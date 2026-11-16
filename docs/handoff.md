@@ -32,7 +32,33 @@ and benchmarks/documentation/releases/G0-G11/Q01-Q20/U01-U24. They must distingu
 current inherited exact-source evidence from fresh reading, optional research from
 required scope, and user deferrals from verified completion. Root receives the
 matrices and independently audits global invariants/Definition of Done.
-No full-current 396-suite PASS or completed original-scope audit is claimed yet.
+All three requirement lanes are now sealed and received in joined-requirements.json:
+78 task IDs, 777 literal/contextual rows (770 complete, seven explicit deferred
+clauses), all 44 Q/U cases and 403 evidence-file identities. No nondeferred gap
+was found. Root cross-cutting/user-scope rows are global-requirements.json.
+The current human-readable scope/result report is
+[V73 original-scope review](verification/completion-v73-2026-11-16.md); it explicitly
+keeps unfinished integration/publication gates separate from received review.
+Both complete native builds pass with unchanged 902 code/config paths. Release
+full 396 passes all 396 with zero failures/skips or metadata/source drift. Sanitizer
+full 396 is still running in exec 12763, runner 3028222/child 3028224; do not restart.
+Latest actual stdout observation is 389/396 passed with no failure markers;
+planner_residual_exceptions remains active, with six serial tests still to follow.
+Check its actual process/receipt/session rather than this saved observation.
+
+User additionally requested another agent create/push GitHub. The frontend audit
+agent prepared isolated /tmp/crown-native-publish-v73, main commit
+2390b679880712ff5d1e38c3555d5f410c8177f5. Native 902 matches current accepted code;
+offline configure discovers 396 tests, credential-signature scan/Git integrity pass,
+and original .git/staging remain untouched. Intended new destination is PRIVATE
+wqc0712/CROWN-native, with SSH identity wqc0712 verified. GitHub API creation still
+needs device authentication. First flow 8446 exited 1 expired_token; no repository
+was created/pushed. Sealed prep: v73-github-publication-v1. User is asked to reply
+Ready before a new flow; use followup_task on v73_frontend_planner_audit to resume.
+Never restart the expired flow or reuse its code. No further create/push permission
+is required; verify actual authentication and destination ownership before action.
+Goal remains ACTIVE, awaiting sanitizer completion, GitHub delivery and final
+source/document/evidence receiving. Do not mark complete from audit counts alone.
 
 Preserve all closed snapshots, SDKs and release/evidence packets. If an audit
 finds a real missing required behavior or inconsistent claim, fix and verify it

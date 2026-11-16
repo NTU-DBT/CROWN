@@ -1,5 +1,16 @@
 {
   "created_utc": "2026-11-16T08:08:28.833483+00:00",
+  "documentation_refresh": {
+    "added_source_paths": [
+      "docs/verification/completion-v73-2026-11-16.md"
+    ],
+    "changed_source_paths": [
+      "docs/handoff.md"
+    ],
+    "code_configuration_paths_changed": 0,
+    "parent_commit": "2390b679880712ff5d1e38c3555d5f410c8177f5",
+    "status": "Release396PASS_SANpending_GitHubAuthenticationPending"
+  },
   "excluded": [
     "original .git and history",
     "build products and verification archives",
@@ -7317,9 +7328,9 @@
       "sha256": "e3889914424fffef25fab7a4c5f4205eaf51dcfcd52d30fe8297fb0d9dcfa559"
     },
     {
-      "bytes": 3262,
+      "bytes": 5262,
       "path": "docs/handoff.md",
-      "sha256": "f89c30dbc2c1985c228a835854216c4042692759e33cc8a27573b96dab8b822d"
+      "sha256": "36c8919a7fc950ba87ed221bd272660c50d88002d05bd9a26b52e057b4cf09bd"
     },
     {
       "bytes": 9190,
@@ -13697,6 +13708,11 @@
       "sha256": "548b2a32ce83174dd2e359f4f549188b0d81448951a7145349467a388bc696cd"
     },
     {
+      "bytes": 6047,
+      "path": "docs/verification/completion-v73-2026-11-16.md",
+      "sha256": "6ea4d06dd7f3f337842db31af30f34267b90f6c634219818cca6fa234c59d2a2"
+    },
+    {
       "bytes": 8900,
       "path": "docs/verification/component-evaluation-v59-2026-11-15.md",
       "sha256": "b13e83cc0a6b5d8e26c3bd0879c61f7ee0917c7ebc7627135a64b5e7515ef0a8"
@@ -14527,6 +14543,11 @@
       "sha256": "e6fce847dcfb8355bfb62db27d7cb47d10bb6e611b8e128f241617873b9d9e15"
     },
     {
+      "bytes": 1341,
+      "path": "docs/verification/o07-cursor-observation-proposal/overlay-sha256.json",
+      "sha256": "dec8d15a99b861bc3cb37c7d66a16879eb1307980e7c125d0a7214f053e804b9"
+    },
+    {
       "bytes": 356,
       "path": "docs/verification/o07-cursor-observation-proposal/overlay/include/crown/io/cursor_observation.hpp",
       "sha256": "44a6bda5bc97724335d1cd0930db0e9dc061381ba060a77ebc4a3a11989844bc"
@@ -14585,11 +14606,6 @@
       "bytes": 109709,
       "path": "docs/verification/o07-cursor-observation-proposal/overlay/src/runtime/support.cpp",
       "sha256": "0f3b62a22bcabb2c24586852e886321f8b11e3d17faaba507dc897f4dbc45afe"
-    },
-    {
-      "bytes": 1341,
-      "path": "docs/verification/o07-cursor-observation-proposal/overlay-sha256.json",
-      "sha256": "dec8d15a99b861bc3cb37c7d66a16879eb1307980e7c125d0a7214f053e804b9"
     },
     {
       "bytes": 2269,
@@ -14852,6 +14868,11 @@
       "sha256": "e95674fef709a12bb2b6b1bddee0ea5a156861f23f805149239c7bb1fa5b817d"
     },
     {
+      "bytes": 334,
+      "path": "docs/verification/o07-mode-binding-proposal/overlay-sha256.json",
+      "sha256": "4991c278faaab76ed2c6dbd1ad43bff65128b73d3ffcc8a1a210af6e9d5c6b02"
+    },
+    {
       "bytes": 10957,
       "path": "docs/verification/o07-mode-binding-proposal/overlay/include/crown/runtime/observation.hpp",
       "sha256": "fd27b4d5e5fc1476f5b98b973e27c4fe5cb7a05cdda04c20f45a2e40e30a918f"
@@ -14865,11 +14886,6 @@
       "bytes": 23505,
       "path": "docs/verification/o07-mode-binding-proposal/overlay/src/runtime/observation.cpp",
       "sha256": "9f03a396babbba49ed37a0dabab2d026c1056166c723e640f8b5b9b0990e7ab2"
-    },
-    {
-      "bytes": 334,
-      "path": "docs/verification/o07-mode-binding-proposal/overlay-sha256.json",
-      "sha256": "4991c278faaab76ed2c6dbd1ad43bff65128b73d3ffcc8a1a210af6e9d5c6b02"
     },
     {
       "bytes": 2313,
@@ -16157,11 +16173,6 @@
       "sha256": "243450222b3757372d219707ccfaabaf7506687b2da23089d01330431dcf97f9"
     },
     {
-      "bytes": 1193,
-      "path": "docs/verification/o07-query-explain-proposal/compile/link_probe.cpp",
-      "sha256": "0071470a326a34488da846763241c193bc2080afa555f02f6edf44b6cb03da02"
-    },
-    {
       "bytes": 6517,
       "path": "docs/verification/o07-query-explain-proposal/compile-evidence-o0.json",
       "sha256": "3fd1066342d577d15c1f3683f73c1d02a8b37f75749154a06c0790d16e6ae027"
@@ -16170,6 +16181,11 @@
       "bytes": 6517,
       "path": "docs/verification/o07-query-explain-proposal/compile-evidence-o3.json",
       "sha256": "c85db28379e3c91dda064abb79183dba015c99171614b39bf7e45752251fdd6a"
+    },
+    {
+      "bytes": 1193,
+      "path": "docs/verification/o07-query-explain-proposal/compile/link_probe.cpp",
+      "sha256": "0071470a326a34488da846763241c193bc2080afa555f02f6edf44b6cb03da02"
     },
     {
       "bytes": 3452,
@@ -16382,6 +16398,11 @@
       "sha256": "b33f17d9fe22fe1e1c8172a73acb56d5cee638baf287fc4ea6742665621889da"
     },
     {
+      "bytes": 1107,
+      "path": "docs/verification/o07-run-context-proposal/overlay-sha256.json",
+      "sha256": "0ab9829a4430480fd7b74b45f54d2f85023063b8636f3b200b9b8aa840958309"
+    },
+    {
       "bytes": 377,
       "path": "docs/verification/o07-run-context-proposal/overlay/include/crown/io/run_context.hpp",
       "sha256": "1d3a88ec600224454046a503edd81b9c09001127e320c6ef8b1678c3381848a0"
@@ -16430,11 +16451,6 @@
       "bytes": 22362,
       "path": "docs/verification/o07-run-context-proposal/overlay/src/runtime/session.cpp",
       "sha256": "008d8f2c7ef59cd3af2da4795f43b9880645714c39ef8c597ced8bce0ce164f8"
-    },
-    {
-      "bytes": 1107,
-      "path": "docs/verification/o07-run-context-proposal/overlay-sha256.json",
-      "sha256": "0ab9829a4430480fd7b74b45f54d2f85023063b8636f3b200b9b8aa840958309"
     },
     {
       "bytes": 1812,
@@ -16492,6 +16508,11 @@
       "sha256": "ed2e415340cf7bc2bd9dab4c611713548e9a72238fbb358b9a04a4ed069a926a"
     },
     {
+      "bytes": 10072,
+      "path": "docs/verification/o07-runtime-proposal-review-2026-11-07.md",
+      "sha256": "a980c00abd66ad68c6d11d9de635245a2bb32a29fe1edd2f4f9299d4b87c4d83"
+    },
+    {
       "bytes": 16724,
       "path": "docs/verification/o07-runtime-proposal/README.md",
       "sha256": "0e36ded1448a9d1e958f90c3a0832bcfbc5feada96bb74a950388a234a0c5822"
@@ -16530,6 +16551,11 @@
       "bytes": 75390,
       "path": "docs/verification/o07-runtime-proposal/o07-runtime-observation.patch",
       "sha256": "78f3c3afa85f89a97051be77b0d958637365d3daaddc40ff408e15787d5ab1ac"
+    },
+    {
+      "bytes": 1109,
+      "path": "docs/verification/o07-runtime-proposal/overlay-sha256.json",
+      "sha256": "ae9fcb9d46b6ac56dfda6cf91fe5083dbb10061e8ef6c3183643403b418f8c3a"
     },
     {
       "bytes": 12755,
@@ -16580,16 +16606,6 @@
       "bytes": 99066,
       "path": "docs/verification/o07-runtime-proposal/overlay/src/runtime/support.cpp",
       "sha256": "841c36f73b8496562ac03b46506fb986ad841fd382c3b09302a807d8b2e232db"
-    },
-    {
-      "bytes": 1109,
-      "path": "docs/verification/o07-runtime-proposal/overlay-sha256.json",
-      "sha256": "ae9fcb9d46b6ac56dfda6cf91fe5083dbb10061e8ef6c3183643403b418f8c3a"
-    },
-    {
-      "bytes": 10072,
-      "path": "docs/verification/o07-runtime-proposal-review-2026-11-07.md",
-      "sha256": "a980c00abd66ad68c6d11d9de635245a2bb32a29fe1edd2f4f9299d4b87c4d83"
     },
     {
       "bytes": 6939,
@@ -24624,7 +24640,8 @@
   ],
   "kind": "source_only_publication",
   "native_inventory_902_match": true,
-  "source_bytes": 180443268,
-  "source_files": 4922,
+  "refreshed_utc": "2026-11-16T08:54:13.575576+00:00",
+  "source_bytes": 180451315,
+  "source_files": 4923,
   "source_repository_origin": "https://github.com/NTU-DBT/CROWN"
 }

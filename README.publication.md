@@ -38,3 +38,15 @@ limits remain applicable; no stronger optimality guarantee is implied by publish
 
 All existing rights and dependency notices are preserved. The user deferred the
 project licensing decision; this snapshot does not grant a new project license.
+
+## Current review snapshot
+
+The [V73 original-scope review](docs/verification/completion-v73-2026-11-16.md)
+records the received requirement review and the complete Release suite: 396 tests
+pass, with no failures or skips. At this documentation snapshot, the complete
+Debug ASan/UBSan suite remains pending and GitHub API authentication remains
+pending after an expired device-login flow. The native 902 inputs remain exact
+V72. This publication export has configured and discovered the 396 tests; it has
+not executed a separate native build or test suite. The source report keeps its
+original historical evidence links and scope qualifications. The full evidence
+archives remain omitted as explained above.
