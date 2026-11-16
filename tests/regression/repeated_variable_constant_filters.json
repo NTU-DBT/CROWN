@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "semantics": "set",
+  "catalog": {
+    "version": 1,
+    "tables": [
+      {
+        "name": "Triple",
+        "columns": [
+          {"name": "first", "type": "string"},
+          {"name": "second", "type": "string"},
+          {"name": "kind", "type": "string"}
+        ]
+      }
+    ]
+  },
+  "query": {
+    "variables": [{"name": "x", "type": "string"}],
+    "atoms": [
+      {
+        "id": "triple",
+        "table": "Triple",
+        "terms": [{"var": "x"}, {"var": "x"}, {"const": "keep"}]
+      }
+    ],
+    "head": [{"var": "x"}]
+  },
+  "initial": [
+    {
+      "table": "Triple",
+      "rows": [["a", "a", "keep"], ["a", "b", "keep"], ["c", "c", "drop"]]
+    }
+  ],
+  "updates": [
+    {"schema_version": 1, "sequence": 1, "table": "Triple", "op": "insert", "values": ["b", "b", "keep"]},
+    {"schema_version": 1, "sequence": 2, "table": "Triple", "op": "insert", "values": ["b", "c", "keep"]},
+    {"schema_version": 1, "sequence": 3, "table": "Triple", "op": "delete", "values": ["a", "a", "keep"]}
+  ]
+}

@@ -1,0 +1,591 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "B04 cold planning export request v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "physical_options",
+    "context",
+    "input_demand"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "type": "integer"
+    },
+    "physical_options": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/physical1"
+        },
+        {
+          "$ref": "#/$defs/physical2"
+        }
+      ]
+    },
+    "context": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "description": "Native admission also caps UTF-8 bytes at1024; include outer frozen build/hardware/allocator/affinity context."
+    },
+    "input_demand": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "table",
+          "operation",
+          "inputs"
+        ],
+        "properties": {
+          "table": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 18446744073709551615
+          },
+          "operation": {
+            "enum": [
+              "insert",
+              "erase"
+            ]
+          },
+          "inputs": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000
+          }
+        }
+      }
+    },
+    "search_work": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100000000,
+      "default": 10000000
+    },
+    "enumeration_work": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100000000,
+      "default": 10000000
+    },
+    "candidate_limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 32,
+      "default": 8
+    },
+    "memory_limit_bytes": {
+      "type": "integer",
+      "minimum": 1048576,
+      "maximum": 4294967296,
+      "default": 268435456
+    },
+    "max_events": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4096,
+      "default": 256
+    },
+    "calibration_repetitions": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "default": 2
+    },
+    "calibration_plan_limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 32,
+      "default": 4
+    },
+    "sample_period": {
+      "type": "integer",
+      "minimum": 2,
+      "maximum": 1000000,
+      "default": 4
+    },
+    "sample_offset": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 999999,
+      "default": 0
+    },
+    "stale_prefix_events": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4096,
+      "default": 1
+    },
+    "meta_work": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100000000,
+      "default": 10000000
+    },
+    "meta_output_limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10000,
+      "default": 1000
+    },
+    "depth_limit": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 256,
+      "default": 128
+    },
+    "record_limit": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10000000,
+      "default": 1000000
+    },
+    "cell_limit": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100000000,
+      "default": 10000000
+    },
+    "model_work": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100000000,
+      "default": 20000000
+    },
+    "prior_calibration": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "identity",
+            "observations",
+            "observations_sha256"
+          ],
+          "properties": {
+            "identity": {
+              "type": "object"
+            },
+            "observations_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "observations": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 65536,
+              "items": {
+                "type": "object",
+                "required": [
+                  "units",
+                  "elapsed_ns"
+                ],
+                "properties": {
+                  "elapsed_ns": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 18446744073709551615
+                  },
+                  "units": {
+                    "type": "array",
+                    "minItems": 22,
+                    "maxItems": 22,
+                    "prefixItems": [
+                      {
+                        "type": "integer",
+                        "const": 1
+                      },
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 18446744073709551615
+                      },
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 18446744073709551615
+                      },
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 18446744073709551615
+                      },
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 18446744073709551615
+                      },
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 18446744073709551615
+                      },
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 18446744073709551615
+                      },
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 18446744073709551615
+                      },
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 18446744073709551615
+                      },
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 18446744073709551615
+                      },
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 18446744073709551615
+                      },
+                      {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 18446744073709551615
+                      },
+                      {
+                        "type": "integer",
+                        "const": 0
+                      },
+                      {
+                        "type": "integer",
+                        "const": 0
+                      },
+                      {
+                        "type": "integer",
+                        "const": 0
+                      },
+                      {
+                        "type": "integer",
+                        "const": 0
+                      },
+                      {
+                        "type": "integer",
+                        "const": 0
+                      },
+                      {
+                        "type": "integer",
+                        "const": 0
+                      },
+                      {
+                        "type": "integer",
+                        "const": 0
+                      },
+                      {
+                        "type": "integer",
+                        "const": 0
+                      },
+                      {
+                        "type": "integer",
+                        "const": 0
+                      },
+                      {
+                        "type": "integer",
+                        "const": 0
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "physical1": {
+      "title": "CROWN physical lowering options v1",
+      "description": "Serialized lowering policy and producer work limits. A reader's host limits independently cap replay and cannot be raised by these stored values.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "policy",
+        "limits"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "integer",
+          "const": 1
+        },
+        "policy": {
+          "$ref": "#/$defs/physical1/$defs/policy"
+        },
+        "limits": {
+          "$ref": "#/$defs/physical1/$defs/limits"
+        }
+      },
+      "$defs": {
+        "uint64": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "nullable_uint64": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/physical1/$defs/uint64"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "arithmetic",
+            "planner",
+            "optimization",
+            "cost_model"
+          ],
+          "properties": {
+            "arithmetic": {
+              "type": "string",
+              "const": "exact-nonnull-v1"
+            },
+            "planner": {
+              "type": "string",
+              "minLength": 1,
+              "default": "crown-tree-v1"
+            },
+            "optimization": {
+              "type": "string",
+              "minLength": 1,
+              "default": "structural-height-v1"
+            },
+            "cost_model": {
+              "type": "string",
+              "minLength": 1,
+              "default": "no-cost-v1"
+            }
+          }
+        },
+        "limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "work",
+            "identity_work"
+          ],
+          "properties": {
+            "work": {
+              "$ref": "#/$defs/physical1/$defs/nullable_uint64",
+              "default": 1000000
+            },
+            "identity_work": {
+              "$ref": "#/$defs/physical1/$defs/nullable_uint64",
+              "default": 1000000
+            }
+          }
+        }
+      }
+    },
+    "physical2": {
+      "title": "CROWN indexed physical lowering options v2",
+      "description": "Opt-in indexed backend with finite per-table counts including undo-owned nodes and one aggregate work allowance per operation; not allocator-byte or peak bounds.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "policy",
+        "limits",
+        "indexed_storage"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "integer",
+          "const": 2
+        },
+        "policy": {
+          "$ref": "#/$defs/physical2/$defs/policy"
+        },
+        "limits": {
+          "$ref": "#/$defs/physical2/$defs/limits"
+        },
+        "indexed_storage": {
+          "$ref": "#/$defs/physical2/$defs/indexed_storage"
+        }
+      },
+      "$defs": {
+        "uint64": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "nullable_uint64": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/physical2/$defs/uint64"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "arithmetic",
+            "planner",
+            "optimization",
+            "cost_model"
+          ],
+          "properties": {
+            "arithmetic": {
+              "type": "string",
+              "const": "exact-nonnull-v1"
+            },
+            "planner": {
+              "type": "string",
+              "minLength": 1,
+              "default": "crown-tree-v1"
+            },
+            "optimization": {
+              "type": "string",
+              "minLength": 1,
+              "default": "structural-height-v1"
+            },
+            "cost_model": {
+              "type": "string",
+              "minLength": 1,
+              "default": "no-cost-v1"
+            }
+          }
+        },
+        "limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "work",
+            "identity_work"
+          ],
+          "properties": {
+            "work": {
+              "$ref": "#/$defs/physical2/$defs/nullable_uint64",
+              "default": 1000000
+            },
+            "identity_work": {
+              "$ref": "#/$defs/physical2/$defs/nullable_uint64",
+              "default": 1000000
+            }
+          }
+        },
+        "indexed_storage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "algorithm",
+            "traversal",
+            "component_scope",
+            "work_scope",
+            "limits",
+            "work"
+          ],
+          "properties": {
+            "algorithm": {
+              "const": "indexed_chained_v1"
+            },
+            "traversal": {
+              "const": "insertion_first_live_key_v1"
+            },
+            "component_scope": {
+              "const": "per_table_including_undo"
+            },
+            "work_scope": {
+              "const": "operation_aggregate"
+            },
+            "limits": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "rows",
+                "indices",
+                "keys",
+                "memberships",
+                "nodes",
+                "directory_slots",
+                "arena_slots",
+                "arena_pins",
+                "journal_entries"
+              ],
+              "properties": {
+                "rows": {
+                  "$ref": "#/$defs/physical2/$defs/uint64"
+                },
+                "indices": {
+                  "$ref": "#/$defs/physical2/$defs/uint64"
+                },
+                "keys": {
+                  "$ref": "#/$defs/physical2/$defs/uint64"
+                },
+                "memberships": {
+                  "$ref": "#/$defs/physical2/$defs/uint64"
+                },
+                "nodes": {
+                  "$ref": "#/$defs/physical2/$defs/uint64"
+                },
+                "directory_slots": {
+                  "$ref": "#/$defs/physical2/$defs/uint64"
+                },
+                "arena_slots": {
+                  "$ref": "#/$defs/physical2/$defs/uint64"
+                },
+                "arena_pins": {
+                  "$ref": "#/$defs/physical2/$defs/uint64"
+                },
+                "journal_entries": {
+                  "$ref": "#/$defs/physical2/$defs/uint64"
+                }
+              }
+            },
+            "work": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "structural_steps",
+                "scalar_fields",
+                "scalar_bytes",
+                "pointer_slots",
+                "link_actions"
+              ],
+              "properties": {
+                "structural_steps": {
+                  "$ref": "#/$defs/physical2/$defs/uint64"
+                },
+                "scalar_fields": {
+                  "$ref": "#/$defs/physical2/$defs/uint64"
+                },
+                "scalar_bytes": {
+                  "$ref": "#/$defs/physical2/$defs/uint64"
+                },
+                "pointer_slots": {
+                  "$ref": "#/$defs/physical2/$defs/uint64"
+                },
+                "link_actions": {
+                  "$ref": "#/$defs/physical2/$defs/uint64"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$comment": "The exporter reads training and calibration inputs only. Finite API grants, actual profile handles, native-mode provenance and observation-digest replay remain semantic checks in the executable."
+}

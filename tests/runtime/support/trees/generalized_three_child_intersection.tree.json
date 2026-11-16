@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "catalog_version": 1,
+  "semantics": "set",
+  "root": "g",
+  "nodes": [
+    {"id": "g", "kind": "generalized", "scope": ["a"], "children": ["e0", "e1", "e2"]},
+    {"id": "e0", "kind": "native", "scope": ["a", "b0"], "children": [], "occurrence": "e0"},
+    {"id": "e1", "kind": "native", "scope": ["a", "b1"], "children": [], "occurrence": "e1"},
+    {"id": "e2", "kind": "native", "scope": ["a", "b2"], "children": [], "occurrence": "e2"}
+  ]
+}

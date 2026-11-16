@@ -1,0 +1,26 @@
+{
+  "status": "O07NS; compiler/link preparation only",
+  "executed": false,
+  "package_sha256": "1062120b94a5733506186cb93cd6dac2bc99c7b4b3d3ab95e8c9c1882afbdb93",
+  "files": {
+    "README.md": "0a1394dcc9f408bff548d402027bae60c937dd380afe47df58c76346399df85e",
+    "baseline-dependencies-mode-binding.json": "dfa10d0f12199bdefabc14b3bb7b9c11dc188d1111bf5ec98d9575b30bd9436c",
+    "baseline-dependencies.json": "776a07c1f0c91e6fa3a63a2e0a4a3a2ce8834ae64a6f657974478aed6f475b65",
+    "build_proposal.py": "3ef6cd6adc9cf92789a1ba4308c6600c212941e7fc3eba6c1d4b3b21f25117bf",
+    "compile-evidence-mode-binding.json": "12aa3e2e5d29a0f72536e3f77a777c4d0b3216e267e46ddec5630177bc3b4bcb",
+    "compile-evidence.json": "2b71e99306948c2fc2d2ac308c7f0956b1f33240a987cebf6248f04b98b06b0a",
+    "make_patch.py": "863c789c2249ab168b45e3fd90c5a9b792d3206a1c916a68c181a9582ae05674",
+    "make_schema.py": "f73868756fd690ca616a7ac28a29ce1bc96b2d002388a5340bb95c91a0438a49",
+    "o07-explain.patch": "8a00d2d4395e86dc89bde41f2326103ccf7b34d58845bc0c60b76f5b9ed15cf8",
+    "overlay/apps/crown-explain-proposal/main.cpp": "e64cc95fca65816e382064200def0daaf8db5e3c6f07a68512b84510eaea390d",
+    "overlay/include/crown/io/explain.hpp": "22cd0cf3862f4ae1019e0a2214c84da252dcba6f793c461c35dd4f0fc5a3d929",
+    "overlay/include/crown/observability/explain.hpp": "04ad1c692aa261fc8579ee031566e38904d5cf83ded9609d524b291df64685bc",
+    "overlay/src/io/explain.cpp": "61335b9d531b35b7926f363090a1d3d239b0e2a2da8e3210c963942457fd15a0",
+    "overlay/src/observability/explain.cpp": "f96ebe8c9bd171acc4890064b285e72111f17011194b60b03792624988dd99af",
+    "pin_sources.py": "50fd556c71694890d8cd7e78b9160a890462068f126561c836a5ca15a0039d4e",
+    "proposal-sha256.json": "cc48c589ed916253644acd0008047f5e734ba0d66d2c4cef72f9066dbcd6060d",
+    "schemas/explain-report-v1.schema.json": "78c04c2e29d42619de2f05f21e0f8c07fbe4c00d1da3a0aaf536629cfe6a198a"
+  },
+  "old_runtime_binary": "68aace2db9b5fdb746525bb570db4cce3fac57bb610813a73308346293e29c9a",
+  "mode_binding_binary": "5187c47b1cb39e3604fe514a36010a647bfcbbb35fdbd90deb81ae1531e7d314"
+}

@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "backend": "reference_recompute",
+  "semantics": "set",
+  "initial": [["a"]],
+  "epochs": [
+    {
+      "sequence": 1,
+      "input_changed": true,
+      "current": [["a"], ["b"]],
+      "delta": {"added": [["b"]], "removed": []}
+    },
+    {
+      "sequence": 2,
+      "input_changed": true,
+      "current": [["a"], ["b"]],
+      "delta": {"added": [], "removed": []}
+    },
+    {
+      "sequence": 3,
+      "input_changed": true,
+      "current": [["b"]],
+      "delta": {"added": [], "removed": [["a"]]}
+    }
+  ]
+}

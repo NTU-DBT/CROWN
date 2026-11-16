@@ -1,0 +1,37 @@
+{
+  "statement": {
+    "begin": 14,
+    "end": 35
+  },
+  "ast": {
+    "version": 180006,
+    "stmts": [
+      {
+        "stmt": {
+          "SelectStmt": {
+            "targetList": [
+              {
+                "ResTarget": {
+                  "name": "label",
+                  "val": {
+                    "A_Const": {
+                      "sval": {
+                        "sval": "雪"
+                      },
+                      "location": 21
+                    }
+                  },
+                  "location": 21
+                }
+              }
+            ],
+            "limitOption": "LIMIT_OPTION_DEFAULT",
+            "op": "SETOP_NONE"
+          }
+        },
+        "stmt_location": 14,
+        "stmt_len": 21
+      }
+    ]
+  }
+}

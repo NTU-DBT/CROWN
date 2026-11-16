@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "semantics": "set",
+  "catalog": {
+    "version": 1,
+    "tables": [
+      {
+        "name": "T_edge0",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "T_edge1",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "T_edge2",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          }
+        ]
+      }
+    ]
+  },
+  "query": {
+    "variables": [
+      {
+        "name": "c",
+        "type": "string"
+      },
+      {
+        "name": "leaf0",
+        "type": "string"
+      },
+      {
+        "name": "leaf1",
+        "type": "string"
+      },
+      {
+        "name": "leaf2",
+        "type": "string"
+      }
+    ],
+    "atoms": [
+      {
+        "id": "edge0",
+        "table": "T_edge0",
+        "terms": [
+          {
+            "var": "c"
+          },
+          {
+            "var": "leaf0"
+          }
+        ]
+      },
+      {
+        "id": "edge1",
+        "table": "T_edge1",
+        "terms": [
+          {
+            "var": "c"
+          },
+          {
+            "var": "leaf1"
+          }
+        ]
+      },
+      {
+        "id": "edge2",
+        "table": "T_edge2",
+        "terms": [
+          {
+            "var": "c"
+          },
+          {
+            "var": "leaf2"
+          }
+        ]
+      }
+    ],
+    "head": [
+      {
+        "var": "c"
+      },
+      {
+        "var": "leaf0"
+      },
+      {
+        "var": "leaf1"
+      },
+      {
+        "var": "leaf2"
+      }
+    ]
+  }
+}

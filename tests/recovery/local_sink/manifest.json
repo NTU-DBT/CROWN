@@ -1,0 +1,245 @@
+{
+  "body_values": {
+    "generation": 7,
+    "kind": 1,
+    "ordinal": 1,
+    "physical_sequence": 11,
+    "row_count": 2
+  },
+  "fields": {
+    "body": {
+      "sha256": "83e57b69222cf65be79638f569537499369472071ac02f6fa0ad29a18351b119",
+      "span": {
+        "end_exclusive": 265,
+        "length": 117,
+        "offset": 148
+      }
+    },
+    "body_fields": {
+      "generation": {
+        "end_exclusive": 165,
+        "length": 8,
+        "offset": 157
+      },
+      "kind": {
+        "end_exclusive": 149,
+        "length": 1,
+        "offset": 148
+      },
+      "ordinal": {
+        "end_exclusive": 157,
+        "length": 8,
+        "offset": 149
+      },
+      "physical_sequence": {
+        "end_exclusive": 173,
+        "length": 8,
+        "offset": 165
+      },
+      "row_count": {
+        "end_exclusive": 181,
+        "length": 8,
+        "offset": 173
+      }
+    },
+    "body_sha256_ascii": {
+      "span": {
+        "end_exclusive": 84,
+        "length": 64,
+        "offset": 20
+      },
+      "value": "83e57b69222cf65be79638f569537499369472071ac02f6fa0ad29a18351b119"
+    },
+    "body_size": {
+      "encoding": "u64le",
+      "span": {
+        "end_exclusive": 20,
+        "length": 8,
+        "offset": 12
+      },
+      "value": 117
+    },
+    "flags": {
+      "encoding": "u16le",
+      "span": {
+        "end_exclusive": 12,
+        "length": 2,
+        "offset": 10
+      },
+      "value": 0
+    },
+    "header_sha256_ascii": {
+      "covers_span": {
+        "end_exclusive": 84,
+        "length": 84,
+        "offset": 0
+      },
+      "span": {
+        "end_exclusive": 148,
+        "length": 64,
+        "offset": 84
+      },
+      "value": "167cd9f3a1cdf862f63779eca7f7fe4aea497ed6a307b207b7c825408895d214"
+    },
+    "magic": {
+      "ascii": "CROWNSK1",
+      "span": {
+        "end_exclusive": 8,
+        "length": 8,
+        "offset": 0
+      }
+    },
+    "version": {
+      "encoding": "u16le",
+      "span": {
+        "end_exclusive": 10,
+        "length": 2,
+        "offset": 8
+      },
+      "value": 1
+    }
+  },
+  "flags": 0,
+  "format": "CROWNSK1",
+  "hashes": {
+    "body_sha256": "83e57b69222cf65be79638f569537499369472071ac02f6fa0ad29a18351b119",
+    "header_prefix_sha256": "167cd9f3a1cdf862f63779eca7f7fe4aea497ed6a307b207b7c825408895d214",
+    "record_sha256": "6c89a8446a9accaa0530cd9967b49676d1aa744b341dcd24becdfcdf5352b235"
+  },
+  "lengths": {
+    "body": 117,
+    "header": 148,
+    "record": 265
+  },
+  "rows_sorted_by_encoded_bytes": [
+    {
+      "arity": 5,
+      "length": 44,
+      "name": "insert",
+      "operation": 0,
+      "record_span": {
+        "end_exclusive": 225,
+        "length": 44,
+        "offset": 181
+      },
+      "scalars": [
+        {
+          "kind": "int64",
+          "record_span": {
+            "end_exclusive": 199,
+            "length": 9,
+            "offset": 190
+          },
+          "tag": 0,
+          "wire_length": 9
+        },
+        {
+          "kind": "string",
+          "record_span": {
+            "end_exclusive": 211,
+            "length": 12,
+            "offset": 199
+          },
+          "tag": 1,
+          "wire_length": 12
+        },
+        {
+          "kind": "bool",
+          "record_span": {
+            "end_exclusive": 213,
+            "length": 2,
+            "offset": 211
+          },
+          "tag": 2,
+          "wire_length": 2
+        },
+        {
+          "kind": "date",
+          "record_span": {
+            "end_exclusive": 218,
+            "length": 5,
+            "offset": 213
+          },
+          "tag": 3,
+          "wire_length": 5
+        },
+        {
+          "kind": "decimal",
+          "record_span": {
+            "end_exclusive": 225,
+            "length": 7,
+            "offset": 218
+          },
+          "tag": 4,
+          "wire_length": 7
+        }
+      ],
+      "sha256": "4d56d7ea170aba95ed225167fb5bb99cfce19ea98f2a30591f6ede12879cb1fe"
+    },
+    {
+      "arity": 5,
+      "length": 40,
+      "name": "erase",
+      "operation": 1,
+      "record_span": {
+        "end_exclusive": 265,
+        "length": 40,
+        "offset": 225
+      },
+      "scalars": [
+        {
+          "kind": "int64",
+          "record_span": {
+            "end_exclusive": 243,
+            "length": 9,
+            "offset": 234
+          },
+          "tag": 0,
+          "wire_length": 9
+        },
+        {
+          "kind": "string",
+          "record_span": {
+            "end_exclusive": 255,
+            "length": 12,
+            "offset": 243
+          },
+          "tag": 1,
+          "wire_length": 12
+        },
+        {
+          "kind": "bool",
+          "record_span": {
+            "end_exclusive": 257,
+            "length": 2,
+            "offset": 255
+          },
+          "tag": 2,
+          "wire_length": 2
+        },
+        {
+          "kind": "date",
+          "record_span": {
+            "end_exclusive": 262,
+            "length": 5,
+            "offset": 257
+          },
+          "tag": 3,
+          "wire_length": 5
+        },
+        {
+          "kind": "decimal",
+          "record_span": {
+            "end_exclusive": 265,
+            "length": 3,
+            "offset": 262
+          },
+          "tag": 4,
+          "wire_length": 3
+        }
+      ],
+      "sha256": "f29874769d951208bd9fe0cf1598786a1108c557da89a7bf89db946544e8a6b2"
+    }
+  ],
+  "version": 1
+}

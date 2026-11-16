@@ -1,0 +1,4060 @@
+{
+  "format": "c01-literal-small-data-reference-v1",
+  "independent_basis": "literal rows, sets, maps, and hand-derived transitions; no collector or O07 metric is an oracle",
+  "native_value_scope": {
+    "types": [
+      "int64",
+      "byte_string",
+      "bool",
+      "date",
+      "decimal"
+    ],
+    "null": "not_representable_in_native_Value_and_not_fixtured",
+    "aggregates": "not_scoped",
+    "ordered_projection_rule": "preserve_field_order; empty projection NDV is 1 for nonempty population and 0 for empty population",
+    "positive_support_rule": "P/E maps contain only positive counts; sum of map multiplicities equals applicable S cardinality",
+    "histogram_rule": "bins count keys, not multiplicity-weighted rows, unless the object is explicitly a touched-event histogram",
+    "top_k_rule": "count descending, then exact native key order ascending"
+  },
+  "fixtures": [
+    {
+      "id": "native_r_root_s_child",
+      "query_shape": "R(x,y), S(y); native R root; S child; head (x,y)",
+      "source_tables_are_full_row_sets": true,
+      "states": [
+        {
+          "label": "baseline_S_7",
+          "source_tables": [
+            {
+              "id": "R",
+              "used_by_query": true,
+              "population": {
+                "layout": [
+                  "x",
+                  "y"
+                ],
+                "rows": [
+                  [
+                    1,
+                    7
+                  ],
+                  [
+                    2,
+                    7
+                  ],
+                  [
+                    3,
+                    8
+                  ]
+                ],
+                "cardinality": 3,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "x"
+                    ],
+                    "ndv": 3
+                  },
+                  {
+                    "fields": [
+                      "y"
+                    ],
+                    "ndv": 2
+                  },
+                  {
+                    "fields": [
+                      "x",
+                      "y"
+                    ],
+                    "ndv": 3
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ]
+              }
+            },
+            {
+              "id": "S",
+              "used_by_query": true,
+              "population": {
+                "layout": [
+                  "y"
+                ],
+                "rows": [
+                  [
+                    7
+                  ]
+                ],
+                "cardinality": 1,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "y"
+                    ],
+                    "ndv": 1
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ]
+              }
+            },
+            {
+              "id": "Unused",
+              "used_by_query": false,
+              "population": {
+                "layout": [
+                  "w"
+                ],
+                "rows": [
+                  [
+                    99
+                  ]
+                ],
+                "cardinality": 1,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "w"
+                    ],
+                    "ndv": 1
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "native_populations": [
+            {
+              "id": "R-root-native",
+              "population": {
+                "layout": [
+                  "x",
+                  "y"
+                ],
+                "rows": [
+                  [
+                    1,
+                    7
+                  ],
+                  [
+                    2,
+                    7
+                  ],
+                  [
+                    3,
+                    8
+                  ]
+                ],
+                "cardinality": 3,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "x"
+                    ],
+                    "ndv": 3
+                  },
+                  {
+                    "fields": [
+                      "y"
+                    ],
+                    "ndv": 2
+                  },
+                  {
+                    "fields": [
+                      "x",
+                      "y"
+                    ],
+                    "ndv": 3
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ],
+                "derivations": [
+                  {
+                    "tuple": [
+                      1,
+                      7
+                    ],
+                    "count": 1
+                  },
+                  {
+                    "tuple": [
+                      2,
+                      7
+                    ],
+                    "count": 1
+                  },
+                  {
+                    "tuple": [
+                      3,
+                      8
+                    ],
+                    "count": 1
+                  }
+                ]
+              }
+            },
+            {
+              "id": "S-child-native",
+              "population": {
+                "layout": [
+                  "y"
+                ],
+                "rows": [
+                  [
+                    7
+                  ]
+                ],
+                "cardinality": 1,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "y"
+                    ],
+                    "ndv": 1
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ],
+                "derivations": [
+                  {
+                    "tuple": [
+                      7
+                    ],
+                    "count": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "survivor_populations": [
+            {
+              "id": "S:R-root",
+              "population": {
+                "layout": [
+                  "x",
+                  "y"
+                ],
+                "rows": [
+                  [
+                    1,
+                    7
+                  ],
+                  [
+                    2,
+                    7
+                  ]
+                ],
+                "cardinality": 2,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "x"
+                    ],
+                    "ndv": 2
+                  },
+                  {
+                    "fields": [
+                      "y"
+                    ],
+                    "ndv": 1
+                  },
+                  {
+                    "fields": [
+                      "x",
+                      "y"
+                    ],
+                    "ndv": 2
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "P": [
+            {
+              "id": "P:R-root",
+              "projection_fields": [],
+              "key_multiplicities": [
+                {
+                  "key": [],
+                  "multiplicity": 2
+                }
+              ],
+              "summary": {
+                "positive_key_count": 1,
+                "sum_multiplicities": 2,
+                "bins": [
+                  {
+                    "multiplicity": 2,
+                    "key_count": 1
+                  }
+                ]
+              },
+              "top_k": {
+                "k": 2,
+                "entries": [
+                  {
+                    "key": [],
+                    "count": 2
+                  }
+                ]
+              }
+            }
+          ],
+          "E": [
+            {
+              "id": "E:R-root",
+              "projection_fields": [
+                "x",
+                "y"
+              ],
+              "key_multiplicities": [
+                {
+                  "key": [
+                    1,
+                    7
+                  ],
+                  "multiplicity": 1
+                },
+                {
+                  "key": [
+                    2,
+                    7
+                  ],
+                  "multiplicity": 1
+                }
+              ],
+              "summary": {
+                "positive_key_count": 2,
+                "sum_multiplicities": 2,
+                "bins": [
+                  {
+                    "multiplicity": 1,
+                    "key_count": 2
+                  }
+                ]
+              },
+              "top_k": {
+                "k": 2,
+                "entries": [
+                  {
+                    "key": [
+                      1,
+                      7
+                    ],
+                    "count": 1
+                  },
+                  {
+                    "key": [
+                      2,
+                      7
+                    ],
+                    "count": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "existing_indexes": [
+            {
+              "id": "R.y.reverse",
+              "key_fields": [
+                "y"
+              ],
+              "key_degrees": [
+                {
+                  "key": [
+                    7
+                  ],
+                  "degree": 2
+                },
+                {
+                  "key": [
+                    8
+                  ],
+                  "degree": 1
+                }
+              ],
+              "summary": {
+                "positive_key_count": 2,
+                "sum_degrees": 3,
+                "bins": [
+                  {
+                    "degree": 1,
+                    "key_count": 1
+                  },
+                  {
+                    "degree": 2,
+                    "key_count": 1
+                  }
+                ]
+              },
+              "top_k": {
+                "k": 2,
+                "entries": [
+                  {
+                    "key": [
+                      7
+                    ],
+                    "degree": 2
+                  },
+                  {
+                    "key": [
+                      8
+                    ],
+                    "degree": 1
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "label": "after_insert_S_8",
+          "source_tables": [
+            {
+              "id": "R",
+              "used_by_query": true,
+              "population": {
+                "layout": [
+                  "x",
+                  "y"
+                ],
+                "rows": [
+                  [
+                    1,
+                    7
+                  ],
+                  [
+                    2,
+                    7
+                  ],
+                  [
+                    3,
+                    8
+                  ]
+                ],
+                "cardinality": 3,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "x"
+                    ],
+                    "ndv": 3
+                  },
+                  {
+                    "fields": [
+                      "y"
+                    ],
+                    "ndv": 2
+                  },
+                  {
+                    "fields": [
+                      "x",
+                      "y"
+                    ],
+                    "ndv": 3
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ]
+              }
+            },
+            {
+              "id": "S",
+              "used_by_query": true,
+              "population": {
+                "layout": [
+                  "y"
+                ],
+                "rows": [
+                  [
+                    7
+                  ],
+                  [
+                    8
+                  ]
+                ],
+                "cardinality": 2,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "y"
+                    ],
+                    "ndv": 2
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ]
+              }
+            },
+            {
+              "id": "Unused",
+              "used_by_query": false,
+              "population": {
+                "layout": [
+                  "w"
+                ],
+                "rows": [
+                  [
+                    99
+                  ]
+                ],
+                "cardinality": 1,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "w"
+                    ],
+                    "ndv": 1
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "native_populations": [
+            {
+              "id": "R-root-native",
+              "population": {
+                "layout": [
+                  "x",
+                  "y"
+                ],
+                "rows": [
+                  [
+                    1,
+                    7
+                  ],
+                  [
+                    2,
+                    7
+                  ],
+                  [
+                    3,
+                    8
+                  ]
+                ],
+                "cardinality": 3,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "x"
+                    ],
+                    "ndv": 3
+                  },
+                  {
+                    "fields": [
+                      "y"
+                    ],
+                    "ndv": 2
+                  },
+                  {
+                    "fields": [
+                      "x",
+                      "y"
+                    ],
+                    "ndv": 3
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ],
+                "derivations": [
+                  {
+                    "tuple": [
+                      1,
+                      7
+                    ],
+                    "count": 1
+                  },
+                  {
+                    "tuple": [
+                      2,
+                      7
+                    ],
+                    "count": 1
+                  },
+                  {
+                    "tuple": [
+                      3,
+                      8
+                    ],
+                    "count": 1
+                  }
+                ]
+              }
+            },
+            {
+              "id": "S-child-native",
+              "population": {
+                "layout": [
+                  "y"
+                ],
+                "rows": [
+                  [
+                    7
+                  ],
+                  [
+                    8
+                  ]
+                ],
+                "cardinality": 2,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "y"
+                    ],
+                    "ndv": 2
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ],
+                "derivations": [
+                  {
+                    "tuple": [
+                      7
+                    ],
+                    "count": 1
+                  },
+                  {
+                    "tuple": [
+                      8
+                    ],
+                    "count": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "survivor_populations": [
+            {
+              "id": "S:R-root",
+              "population": {
+                "layout": [
+                  "x",
+                  "y"
+                ],
+                "rows": [
+                  [
+                    1,
+                    7
+                  ],
+                  [
+                    2,
+                    7
+                  ],
+                  [
+                    3,
+                    8
+                  ]
+                ],
+                "cardinality": 3,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "x"
+                    ],
+                    "ndv": 3
+                  },
+                  {
+                    "fields": [
+                      "y"
+                    ],
+                    "ndv": 2
+                  },
+                  {
+                    "fields": [
+                      "x",
+                      "y"
+                    ],
+                    "ndv": 3
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "P": [
+            {
+              "id": "P:R-root",
+              "projection_fields": [],
+              "key_multiplicities": [
+                {
+                  "key": [],
+                  "multiplicity": 3
+                }
+              ],
+              "summary": {
+                "positive_key_count": 1,
+                "sum_multiplicities": 3,
+                "bins": [
+                  {
+                    "multiplicity": 3,
+                    "key_count": 1
+                  }
+                ]
+              },
+              "top_k": {
+                "k": 2,
+                "entries": [
+                  {
+                    "key": [],
+                    "count": 3
+                  }
+                ]
+              }
+            }
+          ],
+          "E": [
+            {
+              "id": "E:R-root",
+              "projection_fields": [
+                "x",
+                "y"
+              ],
+              "key_multiplicities": [
+                {
+                  "key": [
+                    1,
+                    7
+                  ],
+                  "multiplicity": 1
+                },
+                {
+                  "key": [
+                    2,
+                    7
+                  ],
+                  "multiplicity": 1
+                },
+                {
+                  "key": [
+                    3,
+                    8
+                  ],
+                  "multiplicity": 1
+                }
+              ],
+              "summary": {
+                "positive_key_count": 3,
+                "sum_multiplicities": 3,
+                "bins": [
+                  {
+                    "multiplicity": 1,
+                    "key_count": 3
+                  }
+                ]
+              },
+              "top_k": {
+                "k": 2,
+                "entries": [
+                  {
+                    "key": [
+                      1,
+                      7
+                    ],
+                    "count": 1
+                  },
+                  {
+                    "key": [
+                      2,
+                      7
+                    ],
+                    "count": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "existing_indexes": [
+            {
+              "id": "R.y.reverse",
+              "key_fields": [
+                "y"
+              ],
+              "key_degrees": [
+                {
+                  "key": [
+                    7
+                  ],
+                  "degree": 2
+                },
+                {
+                  "key": [
+                    8
+                  ],
+                  "degree": 1
+                }
+              ],
+              "summary": {
+                "positive_key_count": 2,
+                "sum_degrees": 3,
+                "bins": [
+                  {
+                    "degree": 1,
+                    "key_count": 1
+                  },
+                  {
+                    "degree": 2,
+                    "key_count": 1
+                  }
+                ]
+              },
+              "top_k": {
+                "k": 2,
+                "entries": [
+                  {
+                    "key": [
+                      7
+                    ],
+                    "degree": 2
+                  },
+                  {
+                    "key": [
+                      8
+                    ],
+                    "degree": 1
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "label": "after_delete_S_7",
+          "source_tables": [
+            {
+              "id": "R",
+              "used_by_query": true,
+              "population": {
+                "layout": [
+                  "x",
+                  "y"
+                ],
+                "rows": [
+                  [
+                    1,
+                    7
+                  ],
+                  [
+                    2,
+                    7
+                  ],
+                  [
+                    3,
+                    8
+                  ]
+                ],
+                "cardinality": 3,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "x"
+                    ],
+                    "ndv": 3
+                  },
+                  {
+                    "fields": [
+                      "y"
+                    ],
+                    "ndv": 2
+                  },
+                  {
+                    "fields": [
+                      "x",
+                      "y"
+                    ],
+                    "ndv": 3
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ]
+              }
+            },
+            {
+              "id": "S",
+              "used_by_query": true,
+              "population": {
+                "layout": [
+                  "y"
+                ],
+                "rows": [
+                  [
+                    8
+                  ]
+                ],
+                "cardinality": 1,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "y"
+                    ],
+                    "ndv": 1
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ]
+              }
+            },
+            {
+              "id": "Unused",
+              "used_by_query": false,
+              "population": {
+                "layout": [
+                  "w"
+                ],
+                "rows": [
+                  [
+                    99
+                  ]
+                ],
+                "cardinality": 1,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "w"
+                    ],
+                    "ndv": 1
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "native_populations": [
+            {
+              "id": "R-root-native",
+              "population": {
+                "layout": [
+                  "x",
+                  "y"
+                ],
+                "rows": [
+                  [
+                    1,
+                    7
+                  ],
+                  [
+                    2,
+                    7
+                  ],
+                  [
+                    3,
+                    8
+                  ]
+                ],
+                "cardinality": 3,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "x"
+                    ],
+                    "ndv": 3
+                  },
+                  {
+                    "fields": [
+                      "y"
+                    ],
+                    "ndv": 2
+                  },
+                  {
+                    "fields": [
+                      "x",
+                      "y"
+                    ],
+                    "ndv": 3
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ],
+                "derivations": [
+                  {
+                    "tuple": [
+                      1,
+                      7
+                    ],
+                    "count": 1
+                  },
+                  {
+                    "tuple": [
+                      2,
+                      7
+                    ],
+                    "count": 1
+                  },
+                  {
+                    "tuple": [
+                      3,
+                      8
+                    ],
+                    "count": 1
+                  }
+                ]
+              }
+            },
+            {
+              "id": "S-child-native",
+              "population": {
+                "layout": [
+                  "y"
+                ],
+                "rows": [
+                  [
+                    8
+                  ]
+                ],
+                "cardinality": 1,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "y"
+                    ],
+                    "ndv": 1
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ],
+                "derivations": [
+                  {
+                    "tuple": [
+                      8
+                    ],
+                    "count": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "survivor_populations": [
+            {
+              "id": "S:R-root",
+              "population": {
+                "layout": [
+                  "x",
+                  "y"
+                ],
+                "rows": [
+                  [
+                    3,
+                    8
+                  ]
+                ],
+                "cardinality": 1,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "x"
+                    ],
+                    "ndv": 1
+                  },
+                  {
+                    "fields": [
+                      "y"
+                    ],
+                    "ndv": 1
+                  },
+                  {
+                    "fields": [
+                      "x",
+                      "y"
+                    ],
+                    "ndv": 1
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "P": [
+            {
+              "id": "P:R-root",
+              "projection_fields": [],
+              "key_multiplicities": [
+                {
+                  "key": [],
+                  "multiplicity": 1
+                }
+              ],
+              "summary": {
+                "positive_key_count": 1,
+                "sum_multiplicities": 1,
+                "bins": [
+                  {
+                    "multiplicity": 1,
+                    "key_count": 1
+                  }
+                ]
+              },
+              "top_k": {
+                "k": 2,
+                "entries": [
+                  {
+                    "key": [],
+                    "count": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "E": [
+            {
+              "id": "E:R-root",
+              "projection_fields": [
+                "x",
+                "y"
+              ],
+              "key_multiplicities": [
+                {
+                  "key": [
+                    3,
+                    8
+                  ],
+                  "multiplicity": 1
+                }
+              ],
+              "summary": {
+                "positive_key_count": 1,
+                "sum_multiplicities": 1,
+                "bins": [
+                  {
+                    "multiplicity": 1,
+                    "key_count": 1
+                  }
+                ]
+              },
+              "top_k": {
+                "k": 2,
+                "entries": [
+                  {
+                    "key": [
+                      3,
+                      8
+                    ],
+                    "count": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "existing_indexes": [
+            {
+              "id": "R.y.reverse",
+              "key_fields": [
+                "y"
+              ],
+              "key_degrees": [
+                {
+                  "key": [
+                    7
+                  ],
+                  "degree": 2
+                },
+                {
+                  "key": [
+                    8
+                  ],
+                  "degree": 1
+                }
+              ],
+              "summary": {
+                "positive_key_count": 2,
+                "sum_degrees": 3,
+                "bins": [
+                  {
+                    "degree": 1,
+                    "key_count": 1
+                  },
+                  {
+                    "degree": 2,
+                    "key_count": 1
+                  }
+                ]
+              },
+              "top_k": {
+                "k": 2,
+                "entries": [
+                  {
+                    "key": [
+                      7
+                    ],
+                    "degree": 2
+                  },
+                  {
+                    "key": [
+                      8
+                    ],
+                    "degree": 1
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "post_baseline_inputs": {
+        "committed_physical_input_count": 2,
+        "changed_source_memberships": 2,
+        "no_op_source_memberships": 0,
+        "operations": [
+          {
+            "operation": "insert",
+            "table": "S",
+            "row": [
+              8
+            ],
+            "parent_key": [
+              8
+            ],
+            "source_cardinality": "1_to_2",
+            "touched_parent_degree": 1,
+            "new_survivors": 1
+          },
+          {
+            "operation": "erase",
+            "table": "S",
+            "row": [
+              7
+            ],
+            "parent_key": [
+              7
+            ],
+            "source_cardinality": "2_to_1",
+            "touched_parent_degree": 2,
+            "removed_survivors": 2
+          }
+        ],
+        "touched_degree_histogram": {
+          "observation_weight": "one_per_applied_child_key_event",
+          "event_count": 2,
+          "sum_degrees": 3,
+          "bins": [
+            {
+              "degree": 1,
+              "event_count": 1
+            },
+            {
+              "degree": 2,
+              "event_count": 1
+            }
+          ]
+        },
+        "occurrence_routes_visited_total": 2,
+        "support_count_changes": {
+          "P:R-root": {
+            "changes": 3,
+            "zero_to_positive": 0,
+            "positive_to_zero": 0,
+            "positive_to_positive": 3,
+            "crossing_fraction": 0.0
+          },
+          "E:R-root": {
+            "changes": 3,
+            "zero_to_positive": 1,
+            "positive_to_zero": 2,
+            "positive_to_positive": 0,
+            "crossing_fraction": 1.0
+          }
+        },
+        "support_change_denominator_definition": "one denominator unit per individual P/E key multiplicity change; a missing key is zero; denominator is not physical inputs or touched-degree events"
+      },
+      "lower_only_capture": {
+        "support_state_available": true,
+        "source_table_populations": "unavailable",
+        "physical_input_denominator": "unavailable",
+        "unavailable_is_not_zero": true
+      }
+    },
+    {
+      "id": "physical_projection_derivations",
+      "query_shape": "physical R(x,z) occurrence projects to native x; no z predicate",
+      "initial_source_rows": [
+        [
+          7,
+          10
+        ],
+        [
+          7,
+          11
+        ]
+      ],
+      "source_table_id": "R",
+      "native_layout": [
+        "x"
+      ],
+      "existing_indexes": [],
+      "states": [
+        {
+          "label": "baseline_two_derivations",
+          "source": {
+            "layout": [
+              "x",
+              "z"
+            ],
+            "rows": [
+              [
+                7,
+                10
+              ],
+              [
+                7,
+                11
+              ]
+            ],
+            "cardinality": 2,
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 1
+              },
+              {
+                "fields": [
+                  "z"
+                ],
+                "ndv": 2
+              },
+              {
+                "fields": [
+                  "x",
+                  "z"
+                ],
+                "ndv": 2
+              },
+              {
+                "fields": [],
+                "ndv": 1
+              }
+            ]
+          },
+          "native": {
+            "layout": [
+              "x"
+            ],
+            "rows": [
+              [
+                7
+              ]
+            ],
+            "cardinality": 1,
+            "derivations": [
+              {
+                "tuple": [
+                  7
+                ],
+                "count": 2
+              }
+            ],
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 1
+              },
+              {
+                "fields": [],
+                "ndv": 1
+              }
+            ]
+          },
+          "S": {
+            "layout": [
+              "x"
+            ],
+            "rows": [
+              [
+                7
+              ]
+            ],
+            "cardinality": 1,
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 1
+              },
+              {
+                "fields": [],
+                "ndv": 1
+              }
+            ]
+          },
+          "P": {
+            "projection_fields": [],
+            "key_multiplicities": [
+              {
+                "key": [],
+                "multiplicity": 1
+              }
+            ],
+            "summary": {
+              "positive_key_count": 1,
+              "sum_multiplicities": 1,
+              "bins": [
+                {
+                  "multiplicity": 1,
+                  "key_count": 1
+                }
+              ]
+            },
+            "top_k": {
+              "k": 2,
+              "entries": [
+                {
+                  "key": [],
+                  "count": 1
+                }
+              ]
+            }
+          },
+          "E": {
+            "projection_fields": [
+              "x"
+            ],
+            "key_multiplicities": [
+              {
+                "key": [
+                  7
+                ],
+                "multiplicity": 1
+              }
+            ],
+            "summary": {
+              "positive_key_count": 1,
+              "sum_multiplicities": 1,
+              "bins": [
+                {
+                  "multiplicity": 1,
+                  "key_count": 1
+                }
+              ]
+            },
+            "top_k": {
+              "k": 2,
+              "entries": [
+                {
+                  "key": [
+                    7
+                  ],
+                  "count": 1
+                }
+              ]
+            }
+          }
+        },
+        {
+          "label": "after_insert_7_12",
+          "source": {
+            "layout": [
+              "x",
+              "z"
+            ],
+            "rows": [
+              [
+                7,
+                10
+              ],
+              [
+                7,
+                11
+              ],
+              [
+                7,
+                12
+              ]
+            ],
+            "cardinality": 3,
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 1
+              },
+              {
+                "fields": [
+                  "z"
+                ],
+                "ndv": 3
+              },
+              {
+                "fields": [
+                  "x",
+                  "z"
+                ],
+                "ndv": 3
+              },
+              {
+                "fields": [],
+                "ndv": 1
+              }
+            ]
+          },
+          "native": {
+            "layout": [
+              "x"
+            ],
+            "rows": [
+              [
+                7
+              ]
+            ],
+            "cardinality": 1,
+            "derivations": [
+              {
+                "tuple": [
+                  7
+                ],
+                "count": 3
+              }
+            ],
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 1
+              },
+              {
+                "fields": [],
+                "ndv": 1
+              }
+            ]
+          },
+          "S": {
+            "layout": [
+              "x"
+            ],
+            "rows": [
+              [
+                7
+              ]
+            ],
+            "cardinality": 1,
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 1
+              },
+              {
+                "fields": [],
+                "ndv": 1
+              }
+            ]
+          },
+          "P": {
+            "projection_fields": [],
+            "key_multiplicities": [
+              {
+                "key": [],
+                "multiplicity": 1
+              }
+            ],
+            "summary": {
+              "positive_key_count": 1,
+              "sum_multiplicities": 1,
+              "bins": [
+                {
+                  "multiplicity": 1,
+                  "key_count": 1
+                }
+              ]
+            },
+            "top_k": {
+              "k": 2,
+              "entries": [
+                {
+                  "key": [],
+                  "count": 1
+                }
+              ]
+            }
+          },
+          "E": {
+            "projection_fields": [
+              "x"
+            ],
+            "key_multiplicities": [
+              {
+                "key": [
+                  7
+                ],
+                "multiplicity": 1
+              }
+            ],
+            "summary": {
+              "positive_key_count": 1,
+              "sum_multiplicities": 1,
+              "bins": [
+                {
+                  "multiplicity": 1,
+                  "key_count": 1
+                }
+              ]
+            },
+            "top_k": {
+              "k": 2,
+              "entries": [
+                {
+                  "key": [
+                    7
+                  ],
+                  "count": 1
+                }
+              ]
+            }
+          }
+        },
+        {
+          "label": "after_duplicate_insert_7_12",
+          "source": {
+            "layout": [
+              "x",
+              "z"
+            ],
+            "rows": [
+              [
+                7,
+                10
+              ],
+              [
+                7,
+                11
+              ],
+              [
+                7,
+                12
+              ]
+            ],
+            "cardinality": 3,
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 1
+              },
+              {
+                "fields": [
+                  "z"
+                ],
+                "ndv": 3
+              },
+              {
+                "fields": [
+                  "x",
+                  "z"
+                ],
+                "ndv": 3
+              },
+              {
+                "fields": [],
+                "ndv": 1
+              }
+            ]
+          },
+          "native": {
+            "layout": [
+              "x"
+            ],
+            "rows": [
+              [
+                7
+              ]
+            ],
+            "cardinality": 1,
+            "derivations": [
+              {
+                "tuple": [
+                  7
+                ],
+                "count": 3
+              }
+            ],
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 1
+              },
+              {
+                "fields": [],
+                "ndv": 1
+              }
+            ]
+          },
+          "S": {
+            "layout": [
+              "x"
+            ],
+            "rows": [
+              [
+                7
+              ]
+            ],
+            "cardinality": 1,
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 1
+              },
+              {
+                "fields": [],
+                "ndv": 1
+              }
+            ]
+          },
+          "P": {
+            "projection_fields": [],
+            "key_multiplicities": [
+              {
+                "key": [],
+                "multiplicity": 1
+              }
+            ],
+            "summary": {
+              "positive_key_count": 1,
+              "sum_multiplicities": 1,
+              "bins": [
+                {
+                  "multiplicity": 1,
+                  "key_count": 1
+                }
+              ]
+            },
+            "top_k": {
+              "k": 2,
+              "entries": [
+                {
+                  "key": [],
+                  "count": 1
+                }
+              ]
+            }
+          },
+          "E": {
+            "projection_fields": [
+              "x"
+            ],
+            "key_multiplicities": [
+              {
+                "key": [
+                  7
+                ],
+                "multiplicity": 1
+              }
+            ],
+            "summary": {
+              "positive_key_count": 1,
+              "sum_multiplicities": 1,
+              "bins": [
+                {
+                  "multiplicity": 1,
+                  "key_count": 1
+                }
+              ]
+            },
+            "top_k": {
+              "k": 2,
+              "entries": [
+                {
+                  "key": [
+                    7
+                  ],
+                  "count": 1
+                }
+              ]
+            }
+          }
+        },
+        {
+          "label": "after_absent_erase_7_99",
+          "source": {
+            "layout": [
+              "x",
+              "z"
+            ],
+            "rows": [
+              [
+                7,
+                10
+              ],
+              [
+                7,
+                11
+              ],
+              [
+                7,
+                12
+              ]
+            ],
+            "cardinality": 3,
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 1
+              },
+              {
+                "fields": [
+                  "z"
+                ],
+                "ndv": 3
+              },
+              {
+                "fields": [
+                  "x",
+                  "z"
+                ],
+                "ndv": 3
+              },
+              {
+                "fields": [],
+                "ndv": 1
+              }
+            ]
+          },
+          "native": {
+            "layout": [
+              "x"
+            ],
+            "rows": [
+              [
+                7
+              ]
+            ],
+            "cardinality": 1,
+            "derivations": [
+              {
+                "tuple": [
+                  7
+                ],
+                "count": 3
+              }
+            ],
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 1
+              },
+              {
+                "fields": [],
+                "ndv": 1
+              }
+            ]
+          },
+          "S": {
+            "layout": [
+              "x"
+            ],
+            "rows": [
+              [
+                7
+              ]
+            ],
+            "cardinality": 1,
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 1
+              },
+              {
+                "fields": [],
+                "ndv": 1
+              }
+            ]
+          },
+          "P": {
+            "projection_fields": [],
+            "key_multiplicities": [
+              {
+                "key": [],
+                "multiplicity": 1
+              }
+            ],
+            "summary": {
+              "positive_key_count": 1,
+              "sum_multiplicities": 1,
+              "bins": [
+                {
+                  "multiplicity": 1,
+                  "key_count": 1
+                }
+              ]
+            },
+            "top_k": {
+              "k": 2,
+              "entries": [
+                {
+                  "key": [],
+                  "count": 1
+                }
+              ]
+            }
+          },
+          "E": {
+            "projection_fields": [
+              "x"
+            ],
+            "key_multiplicities": [
+              {
+                "key": [
+                  7
+                ],
+                "multiplicity": 1
+              }
+            ],
+            "summary": {
+              "positive_key_count": 1,
+              "sum_multiplicities": 1,
+              "bins": [
+                {
+                  "multiplicity": 1,
+                  "key_count": 1
+                }
+              ]
+            },
+            "top_k": {
+              "k": 2,
+              "entries": [
+                {
+                  "key": [
+                    7
+                  ],
+                  "count": 1
+                }
+              ]
+            }
+          }
+        },
+        {
+          "label": "after_erase_7_10",
+          "source": {
+            "layout": [
+              "x",
+              "z"
+            ],
+            "rows": [
+              [
+                7,
+                11
+              ],
+              [
+                7,
+                12
+              ]
+            ],
+            "cardinality": 2,
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 1
+              },
+              {
+                "fields": [
+                  "z"
+                ],
+                "ndv": 2
+              },
+              {
+                "fields": [
+                  "x",
+                  "z"
+                ],
+                "ndv": 2
+              },
+              {
+                "fields": [],
+                "ndv": 1
+              }
+            ]
+          },
+          "native": {
+            "layout": [
+              "x"
+            ],
+            "rows": [
+              [
+                7
+              ]
+            ],
+            "cardinality": 1,
+            "derivations": [
+              {
+                "tuple": [
+                  7
+                ],
+                "count": 2
+              }
+            ],
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 1
+              },
+              {
+                "fields": [],
+                "ndv": 1
+              }
+            ]
+          },
+          "S": {
+            "layout": [
+              "x"
+            ],
+            "rows": [
+              [
+                7
+              ]
+            ],
+            "cardinality": 1,
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 1
+              },
+              {
+                "fields": [],
+                "ndv": 1
+              }
+            ]
+          },
+          "P": {
+            "projection_fields": [],
+            "key_multiplicities": [
+              {
+                "key": [],
+                "multiplicity": 1
+              }
+            ],
+            "summary": {
+              "positive_key_count": 1,
+              "sum_multiplicities": 1,
+              "bins": [
+                {
+                  "multiplicity": 1,
+                  "key_count": 1
+                }
+              ]
+            },
+            "top_k": {
+              "k": 2,
+              "entries": [
+                {
+                  "key": [],
+                  "count": 1
+                }
+              ]
+            }
+          },
+          "E": {
+            "projection_fields": [
+              "x"
+            ],
+            "key_multiplicities": [
+              {
+                "key": [
+                  7
+                ],
+                "multiplicity": 1
+              }
+            ],
+            "summary": {
+              "positive_key_count": 1,
+              "sum_multiplicities": 1,
+              "bins": [
+                {
+                  "multiplicity": 1,
+                  "key_count": 1
+                }
+              ]
+            },
+            "top_k": {
+              "k": 2,
+              "entries": [
+                {
+                  "key": [
+                    7
+                  ],
+                  "count": 1
+                }
+              ]
+            }
+          }
+        },
+        {
+          "label": "after_erase_7_11",
+          "source": {
+            "layout": [
+              "x",
+              "z"
+            ],
+            "rows": [
+              [
+                7,
+                12
+              ]
+            ],
+            "cardinality": 1,
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 1
+              },
+              {
+                "fields": [
+                  "z"
+                ],
+                "ndv": 1
+              },
+              {
+                "fields": [
+                  "x",
+                  "z"
+                ],
+                "ndv": 1
+              },
+              {
+                "fields": [],
+                "ndv": 1
+              }
+            ]
+          },
+          "native": {
+            "layout": [
+              "x"
+            ],
+            "rows": [
+              [
+                7
+              ]
+            ],
+            "cardinality": 1,
+            "derivations": [
+              {
+                "tuple": [
+                  7
+                ],
+                "count": 1
+              }
+            ],
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 1
+              },
+              {
+                "fields": [],
+                "ndv": 1
+              }
+            ]
+          },
+          "S": {
+            "layout": [
+              "x"
+            ],
+            "rows": [
+              [
+                7
+              ]
+            ],
+            "cardinality": 1,
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 1
+              },
+              {
+                "fields": [],
+                "ndv": 1
+              }
+            ]
+          },
+          "P": {
+            "projection_fields": [],
+            "key_multiplicities": [
+              {
+                "key": [],
+                "multiplicity": 1
+              }
+            ],
+            "summary": {
+              "positive_key_count": 1,
+              "sum_multiplicities": 1,
+              "bins": [
+                {
+                  "multiplicity": 1,
+                  "key_count": 1
+                }
+              ]
+            },
+            "top_k": {
+              "k": 2,
+              "entries": [
+                {
+                  "key": [],
+                  "count": 1
+                }
+              ]
+            }
+          },
+          "E": {
+            "projection_fields": [
+              "x"
+            ],
+            "key_multiplicities": [
+              {
+                "key": [
+                  7
+                ],
+                "multiplicity": 1
+              }
+            ],
+            "summary": {
+              "positive_key_count": 1,
+              "sum_multiplicities": 1,
+              "bins": [
+                {
+                  "multiplicity": 1,
+                  "key_count": 1
+                }
+              ]
+            },
+            "top_k": {
+              "k": 2,
+              "entries": [
+                {
+                  "key": [
+                    7
+                  ],
+                  "count": 1
+                }
+              ]
+            }
+          }
+        },
+        {
+          "label": "after_last_erase_7_12",
+          "source": {
+            "layout": [
+              "x",
+              "z"
+            ],
+            "rows": [],
+            "cardinality": 0,
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 0
+              },
+              {
+                "fields": [
+                  "z"
+                ],
+                "ndv": 0
+              },
+              {
+                "fields": [
+                  "x",
+                  "z"
+                ],
+                "ndv": 0
+              },
+              {
+                "fields": [],
+                "ndv": 0
+              }
+            ]
+          },
+          "native": {
+            "layout": [
+              "x"
+            ],
+            "rows": [],
+            "cardinality": 0,
+            "derivations": [],
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 0
+              },
+              {
+                "fields": [],
+                "ndv": 0
+              }
+            ]
+          },
+          "S": {
+            "layout": [
+              "x"
+            ],
+            "rows": [],
+            "cardinality": 0,
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 0
+              },
+              {
+                "fields": [],
+                "ndv": 0
+              }
+            ]
+          },
+          "P": {
+            "projection_fields": [],
+            "key_multiplicities": [],
+            "summary": {
+              "positive_key_count": 0,
+              "sum_multiplicities": 0,
+              "bins": []
+            },
+            "top_k": {
+              "k": 2,
+              "entries": []
+            }
+          },
+          "E": {
+            "projection_fields": [
+              "x"
+            ],
+            "key_multiplicities": [],
+            "summary": {
+              "positive_key_count": 0,
+              "sum_multiplicities": 0,
+              "bins": []
+            },
+            "top_k": {
+              "k": 2,
+              "entries": []
+            }
+          }
+        }
+      ],
+      "post_baseline_inputs": {
+        "committed_physical_input_count": 6,
+        "changed_source_memberships": 4,
+        "no_op_source_memberships": 2,
+        "occurrence_routes_visited_total": 4,
+        "operations": [
+          {
+            "operation": "insert",
+            "row": [
+              7,
+              12
+            ],
+            "source_membership_changed": true,
+            "occurrence_routes_visited": 1,
+            "accepted_derivation_delta": 1,
+            "native_membership_crossing": false
+          },
+          {
+            "operation": "insert",
+            "row": [
+              7,
+              12
+            ],
+            "source_membership_changed": false,
+            "occurrence_routes_visited": 0,
+            "accepted_derivation_delta": 0,
+            "reason": "duplicate_full_source_row",
+            "native_membership_crossing": false
+          },
+          {
+            "operation": "erase",
+            "row": [
+              7,
+              99
+            ],
+            "source_membership_changed": false,
+            "occurrence_routes_visited": 0,
+            "accepted_derivation_delta": 0,
+            "reason": "absent_full_source_row",
+            "native_membership_crossing": false
+          },
+          {
+            "operation": "erase",
+            "row": [
+              7,
+              10
+            ],
+            "source_membership_changed": true,
+            "occurrence_routes_visited": 1,
+            "accepted_derivation_delta": -1,
+            "derivation_count_after": 2,
+            "native_membership_crossing": false
+          },
+          {
+            "operation": "erase",
+            "row": [
+              7,
+              11
+            ],
+            "source_membership_changed": true,
+            "occurrence_routes_visited": 1,
+            "accepted_derivation_delta": -1,
+            "derivation_count_after": 1,
+            "native_membership_crossing": false
+          },
+          {
+            "operation": "erase",
+            "row": [
+              7,
+              12
+            ],
+            "source_membership_changed": true,
+            "occurrence_routes_visited": 1,
+            "accepted_derivation_delta": -1,
+            "derivation_count_after": 0,
+            "native_membership_crossing": true
+          }
+        ],
+        "native_tuple_membership_crossings": 1,
+        "P:R-root_support_changes_on_last_erase": {
+          "changes": 1,
+          "zero_to_positive": 0,
+          "positive_to_zero": 1,
+          "crossing_fraction": 1.0
+        },
+        "E:R-root_support_changes_on_last_erase": {
+          "changes": 1,
+          "zero_to_positive": 0,
+          "positive_to_zero": 1,
+          "crossing_fraction": 1.0
+        }
+      }
+    },
+    {
+      "id": "empty_and_nullary_projections",
+      "scope_note": "set-theoretic expectations under the preflight empty-projection rule; runtime constructibility of nullary layouts remains a separate check",
+      "cases": [
+        {
+          "label": "empty_unary",
+          "source": {
+            "layout": [
+              "x"
+            ],
+            "rows": [],
+            "cardinality": 0,
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 0
+              },
+              {
+                "fields": [],
+                "ndv": 0
+              }
+            ]
+          },
+          "native": {
+            "layout": [
+              "x"
+            ],
+            "rows": [],
+            "cardinality": 0,
+            "derivations": [],
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 0
+              },
+              {
+                "fields": [],
+                "ndv": 0
+              }
+            ]
+          },
+          "S": {
+            "layout": [
+              "x"
+            ],
+            "rows": [],
+            "cardinality": 0,
+            "ordered_projection_ndv": [
+              {
+                "fields": [
+                  "x"
+                ],
+                "ndv": 0
+              },
+              {
+                "fields": [],
+                "ndv": 0
+              }
+            ]
+          },
+          "P": {
+            "projection_fields": [],
+            "key_multiplicities": [],
+            "summary": {
+              "positive_key_count": 0,
+              "sum_multiplicities": 0,
+              "bins": []
+            },
+            "top_k": {
+              "k": 2,
+              "entries": []
+            }
+          },
+          "E": {
+            "projection_fields": [
+              "x"
+            ],
+            "key_multiplicities": [],
+            "summary": {
+              "positive_key_count": 0,
+              "sum_multiplicities": 0,
+              "bins": []
+            },
+            "top_k": {
+              "k": 2,
+              "entries": []
+            }
+          },
+          "existing_indexes": []
+        },
+        {
+          "label": "empty_nullary",
+          "source": {
+            "layout": [],
+            "rows": [],
+            "cardinality": 0,
+            "ordered_projection_ndv": [
+              {
+                "fields": [],
+                "ndv": 0
+              }
+            ]
+          },
+          "native": {
+            "layout": [],
+            "rows": [],
+            "cardinality": 0,
+            "derivations": [],
+            "ordered_projection_ndv": [
+              {
+                "fields": [],
+                "ndv": 0
+              }
+            ]
+          },
+          "S": {
+            "layout": [],
+            "rows": [],
+            "cardinality": 0,
+            "ordered_projection_ndv": [
+              {
+                "fields": [],
+                "ndv": 0
+              }
+            ]
+          },
+          "P": {
+            "projection_fields": [],
+            "key_multiplicities": [],
+            "summary": {
+              "positive_key_count": 0,
+              "sum_multiplicities": 0,
+              "bins": []
+            },
+            "top_k": {
+              "k": 2,
+              "entries": []
+            }
+          },
+          "E": {
+            "projection_fields": [],
+            "key_multiplicities": [],
+            "summary": {
+              "positive_key_count": 0,
+              "sum_multiplicities": 0,
+              "bins": []
+            },
+            "top_k": {
+              "k": 2,
+              "entries": []
+            }
+          },
+          "existing_indexes": []
+        },
+        {
+          "label": "singleton_nullary",
+          "source": {
+            "layout": [],
+            "rows": [
+              []
+            ],
+            "cardinality": 1,
+            "ordered_projection_ndv": [
+              {
+                "fields": [],
+                "ndv": 1
+              }
+            ]
+          },
+          "native": {
+            "layout": [],
+            "rows": [
+              []
+            ],
+            "cardinality": 1,
+            "derivations": [
+              {
+                "tuple": [],
+                "count": 1
+              }
+            ],
+            "ordered_projection_ndv": [
+              {
+                "fields": [],
+                "ndv": 1
+              }
+            ]
+          },
+          "S": {
+            "layout": [],
+            "rows": [
+              []
+            ],
+            "cardinality": 1,
+            "ordered_projection_ndv": [
+              {
+                "fields": [],
+                "ndv": 1
+              }
+            ]
+          },
+          "P": {
+            "projection_fields": [],
+            "key_multiplicities": [
+              {
+                "key": [],
+                "multiplicity": 1
+              }
+            ],
+            "summary": {
+              "positive_key_count": 1,
+              "sum_multiplicities": 1,
+              "bins": [
+                {
+                  "multiplicity": 1,
+                  "key_count": 1
+                }
+              ]
+            },
+            "top_k": {
+              "k": 2,
+              "entries": [
+                {
+                  "key": [],
+                  "count": 1
+                }
+              ]
+            }
+          },
+          "E": {
+            "projection_fields": [],
+            "key_multiplicities": [
+              {
+                "key": [],
+                "multiplicity": 1
+              }
+            ],
+            "summary": {
+              "positive_key_count": 1,
+              "sum_multiplicities": 1,
+              "bins": [
+                {
+                  "multiplicity": 1,
+                  "key_count": 1
+                }
+              ]
+            },
+            "top_k": {
+              "k": 2,
+              "entries": [
+                {
+                  "key": [],
+                  "count": 1
+                }
+              ]
+            }
+          },
+          "existing_indexes": []
+        }
+      ]
+    },
+    {
+      "id": "binary_heavy_tie_and_decimal_equality",
+      "byte_string_rows_are_exact_byte_sequences": true,
+      "states": [
+        {
+          "label": "binary_key_tie",
+          "source_tables": [
+            {
+              "id": "B",
+              "used_by_query": true,
+              "population": {
+                "layout": [
+                  "k",
+                  "suffix"
+                ],
+                "rows": [
+                  [
+                    {
+                      "bytes_hex": "61"
+                    },
+                    1
+                  ],
+                  [
+                    {
+                      "bytes_hex": "61"
+                    },
+                    2
+                  ],
+                  [
+                    {
+                      "bytes_hex": "6100"
+                    },
+                    1
+                  ],
+                  [
+                    {
+                      "bytes_hex": "6100"
+                    },
+                    2
+                  ]
+                ],
+                "cardinality": 4,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "k"
+                    ],
+                    "ndv": 2
+                  },
+                  {
+                    "fields": [
+                      "suffix"
+                    ],
+                    "ndv": 2
+                  },
+                  {
+                    "fields": [
+                      "k",
+                      "suffix"
+                    ],
+                    "ndv": 4
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "native_populations": [
+            {
+              "id": "B-root-native",
+              "population": {
+                "layout": [
+                  "k",
+                  "suffix"
+                ],
+                "rows": [
+                  [
+                    {
+                      "bytes_hex": "61"
+                    },
+                    1
+                  ],
+                  [
+                    {
+                      "bytes_hex": "61"
+                    },
+                    2
+                  ],
+                  [
+                    {
+                      "bytes_hex": "6100"
+                    },
+                    1
+                  ],
+                  [
+                    {
+                      "bytes_hex": "6100"
+                    },
+                    2
+                  ]
+                ],
+                "cardinality": 4,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "k"
+                    ],
+                    "ndv": 2
+                  },
+                  {
+                    "fields": [
+                      "suffix"
+                    ],
+                    "ndv": 2
+                  },
+                  {
+                    "fields": [
+                      "k",
+                      "suffix"
+                    ],
+                    "ndv": 4
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ],
+                "derivations": [
+                  {
+                    "tuple": [
+                      {
+                        "bytes_hex": "61"
+                      },
+                      1
+                    ],
+                    "count": 1
+                  },
+                  {
+                    "tuple": [
+                      {
+                        "bytes_hex": "61"
+                      },
+                      2
+                    ],
+                    "count": 1
+                  },
+                  {
+                    "tuple": [
+                      {
+                        "bytes_hex": "6100"
+                      },
+                      1
+                    ],
+                    "count": 1
+                  },
+                  {
+                    "tuple": [
+                      {
+                        "bytes_hex": "6100"
+                      },
+                      2
+                    ],
+                    "count": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "survivor_populations": [
+            {
+              "id": "S:B-root",
+              "population": {
+                "layout": [
+                  "k",
+                  "suffix"
+                ],
+                "rows": [
+                  [
+                    {
+                      "bytes_hex": "61"
+                    },
+                    1
+                  ],
+                  [
+                    {
+                      "bytes_hex": "61"
+                    },
+                    2
+                  ],
+                  [
+                    {
+                      "bytes_hex": "6100"
+                    },
+                    1
+                  ],
+                  [
+                    {
+                      "bytes_hex": "6100"
+                    },
+                    2
+                  ]
+                ],
+                "cardinality": 4,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "k"
+                    ],
+                    "ndv": 2
+                  },
+                  {
+                    "fields": [
+                      "suffix"
+                    ],
+                    "ndv": 2
+                  },
+                  {
+                    "fields": [
+                      "k",
+                      "suffix"
+                    ],
+                    "ndv": 4
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "P": [
+            {
+              "id": "P:B-root",
+              "projection_fields": [
+                "k"
+              ],
+              "key_multiplicities": [
+                {
+                  "key": [
+                    {
+                      "bytes_hex": "61"
+                    }
+                  ],
+                  "multiplicity": 2
+                },
+                {
+                  "key": [
+                    {
+                      "bytes_hex": "6100"
+                    }
+                  ],
+                  "multiplicity": 2
+                }
+              ],
+              "summary": {
+                "positive_key_count": 2,
+                "sum_multiplicities": 4,
+                "bins": [
+                  {
+                    "multiplicity": 2,
+                    "key_count": 2
+                  }
+                ]
+              },
+              "top_k": {
+                "k": 2,
+                "entries": [
+                  {
+                    "key": [
+                      {
+                        "bytes_hex": "61"
+                      }
+                    ],
+                    "count": 2
+                  },
+                  {
+                    "key": [
+                      {
+                        "bytes_hex": "6100"
+                      }
+                    ],
+                    "count": 2
+                  }
+                ]
+              }
+            }
+          ],
+          "E": [
+            {
+              "id": "E:B-root",
+              "projection_fields": [
+                "k",
+                "suffix"
+              ],
+              "key_multiplicities": [
+                {
+                  "key": [
+                    {
+                      "bytes_hex": "61"
+                    },
+                    1
+                  ],
+                  "multiplicity": 1
+                },
+                {
+                  "key": [
+                    {
+                      "bytes_hex": "61"
+                    },
+                    2
+                  ],
+                  "multiplicity": 1
+                },
+                {
+                  "key": [
+                    {
+                      "bytes_hex": "6100"
+                    },
+                    1
+                  ],
+                  "multiplicity": 1
+                },
+                {
+                  "key": [
+                    {
+                      "bytes_hex": "6100"
+                    },
+                    2
+                  ],
+                  "multiplicity": 1
+                }
+              ],
+              "summary": {
+                "positive_key_count": 4,
+                "sum_multiplicities": 4,
+                "bins": [
+                  {
+                    "multiplicity": 1,
+                    "key_count": 4
+                  }
+                ]
+              },
+              "top_k": {
+                "k": 4,
+                "entries": [
+                  {
+                    "key": [
+                      {
+                        "bytes_hex": "61"
+                      },
+                      1
+                    ],
+                    "count": 1
+                  },
+                  {
+                    "key": [
+                      {
+                        "bytes_hex": "61"
+                      },
+                      2
+                    ],
+                    "count": 1
+                  },
+                  {
+                    "key": [
+                      {
+                        "bytes_hex": "6100"
+                      },
+                      1
+                    ],
+                    "count": 1
+                  },
+                  {
+                    "key": [
+                      {
+                        "bytes_hex": "6100"
+                      },
+                      2
+                    ],
+                    "count": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "existing_indexes": []
+        },
+        {
+          "label": "canonical_decimal_projection",
+          "source_tables": [
+            {
+              "id": "D",
+              "used_by_query": true,
+              "population": {
+                "layout": [
+                  "amount",
+                  "suffix"
+                ],
+                "rows": [
+                  [
+                    {
+                      "decimal": "7"
+                    },
+                    1
+                  ],
+                  [
+                    {
+                      "decimal": "7"
+                    },
+                    2
+                  ]
+                ],
+                "cardinality": 2,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "amount"
+                    ],
+                    "ndv": 1
+                  },
+                  {
+                    "fields": [
+                      "suffix"
+                    ],
+                    "ndv": 2
+                  },
+                  {
+                    "fields": [
+                      "amount",
+                      "suffix"
+                    ],
+                    "ndv": 2
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "input_spellings": [
+            {
+              "row": [
+                {
+                  "decimal_input": "7.0"
+                },
+                1
+              ]
+            },
+            {
+              "row": [
+                {
+                  "decimal_input": "7.00"
+                },
+                2
+              ]
+            }
+          ],
+          "native_populations": [
+            {
+              "id": "D-occurrence-native",
+              "population": {
+                "layout": [
+                  "amount"
+                ],
+                "rows": [
+                  [
+                    {
+                      "decimal": "7"
+                    }
+                  ]
+                ],
+                "cardinality": 1,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "amount"
+                    ],
+                    "ndv": 1
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ],
+                "derivations": [
+                  {
+                    "tuple": [
+                      {
+                        "decimal": "7"
+                      }
+                    ],
+                    "count": 2
+                  }
+                ]
+              }
+            }
+          ],
+          "survivor_populations": [
+            {
+              "id": "S:D-root",
+              "population": {
+                "layout": [
+                  "amount"
+                ],
+                "rows": [
+                  [
+                    {
+                      "decimal": "7"
+                    }
+                  ]
+                ],
+                "cardinality": 1,
+                "ordered_projection_ndv": [
+                  {
+                    "fields": [
+                      "amount"
+                    ],
+                    "ndv": 1
+                  },
+                  {
+                    "fields": [],
+                    "ndv": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "P": [
+            {
+              "id": "P:D-root",
+              "projection_fields": [],
+              "key_multiplicities": [
+                {
+                  "key": [],
+                  "multiplicity": 1
+                }
+              ],
+              "summary": {
+                "positive_key_count": 1,
+                "sum_multiplicities": 1,
+                "bins": [
+                  {
+                    "multiplicity": 1,
+                    "key_count": 1
+                  }
+                ]
+              },
+              "top_k": {
+                "k": 2,
+                "entries": [
+                  {
+                    "key": [],
+                    "count": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "E": [
+            {
+              "id": "E:D-root",
+              "projection_fields": [
+                "amount"
+              ],
+              "key_multiplicities": [
+                {
+                  "key": [
+                    {
+                      "decimal": "7"
+                    }
+                  ],
+                  "multiplicity": 1
+                }
+              ],
+              "summary": {
+                "positive_key_count": 1,
+                "sum_multiplicities": 1,
+                "bins": [
+                  {
+                    "multiplicity": 1,
+                    "key_count": 1
+                  }
+                ]
+              },
+              "top_k": {
+                "k": 2,
+                "entries": [
+                  {
+                    "key": [
+                      {
+                        "decimal": "7"
+                      }
+                    ],
+                    "count": 1
+                  }
+                ]
+              }
+            }
+          ],
+          "existing_indexes": [],
+          "post_baseline_inputs": {
+            "committed_physical_input_count": 1,
+            "changed_source_memberships": 0,
+            "no_op_source_memberships": 1,
+            "occurrence_routes_visited_total": 0,
+            "operations": [
+              {
+                "operation": "insert",
+                "row": [
+                  {
+                    "decimal_input": "7.00"
+                  },
+                  1
+                ],
+                "parsed_native_row": [
+                  {
+                    "decimal": "7"
+                  },
+                  1
+                ],
+                "source_membership_changed": false,
+                "source_cardinality": "2_to_2",
+                "occurrence_routes_visited": 0,
+                "native_derivation_delta": 0,
+                "reason": "canonical_decimal_equal_to_existing_full_row"
+              }
+            ]
+          }
+        }
+      ],
+      "index_event_weighting_control": {
+        "query_shape": "Parent(k,id), Child(k); only this isolated reverse-index event histogram illustrates weighting",
+        "parent_source_rows": [
+          [
+            "a",
+            1
+          ],
+          [
+            "b",
+            1
+          ],
+          [
+            "h",
+            1
+          ],
+          [
+            "h",
+            2
+          ]
+        ],
+        "existing_index": {
+          "id": "Parent.k.reverse",
+          "key_degrees": [
+            {
+              "key": [
+                "a"
+              ],
+              "degree": 1
+            },
+            {
+              "key": [
+                "b"
+              ],
+              "degree": 1
+            },
+            {
+              "key": [
+                "h"
+              ],
+              "degree": 2
+            }
+          ],
+          "summary": {
+            "positive_key_count": 3,
+            "sum_degrees": 4,
+            "bins": [
+              {
+                "degree": 1,
+                "key_count": 2
+              },
+              {
+                "degree": 2,
+                "key_count": 1
+              }
+            ],
+            "uniform_key_mean": 1.3333333333333333
+          },
+          "top_k": {
+            "k": 3,
+            "entries": [
+              {
+                "key": [
+                  "h"
+                ],
+                "degree": 2
+              },
+              {
+                "key": [
+                  "a"
+                ],
+                "degree": 1
+              },
+              {
+                "key": [
+                  "b"
+                ],
+                "degree": 1
+              }
+            ]
+          },
+          "key_fields": [
+            "k"
+          ]
+        },
+        "child_source_initial_rows": [],
+        "post_baseline_counters": {
+          "committed_physical_input_count": 9,
+          "changed_source_memberships": 9,
+          "no_op_source_memberships": 0
+        },
+        "applied_child_key_event_trace": [
+          "+a",
+          "-a",
+          "+a",
+          "-a",
+          "+a",
+          "-a",
+          "+b",
+          "-b",
+          "+h"
+        ],
+        "touched_degree_event_values": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          2
+        ],
+        "touched_degree_histogram": {
+          "observation_weight": "one_per_applied_child_key_event",
+          "event_count": 9,
+          "sum_degrees": 10,
+          "bins": [
+            {
+              "degree": 1,
+              "event_count": 8
+            },
+            {
+              "degree": 2,
+              "event_count": 1
+            }
+          ],
+          "event_weighted_mean": 1.1111111111111112
+        },
+        "state_snapshots": [
+          {
+            "label": "initial_empty_child",
+            "child_rows": [],
+            "survivor_rows": [],
+            "P": {
+              "projection_fields": [],
+              "key_multiplicities": [],
+              "summary": {
+                "positive_key_count": 0,
+                "sum_multiplicities": 0,
+                "bins": []
+              }
+            },
+            "E": {
+              "projection_fields": [
+                "k",
+                "id"
+              ],
+              "key_multiplicities": [],
+              "summary": {
+                "positive_key_count": 0,
+                "sum_multiplicities": 0,
+                "bins": []
+              }
+            }
+          },
+          {
+            "label": "after_+a",
+            "child_rows": [
+              [
+                "a"
+              ]
+            ],
+            "survivor_rows": [
+              [
+                "a",
+                1
+              ]
+            ],
+            "P": {
+              "projection_fields": [],
+              "key_multiplicities": [
+                {
+                  "key": [],
+                  "multiplicity": 1
+                }
+              ],
+              "summary": {
+                "positive_key_count": 1,
+                "sum_multiplicities": 1,
+                "bins": [
+                  {
+                    "multiplicity": 1,
+                    "key_count": 1
+                  }
+                ]
+              }
+            },
+            "E": {
+              "projection_fields": [
+                "k",
+                "id"
+              ],
+              "key_multiplicities": [
+                {
+                  "key": [
+                    "a",
+                    1
+                  ],
+                  "multiplicity": 1
+                }
+              ],
+              "summary": {
+                "positive_key_count": 1,
+                "sum_multiplicities": 1,
+                "bins": [
+                  {
+                    "multiplicity": 1,
+                    "key_count": 1
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "label": "after_-a_1",
+            "child_rows": [],
+            "survivor_rows": [],
+            "P": {
+              "projection_fields": [],
+              "key_multiplicities": [],
+              "summary": {
+                "positive_key_count": 0,
+                "sum_multiplicities": 0,
+                "bins": []
+              }
+            },
+            "E": {
+              "projection_fields": [
+                "k",
+                "id"
+              ],
+              "key_multiplicities": [],
+              "summary": {
+                "positive_key_count": 0,
+                "sum_multiplicities": 0,
+                "bins": []
+              }
+            }
+          },
+          {
+            "label": "after_+a_2",
+            "child_rows": [
+              [
+                "a"
+              ]
+            ],
+            "survivor_rows": [
+              [
+                "a",
+                1
+              ]
+            ],
+            "P": {
+              "projection_fields": [],
+              "key_multiplicities": [
+                {
+                  "key": [],
+                  "multiplicity": 1
+                }
+              ],
+              "summary": {
+                "positive_key_count": 1,
+                "sum_multiplicities": 1,
+                "bins": [
+                  {
+                    "multiplicity": 1,
+                    "key_count": 1
+                  }
+                ]
+              }
+            },
+            "E": {
+              "projection_fields": [
+                "k",
+                "id"
+              ],
+              "key_multiplicities": [
+                {
+                  "key": [
+                    "a",
+                    1
+                  ],
+                  "multiplicity": 1
+                }
+              ],
+              "summary": {
+                "positive_key_count": 1,
+                "sum_multiplicities": 1,
+                "bins": [
+                  {
+                    "multiplicity": 1,
+                    "key_count": 1
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "label": "after_-a_2",
+            "child_rows": [],
+            "survivor_rows": [],
+            "P": {
+              "projection_fields": [],
+              "key_multiplicities": [],
+              "summary": {
+                "positive_key_count": 0,
+                "sum_multiplicities": 0,
+                "bins": []
+              }
+            },
+            "E": {
+              "projection_fields": [
+                "k",
+                "id"
+              ],
+              "key_multiplicities": [],
+              "summary": {
+                "positive_key_count": 0,
+                "sum_multiplicities": 0,
+                "bins": []
+              }
+            }
+          },
+          {
+            "label": "after_+a_3",
+            "child_rows": [
+              [
+                "a"
+              ]
+            ],
+            "survivor_rows": [
+              [
+                "a",
+                1
+              ]
+            ],
+            "P": {
+              "projection_fields": [],
+              "key_multiplicities": [
+                {
+                  "key": [],
+                  "multiplicity": 1
+                }
+              ],
+              "summary": {
+                "positive_key_count": 1,
+                "sum_multiplicities": 1,
+                "bins": [
+                  {
+                    "multiplicity": 1,
+                    "key_count": 1
+                  }
+                ]
+              }
+            },
+            "E": {
+              "projection_fields": [
+                "k",
+                "id"
+              ],
+              "key_multiplicities": [
+                {
+                  "key": [
+                    "a",
+                    1
+                  ],
+                  "multiplicity": 1
+                }
+              ],
+              "summary": {
+                "positive_key_count": 1,
+                "sum_multiplicities": 1,
+                "bins": [
+                  {
+                    "multiplicity": 1,
+                    "key_count": 1
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "label": "after_-a_3",
+            "child_rows": [],
+            "survivor_rows": [],
+            "P": {
+              "projection_fields": [],
+              "key_multiplicities": [],
+              "summary": {
+                "positive_key_count": 0,
+                "sum_multiplicities": 0,
+                "bins": []
+              }
+            },
+            "E": {
+              "projection_fields": [
+                "k",
+                "id"
+              ],
+              "key_multiplicities": [],
+              "summary": {
+                "positive_key_count": 0,
+                "sum_multiplicities": 0,
+                "bins": []
+              }
+            }
+          },
+          {
+            "label": "after_+b",
+            "child_rows": [
+              [
+                "b"
+              ]
+            ],
+            "survivor_rows": [
+              [
+                "b",
+                1
+              ]
+            ],
+            "P": {
+              "projection_fields": [],
+              "key_multiplicities": [
+                {
+                  "key": [],
+                  "multiplicity": 1
+                }
+              ],
+              "summary": {
+                "positive_key_count": 1,
+                "sum_multiplicities": 1,
+                "bins": [
+                  {
+                    "multiplicity": 1,
+                    "key_count": 1
+                  }
+                ]
+              }
+            },
+            "E": {
+              "projection_fields": [
+                "k",
+                "id"
+              ],
+              "key_multiplicities": [
+                {
+                  "key": [
+                    "b",
+                    1
+                  ],
+                  "multiplicity": 1
+                }
+              ],
+              "summary": {
+                "positive_key_count": 1,
+                "sum_multiplicities": 1,
+                "bins": [
+                  {
+                    "multiplicity": 1,
+                    "key_count": 1
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "label": "after_-b",
+            "child_rows": [],
+            "survivor_rows": [],
+            "P": {
+              "projection_fields": [],
+              "key_multiplicities": [],
+              "summary": {
+                "positive_key_count": 0,
+                "sum_multiplicities": 0,
+                "bins": []
+              }
+            },
+            "E": {
+              "projection_fields": [
+                "k",
+                "id"
+              ],
+              "key_multiplicities": [],
+              "summary": {
+                "positive_key_count": 0,
+                "sum_multiplicities": 0,
+                "bins": []
+              }
+            }
+          },
+          {
+            "label": "after_+h",
+            "child_rows": [
+              [
+                "h"
+              ]
+            ],
+            "survivor_rows": [
+              [
+                "h",
+                1
+              ],
+              [
+                "h",
+                2
+              ]
+            ],
+            "P": {
+              "projection_fields": [],
+              "key_multiplicities": [
+                {
+                  "key": [],
+                  "multiplicity": 2
+                }
+              ],
+              "summary": {
+                "positive_key_count": 1,
+                "sum_multiplicities": 2,
+                "bins": [
+                  {
+                    "multiplicity": 2,
+                    "key_count": 1
+                  }
+                ]
+              }
+            },
+            "E": {
+              "projection_fields": [
+                "k",
+                "id"
+              ],
+              "key_multiplicities": [
+                {
+                  "key": [
+                    "h",
+                    1
+                  ],
+                  "multiplicity": 1
+                },
+                {
+                  "key": [
+                    "h",
+                    2
+                  ],
+                  "multiplicity": 1
+                }
+              ],
+              "summary": {
+                "positive_key_count": 2,
+                "sum_multiplicities": 2,
+                "bins": [
+                  {
+                    "multiplicity": 1,
+                    "key_count": 2
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "support_count_changes": {
+          "P": {
+            "changes": 10,
+            "zero_to_positive": 5,
+            "positive_to_zero": 4,
+            "positive_to_positive": 1,
+            "crossing_fraction": 0.9
+          },
+          "E": {
+            "changes": 10,
+            "zero_to_positive": 6,
+            "positive_to_zero": 4,
+            "positive_to_positive": 0,
+            "crossing_fraction": 1.0
+          }
+        },
+        "final_child_source_rows": [
+          [
+            "h"
+          ]
+        ],
+        "final_survivor_rows": [
+          [
+            "h",
+            1
+          ],
+          [
+            "h",
+            2
+          ]
+        ],
+        "final_S_cardinality": 2,
+        "final_P": {
+          "projection_fields": [],
+          "key_multiplicities": [
+            {
+              "key": [],
+              "multiplicity": 2
+            }
+          ],
+          "summary": {
+            "positive_key_count": 1,
+            "sum_multiplicities": 2,
+            "bins": [
+              {
+                "multiplicity": 2,
+                "key_count": 1
+              }
+            ]
+          }
+        },
+        "final_E": {
+          "projection_fields": [
+            "k",
+            "id"
+          ],
+          "key_multiplicities": [
+            {
+              "key": [
+                "h",
+                1
+              ],
+              "multiplicity": 1
+            },
+            {
+              "key": [
+                "h",
+                2
+              ],
+              "multiplicity": 1
+            }
+          ],
+          "summary": {
+            "positive_key_count": 2,
+            "sum_multiplicities": 2,
+            "bins": [
+              {
+                "multiplicity": 1,
+                "key_count": 2
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "lower_only_capture": {
+    "support_facts_available": [
+      "S",
+      "P",
+      "E",
+      "support_histograms",
+      "support_top_k"
+    ],
+    "source_table_populations": "unavailable",
+    "physical_input_denominator": "unavailable",
+    "unavailable_must_not_be_encoded_as_zero": true
+  }
+}

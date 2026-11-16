@@ -1,0 +1,38 @@
+{
+  "baseline-sha256.json": {
+    "verified_files": 69,
+    "mismatches": []
+  },
+  "overlay-sha256.json": {
+    "verified_files": 10,
+    "mismatches": []
+  },
+  "compile-evidence-testing.json": {
+    "verified_compiler_dependencies": 43,
+    "mismatches": []
+  },
+  "compile-evidence-production.json": {
+    "verified_compiler_dependencies": 42,
+    "mismatches": []
+  },
+  "report-evidence-testing.json": {
+    "verified_compiler_dependencies": 41,
+    "mismatches": []
+  },
+  "report-evidence-production.json": {
+    "verified_compiler_dependencies": 41,
+    "mismatches": []
+  },
+  "o07-runtime-proposal": {
+    "preserved_files": 10,
+    "mismatches": []
+  },
+  "o07-mode-binding-proposal": {
+    "preserved_files": 3,
+    "mismatches": []
+  },
+  "o07-explain-proposal": {
+    "preserved_files": 17,
+    "mismatches": []
+  }
+}

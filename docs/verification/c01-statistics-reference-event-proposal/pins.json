@@ -1,0 +1,59 @@
+{
+  "revision": "c01-statistics-reference-event-v1",
+  "revision_payload_sha256": {
+    "README.md": "bfa6f999b4b5571f1eb921f41aeda5e30de8e660c5044f166b3551a2c6cc4501",
+    "fixtures.json": "78fca0f4a3225eaee5aa20d1220ca4b7b3301cd42cc9fef6d01073e3c6be19d0",
+    "reference_check.py": "f15fd202562f3fa45c0eb7d27cda3d1e80b5aba6464cfc8a93ff6d194660ca1f"
+  },
+  "preserved_revision_sha256": {
+    "docs/verification/c01-statistics-reference-revision-proposal/README.md": "a7c2cfd06c0aaa14b32b09255817226758e4e19bfaa7dae8d9fc33af451bf9cf",
+    "docs/verification/c01-statistics-reference-revision-proposal/fixtures.json": "3640f8a3184ca8fe4aa7e9b311c03e6a3d0024e15dfe81e6ff46a773618b56dd",
+    "docs/verification/c01-statistics-reference-revision-proposal/reference_check.py": "f15fd202562f3fa45c0eb7d27cda3d1e80b5aba6464cfc8a93ff6d194660ca1f",
+    "docs/verification/c01-statistics-reference-revision-proposal/pins.json": "ab5ff9f5753e61282569c9472a84e8118bc2d90b86ace754b87a08e46245a881",
+    "docs/verification/c01-statistics-reference-revision-proposal/SHA256SUMS": "ba7ccff5ad7defe82c0fe0836d8e12574c2daf556578997afd8135a1853fae19"
+  },
+  "preserved_original_and_attempt1": {
+    "revision": "c01-statistics-reference-revision-v1",
+    "validation_command": "python3 docs/verification/c01-statistics-reference-revision-proposal/reference_check.py",
+    "revision_payload_sha256": {
+      "README.md": "a7c2cfd06c0aaa14b32b09255817226758e4e19bfaa7dae8d9fc33af451bf9cf",
+      "fixtures.json": "3640f8a3184ca8fe4aa7e9b311c03e6a3d0024e15dfe81e6ff46a773618b56dd",
+      "reference_check.py": "f15fd202562f3fa45c0eb7d27cda3d1e80b5aba6464cfc8a93ff6d194660ca1f"
+    },
+    "requirements_inputs": {
+      "Refactor.md:1275-1277": "bb90e4a4e97e2817a0869ad86c5c8b00e571bb241f153fb44641c71f86fcd5ce",
+      "docs/verification/c01-statistics-preflight-2026-11-07.md:sections-2-and-7": "c215b8f6ff5cf106a0a22a64c3a1963492e2308f2bc566616f614b0392bfe857"
+    },
+    "preserved_original_packet_sha256": {
+      "docs/verification/c01-statistics-reference-proposal/README.md": "1278d9c09da4b9247773e4700883f91cb8523fd2df64a2d0848f03592a798661",
+      "docs/verification/c01-statistics-reference-proposal/fixtures.json": "1233a322f5454e349d5053b6bd32df592689045280f9ec5b09213b8d2d751e78",
+      "docs/verification/c01-statistics-reference-proposal/reference_check.py": "a42fff16990ed2b8523e771cdc8da3823364cdd501e165788295fbd53919b3df"
+    },
+    "preserved_root_attempt_1_sha256": {
+      "build/verification/c01-statistics-literal-reference-attempt-1.json": "a9cf2eafccc70972b5ebdc2f4e8e73c0eff31127befdd552a189d7d032738110",
+      "build/verification/c01-statistics-literal-reference-attempt-1.log": "17555e8ae1ae7008302ccaf77835831738e660eef073d3f48ec397b2bca792be"
+    },
+    "prior_failure": {
+      "attempt": 1,
+      "stage": "JSON parsing before semantic checks",
+      "location": "fixtures.json line 155, column 268",
+      "cause": "missing closing brace for the decimal derivation entry before its list terminator",
+      "correction": "syntax only; all prior numerical expectations retained"
+    },
+    "hash_manifest": "SHA256SUMS lists README.md, fixtures.json, reference_check.py, and pins.json; it excludes itself to avoid recursive hashing."
+  },
+  "preserved_root_attempt_2_sha256": {
+    "build/verification/c01-statistics-literal-reference-attempt-2.json": "f8b881bfe00c31522a4a4c0b398b84e69b6970b4dcc0b51cd6562ee32885fc3d",
+    "build/verification/c01-statistics-literal-reference-attempt-2.log": "8d02a9f21d3b55f53471f434b13776d3df59e35a5f442699b65fe4d0547b3894"
+  },
+  "expected_metadata_added": [
+    {
+      "input_ordinal": 1,
+      "value": false
+    },
+    {
+      "input_ordinal": 2,
+      "value": false
+    }
+  ]
+}

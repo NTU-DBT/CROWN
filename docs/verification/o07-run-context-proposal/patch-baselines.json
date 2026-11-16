@@ -1,0 +1,36 @@
+{
+  "include/crown/io/run_context.hpp": null,
+  "include/crown/runtime/delta.hpp": {
+    "path": "docs/verification/o07-runtime-proposal/overlay/include/crown/runtime/delta.hpp",
+    "sha256": "95cce7f7598d3abcc4a03f81300e8742ecd6cb740f23e266e6dea8a0fcf8268a"
+  },
+  "include/crown/runtime/observation.hpp": {
+    "path": "docs/verification/o07-mode-binding-proposal/overlay/include/crown/runtime/observation.hpp",
+    "sha256": "fd27b4d5e5fc1476f5b98b973e27c4fe5cb7a05cdda04c20f45a2e40e30a918f"
+  },
+  "include/crown/runtime/physical.hpp": {
+    "path": "docs/verification/o07-runtime-proposal/overlay/include/crown/runtime/physical.hpp",
+    "sha256": "f667985628b6fe4c17553e08f35c5c6889dadcc5c30a73a2e392fcbd748eb5ef"
+  },
+  "include/crown/runtime/session.hpp": {
+    "path": "docs/verification/o07-runtime-proposal/overlay/include/crown/runtime/session.hpp",
+    "sha256": "499e98b603d80d1815f998307e44257e88130696fe4e152e1d5835afca3604a6"
+  },
+  "src/io/run_context.cpp": null,
+  "src/runtime/delta.cpp": {
+    "path": "docs/verification/o07-mode-binding-proposal/overlay/src/runtime/delta.cpp",
+    "sha256": "dc4f8f47fb5ce13858ee4a078cca0fbe13a2a5039015e37dac629a2c6614f877"
+  },
+  "src/runtime/observation.cpp": {
+    "path": "docs/verification/o07-mode-binding-proposal/overlay/src/runtime/observation.cpp",
+    "sha256": "9f03a396babbba49ed37a0dabab2d026c1056166c723e640f8b5b9b0990e7ab2"
+  },
+  "src/runtime/physical.cpp": {
+    "path": "docs/verification/o07-runtime-proposal/overlay/src/runtime/physical.cpp",
+    "sha256": "860577e148ae05706832c8299fa82ffb287a1bc0a17a20f2308e33a6f3051b96"
+  },
+  "src/runtime/session.cpp": {
+    "path": "docs/verification/o07-runtime-proposal/overlay/src/runtime/session.cpp",
+    "sha256": "93b8dfc99b9631090176fd482f095500df2ab90232b8a2e9f417f3fe9efab996"
+  }
+}

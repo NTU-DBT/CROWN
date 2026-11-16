@@ -1,0 +1,134 @@
+{
+  "epochs": [
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21,
+          28,
+          35,
+          42,
+          49
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 1,
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            7,
+            14,
+            21,
+            28,
+            35,
+            42,
+            49
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21,
+          28,
+          35,
+          42,
+          49
+        ],
+        [
+          1,
+          8,
+          15,
+          22,
+          29,
+          36,
+          43,
+          50
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 2,
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            1,
+            8,
+            15,
+            22,
+            29,
+            36,
+            43,
+            50
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21,
+          28,
+          35,
+          42,
+          49
+        ],
+        [
+          1,
+          8,
+          15,
+          22,
+          29,
+          36,
+          43,
+          50
+        ],
+        [
+          2,
+          9,
+          16,
+          23,
+          30,
+          37,
+          44,
+          51
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 3,
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            2,
+            9,
+            16,
+            23,
+            30,
+            37,
+            44,
+            51
+          ]
+        }
+      ]
+    }
+  ],
+  "initial_rows": [],
+  "oracle": "independent_relational_and_sqlite",
+  "query": "wide_arity_8",
+  "schema_version": 1
+}

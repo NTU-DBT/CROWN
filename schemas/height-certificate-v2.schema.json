@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN version-2 scope-orbit and component minimum-height certificate",
+  "description": "The native reader binds the exact catalog/query. The independent checker transports bounds only within identical complete native-scope occurrence classes, derives whole-query disconnected components itself, and exhaustively replays all remaining root/partition alternatives. Version 1 keeps its original exhaustive semantics.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "algorithm",
+    "query_binding",
+    "minimum_height",
+    "tree",
+    "lower_bounds"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 2
+    },
+    "algorithm": {
+      "type": "string",
+      "const": "crown_partition_exact_v2"
+    },
+    "query_binding": {
+      "oneOf": [
+        {
+          "$ref": "cq-v1.schema.json"
+        },
+        {
+          "$ref": "cq-v2.schema.json"
+        },
+        {
+          "$ref": "cq-v3.schema.json"
+        }
+      ],
+      "description": "The canonical direct-CQ document for the same catalog and query, with empty initial rows and no updates. Nondefault catalog metadata requires v3; otherwise date/decimal catalogs use v2 and primitive catalogs use v1. Exact canonical equality is checked by the native reader."
+    },
+    "minimum_height": {
+      "oneOf": [
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The claimed minimum native height, or null when the admissible tree family is proved empty."
+    },
+    "tree": {
+      "oneOf": [
+        {
+          "$ref": "tree-v1.schema.json"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "An upper-bound witness at minimum_height, or null for a proved-infeasible nonempty query."
+    },
+    "lower_bounds": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/lower_bound_state"
+      },
+      "description": "One checked claim per scope-permutation orbit and state flags. Duplicate orbit claims are rejected by the native checker. Component lower bounds are derived from the bound states, not trusted serialized partitions."
+    }
+  },
+  "$defs": {
+    "uint64_index": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "positive_uint64": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 18446744073709551615
+    },
+    "lower_bound_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "occurrences",
+        "generalized_allowed",
+        "connex_reachable",
+        "bound"
+      ],
+      "properties": {
+        "occurrences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/uint64_index"
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "A nonempty, sorted, unique list of zero-based atom occurrence indices. Sorting and query-relative range are checked by the native verifier."
+        },
+        "generalized_allowed": {
+          "type": "boolean",
+          "description": "Whether generalized roots are allowed in this residual search state."
+        },
+        "connex_reachable": {
+          "type": "boolean",
+          "description": "Whether this state is reachable through the root-connected output region."
+        },
+        "bound": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/positive_uint64"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "A positive lower bound no greater than the number of state occurrences, or null to claim that the state has no admissible completion. The bound/occurrence relationship and proof are checked by the native verifier."
+        }
+      }
+    }
+  }
+}

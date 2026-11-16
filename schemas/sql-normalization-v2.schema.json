@@ -1,0 +1,331 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN version-2 normalized SQL program",
+  "description": "Grounded equality classes, explicit constant-column guards, preserved mutable occurrences and ordered output mapping. Native import requires complete bounded replay.",
+  "$defs": {
+    "uint64": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "nullable_uint64": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/uint64"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "value": {
+      "$ref": "cq-v3.schema.json#/$defs/value"
+    },
+    "sql_value": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/value"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "sql_type": {
+      "$ref": "sql-binding-v1.schema.json#/$defs/sql_type"
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "work_limit"
+      ],
+      "properties": {
+        "work_limit": {
+          "$ref": "#/$defs/nullable_uint64"
+        }
+      }
+    },
+    "adapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "occurrence",
+        "base",
+        "predicates",
+        "non_null_columns",
+        "equal_columns",
+        "column_classes",
+        "projection",
+        "program",
+        "constant_columns"
+      ],
+      "properties": {
+        "occurrence": {
+          "$ref": "#/$defs/uint64"
+        },
+        "base": {
+          "$ref": "#/$defs/uint64"
+        },
+        "predicates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/uint64"
+          }
+        },
+        "non_null_columns": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/uint64"
+          }
+        },
+        "equal_columns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "left",
+              "right"
+            ],
+            "properties": {
+              "left": {
+                "$ref": "#/$defs/uint64"
+              },
+              "right": {
+                "$ref": "#/$defs/uint64"
+              }
+            }
+          }
+        },
+        "column_classes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nullable_uint64"
+          }
+        },
+        "projection": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "variable",
+              "expression"
+            ],
+            "properties": {
+              "variable": {
+                "$ref": "#/$defs/uint64"
+              },
+              "expression": {
+                "$ref": "#/$defs/uint64"
+              }
+            }
+          }
+        },
+        "program": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/uint64"
+          }
+        },
+        "constant_columns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "column",
+              "value"
+            ],
+            "properties": {
+              "column": {
+                "$ref": "#/$defs/uint64"
+              },
+              "value": {
+                "$ref": "#/$defs/value"
+              }
+            }
+          }
+        }
+      }
+    },
+    "output": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "type",
+            "kind",
+            "column"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "type": {
+              "$ref": "#/$defs/sql_type"
+            },
+            "kind": {
+              "const": "core"
+            },
+            "column": {
+              "$ref": "#/$defs/uint64"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "type",
+            "kind",
+            "value"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "type": {
+              "$ref": "#/$defs/sql_type"
+            },
+            "kind": {
+              "const": "constant"
+            },
+            "value": {
+              "$ref": "#/$defs/value"
+            }
+          }
+        }
+      ]
+    },
+    "success": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "normalization_valid",
+        "admission_status",
+        "binding",
+        "core",
+        "parameter_values",
+        "adapters",
+        "base_routes",
+        "outputs",
+        "limits",
+        "work"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 2
+        },
+        "normalization_valid": {
+          "const": true
+        },
+        "admission_status": {
+          "const": "not_checked"
+        },
+        "binding": {
+          "allOf": [
+            {
+              "$ref": "sql-binding-v1.schema.json"
+            },
+            {
+              "properties": {
+                "binding_valid": {
+                  "const": true
+                }
+              }
+            }
+          ]
+        },
+        "core": {
+          "allOf": [
+            {
+              "$ref": "cq-v3.schema.json"
+            },
+            {
+              "required": [
+                "initial",
+                "updates"
+              ],
+              "properties": {
+                "updates": {
+                  "maxItems": 0
+                },
+                "initial": {
+                  "items": {
+                    "properties": {
+                      "rows": {
+                        "maxItems": 0
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "parameter_values": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sql_value"
+          }
+        },
+        "adapters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/adapter"
+          }
+        },
+        "base_routes": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/$defs/uint64"
+            }
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/output"
+          }
+        },
+        "limits": {
+          "$ref": "#/$defs/limits"
+        },
+        "work": {
+          "$ref": "#/$defs/uint64"
+        }
+      }
+    },
+    "parameter_values_document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "values"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sql_value"
+          }
+        }
+      }
+    }
+  },
+  "$ref": "#/$defs/success"
+}

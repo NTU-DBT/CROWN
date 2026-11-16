@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN immutable tuple layout descriptor v1",
+  "description": "Wire descriptors contain no runtime token/address. Native construction validates decimal domains and repeated-variable type consistency.",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "layout_id", "semantics", "context", "origin", "fields"],
+  "properties": {
+    "schema_version": {"const": 1}, "layout_id": {"$ref": "#/$defs/id"}, "semantics": {"const": "nonnull_exact_binary"},
+    "context": {"type": "object", "additionalProperties": false, "required": ["catalog_version", "binding"],
+      "properties": {"catalog_version": {"$ref": "catalog-v1.schema.json#/$defs/positive_uint64"}, "binding": {"type": "string"}}},
+    "origin": {"oneOf": [{"type": "null"}, {"type": "object", "additionalProperties": false, "required": ["table", "source_schema_version"],
+      "properties": {"table": {"$ref": "#/$defs/id"}, "source_schema_version": {"$ref": "catalog-v1.schema.json#/$defs/positive_uint64"}}}]},
+    "fields": {"type": "array", "items": {"$ref": "#/$defs/field"}}
+  },
+  "$defs": {
+    "id": {"$ref": "catalog-v1.schema.json#/$defs/uint64"},
+    "field": {
+      "type": "object", "additionalProperties": false, "required": ["type", "decimal", "variable"],
+      "properties": {
+        "type": {"$ref": "catalog-v1.schema.json#/$defs/scalar_type"},
+        "decimal": {"oneOf": [{"type": "null"}, {"$ref": "catalog-v1.schema.json#/$defs/decimal_spec"}]},
+        "variable": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/id"}]}
+      },
+      "if": {"properties": {"type": {"not": {"const": "decimal"}}}},
+      "then": {"properties": {"decimal": {"type": "null"}}}
+    }
+  }
+}

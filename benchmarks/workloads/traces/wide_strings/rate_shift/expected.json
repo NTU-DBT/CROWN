@@ -1,0 +1,253 @@
+{
+  "epochs": [
+    {
+      "current_rows": [
+        [
+          "0:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "7:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "14:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ]
+      ],
+      "phase": "charged_load",
+      "physical_changed": true,
+      "sequence": 1,
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            "0:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+            "7:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+            "14:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          "0:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "7:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "14:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ],
+        [
+          "1:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "8:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "15:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ]
+      ],
+      "phase": "charged_load",
+      "physical_changed": true,
+      "sequence": 2,
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            "1:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+            "8:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+            "15:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          "0:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "7:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "14:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ],
+        [
+          "1:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "8:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "15:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ],
+        [
+          "2:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "9:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "16:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ]
+      ],
+      "phase": "charged_load",
+      "physical_changed": true,
+      "sequence": 3,
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            "2:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+            "9:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+            "16:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          "1:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "8:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "15:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ],
+        [
+          "2:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "9:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "16:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ]
+      ],
+      "phase": "phase_0",
+      "physical_changed": true,
+      "sequence": 4,
+      "signed_delta": [
+        {
+          "operation": "delete",
+          "values": [
+            "0:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+            "7:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+            "14:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          "0:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "7:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "14:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ],
+        [
+          "1:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "8:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "15:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ],
+        [
+          "2:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "9:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "16:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ]
+      ],
+      "phase": "phase_0",
+      "physical_changed": true,
+      "sequence": 5,
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            "0:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+            "7:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+            "14:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          "0:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "7:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "14:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ],
+        [
+          "1:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "8:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "15:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ]
+      ],
+      "phase": "phase_1",
+      "physical_changed": true,
+      "sequence": 6,
+      "signed_delta": [
+        {
+          "operation": "delete",
+          "values": [
+            "2:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+            "9:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+            "16:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          "0:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "7:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "14:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ],
+        [
+          "1:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "8:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "15:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ],
+        [
+          "2:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "9:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "16:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ]
+      ],
+      "phase": "phase_1",
+      "physical_changed": true,
+      "sequence": 7,
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            "2:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+            "9:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+            "16:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          "0:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "7:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "14:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ],
+        [
+          "1:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "8:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "15:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ],
+        [
+          "2:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "9:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "16:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": false,
+      "sequence": 8,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [
+        [
+          "0:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "7:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "14:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ],
+        [
+          "1:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "8:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "15:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ],
+        [
+          "2:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "9:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/",
+          "16:雪\u0000wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/wide/"
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": false,
+      "sequence": 9,
+      "signed_delta": []
+    }
+  ],
+  "initial_rows": [],
+  "oracle": "independent_relational_and_sqlite",
+  "query": "wide_strings",
+  "schema_version": 1
+}

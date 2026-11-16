@@ -1,0 +1,375 @@
+{
+  "schema_version": 1,
+  "catalog": {
+    "version": 17,
+    "tables": [
+      {
+        "name": "r",
+        "columns": [
+          {
+            "name": "x",
+            "type": "int64"
+          },
+          {
+            "name": "y",
+            "type": "int64"
+          },
+          {
+            "name": "tag",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "s",
+        "columns": [
+          {
+            "name": "y",
+            "type": "int64"
+          },
+          {
+            "name": "z",
+            "type": "int64"
+          }
+        ]
+      },
+      {
+        "name": "t",
+        "columns": [
+          {
+            "name": "x",
+            "type": "int64"
+          },
+          {
+            "name": "z",
+            "type": "int64"
+          }
+        ]
+      },
+      {
+        "name": "zero",
+        "columns": []
+      },
+      {
+        "name": "typed",
+        "columns": [
+          {
+            "name": "day",
+            "type": "date"
+          },
+          {
+            "name": "amount",
+            "type": "decimal",
+            "decimal": {
+              "precision": 6,
+              "scale": 2
+            }
+          },
+          {
+            "name": "flag",
+            "type": "bool"
+          },
+          {
+            "name": "val",
+            "type": "int64"
+          }
+        ]
+      },
+      {
+        "name": "nullable",
+        "columns": [
+          {
+            "name": "f",
+            "type": "bool",
+            "nullable": true
+          }
+        ]
+      },
+      {
+        "name": "wide",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "int64"
+          },
+          {
+            "name": "c1",
+            "type": "int64"
+          },
+          {
+            "name": "c2",
+            "type": "int64"
+          },
+          {
+            "name": "c3",
+            "type": "int64"
+          },
+          {
+            "name": "c4",
+            "type": "int64"
+          },
+          {
+            "name": "c5",
+            "type": "int64"
+          },
+          {
+            "name": "c6",
+            "type": "int64"
+          },
+          {
+            "name": "c7",
+            "type": "int64"
+          },
+          {
+            "name": "c8",
+            "type": "int64"
+          },
+          {
+            "name": "c9",
+            "type": "int64"
+          },
+          {
+            "name": "c10",
+            "type": "int64"
+          },
+          {
+            "name": "c11",
+            "type": "int64"
+          },
+          {
+            "name": "c12",
+            "type": "int64"
+          },
+          {
+            "name": "c13",
+            "type": "int64"
+          },
+          {
+            "name": "c14",
+            "type": "int64"
+          },
+          {
+            "name": "c15",
+            "type": "int64"
+          },
+          {
+            "name": "c16",
+            "type": "int64"
+          },
+          {
+            "name": "c17",
+            "type": "int64"
+          },
+          {
+            "name": "c18",
+            "type": "int64"
+          },
+          {
+            "name": "c19",
+            "type": "int64"
+          },
+          {
+            "name": "c20",
+            "type": "int64"
+          },
+          {
+            "name": "c21",
+            "type": "int64"
+          },
+          {
+            "name": "c22",
+            "type": "int64"
+          },
+          {
+            "name": "c23",
+            "type": "int64"
+          },
+          {
+            "name": "c24",
+            "type": "int64"
+          },
+          {
+            "name": "c25",
+            "type": "int64"
+          },
+          {
+            "name": "c26",
+            "type": "int64"
+          },
+          {
+            "name": "c27",
+            "type": "int64"
+          },
+          {
+            "name": "c28",
+            "type": "int64"
+          },
+          {
+            "name": "c29",
+            "type": "int64"
+          },
+          {
+            "name": "c30",
+            "type": "int64"
+          },
+          {
+            "name": "c31",
+            "type": "int64"
+          },
+          {
+            "name": "c32",
+            "type": "int64"
+          },
+          {
+            "name": "c33",
+            "type": "int64"
+          },
+          {
+            "name": "c34",
+            "type": "int64"
+          },
+          {
+            "name": "c35",
+            "type": "int64"
+          },
+          {
+            "name": "c36",
+            "type": "int64"
+          },
+          {
+            "name": "c37",
+            "type": "int64"
+          },
+          {
+            "name": "c38",
+            "type": "int64"
+          },
+          {
+            "name": "c39",
+            "type": "int64"
+          },
+          {
+            "name": "c40",
+            "type": "int64"
+          },
+          {
+            "name": "c41",
+            "type": "int64"
+          },
+          {
+            "name": "c42",
+            "type": "int64"
+          },
+          {
+            "name": "c43",
+            "type": "int64"
+          },
+          {
+            "name": "c44",
+            "type": "int64"
+          },
+          {
+            "name": "c45",
+            "type": "int64"
+          },
+          {
+            "name": "c46",
+            "type": "int64"
+          },
+          {
+            "name": "c47",
+            "type": "int64"
+          },
+          {
+            "name": "c48",
+            "type": "int64"
+          },
+          {
+            "name": "c49",
+            "type": "int64"
+          },
+          {
+            "name": "c50",
+            "type": "int64"
+          },
+          {
+            "name": "c51",
+            "type": "int64"
+          },
+          {
+            "name": "c52",
+            "type": "int64"
+          },
+          {
+            "name": "c53",
+            "type": "int64"
+          },
+          {
+            "name": "c54",
+            "type": "int64"
+          },
+          {
+            "name": "c55",
+            "type": "int64"
+          },
+          {
+            "name": "c56",
+            "type": "int64"
+          },
+          {
+            "name": "c57",
+            "type": "int64"
+          },
+          {
+            "name": "c58",
+            "type": "int64"
+          },
+          {
+            "name": "c59",
+            "type": "int64"
+          },
+          {
+            "name": "c60",
+            "type": "int64"
+          },
+          {
+            "name": "c61",
+            "type": "int64"
+          },
+          {
+            "name": "c62",
+            "type": "int64"
+          },
+          {
+            "name": "c63",
+            "type": "int64"
+          },
+          {
+            "name": "c64",
+            "type": "int64"
+          },
+          {
+            "name": "c65",
+            "type": "int64"
+          },
+          {
+            "name": "c66",
+            "type": "int64"
+          },
+          {
+            "name": "c67",
+            "type": "int64"
+          },
+          {
+            "name": "c68",
+            "type": "int64"
+          },
+          {
+            "name": "c69",
+            "type": "int64"
+          }
+        ]
+      }
+    ]
+  }
+}

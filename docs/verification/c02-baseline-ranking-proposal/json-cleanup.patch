@@ -1,0 +1,135 @@
+--- nlohmann-json-3.12.0.upstream.hpp
++++ nlohmann-json-3.12.0.crown-c02.hpp
+@@ -20568,6 +20568,28 @@
+         /// constructor for rvalue binary arrays (internal type)
+         json_value(binary_t&& value) : binary(create<binary_t>(std::move(value))) {}
+ 
++        // CROWN local repair: allocation failure during flattening must not
++        // escape a noexcept JSON destructor. Prune last leaves iteratively;
++        // erasing the last member also avoids ordered_map key-shift copies.
++        // This deliberately slower path is used only after std::bad_alloc.
++        static void clear_without_allocation(basic_json& root) noexcept
++        {
++            while (root.is_structured() && !root.empty())
++            {
++                auto* parent = &root;
++                auto child = parent->end();
++                --child;
++                while (child->is_structured() && !child->empty())
++                {
++                    parent = &*child;
++                    child = parent->end();
++                    --child;
++                }
++                parent->erase(child);
++            }
++            root.clear();
++        }
++
+         void destroy(value_t t)
+         {
+             if (
+@@ -20584,48 +20606,72 @@
+             {
+                 // flatten the current json_value to a heap-allocated stack
+                 std::vector<basic_json> stack;
+-
+-                // move the top-level items to stack
+-                if (t == value_t::array)
+-                {
+-                    stack.reserve(array->size());
+-                    std::move(array->begin(), array->end(), std::back_inserter(stack));
+-                }
+-                else
++                // Keep the active value outside the try scope: if a stack
++                // growth fails after moving some children, it must reach the
++                // allocation-free cleanup before its own destructor runs.
++                basic_json current_item;
++                try
+                 {
+-                    stack.reserve(object->size());
+-                    for (auto&& it : *object)
++                    // move the top-level items to stack
++                    if (t == value_t::array)
+                     {
+-                        stack.push_back(std::move(it.second));
++                        stack.reserve(array->size());
++                        std::move(array->begin(), array->end(), std::back_inserter(stack));
++                    }
++                    else
++                    {
++                        stack.reserve(object->size());
++                        for (auto&& it : *object)
++                        {
++                            stack.push_back(std::move(it.second));
++                        }
+                     }
+-                }
+-
+-                while (!stack.empty())
+-                {
+-                    // move the last item to local variable to be processed
+-                    basic_json current_item(std::move(stack.back()));
+-                    stack.pop_back();
+ 
+-                    // if current_item is array/object, move
+-                    // its children to the stack to be processed later
+-                    if (current_item.is_array())
++                    while (!stack.empty())
+                     {
+-                        std::move(current_item.m_data.m_value.array->begin(), current_item.m_data.m_value.array->end(), std::back_inserter(stack));
++                        current_item = std::move(stack.back());
++                        stack.pop_back();
+ 
+-                        current_item.m_data.m_value.array->clear();
++                        if (current_item.is_array())
++                        {
++                            std::move(current_item.m_data.m_value.array->begin(), current_item.m_data.m_value.array->end(), std::back_inserter(stack));
++                            current_item.m_data.m_value.array->clear();
++                        }
++                        else if (current_item.is_object())
++                        {
++                            for (auto&& it : *current_item.m_data.m_value.object)
++                            {
++                                stack.push_back(std::move(it.second));
++                            }
++                            current_item.m_data.m_value.object->clear();
++                        }
++                        // Exactly the old per-iteration destruction point.
++                        current_item = nullptr;
++                    }
++                }
++                catch (const std::bad_alloc&)
++                {
++                    // All three owners can hold distinct partially moved
++                    // descendants. Empty every one before ordinary teardown.
++                    clear_without_allocation(current_item);
++                    for (auto& item : stack)
++                    {
++                        clear_without_allocation(item);
+                     }
+-                    else if (current_item.is_object())
++                    if (t == value_t::array)
+                     {
+-                        for (auto&& it : *current_item.m_data.m_value.object)
++                        for (auto& item : *array)
+                         {
+-                            stack.push_back(std::move(it.second));
++                            clear_without_allocation(item);
++                        }
++                    }
++                    else
++                    {
++                        for (auto& item : *object)
++                        {
++                            clear_without_allocation(item.second);
+                         }
+-
+-                        current_item.m_data.m_value.object->clear();
+                     }
+-
+-                    // it's now safe that current_item get destructed
+-                    // since it doesn't have any children
+                 }
+             }
+ 

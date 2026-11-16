@@ -1,0 +1,1 @@
+SELECT DISTINCT x,x AS again,7 AS fixed FROM r WHERE x=1

@@ -1,0 +1,19 @@
+--- docs/verification/c05-selection-implementation-proposal/BINDING.md	2026-11-07 16:23:17.410281608 +0800
++++ docs/verification/c05-native-registration-proposal/overlay/docs/selection_binding.md	2026-11-07 17:06:30.259452162 +0800
+@@ -1,6 +1,6 @@
+ # C05 version-1 diagnostic and artifact bytes
+ 
+-This is the field-order specification for the excluded implementation's private
++This is the field-order specification for the selection implementation's private
+ byte visitors. They return diagnostic bytes only. They cannot admit a proof,
+ construct a Selection/CurrentSelection, or install an artifact. Public selection
+ first requires actual P07/P08/C02 handles and supported request values. There is
+@@ -138,7 +138,7 @@
+ reuse condition. Conservative fields can reduce hit rate without weakening it.
+ 
+ The analytical invalidation argument and full authority boundary are retained
+-in the accepted [preflight cache contract](../c05-selection-preflight-proposal/CACHE_KEY.md).
++in the accepted [preflight cache contract](verification/c05-selection-preflight-proposal/CACHE_KEY.md).
+ The producer's mutation records and the separate independent byte-vector oracle
+ must be compiled/executed by root; this specification is not a claim that those
+ runtime checks have passed.

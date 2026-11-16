@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.25)
+project(crown_independent_queries_example LANGUAGES CXX)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+find_package(Crown 0.1 CONFIG REQUIRED)
+add_executable(crown_independent_queries main.cpp)
+set_target_properties(crown_independent_queries PROPERTIES CXX_EXTENSIONS OFF)
+target_link_libraries(crown_independent_queries PRIVATE CROWN::queries)
+target_compile_options(crown_independent_queries PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror)

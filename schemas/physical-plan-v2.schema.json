@@ -1,0 +1,766 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN indexed physical plan artifact v2",
+  "description": "Strict shape and domain schema for a generated physical artifact. The native reader independently rebuilds and compares every descriptor and enforces cross-document references, route semantics, and assignment validity.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "lowerer",
+    "route",
+    "source",
+    "tree",
+    "options",
+    "binding",
+    "verification",
+    "layouts",
+    "relations",
+    "indexes",
+    "inputs",
+    "base_routes",
+    "nodes",
+    "edges",
+    "enumeration",
+    "guarantee",
+    "work"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 2
+    },
+    "lowerer": {
+      "type": "string",
+      "const": "crown-lower-v2"
+    },
+    "route": {
+      "enum": [
+        "tree",
+        "constant_true",
+        "constant_false"
+      ]
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "tree": {
+      "$ref": "tree-v1.schema.json"
+    },
+    "options": {
+      "$ref": "physical-plan-options-v2.schema.json"
+    },
+    "binding": {
+      "$ref": "#/$defs/binding"
+    },
+    "verification": {
+      "$ref": "#/$defs/verification"
+    },
+    "layouts": {
+      "type": "array",
+      "items": {
+        "$ref": "tuple-layout-v1.schema.json"
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/relation"
+      }
+    },
+    "indexes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/index"
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/input"
+      }
+    },
+    "base_routes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/id_list"
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/edge"
+      }
+    },
+    "enumeration": {
+      "$ref": "#/$defs/enumeration"
+    },
+    "guarantee": {
+      "$ref": "#/$defs/guarantee"
+    },
+    "work": {
+      "$ref": "#/$defs/uint64"
+    }
+  },
+  "$defs": {
+    "uint64": {
+      "$ref": "sql-normalization-v2.schema.json#/$defs/uint64"
+    },
+    "id": {
+      "$ref": "#/$defs/uint64"
+    },
+    "nullable_id": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "nullable_uint64": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/uint64"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "id_list": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/id"
+      },
+      "uniqueItems": true
+    },
+    "projection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_layout",
+        "target_layout",
+        "fields"
+      ],
+      "properties": {
+        "source_layout": {
+          "$ref": "#/$defs/id"
+        },
+        "target_layout": {
+          "$ref": "#/$defs/id"
+        },
+        "fields": {
+          "$ref": "#/$defs/id_list"
+        }
+      }
+    },
+    "field_pair": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "$ref": "#/$defs/id"
+        },
+        {
+          "$ref": "#/$defs/id"
+        }
+      ],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "input_constant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "value"
+      ],
+      "properties": {
+        "field": {
+          "$ref": "#/$defs/id"
+        },
+        "value": {
+          "$ref": "cq-v2.schema.json#/$defs/value"
+        }
+      }
+    },
+    "slot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "step",
+        "field"
+      ],
+      "properties": {
+        "step": {
+          "$ref": "#/$defs/uint64"
+        },
+        "field": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "layout_id": {
+      "$ref": "tuple-layout-v1.schema.json#/$defs/id"
+    },
+    "source": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/direct_source"
+        },
+        {
+          "$ref": "#/$defs/normalized_source"
+        }
+      ]
+    },
+    "direct_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "document"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "direct_cq"
+        },
+        "document": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "cq-v3.schema.json"
+            },
+            {
+              "required": [
+                "initial",
+                "updates"
+              ],
+              "properties": {
+                "initial": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "rows": {
+                        "maxItems": 0
+                      }
+                    }
+                  }
+                },
+                "updates": {
+                  "type": "array",
+                  "maxItems": 0
+                }
+              }
+            }
+          ],
+          "unevaluatedProperties": false
+        }
+      }
+    },
+    "normalized_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "program"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "normalized_sql"
+        },
+        "program": {
+          "$ref": "sql-normalization-v2.schema.json"
+        }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "physical_sha256"
+      ],
+      "properties": {
+        "identity": {
+          "allOf": [
+            {
+              "$ref": "query-identity-v1.schema.json"
+            },
+            {
+              "type": "object",
+              "required": [
+                "identity_valid",
+                "status"
+              ],
+              "properties": {
+                "identity_valid": {
+                  "const": true
+                },
+                "status": {
+                  "const": "complete"
+                }
+              }
+            }
+          ]
+        },
+        "physical_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "valid",
+        "native_height",
+        "edge_depth",
+        "maximal_connex"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "constant_operator",
+            "independent_tree_verifier"
+          ]
+        },
+        "valid": {
+          "type": "boolean",
+          "const": true
+        },
+        "native_height": {
+          "$ref": "#/$defs/uint64"
+        },
+        "edge_depth": {
+          "$ref": "#/$defs/uint64"
+        },
+        "maximal_connex": {
+          "$ref": "#/$defs/id_list"
+        }
+      }
+    },
+    "relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "role",
+        "layout",
+        "node",
+        "base"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "role": {
+          "enum": [
+            "physical_base",
+            "native_records",
+            "generalized_candidates",
+            "survivors",
+            "parent_support",
+            "visible"
+          ]
+        },
+        "layout": {
+          "$ref": "#/$defs/layout_id"
+        },
+        "node": {
+          "$ref": "#/$defs/nullable_id"
+        },
+        "base": {
+          "$ref": "#/$defs/nullable_id"
+        }
+      }
+    },
+    "index": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "relation",
+        "projection",
+        "uses"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "relation": {
+          "$ref": "#/$defs/id"
+        },
+        "projection": {
+          "$ref": "#/$defs/projection"
+        },
+        "uses": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "reverse_child_support",
+              "visible_enumeration"
+            ]
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "occurrence",
+        "node",
+        "base",
+        "logical_table",
+        "physical_layout",
+        "projection",
+        "equalities",
+        "constants"
+      ],
+      "properties": {
+        "occurrence": {
+          "$ref": "#/$defs/id"
+        },
+        "node": {
+          "$ref": "#/$defs/id"
+        },
+        "base": {
+          "$ref": "#/$defs/id"
+        },
+        "logical_table": {
+          "$ref": "#/$defs/id"
+        },
+        "physical_layout": {
+          "$ref": "#/$defs/layout_id"
+        },
+        "projection": {
+          "$ref": "#/$defs/projection"
+        },
+        "equalities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/field_pair"
+          }
+        },
+        "constants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/input_constant"
+          }
+        }
+      }
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "occurrence",
+        "parent",
+        "children",
+        "scope",
+        "visible_scope",
+        "connex",
+        "layout",
+        "parent_key",
+        "visible_projection",
+        "records",
+        "survivors",
+        "parent_support",
+        "visible_relation"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": [
+            "native",
+            "generalized"
+          ]
+        },
+        "occurrence": {
+          "$ref": "#/$defs/nullable_id"
+        },
+        "parent": {
+          "$ref": "#/$defs/nullable_id"
+        },
+        "children": {
+          "$ref": "#/$defs/id_list"
+        },
+        "scope": {
+          "$ref": "#/$defs/id_list"
+        },
+        "visible_scope": {
+          "$ref": "#/$defs/id_list"
+        },
+        "connex": {
+          "type": "boolean"
+        },
+        "layout": {
+          "$ref": "#/$defs/layout_id"
+        },
+        "parent_key": {
+          "$ref": "#/$defs/projection"
+        },
+        "visible_projection": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/projection"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "records": {
+          "$ref": "#/$defs/id"
+        },
+        "survivors": {
+          "$ref": "#/$defs/id"
+        },
+        "parent_support": {
+          "$ref": "#/$defs/id"
+        },
+        "visible_relation": {
+          "$ref": "#/$defs/nullable_id"
+        }
+      }
+    },
+    "edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "parent",
+        "child",
+        "child_slot",
+        "parent_key",
+        "reverse_index"
+      ],
+      "properties": {
+        "parent": {
+          "$ref": "#/$defs/id"
+        },
+        "child": {
+          "$ref": "#/$defs/id"
+        },
+        "child_slot": {
+          "$ref": "#/$defs/uint64"
+        },
+        "parent_key": {
+          "$ref": "#/$defs/projection"
+        },
+        "reverse_index": {
+          "$ref": "#/$defs/nullable_id"
+        }
+      }
+    },
+    "enumeration_step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "node",
+        "relation",
+        "depth",
+        "parent_step",
+        "parent_key",
+        "bucket_index"
+      ],
+      "properties": {
+        "node": {
+          "$ref": "#/$defs/id"
+        },
+        "relation": {
+          "$ref": "#/$defs/id"
+        },
+        "depth": {
+          "$ref": "#/$defs/uint64"
+        },
+        "parent_step": {
+          "$ref": "#/$defs/nullable_uint64"
+        },
+        "parent_key": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/projection"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "bucket_index": {
+          "$ref": "#/$defs/nullable_id"
+        }
+      }
+    },
+    "assignment_equality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "left",
+        "right"
+      ],
+      "properties": {
+        "left": {
+          "$ref": "#/$defs/slot"
+        },
+        "right": {
+          "$ref": "#/$defs/slot"
+        }
+      }
+    },
+    "enumeration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "steps",
+        "output",
+        "equalities",
+        "depth",
+        "result_layout"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "nary_visible_assignments"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/enumeration_step"
+          }
+        },
+        "output": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/slot"
+          }
+        },
+        "equalities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/assignment_equality"
+          }
+        },
+        "depth": {
+          "$ref": "#/$defs/uint64"
+        },
+        "result_layout": {
+          "$ref": "#/$defs/layout_id"
+        }
+      }
+    },
+    "guarantee": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "semantics",
+        "query_class",
+        "update_contract",
+        "arithmetic",
+        "storage_backend",
+        "execution_status",
+        "height_status",
+        "state_bound",
+        "maintenance_bound",
+        "cursor_startup_bound",
+        "cursor_delay_bound",
+        "cursor_termination_bound",
+        "operation_modes",
+        "assumptions",
+        "output_accounting"
+      ],
+      "properties": {
+        "semantics": {
+          "type": "string",
+          "const": "exact_set"
+        },
+        "query_class": {
+          "enum": [
+            "free_connex",
+            "constant_result"
+          ]
+        },
+        "update_contract": {
+          "type": "string",
+          "const": "physical_full_row_set_events"
+        },
+        "arithmetic": {
+          "type": "string",
+          "const": "exact-nonnull-v1"
+        },
+        "storage_backend": {
+          "type": "string",
+          "const": "indexed_chained_v1"
+        },
+        "execution_status": {
+          "type": "string",
+          "const": "lowered_not_started"
+        },
+        "height_status": {
+          "type": "string",
+          "const": "valid_upper_bound"
+        },
+        "state_bound": {
+          "type": "string",
+          "const": "runtime_not_implemented"
+        },
+        "maintenance_bound": {
+          "type": "string",
+          "const": "runtime_not_implemented"
+        },
+        "cursor_startup_bound": {
+          "type": "string",
+          "const": "runtime_not_implemented"
+        },
+        "cursor_delay_bound": {
+          "type": "string",
+          "const": "runtime_not_implemented"
+        },
+        "cursor_termination_bound": {
+          "type": "string",
+          "const": "runtime_not_implemented"
+        },
+        "operation_modes": {
+          "const": [
+            "compile_only",
+            "indexed_storage_initialization"
+          ]
+        },
+        "assumptions": {
+          "const": [
+            "single_writer",
+            "nonnull_exact_binary_values",
+            "distributed_hashes_for_expected_time_only",
+            "finite_work_and_component_admission"
+          ]
+        },
+        "output_accounting": {
+          "const": [
+            "one_action_per_emitted_tuple",
+            "retained_snapshots_and_buffers_accounted_separately"
+          ]
+        }
+      }
+    }
+  }
+}

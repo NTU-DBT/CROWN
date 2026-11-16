@@ -1,0 +1,131 @@
+{
+  "kind": "compile/link only; no binary execution",
+  "optimization": "0",
+  "new_translation_units": 2,
+  "consumer_translation_units": 1,
+  "commands": [
+    {
+      "source": "/home/userroot/Codex/CROWN/docs/verification/o07-query-explain-proposal/overlay/src/observability/query_explain.cpp",
+      "command": [
+        "/usr/bin/c++",
+        "-std=c++23",
+        "-O0",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wconversion",
+        "-Wsign-conversion",
+        "-Werror",
+        "-I",
+        "/home/userroot/Codex/CROWN/docs/verification/o07-query-explain-proposal/overlay/include",
+        "-I",
+        "/home/userroot/Codex/CROWN/include",
+        "-isystem",
+        "/home/userroot/Codex/CROWN/third_party",
+        "-MMD",
+        "-MF",
+        "/tmp/crown-o07-query-explain-o0/0.d",
+        "-c",
+        "/home/userroot/Codex/CROWN/docs/verification/o07-query-explain-proposal/overlay/src/observability/query_explain.cpp",
+        "-o",
+        "/tmp/crown-o07-query-explain-o0/0.o"
+      ],
+      "exit_code": 0
+    },
+    {
+      "source": "/home/userroot/Codex/CROWN/docs/verification/o07-query-explain-proposal/overlay/src/io/query_explain.cpp",
+      "command": [
+        "/usr/bin/c++",
+        "-std=c++23",
+        "-O0",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wconversion",
+        "-Wsign-conversion",
+        "-Werror",
+        "-I",
+        "/home/userroot/Codex/CROWN/docs/verification/o07-query-explain-proposal/overlay/include",
+        "-I",
+        "/home/userroot/Codex/CROWN/include",
+        "-isystem",
+        "/home/userroot/Codex/CROWN/third_party",
+        "-MMD",
+        "-MF",
+        "/tmp/crown-o07-query-explain-o0/1.d",
+        "-c",
+        "/home/userroot/Codex/CROWN/docs/verification/o07-query-explain-proposal/overlay/src/io/query_explain.cpp",
+        "-o",
+        "/tmp/crown-o07-query-explain-o0/1.o"
+      ],
+      "exit_code": 0
+    },
+    {
+      "source": "/home/userroot/Codex/CROWN/docs/verification/o07-query-explain-proposal/compile/link_probe.cpp",
+      "command": [
+        "/usr/bin/c++",
+        "-std=c++23",
+        "-O0",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wconversion",
+        "-Wsign-conversion",
+        "-Werror",
+        "-I",
+        "/home/userroot/Codex/CROWN/docs/verification/o07-query-explain-proposal/overlay/include",
+        "-I",
+        "/home/userroot/Codex/CROWN/include",
+        "-isystem",
+        "/home/userroot/Codex/CROWN/third_party",
+        "-MMD",
+        "-MF",
+        "/tmp/crown-o07-query-explain-o0/2.d",
+        "-c",
+        "/home/userroot/Codex/CROWN/docs/verification/o07-query-explain-proposal/compile/link_probe.cpp",
+        "-o",
+        "/tmp/crown-o07-query-explain-o0/2.o"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "/usr/bin/c++",
+        "/tmp/crown-o07-query-explain-o0/0.o",
+        "/tmp/crown-o07-query-explain-o0/1.o",
+        "/tmp/crown-o07-query-explain-o0/2.o",
+        "/home/userroot/Codex/CROWN/build/release/libcrown_core.a",
+        "-o",
+        "/tmp/crown-o07-query-explain-o0/query-explain-link-probe"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "source_hashes": {
+    "/home/userroot/Codex/CROWN/docs/verification/o07-query-explain-proposal/overlay/src/observability/query_explain.cpp": "83a8e0e0c8e019708a7e0d8085562ce3de7f9433e3278073cfe192fdd20cf895",
+    "/home/userroot/Codex/CROWN/docs/verification/o07-query-explain-proposal/overlay/src/io/query_explain.cpp": "8c0ac1c1601cc51a38466f3cd6cd2d0d6a6f81011340bac647c24fd4e0fef1ae",
+    "/home/userroot/Codex/CROWN/docs/verification/o07-query-explain-proposal/compile/link_probe.cpp": "0071470a326a34488da846763241c193bc2080afa555f02f6edf44b6cb03da02"
+  },
+  "compiler_dependencies": {
+    "/home/userroot/Codex/CROWN/docs/verification/o07-query-explain-proposal/compile/../fixtures/query_families.hpp": "dcace4d0c8f58742dffee40973f40542e1091a154187e2a204c4e0084f5a793b",
+    "/home/userroot/Codex/CROWN/docs/verification/o07-query-explain-proposal/compile/link_probe.cpp": "0071470a326a34488da846763241c193bc2080afa555f02f6edf44b6cb03da02",
+    "/home/userroot/Codex/CROWN/docs/verification/o07-query-explain-proposal/overlay/include/crown/io/query_explain.hpp": "b21222a3b3c260aa1ab7b344aac9ba61458c980990c8557bc0c28dfc0829050a",
+    "/home/userroot/Codex/CROWN/docs/verification/o07-query-explain-proposal/overlay/include/crown/observability/query_explain.hpp": "9d867ef6f21540e29a40a240c3fd59089169ddddd116830fca7636010cdab13b",
+    "/home/userroot/Codex/CROWN/docs/verification/o07-query-explain-proposal/overlay/src/io/query_explain.cpp": "8c0ac1c1601cc51a38466f3cd6cd2d0d6a6f81011340bac647c24fd4e0fef1ae",
+    "/home/userroot/Codex/CROWN/docs/verification/o07-query-explain-proposal/overlay/src/observability/query_explain.cpp": "83a8e0e0c8e019708a7e0d8085562ce3de7f9433e3278073cfe192fdd20cf895",
+    "/home/userroot/Codex/CROWN/include/crown/api/error.hpp": "e6a055f92c2b0d624539b128ab731d9ae2cdc03b84781f7281633714ef3bf92c",
+    "/home/userroot/Codex/CROWN/include/crown/ir/ids.hpp": "41d8cd89060ef3d63aad0265fad95073255281ff7e86130dffa0ee6aa5c375a0",
+    "/home/userroot/Codex/CROWN/include/crown/ir/model.hpp": "e0f4e162b0eeff12a864f94ff40258f19d7753b282215c5259c4e5ef9d6cdaec",
+    "/home/userroot/Codex/CROWN/include/crown/ir/scalar.hpp": "24fe26bf2b32ce3960d744a4209c6ccfec545fef830245e2c56e28f9cafa00a4",
+    "/home/userroot/Codex/CROWN/include/crown/ir/tree.hpp": "6ec6e1cfa55e3dcde330ed39b7d525652226117dda4e857cb02a0867aede2496",
+    "/home/userroot/Codex/CROWN/include/crown/planner/oracle.hpp": "fc4a949e706635a439fa1faa87f48273d328ef84e38f43d8dd1ea67cd5912b26",
+    "/home/userroot/Codex/CROWN/include/crown/planner/search.hpp": "514489385d4c4f0ec1c874b89f99091882d6c7a3049af6100c9df4da86854a61"
+  },
+  "reused_native_archive": "/home/userroot/Codex/CROWN/build/release/libcrown_core.a",
+  "reused_native_archive_sha256": "784b820ff9284ad75033552056fd2a81113f7eb54be5db56959f31ce778bcf9d",
+  "proposal_archive": "/tmp/crown-o07-query-explain-o0/libcrown_query_explain_proposal.a",
+  "proposal_archive_sha256": "889e42c051bfb75413f1a8cb1bc7cde3c09a96d84341558dfbeef747250624fb",
+  "binary": "/tmp/crown-o07-query-explain-o0/query-explain-link-probe",
+  "binary_sha256": "37b5c7bf0fc0aa3314aff5f173fca9a3c8859b7e04a4b3b15c0fb39d6d4655eb",
+  "abi": "No native or runtime layout changes; depends only on unchanged planner/core interfaces. No physical-plan/runtime/SQL archive linked."
+}

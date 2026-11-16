@@ -1,0 +1,29 @@
+{
+  "catalog": {
+    "tables": [
+      {
+        "columns": [
+          {
+            "name": "c0",
+            "nullable": false,
+            "type": "int64"
+          },
+          {
+            "name": "c1",
+            "nullable": false,
+            "type": "int64"
+          }
+        ],
+        "constraints": [],
+        "key_hints": [],
+        "name": "r0",
+        "source_schema_version": 1,
+        "statistics": {
+          "distinct_counts": []
+        }
+      }
+    ],
+    "version": 1
+  },
+  "schema_version": 1
+}

@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "scope": "Exact copies of actual isolated legacy outputs for offline checker regression; diagnostic numbers are not benchmark data",
+  "source_commits": {
+    "scala": "e369a623517723b3be3ea3e9806779f3c591e7f9",
+    "cpp": "c6811db68a34ab3b32722968c4e1e821f730c5ac"
+  },
+  "captures": {
+    "tests/legacy_baselines/line5cd.stdout.txt": {
+      "sha256": "227722e758b8082b6e48570839b718966495a2117bde9e5cd5e5db7be0bb4bca",
+      "captured_stdout": "build/verification/v57-b01-cpp-recon-v1/actual-line5cd-v1/stdout.log",
+      "execution_receipt": "build/verification/v57-b01-cpp-recon-v1/actual-line5cd-v1/receipt.json",
+      "execution_receipt_sha256": "10feed9709214a345acff819125f7308e057fad5d2d0ac2af2c7ad43050a55f6"
+    },
+    "tests/legacy_baselines/line5gc-full.stdout.txt": {
+      "sha256": "3897c8723d9ffccd76b9b464156cd0794bbd2d1883a477acd422a74dda72ad42",
+      "captured_stdout": "build/verification/v57-b01-cpp-recon-v1/actual-line5gc-v1/full.stdout.log",
+      "execution_receipt": "build/verification/v57-b01-cpp-recon-v1/actual-line5gc-v1/receipt.json",
+      "execution_receipt_sha256": "fb5720598c6348a9a80f88db614b066147aa2d20c2224acdd8b66cf16cbf5ff5"
+    },
+    "tests/legacy_baselines/line5gc-replacements.stdout.txt": {
+      "sha256": "934f9e6e005c28dd61f1e654437707834bf13bb72dad81ea4d484a7461ec3a3f",
+      "captured_stdout": "build/verification/v57-b01-cpp-recon-v1/actual-line5gc-v1/delta.stdout.log",
+      "execution_receipt": "build/verification/v57-b01-cpp-recon-v1/actual-line5gc-v1/receipt.json",
+      "execution_receipt_sha256": "fb5720598c6348a9a80f88db614b066147aa2d20c2224acdd8b66cf16cbf5ff5"
+    },
+    "tests/legacy_baselines/scala-l3.stdout.jsonl": {
+      "sha256": "6553b51e525368347138a5245c1570ee49f9d958a1ac1312d4022db80f24b372",
+      "captured_stdout": "build/verification/v57-b01-scala-recon-v1/scala-replay-mixed22-java8-v1.stdout.log",
+      "execution_receipt": "build/verification/v57-b01-scala-recon-v1/scala-replay-mixed22-java8-v1.json",
+      "execution_receipt_sha256": "a28218572a3d247a3a6629fc62a7c43dc79c0d9505cf0152f6ee1fb9cf2a53c6"
+    }
+  },
+  "baseline_launched_by_offline_checker": false,
+  "timing_eligible": false
+}

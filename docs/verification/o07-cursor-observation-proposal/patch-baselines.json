@@ -1,0 +1,44 @@
+{
+  "include/crown/io/cursor_observation.hpp": null,
+  "include/crown/runtime/delta.hpp": {
+    "path": "docs/verification/o07-run-context-proposal/overlay/include/crown/runtime/delta.hpp",
+    "sha256": "464e914178a962b611435ddd2070e80fdf6fb154436bbc438ce17aee8a961eed"
+  },
+  "include/crown/runtime/observation.hpp": {
+    "path": "docs/verification/o07-run-context-proposal/overlay/include/crown/runtime/observation.hpp",
+    "sha256": "2e2849515810a7e31658e5a96b926fd5236f424620b648c9bd080f9e8b229fe7"
+  },
+  "include/crown/runtime/physical.hpp": {
+    "path": "docs/verification/o07-run-context-proposal/overlay/include/crown/runtime/physical.hpp",
+    "sha256": "86f46e00591db36f97f9f6b07f0e33634e0c1db91bb055747641db5382351d2a"
+  },
+  "include/crown/runtime/session.hpp": {
+    "path": "docs/verification/o07-run-context-proposal/overlay/include/crown/runtime/session.hpp",
+    "sha256": "2a8fe519d847d7ad1dc594813320e89b8de859ff04037270389d8f3e249682e8"
+  },
+  "include/crown/runtime/support.hpp": {
+    "path": "docs/verification/o07-runtime-proposal/overlay/include/crown/runtime/support.hpp",
+    "sha256": "fe484721b293379b3db4a93a6a8416ca4dd9246537886be77dc1b336fb4ec12d"
+  },
+  "src/io/cursor_observation.cpp": null,
+  "src/runtime/delta.cpp": {
+    "path": "docs/verification/o07-run-context-proposal/overlay/src/runtime/delta.cpp",
+    "sha256": "99c2afe3ba23b343a31a0c4dbf424609a8d1502753d4bb14ac77024037ea8d93"
+  },
+  "src/runtime/observation.cpp": {
+    "path": "docs/verification/o07-run-context-proposal/overlay/src/runtime/observation.cpp",
+    "sha256": "c24abb6ae9d2ff1545dbcfcbe671af908962e6bdd59678e59ae9a6de0246a0fb"
+  },
+  "src/runtime/physical.cpp": {
+    "path": "docs/verification/o07-run-context-proposal/overlay/src/runtime/physical.cpp",
+    "sha256": "83a8c2c9afbd5fe5a43a2ede87764b98425d28ff40df35655e8ead15054d09e4"
+  },
+  "src/runtime/session.cpp": {
+    "path": "docs/verification/o07-run-context-proposal/overlay/src/runtime/session.cpp",
+    "sha256": "008d8f2c7ef59cd3af2da4795f43b9880645714c39ef8c597ced8bce0ce164f8"
+  },
+  "src/runtime/support.cpp": {
+    "path": "docs/verification/o07-runtime-proposal/overlay/src/runtime/support.cpp",
+    "sha256": "841c36f73b8496562ac03b46506fb986ad841fd382c3b09302a807d8b2e232db"
+  }
+}

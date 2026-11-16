@@ -1,0 +1,176 @@
+{
+  "scope": "compile and link only; no execution by author",
+  "commands": [
+    {
+      "name": "gcc-default-compile",
+      "cwd": "/home/userroot/Codex/CROWN",
+      "env": {},
+      "argv": [
+        "/usr/bin/c++",
+        "-g",
+        "-std=c++23",
+        "-UNDEBUG",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wconversion",
+        "-Wsign-conversion",
+        "-Werror",
+        "-I/home/userroot/Codex/CROWN/docs/verification/c02-allocation-variance-source-review-proposal",
+        "-I/home/userroot/Codex/CROWN/include",
+        "-isystem",
+        "/home/userroot/Codex/CROWN/third_party",
+        "-MD",
+        "-MF",
+        "/tmp/crown-c02-allocation-variance-1/gcc-default.o.d",
+        "-c",
+        "/home/userroot/Codex/CROWN/docs/verification/c02-allocation-variance-source-review-proposal/default_initialization_probe.cpp",
+        "-o",
+        "/tmp/crown-c02-allocation-variance-1/gcc-default.o"
+      ]
+    },
+    {
+      "name": "gcc-default-link",
+      "cwd": "/home/userroot/Codex/CROWN",
+      "env": {},
+      "argv": [
+        "/usr/bin/c++",
+        "-g",
+        "/tmp/crown-c02-allocation-variance-1/gcc-default.o",
+        "-o",
+        "/tmp/crown-c02-allocation-variance-1/gcc-default"
+      ]
+    },
+    {
+      "name": "gcc-lower-compile",
+      "cwd": "/home/userroot/Codex/CROWN",
+      "env": {},
+      "argv": [
+        "/usr/bin/c++",
+        "-g",
+        "-std=c++23",
+        "-UNDEBUG",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wconversion",
+        "-Wsign-conversion",
+        "-Werror",
+        "-I/home/userroot/Codex/CROWN/docs/verification/c02-allocation-variance-source-review-proposal",
+        "-I/home/userroot/Codex/CROWN/tests/support",
+        "-I/home/userroot/Codex/CROWN/include",
+        "-isystem",
+        "/home/userroot/Codex/CROWN/third_party",
+        "-MD",
+        "-MF",
+        "/tmp/crown-c02-allocation-variance-1/gcc-lower.o.d",
+        "-c",
+        "/home/userroot/Codex/CROWN/docs/verification/c02-allocation-variance-source-review-proposal/native_lower_probe.cpp",
+        "-o",
+        "/tmp/crown-c02-allocation-variance-1/gcc-lower.o"
+      ]
+    },
+    {
+      "name": "gcc-lower-link",
+      "cwd": "/home/userroot/Codex/CROWN",
+      "env": {},
+      "argv": [
+        "/usr/bin/c++",
+        "-g",
+        "/tmp/crown-c02-allocation-variance-1/gcc-lower.o",
+        "-o",
+        "/tmp/crown-c02-allocation-variance-1/gcc-lower",
+        "/home/userroot/Codex/CROWN/build/debug/libcrown_plan.a",
+        "/home/userroot/Codex/CROWN/build/debug/libcrown_sql.a",
+        "/home/userroot/Codex/CROWN/build/debug/_deps/libpg_query/libpg_query-18.1.0/libpg_query.a",
+        "/home/userroot/Codex/CROWN/build/debug/libcrown_core.a"
+      ]
+    },
+    {
+      "name": "clang-default-compile",
+      "cwd": "/home/userroot/Codex/CROWN",
+      "env": {},
+      "argv": [
+        "/home/userroot/Codex/CROWN/build/toolchains/clang18/root/usr/bin/clang++-18",
+        "-g",
+        "-std=c++23",
+        "-UNDEBUG",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wconversion",
+        "-Wsign-conversion",
+        "-Werror",
+        "-I/home/userroot/Codex/CROWN/docs/verification/c02-allocation-variance-source-review-proposal",
+        "-I/home/userroot/Codex/CROWN/include",
+        "-isystem",
+        "/home/userroot/Codex/CROWN/third_party",
+        "-MD",
+        "-MF",
+        "/tmp/crown-c02-allocation-variance-1/clang-default.o.d",
+        "-c",
+        "/home/userroot/Codex/CROWN/docs/verification/c02-allocation-variance-source-review-proposal/default_initialization_probe.cpp",
+        "-o",
+        "/tmp/crown-c02-allocation-variance-1/clang-default.o"
+      ]
+    },
+    {
+      "name": "clang-default-link",
+      "cwd": "/home/userroot/Codex/CROWN",
+      "env": {},
+      "argv": [
+        "/home/userroot/Codex/CROWN/build/toolchains/clang18/root/usr/bin/clang++-18",
+        "-g",
+        "/tmp/crown-c02-allocation-variance-1/clang-default.o",
+        "-o",
+        "/tmp/crown-c02-allocation-variance-1/clang-default"
+      ]
+    },
+    {
+      "name": "clang-lower-compile",
+      "cwd": "/home/userroot/Codex/CROWN",
+      "env": {},
+      "argv": [
+        "/home/userroot/Codex/CROWN/build/toolchains/clang18/root/usr/bin/clang++-18",
+        "-g",
+        "-std=c++23",
+        "-UNDEBUG",
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wconversion",
+        "-Wsign-conversion",
+        "-Werror",
+        "-I/home/userroot/Codex/CROWN/docs/verification/c02-allocation-variance-source-review-proposal",
+        "-I/home/userroot/Codex/CROWN/tests/support",
+        "-I/home/userroot/Codex/CROWN/include",
+        "-isystem",
+        "/home/userroot/Codex/CROWN/third_party",
+        "-MD",
+        "-MF",
+        "/tmp/crown-c02-allocation-variance-1/clang-lower.o.d",
+        "-c",
+        "/home/userroot/Codex/CROWN/docs/verification/c02-allocation-variance-source-review-proposal/native_lower_probe.cpp",
+        "-o",
+        "/tmp/crown-c02-allocation-variance-1/clang-lower.o"
+      ]
+    },
+    {
+      "name": "clang-lower-link",
+      "cwd": "/home/userroot/Codex/CROWN",
+      "env": {},
+      "argv": [
+        "/home/userroot/Codex/CROWN/build/toolchains/clang18/root/usr/bin/clang++-18",
+        "-g",
+        "/tmp/crown-c02-allocation-variance-1/clang-lower.o",
+        "-o",
+        "/tmp/crown-c02-allocation-variance-1/clang-lower",
+        "/home/userroot/Codex/CROWN/build/clang-debug/libcrown_plan.a",
+        "/home/userroot/Codex/CROWN/build/clang-debug/libcrown_sql.a",
+        "/home/userroot/Codex/CROWN/build/clang-debug/_deps/libpg_query/libpg_query-18.1.0/libpg_query.a",
+        "/home/userroot/Codex/CROWN/build/clang-debug/libcrown_core.a"
+      ]
+    }
+  ]
+}
+

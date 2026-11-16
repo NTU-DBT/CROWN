@@ -1,0 +1,510 @@
+{
+  "flags": 0,
+  "format": "CROWNRT1",
+  "hashes": {
+    "body_sha256": "8d34b1597e33d565aedf9c3f3d6574003bfc0ad258a2e0485ad25da2990b08c8",
+    "covered_prefix_sha256": "d4cc890cbae4c2668b3e0c4452dec93d91abb727f0f73cc2a55676ba305e0ec8",
+    "record_sha256": "54e9f4216cb183cc3f55dc84d218586dfc25c87a12d6b69591d9afec775d4ace"
+  },
+  "layout": {
+    "body": {
+      "sha256": "8d34b1597e33d565aedf9c3f3d6574003bfc0ad258a2e0485ad25da2990b08c8",
+      "span": {
+        "end_exclusive": 660,
+        "length": 640,
+        "offset": 20
+      }
+    },
+    "body_fields": {
+      "acknowledged_generation": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 652,
+          "length": 8,
+          "offset": 644
+        },
+        "value": 7
+      },
+      "acknowledged_sequence": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 660,
+          "length": 8,
+          "offset": 652
+        },
+        "value": 11
+      },
+      "old_root.checkpoint_sha256": {
+        "encoding": "ASCII64 lowercase SHA256",
+        "span": {
+          "end_exclusive": 132,
+          "length": 64,
+          "offset": 68
+        },
+        "value": "8d1a75dd2d7ffc51ab7b9552cb7d9d04e0e215b29d23f468f3b65d8c8872a03f"
+      },
+      "old_root.command_sequence": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 148,
+          "length": 8,
+          "offset": 140
+        },
+        "value": 13
+      },
+      "old_root.first_generation": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 68,
+          "length": 8,
+          "offset": 60
+        },
+        "value": 3
+      },
+      "old_root.generation": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 60,
+          "length": 8,
+          "offset": 52
+        },
+        "value": 7
+      },
+      "old_root.physical_sequence": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 140,
+          "length": 8,
+          "offset": 132
+        },
+        "value": 11
+      },
+      "old_root.query_id": {
+        "encoding": "ASCII32",
+        "span": {
+          "end_exclusive": 52,
+          "length": 32,
+          "offset": 20
+        },
+        "value": "0123456789abcdef0123456789abcdef"
+      },
+      "sink_header.base_sequence": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 572,
+          "length": 8,
+          "offset": 564
+        },
+        "value": 10
+      },
+      "sink_header.catalog_version": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 348,
+          "length": 8,
+          "offset": 340
+        },
+        "value": 5
+      },
+      "sink_header.fields": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 580,
+          "length": 8,
+          "offset": 572
+        },
+        "value": 3
+      },
+      "sink_header.first_generation": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 564,
+          "length": 8,
+          "offset": 556
+        },
+        "value": 3
+      },
+      "sink_header.physical_sha256": {
+        "encoding": "ASCII64 lowercase SHA256",
+        "span": {
+          "end_exclusive": 276,
+          "length": 64,
+          "offset": 212
+        },
+        "value": "a2bbc3d009cd0961875a033f9772bdcf6c904eaac6ec3f1fd0caf4dd51accb9a"
+      },
+      "sink_header.policy[0]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 356,
+          "length": 8,
+          "offset": 348
+        },
+        "value": 1
+      },
+      "sink_header.policy[10]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 436,
+          "length": 8,
+          "offset": 428
+        },
+        "value": 0
+      },
+      "sink_header.policy[11]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 444,
+          "length": 8,
+          "offset": 436
+        },
+        "value": 1
+      },
+      "sink_header.policy[12]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 452,
+          "length": 8,
+          "offset": 444
+        },
+        "value": 1000000
+      },
+      "sink_header.policy[13]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 460,
+          "length": 8,
+          "offset": 452
+        },
+        "value": 18446744073709551615
+      },
+      "sink_header.policy[14]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 468,
+          "length": 8,
+          "offset": 460
+        },
+        "value": 1
+      },
+      "sink_header.policy[15]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 476,
+          "length": 8,
+          "offset": 468
+        },
+        "value": 1
+      },
+      "sink_header.policy[16]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 484,
+          "length": 8,
+          "offset": 476
+        },
+        "value": 0
+      },
+      "sink_header.policy[17]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 492,
+          "length": 8,
+          "offset": 484
+        },
+        "value": 0
+      },
+      "sink_header.policy[18]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 500,
+          "length": 8,
+          "offset": 492
+        },
+        "value": 1
+      },
+      "sink_header.policy[19]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 508,
+          "length": 8,
+          "offset": 500
+        },
+        "value": 1000000
+      },
+      "sink_header.policy[1]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 364,
+          "length": 8,
+          "offset": 356
+        },
+        "value": 1000000
+      },
+      "sink_header.policy[20]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 516,
+          "length": 8,
+          "offset": 508
+        },
+        "value": 1
+      },
+      "sink_header.policy[21]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 524,
+          "length": 8,
+          "offset": 516
+        },
+        "value": 1000000
+      },
+      "sink_header.policy[22]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 532,
+          "length": 8,
+          "offset": 524
+        },
+        "value": 1
+      },
+      "sink_header.policy[23]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 540,
+          "length": 8,
+          "offset": 532
+        },
+        "value": 1000000
+      },
+      "sink_header.policy[24]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 548,
+          "length": 8,
+          "offset": 540
+        },
+        "value": 65536
+      },
+      "sink_header.policy[25]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 556,
+          "length": 8,
+          "offset": 548
+        },
+        "value": 67108864
+      },
+      "sink_header.policy[2]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 372,
+          "length": 8,
+          "offset": 364
+        },
+        "value": 18446744073709551615
+      },
+      "sink_header.policy[3]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 380,
+          "length": 8,
+          "offset": 372
+        },
+        "value": 0
+      },
+      "sink_header.policy[4]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 388,
+          "length": 8,
+          "offset": 380
+        },
+        "value": 0
+      },
+      "sink_header.policy[5]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 396,
+          "length": 8,
+          "offset": 388
+        },
+        "value": 2
+      },
+      "sink_header.policy[6]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 404,
+          "length": 8,
+          "offset": 396
+        },
+        "value": 256
+      },
+      "sink_header.policy[7]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 412,
+          "length": 8,
+          "offset": 404
+        },
+        "value": 1
+      },
+      "sink_header.policy[8]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 420,
+          "length": 8,
+          "offset": 412
+        },
+        "value": 0
+      },
+      "sink_header.policy[9]": {
+        "encoding": "u64le",
+        "span": {
+          "end_exclusive": 428,
+          "length": 8,
+          "offset": 420
+        },
+        "value": 1
+      },
+      "sink_header.query_id": {
+        "encoding": "ASCII32",
+        "span": {
+          "end_exclusive": 180,
+          "length": 32,
+          "offset": 148
+        },
+        "value": "0123456789abcdef0123456789abcdef"
+      },
+      "sink_header.schema_sha256": {
+        "encoding": "ASCII64 lowercase SHA256",
+        "span": {
+          "end_exclusive": 644,
+          "length": 64,
+          "offset": 580
+        },
+        "value": "709e80c88487a2411e1ee4dfb9f22a861492d20c4765150c0c794abd70f8147c"
+      },
+      "sink_header.sink_id": {
+        "encoding": "ASCII32",
+        "span": {
+          "end_exclusive": 212,
+          "length": 32,
+          "offset": 180
+        },
+        "value": "fedcba9876543210fedcba9876543210"
+      },
+      "sink_header.source_sha256": {
+        "encoding": "ASCII64 lowercase SHA256",
+        "span": {
+          "end_exclusive": 340,
+          "length": 64,
+          "offset": 276
+        },
+        "value": "3268bbbda13feaeb38df1c4a404ccb7167f235a1a99cbc66c05a21cb17f41cb5"
+      }
+    },
+    "body_length": {
+      "encoding": "u64le",
+      "span": {
+        "end_exclusive": 20,
+        "length": 8,
+        "offset": 12
+      },
+      "value": 640
+    },
+    "checksum": {
+      "covers": {
+        "end_exclusive": 660,
+        "length": 660,
+        "offset": 0
+      },
+      "encoding": "ASCII64 lowercase SHA256",
+      "span": {
+        "end_exclusive": 724,
+        "length": 64,
+        "offset": 660
+      },
+      "value": "d4cc890cbae4c2668b3e0c4452dec93d91abb727f0f73cc2a55676ba305e0ec8"
+    },
+    "flags": {
+      "encoding": "u16le",
+      "span": {
+        "end_exclusive": 12,
+        "length": 2,
+        "offset": 10
+      },
+      "value": 0
+    },
+    "magic": {
+      "ascii": "CROWNRT1",
+      "span": {
+        "end_exclusive": 8,
+        "length": 8,
+        "offset": 0
+      }
+    },
+    "version": {
+      "encoding": "u16le",
+      "span": {
+        "end_exclusive": 10,
+        "length": 2,
+        "offset": 8
+      },
+      "value": 1
+    }
+  },
+  "lengths": {
+    "body": 640,
+    "checksum": 64,
+    "header_prefix": 20,
+    "record": 724
+  },
+  "values": {
+    "acknowledged_generation": 7,
+    "acknowledged_sequence": 11,
+    "query_id": "0123456789abcdef0123456789abcdef",
+    "root_checkpoint_sha256": "8d1a75dd2d7ffc51ab7b9552cb7d9d04e0e215b29d23f468f3b65d8c8872a03f",
+    "root_command_sequence": 13,
+    "root_first_generation": 3,
+    "root_generation": 7,
+    "root_physical_sequence": 11,
+    "sink_base_sequence": 10,
+    "sink_catalog_version": 5,
+    "sink_fields": 3,
+    "sink_first_generation": 3,
+    "sink_id": "fedcba9876543210fedcba9876543210",
+    "sink_physical_sha256": "a2bbc3d009cd0961875a033f9772bdcf6c904eaac6ec3f1fd0caf4dd51accb9a",
+    "sink_policy": [
+      1,
+      1000000,
+      18446744073709551615,
+      0,
+      0,
+      2,
+      256,
+      1,
+      0,
+      1,
+      0,
+      1,
+      1000000,
+      18446744073709551615,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1000000,
+      1,
+      1000000,
+      1,
+      1000000,
+      65536,
+      67108864
+    ],
+    "sink_schema_sha256": "709e80c88487a2411e1ee4dfb9f22a861492d20c4765150c0c794abd70f8147c",
+    "sink_source_sha256": "3268bbbda13feaeb38df1c4a404ccb7167f235a1a99cbc66c05a21cb17f41cb5"
+  },
+  "version": 1
+}

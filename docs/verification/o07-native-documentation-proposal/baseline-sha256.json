@@ -1,0 +1,46 @@
+{
+  "native_document_baselines": {
+    "README.md": "3b5f0c1b85a0ebc9c1ca64946f774aa08749244205d59752f5388022b4642402",
+    "docs/native_build.md": "c57b584855fabd8181317570f1b4be529c858d6751831802618706679156da58"
+  },
+  "reviewed_proposal_packages": {
+    "composed_explain": {
+      "package_sha256": "a4e759965fea2efcb3578080f0445d80579bb6f0daf1a5c36ea4149c6310f30a",
+      "readiness_sha256": "2b8687a6d96bad288614de5dbe20432c191cf8496b4762ad424a7623938113b1"
+    },
+    "native_integration": {
+      "package_sha256": "ae3aee4c94e185e96bef3755556ac0c8528927583463a1a5ae5e44096104ee78",
+      "readiness_sha256": "327b896e1bf302657cf52aa373618ae507077dd7bab6962c7794ce52804b4689"
+    }
+  },
+  "scope": "read-only pins for the documentation proposal; no native docs or frozen sources are edited",
+  "source_sha256": {
+    "docs/verification/o07-composed-explain-proposal/README.md": "ca6c18a74f6f16fde4a43a3030e33bfd46256c84d70bdd985ffdfbba5699444b",
+    "docs/verification/o07-composed-explain-proposal/overlay/include/crown/observability/explain.hpp": "70f89d1fd8adaead4ec08165a8b25887f60814c2ac5b77daa74147ebfdf490f8",
+    "docs/verification/o07-composed-explain-proposal/overlay/src/io/explain.cpp": "e2ac36d5071c0744e8970d543d1b55e47d2a76eee1ead423000b7764776a7a38",
+    "docs/verification/o07-composed-explain-proposal/overlay/src/observability/explain.cpp": "632e0248507f62d0d69585448f5457b53f14382cac3a8cb1b7c41426b76f2303",
+    "docs/verification/o07-composed-explain-proposal/overlay/src/runtime/session.cpp": "21912440bd3827aa9b8b92f86ad141291290c01bce4739255054ad3804645e95",
+    "docs/verification/o07-composed-explain-proposal/readiness.json": "2b8687a6d96bad288614de5dbe20432c191cf8496b4762ad424a7623938113b1",
+    "docs/verification/o07-cursor-observation-proposal/overlay/include/crown/io/cursor_observation.hpp": "44a6bda5bc97724335d1cd0930db0e9dc061381ba060a77ebc4a3a11989844bc",
+    "docs/verification/o07-cursor-observation-proposal/overlay/src/io/cursor_observation.cpp": "174b98b297a0217f22814cbc7b6ba68bb4c9cfccac6c640922d2a63bf8e8817a",
+    "docs/verification/o07-cursor-observation-proposal/overlay/src/runtime/delta.cpp": "17bf227b5d2e6fe1abb1d1cc75a14065e03c8b953223f73c007bfdb6e721111f",
+    "docs/verification/o07-cursor-observation-proposal/overlay/src/runtime/observation.cpp": "0bf7cda74c132206de6b3194b5a8e319d2cfd840f5af175c19cdb1de20f8bc82",
+    "docs/verification/o07-cursor-observation-proposal/overlay/src/runtime/physical.cpp": "54222792d22afe8dce5dc496a7a18d5a8c4962f2258e4db24bdc293375be871b",
+    "docs/verification/o07-mode-binding-proposal/overlay/include/crown/runtime/observation.hpp": "fd27b4d5e5fc1476f5b98b973e27c4fe5cb7a05cdda04c20f45a2e40e30a918f",
+    "docs/verification/o07-mode-binding-proposal/overlay/src/runtime/observation.cpp": "9f03a396babbba49ed37a0dabab2d026c1056166c723e640f8b5b9b0990e7ab2",
+    "docs/verification/o07-native-integration-proposal/README.md": "0f70e1aaad35a56cc568a83fd9f3da09dbc79974853bc2332162661228cc4b11",
+    "docs/verification/o07-native-integration-proposal/overlay/apps/crown/explain.cpp": "7fc01d06f7dcc63f06da2556dd7d385e2310aea6811784318afc7c41c512bf68",
+    "docs/verification/o07-native-integration-proposal/overlay/apps/crown/explain.hpp": "29cf9661aac780e70332fc7a1e8d5df6407ac7bc9e20b51ab3f63b36dd4b9350",
+    "docs/verification/o07-native-integration-proposal/overlay/apps/crown/main.cpp": "80e3c4592cfee63dc8991544e5366a0a2eb67939a57671fa09209023b27b0e1e",
+    "docs/verification/o07-native-integration-proposal/overlay/src/io/explain.cpp": "31a3d3f13347dbd84f2c81b56f389891d71c8ccdace259c7d81c0fa4149ca8be",
+    "docs/verification/o07-native-integration-proposal/readiness.json": "327b896e1bf302657cf52aa373618ae507077dd7bab6962c7794ce52804b4689",
+    "docs/verification/o07-native-integration-proposal/schemas/explain-report-v2.schema.json": "c4aa8c7c62e0608d7b035128a9bd9b561387c0c16491efa704d8b95b469c9f74",
+    "docs/verification/o07-native-integration-proposal/schemas/explain-tree-v2.schema.json": "608154cd56f807a283d4a86e58b20af1cce6605b8a77a2727ff084d7a7967335",
+    "docs/verification/o07-native-integration-proposal/schemas/query-explain-v1.schema.json": "b843e905e9a2a5c201847c2db8cd93fed85a836b56d6faa8d4319c70cd02979d",
+    "docs/verification/o07-native-integration-proposal/schemas/query-witness-v1.schema.json": "1e2121a6c7ce98f8e68650cf1bf54733db6eec0b4a254695dbafa84c10688f7e",
+    "docs/verification/o07-query-explain-proposal/overlay/include/crown/io/query_explain.hpp": "b21222a3b3c260aa1ab7b344aac9ba61458c980990c8557bc0c28dfc0829050a",
+    "docs/verification/o07-query-explain-proposal/overlay/include/crown/observability/query_explain.hpp": "9d867ef6f21540e29a40a240c3fd59089169ddddd116830fca7636010cdab13b",
+    "docs/verification/o07-query-explain-proposal/overlay/src/io/query_explain.cpp": "8c0ac1c1601cc51a38466f3cd6cd2d0d6a6f81011340bac647c24fd4e0fef1ae",
+    "docs/verification/o07-query-explain-proposal/overlay/src/observability/query_explain.cpp": "83a8e0e0c8e019708a7e0d8085562ce3de7f9433e3278073cfe192fdd20cf895"
+  }
+}

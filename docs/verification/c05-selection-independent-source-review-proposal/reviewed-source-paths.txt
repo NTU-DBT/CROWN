@@ -1,0 +1,9 @@
+docs/verification/c05-selection-implementation-proposal/overlay/include/crown/planner/selection.hpp
+docs/verification/c05-selection-implementation-proposal/overlay/include/crown/runtime/selection.hpp
+docs/verification/c05-selection-implementation-proposal/overlay/src/planner/selection.cpp
+docs/verification/c05-selection-implementation-proposal/overlay/src/planner/selection_binding.cpp
+docs/verification/c05-selection-implementation-proposal/overlay/src/planner/selection_budget.cpp
+docs/verification/c05-selection-implementation-proposal/overlay/src/planner/selection_cache.cpp
+docs/verification/c05-selection-implementation-proposal/overlay/src/planner/selection_detail.hpp
+docs/verification/c05-selection-implementation-proposal/overlay/src/planner/selection_payload.cpp
+docs/verification/c05-selection-implementation-proposal/overlay/src/runtime/selection.cpp

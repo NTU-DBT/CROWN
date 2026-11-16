@@ -1,0 +1,16 @@
+{
+  "recorded_utc": "2026-11-06T23:12:04.879989+00:00",
+  "scope": "excluded root adaptations for final-layout/native-test migration only",
+  "standalone_summary": "build/verification/o07-final-layer-adapted-tests-attempt-2.json",
+  "standalone_summary_sha256": "4bb381c68c114ec7f172373970e769594743bc8454a429532830f2c49e9bc0d6",
+  "sanitizer_summary": "build/verification/o07-final-sanitize-build-attempt-1.json",
+  "sanitizer_summary_sha256": "31b7cdd0e921d93f858ea8363888ec0f76f795865a3d4e23afee267201c4e7da",
+  "all20groups_pass": true,
+  "originals_unchanged": true,
+  "default_observation_mode": "timed; only explicit off+capture_transitions=true invalid",
+  "native_test_destinations": {
+    "runtime_observation_test.cpp": "tests/unit/runtime_observation_test.cpp",
+    "mode_binding_test.cpp": "tests/unit/observation_mode_binding_test.cpp",
+    "run_context_test.cpp": "tests/unit/observation_run_context_test.cpp"
+  }
+}

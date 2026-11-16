@@ -1,0 +1,659 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Excluded P07 candidate, diagnostic and snapshot report proposal",
+  "description": "Report-only structure. Native checked artifacts establish authority; schema validation does not establish proof validity, cross-field binding/height equality, or enumeration completeness. Original certificate witness is distinct from candidate upper. No cost-optimality claim.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/candidate"
+    },
+    {
+      "$ref": "#/$defs/progress"
+    },
+    {
+      "$ref": "#/$defs/snapshot"
+    }
+  ],
+  "$defs": {
+    "uint64": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "optional_uint64": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/uint64"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "binding": {
+      "oneOf": [
+        {
+          "$ref": "../../../schemas/cq-v1.schema.json"
+        },
+        {
+          "$ref": "../../../schemas/cq-v2.schema.json"
+        },
+        {
+          "$ref": "../../../schemas/cq-v3.schema.json"
+        }
+      ]
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "updates",
+        "arithmetic",
+        "planner",
+        "optimization",
+        "cost_model",
+        "canonicalization"
+      ],
+      "properties": {
+        "updates": {
+          "const": "mixed-full-row-set-v1"
+        },
+        "arithmetic": {
+          "const": "exact-nonnull-v1"
+        },
+        "planner": {
+          "const": "crown-tree-v1"
+        },
+        "optimization": {
+          "const": "structural-height-v1"
+        },
+        "cost_model": {
+          "const": "no-cost-v1"
+        },
+        "canonicalization": {
+          "const": "structural-tree-key-v1"
+        }
+      }
+    },
+    "certificate": {
+      "allOf": [
+        {
+          "oneOf": [
+            {
+              "$ref": "../../../schemas/height-certificate-v1.schema.json"
+            },
+            {
+              "$ref": "../../../schemas/height-certificate-v2.schema.json"
+            }
+          ]
+        },
+        {
+          "properties": {
+            "minimum_height": {
+              "$ref": "#/$defs/uint64"
+            },
+            "tree": {
+              "$ref": "../../../schemas/tree-v1.schema.json"
+            }
+          }
+        }
+      ]
+    },
+    "original_proof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope",
+        "certificate"
+      ],
+      "properties": {
+        "scope": {
+          "const": "original_query"
+        },
+        "certificate": {
+          "$ref": "#/$defs/certificate"
+        }
+      }
+    },
+    "counters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attempted",
+        "committed_transitions",
+        "allocation_failures",
+        "active_nanoseconds",
+        "current_depth",
+        "peak_depth"
+      ],
+      "properties": {
+        "attempted": {
+          "$ref": "#/$defs/uint64"
+        },
+        "committed_transitions": {
+          "$ref": "#/$defs/uint64"
+        },
+        "allocation_failures": {
+          "$ref": "#/$defs/uint64"
+        },
+        "active_nanoseconds": {
+          "$ref": "#/$defs/uint64"
+        },
+        "current_depth": {
+          "$ref": "#/$defs/uint64"
+        },
+        "peak_depth": {
+          "$ref": "#/$defs/uint64"
+        }
+      }
+    },
+    "statistics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "proposed",
+        "rejected",
+        "taller",
+        "duplicates",
+        "published",
+        "topologies",
+        "scope_tuples",
+        "cache_seeded"
+      ],
+      "properties": {
+        "proposed": {
+          "$ref": "#/$defs/uint64"
+        },
+        "rejected": {
+          "$ref": "#/$defs/uint64"
+        },
+        "taller": {
+          "$ref": "#/$defs/uint64"
+        },
+        "duplicates": {
+          "$ref": "#/$defs/uint64"
+        },
+        "published": {
+          "$ref": "#/$defs/uint64"
+        },
+        "topologies": {
+          "$ref": "#/$defs/uint64"
+        },
+        "scope_tuples": {
+          "$ref": "#/$defs/uint64"
+        },
+        "cache_seeded": {
+          "$ref": "#/$defs/uint64"
+        }
+      }
+    },
+    "phase_limit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "work",
+        "active_nanoseconds"
+      ],
+      "properties": {
+        "work": {
+          "$ref": "#/$defs/optional_uint64"
+        },
+        "active_nanoseconds": {
+          "$ref": "#/$defs/optional_uint64"
+        }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enumeration",
+        "logical_depth",
+        "records",
+        "cells",
+        "retained_candidates"
+      ],
+      "properties": {
+        "enumeration": {
+          "$ref": "#/$defs/phase_limit"
+        },
+        "logical_depth": {
+          "$ref": "#/$defs/optional_uint64"
+        },
+        "records": {
+          "$ref": "#/$defs/optional_uint64"
+        },
+        "cells": {
+          "$ref": "#/$defs/optional_uint64"
+        },
+        "retained_candidates": {
+          "$ref": "#/$defs/optional_uint64"
+        }
+      }
+    },
+    "checked_upper": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "proof_status",
+        "height",
+        "tree"
+      ],
+      "properties": {
+        "proof_status": {
+          "const": "checked_upper_only"
+        },
+        "height": {
+          "$ref": "#/$defs/uint64"
+        },
+        "tree": {
+          "$ref": "../../../schemas/tree-v1.schema.json"
+        }
+      }
+    },
+    "residual_trace": {
+      "$ref": "../../../schemas/residual-report-v1.schema.json#/$defs/trace"
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "sequence",
+        "residual_last_step",
+        "residual_trace"
+      ],
+      "properties": {
+        "source": {
+          "enum": [
+            "exact_witness",
+            "residual_seed",
+            "normal_form"
+          ]
+        },
+        "sequence": {
+          "$ref": "#/$defs/uint64"
+        },
+        "residual_last_step": {
+          "oneOf": [
+            {
+              "enum": [
+                "hierarchy_seed",
+                "native_leaf",
+                "generalized_leaf",
+                "generalized_graft",
+                "exact_repair",
+                "exact_original"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "residual_trace": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/residual_trace"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "source": {
+                "const": "residual_seed"
+              }
+            },
+            "required": [
+              "source"
+            ]
+          },
+          "then": {
+            "properties": {
+              "residual_last_step": {
+                "type": "string"
+              },
+              "residual_trace": {
+                "$ref": "#/$defs/residual_trace"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "source": {
+                "enum": [
+                  "exact_witness",
+                  "normal_form"
+                ]
+              }
+            },
+            "required": [
+              "source"
+            ]
+          },
+          "then": {
+            "properties": {
+              "residual_last_step": {
+                "type": "null"
+              },
+              "residual_trace": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "artifact",
+        "accounting",
+        "query_binding",
+        "context",
+        "family",
+        "optimization_scope",
+        "original_proof",
+        "height_relationship",
+        "checked_upper",
+        "structural_key",
+        "provenance"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "integer",
+          "const": 1
+        },
+        "artifact": {
+          "const": "minimum_height_candidate"
+        },
+        "accounting": {
+          "const": "continuation_v1"
+        },
+        "query_binding": {
+          "$ref": "#/$defs/binding"
+        },
+        "context": {
+          "$ref": "#/$defs/context"
+        },
+        "family": {
+          "const": "exact-seed/residual-seed/normal-form-v1"
+        },
+        "optimization_scope": {
+          "const": "structural_height_only"
+        },
+        "original_proof": {
+          "$ref": "#/$defs/original_proof"
+        },
+        "height_relationship": {
+          "const": "checked_upper_matches_supplied_original_minimum"
+        },
+        "checked_upper": {
+          "$ref": "#/$defs/checked_upper"
+        },
+        "structural_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
+      }
+    },
+    "snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "artifact",
+        "accounting",
+        "query_binding",
+        "context",
+        "family",
+        "optimization_scope",
+        "original_proof",
+        "family_exhausted",
+        "exhaustion_scope",
+        "candidate_count",
+        "prefix"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "integer",
+          "const": 1
+        },
+        "artifact": {
+          "const": "candidate_snapshot"
+        },
+        "accounting": {
+          "const": "continuation_v1"
+        },
+        "query_binding": {
+          "$ref": "#/$defs/binding"
+        },
+        "context": {
+          "$ref": "#/$defs/context"
+        },
+        "family": {
+          "const": "exact-seed/residual-seed/normal-form-v1"
+        },
+        "optimization_scope": {
+          "const": "structural_height_only"
+        },
+        "original_proof": {
+          "$ref": "#/$defs/original_proof"
+        },
+        "family_exhausted": {
+          "type": "boolean"
+        },
+        "exhaustion_scope": {
+          "const": "admitted_seeds_and_normal_form_v1_only"
+        },
+        "candidate_count": {
+          "$ref": "#/$defs/uint64"
+        },
+        "prefix": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/candidate"
+          }
+        }
+      }
+    },
+    "progress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "artifact",
+        "accounting",
+        "query_binding",
+        "context",
+        "family",
+        "optimization_scope",
+        "original_proof",
+        "report_role",
+        "phase",
+        "stop_reason",
+        "verified_original_height",
+        "family_exhausted",
+        "exhaustion_scope",
+        "candidate_count",
+        "work",
+        "statistics",
+        "records",
+        "cells",
+        "limit_revision",
+        "limits"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "integer",
+          "const": 1
+        },
+        "artifact": {
+          "const": "candidate_progress"
+        },
+        "accounting": {
+          "const": "continuation_v1"
+        },
+        "query_binding": {
+          "$ref": "#/$defs/binding"
+        },
+        "context": {
+          "$ref": "#/$defs/context"
+        },
+        "family": {
+          "const": "exact-seed/residual-seed/normal-form-v1"
+        },
+        "optimization_scope": {
+          "const": "structural_height_only"
+        },
+        "original_proof": {
+          "$ref": "#/$defs/original_proof"
+        },
+        "report_role": {
+          "const": "enumeration_diagnostic"
+        },
+        "phase": {
+          "enum": [
+            "admitted",
+            "exact_seed",
+            "residual_seed",
+            "enumerate",
+            "validate",
+            "canonicalize",
+            "publish",
+            "exhausted",
+            "failed",
+            "cancelled"
+          ]
+        },
+        "stop_reason": {
+          "enum": [
+            "none",
+            "candidate_ready",
+            "quantum_work",
+            "quantum_time",
+            "total_work",
+            "total_time",
+            "depth_limit",
+            "record_limit",
+            "cell_limit",
+            "candidate_capacity",
+            "allocation_failure",
+            "counter_overflow",
+            "invalid_quantum",
+            "internal_failure",
+            "exhausted",
+            "cancelled"
+          ]
+        },
+        "verified_original_height": {
+          "$ref": "#/$defs/uint64"
+        },
+        "family_exhausted": {
+          "type": "boolean"
+        },
+        "exhaustion_scope": {
+          "const": "admitted_seeds_and_normal_form_v1_only"
+        },
+        "candidate_count": {
+          "$ref": "#/$defs/uint64"
+        },
+        "work": {
+          "$ref": "#/$defs/counters"
+        },
+        "statistics": {
+          "$ref": "#/$defs/statistics"
+        },
+        "records": {
+          "$ref": "#/$defs/uint64"
+        },
+        "cells": {
+          "$ref": "#/$defs/uint64"
+        },
+        "limit_revision": {
+          "$ref": "#/$defs/uint64"
+        },
+        "limits": {
+          "$ref": "#/$defs/limits"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "phase": {
+                "const": "exhausted"
+              }
+            },
+            "required": [
+              "phase"
+            ]
+          },
+          "then": {
+            "properties": {
+              "family_exhausted": {
+                "const": true
+              },
+              "stop_reason": {
+                "const": "exhausted"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "family_exhausted": {
+                "const": true
+              }
+            },
+            "required": [
+              "family_exhausted"
+            ]
+          },
+          "then": {
+            "properties": {
+              "phase": {
+                "const": "exhausted"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "phase": {
+                "const": "cancelled"
+              }
+            },
+            "required": [
+              "phase"
+            ]
+          },
+          "then": {
+            "properties": {
+              "family_exhausted": {
+                "const": false
+              },
+              "stop_reason": {
+                "const": "cancelled"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

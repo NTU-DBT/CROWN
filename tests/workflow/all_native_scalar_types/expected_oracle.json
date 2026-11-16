@@ -1,0 +1,442 @@
+{
+  "schema_version": 1,
+  "query": "all_native_scalar_types",
+  "oracle_definition": "Full-head set query covering int64 boundaries, a NUL string, UTF-8 strings, bool, tagged Gregorian dates, and exact tagged decimals; alternate decimal spelling is a typed duplicate.",
+  "initial_current_rows": [],
+  "events": [
+    {
+      "sequence": 1,
+      "source_position": {
+        "source": "all-native-scalar-types-input",
+        "offset": 100
+      },
+      "input": {
+        "table": "scalar_values",
+        "operation": "insert",
+        "values": [
+          -9223372036854775808,
+          "NUL\u0000inside",
+          true,
+          {
+            "date": "2000-02-29"
+          },
+          {
+            "decimal": "-12.340"
+          }
+        ]
+      },
+      "current_rows": [
+        [
+          -9223372036854775808,
+          "NUL\u0000inside",
+          true,
+          {
+            "date": "2000-02-29"
+          },
+          {
+            "decimal": "-12.34"
+          }
+        ]
+      ],
+      "added": [
+        [
+          -9223372036854775808,
+          "NUL\u0000inside",
+          true,
+          {
+            "date": "2000-02-29"
+          },
+          {
+            "decimal": "-12.34"
+          }
+        ]
+      ],
+      "removed": [],
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            -9223372036854775808,
+            "NUL\u0000inside",
+            true,
+            {
+              "date": "2000-02-29"
+            },
+            {
+              "decimal": "-12.34"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sequence": 2,
+      "source_position": {
+        "source": "all-native-scalar-types-input",
+        "offset": 200
+      },
+      "input": {
+        "table": "scalar_values",
+        "operation": "insert",
+        "values": [
+          9223372036854775807,
+          "café/雪",
+          false,
+          {
+            "date": "2024-02-29"
+          },
+          {
+            "decimal": "0.00000000000000000000000000000000000001"
+          }
+        ]
+      },
+      "current_rows": [
+        [
+          -9223372036854775808,
+          "NUL\u0000inside",
+          true,
+          {
+            "date": "2000-02-29"
+          },
+          {
+            "decimal": "-12.34"
+          }
+        ],
+        [
+          9223372036854775807,
+          "café/雪",
+          false,
+          {
+            "date": "2024-02-29"
+          },
+          {
+            "decimal": "0.00000000000000000000000000000000000001"
+          }
+        ]
+      ],
+      "added": [
+        [
+          9223372036854775807,
+          "café/雪",
+          false,
+          {
+            "date": "2024-02-29"
+          },
+          {
+            "decimal": "0.00000000000000000000000000000000000001"
+          }
+        ]
+      ],
+      "removed": [],
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            9223372036854775807,
+            "café/雪",
+            false,
+            {
+              "date": "2024-02-29"
+            },
+            {
+              "decimal": "0.00000000000000000000000000000000000001"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sequence": 3,
+      "source_position": {
+        "source": "all-native-scalar-types-input",
+        "offset": 300
+      },
+      "input": {
+        "table": "scalar_values",
+        "operation": "insert",
+        "values": [
+          -9223372036854775808,
+          "NUL\u0000inside",
+          true,
+          {
+            "date": "2000-02-29"
+          },
+          {
+            "decimal": "-12.34"
+          }
+        ]
+      },
+      "current_rows": [
+        [
+          -9223372036854775808,
+          "NUL\u0000inside",
+          true,
+          {
+            "date": "2000-02-29"
+          },
+          {
+            "decimal": "-12.34"
+          }
+        ],
+        [
+          9223372036854775807,
+          "café/雪",
+          false,
+          {
+            "date": "2024-02-29"
+          },
+          {
+            "decimal": "0.00000000000000000000000000000000000001"
+          }
+        ]
+      ],
+      "added": [],
+      "removed": [],
+      "signed_delta": []
+    },
+    {
+      "sequence": 4,
+      "source_position": {
+        "source": "all-native-scalar-types-input",
+        "offset": 400
+      },
+      "input": {
+        "table": "scalar_values",
+        "operation": "delete",
+        "values": [
+          9223372036854775807,
+          "café/雪",
+          false,
+          {
+            "date": "2024-02-29"
+          },
+          {
+            "decimal": "0.00000000000000000000000000000000000001"
+          }
+        ]
+      },
+      "current_rows": [
+        [
+          -9223372036854775808,
+          "NUL\u0000inside",
+          true,
+          {
+            "date": "2000-02-29"
+          },
+          {
+            "decimal": "-12.34"
+          }
+        ]
+      ],
+      "added": [],
+      "removed": [
+        [
+          9223372036854775807,
+          "café/雪",
+          false,
+          {
+            "date": "2024-02-29"
+          },
+          {
+            "decimal": "0.00000000000000000000000000000000000001"
+          }
+        ]
+      ],
+      "signed_delta": [
+        {
+          "operation": "delete",
+          "values": [
+            9223372036854775807,
+            "café/雪",
+            false,
+            {
+              "date": "2024-02-29"
+            },
+            {
+              "decimal": "0.00000000000000000000000000000000000001"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sequence": 5,
+      "source_position": {
+        "source": "all-native-scalar-types-input",
+        "offset": 500
+      },
+      "input": {
+        "table": "scalar_values",
+        "operation": "delete",
+        "values": [
+          9223372036854775807,
+          "café/雪",
+          false,
+          {
+            "date": "2024-02-29"
+          },
+          {
+            "decimal": "0.00000000000000000000000000000000000001"
+          }
+        ]
+      },
+      "current_rows": [
+        [
+          -9223372036854775808,
+          "NUL\u0000inside",
+          true,
+          {
+            "date": "2000-02-29"
+          },
+          {
+            "decimal": "-12.34"
+          }
+        ]
+      ],
+      "added": [],
+      "removed": [],
+      "signed_delta": []
+    },
+    {
+      "sequence": 6,
+      "source_position": {
+        "source": "all-native-scalar-types-input",
+        "offset": 600
+      },
+      "input": {
+        "table": "scalar_values",
+        "operation": "insert",
+        "values": [
+          0,
+          "NUL\u0000/雪",
+          true,
+          {
+            "date": "1900-02-28"
+          },
+          {
+            "decimal": "123.45"
+          }
+        ]
+      },
+      "current_rows": [
+        [
+          -9223372036854775808,
+          "NUL\u0000inside",
+          true,
+          {
+            "date": "2000-02-29"
+          },
+          {
+            "decimal": "-12.34"
+          }
+        ],
+        [
+          0,
+          "NUL\u0000/雪",
+          true,
+          {
+            "date": "1900-02-28"
+          },
+          {
+            "decimal": "123.45"
+          }
+        ]
+      ],
+      "added": [
+        [
+          0,
+          "NUL\u0000/雪",
+          true,
+          {
+            "date": "1900-02-28"
+          },
+          {
+            "decimal": "123.45"
+          }
+        ]
+      ],
+      "removed": [],
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            "NUL\u0000/雪",
+            true,
+            {
+              "date": "1900-02-28"
+            },
+            {
+              "decimal": "123.45"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "sequence": 7,
+      "source_position": {
+        "source": "all-native-scalar-types-input",
+        "offset": 700
+      },
+      "input": {
+        "table": "scalar_values",
+        "operation": "delete",
+        "values": [
+          -9223372036854775808,
+          "NUL\u0000inside",
+          true,
+          {
+            "date": "2000-02-29"
+          },
+          {
+            "decimal": "-12.340"
+          }
+        ]
+      },
+      "current_rows": [
+        [
+          0,
+          "NUL\u0000/雪",
+          true,
+          {
+            "date": "1900-02-28"
+          },
+          {
+            "decimal": "123.45"
+          }
+        ]
+      ],
+      "added": [],
+      "removed": [
+        [
+          -9223372036854775808,
+          "NUL\u0000inside",
+          true,
+          {
+            "date": "2000-02-29"
+          },
+          {
+            "decimal": "-12.34"
+          }
+        ]
+      ],
+      "signed_delta": [
+        {
+          "operation": "delete",
+          "values": [
+            -9223372036854775808,
+            "NUL\u0000inside",
+            true,
+            {
+              "date": "2000-02-29"
+            },
+            {
+              "decimal": "-12.34"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

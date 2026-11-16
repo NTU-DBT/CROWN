@@ -1,0 +1,58 @@
+--- docs/verification/c05-selection-independent-tests-proposal/tests/selection_cache_independent_test.cpp	2026-11-07 16:39:33.006396366 +0800
++++ docs/verification/c05-selection-independent-cache-correction-proposal/tests/selection_cache_independent_test.cpp	2026-11-07 17:33:11.398160037 +0800
+@@ -162,10 +162,13 @@
+     requests.push_back(request);
+   }
+   std::set<std::string> keys{*seed.cache_binding()};
++  std::vector<s::Selection> retained_namespaces;
++  retained_namespaces.push_back(seed);
+   for (const auto& request:requests) {
+     const auto result=choose(f.all,source,request,cache);
+     check(result.cache_observation().disposition==s::CacheDisposition::inserted && keys.insert(*result.cache_binding()).second,
+           "requested policy/fallback/family/resource field was omitted from cache namespace");
++    retained_namespaces.push_back(result);
+   }
+   for (unsigned field=0;field<6;++field) {
+     PhysicalOptions options;
+@@ -177,6 +180,33 @@
+       case 4:++*options.limits.work_limit;break;
+       case 5:++*options.limits.identity.work_limit;break;default:break;
+     }
++    if (field==0) {
++      // Native identity admits only exact-nonnull-v1. Keep this field as a
++      // rejection/atomicity check, not a supported alternate namespace.
++      const auto before=cache.statistics();
++      const auto rejected=s::select(f.all,s::Source{s::DirectCQ{options}},height(),{},&cache,s::CacheUse::read_write);
++      check(rejected.stop==s::Stop::lowering_failure && rejected.stage==s::Stage::lowering &&
++            rejected.resource==s::Resource::none && !rejected.component_stop && !rejected.selection &&
++            cache.statistics()==before,
++            "unsupported arithmetic published a result or changed cache statistics");
++      auto expected=before;
++      for (const auto& retained:retained_namespaces) {
++        const auto existing=choose(f.all,source,retained.request(),cache,s::CacheUse::read_only);
++        ++expected.hits;
++        check(existing.cache_observation().disposition==s::CacheDisposition::hit &&
++              existing.cache_binding()==retained.cache_binding() &&
++              &existing.plan().tree()==&retained.plan().tree() && cache.statistics()==expected,
++              "unsupported arithmetic changed a retained entry or retry counters");
++      }
++      options.policy.arithmetic="exact-nonnull-v1";
++      const auto retry=choose(f.all,s::Source{s::DirectCQ{options}},height(),cache);
++      ++expected.hits;
++      check(retry.cache_observation().disposition==s::CacheDisposition::hit &&
++            retry.cache_binding()==seed.cache_binding() && &retry.plan().tree()==&seed.plan().tree() &&
++            cache.statistics()==expected,
++            "supported same-configuration retry lost the original cache artifact");
++      continue;
++    }
+     const auto result=choose(f.all,s::Source{s::DirectCQ{options}},height(),cache);
+     check(result.cache_observation().disposition==s::CacheDisposition::inserted && keys.insert(*result.cache_binding()).second,
+           "exact physical options namespace was omitted from cache key");
+@@ -239,6 +269,6 @@
+     proof_refresh_and_raw_tree(fixture);
+     request_source_family_namespace(fixture);
+     current_abort_noop_reset(fixture);
+-    std::cout<<"C05 independent cache groups=5 request_fields=13 physical_options=6 FIFO=2 raw_tree_aliases=2\n";
++    std::cout<<"C05 independent cache groups=5 request_fields=13 physical_options_supported=5 physical_options_rejected=1 FIFO=2 raw_tree_aliases=2\n";
+   } catch(const std::exception& error){std::cerr<<error.what()<<'\n';return 1;}
+ }

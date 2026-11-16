@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN Next version-2 direct-CQ reference document",
+  "description": "The native reader additionally checks identifiers, exact JSON integer tokens, Gregorian date validity, decimal precision and scale, cross references, typing, bound variables, and contiguous update sequences. JSON Schema cannot distinguish an integer token from a floating-point token such as 1.0 in every implementation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "semantics", "catalog", "query"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 2},
+    "semantics": {"const": "set"},
+    "catalog": {
+      "type": "object", "additionalProperties": false,
+      "required": ["version", "tables"],
+      "properties": {
+        "version": {"$ref": "#/$defs/positive_uint64"},
+        "tables": {"type": "array", "items": {"$ref": "#/$defs/table"}}
+      }
+    },
+    "query": {
+      "type": "object", "additionalProperties": false,
+      "required": ["variables", "atoms", "head"],
+      "properties": {
+        "variables": {"type": "array", "items": {"$ref": "#/$defs/column"}},
+        "atoms": {"type": "array", "items": {"$ref": "#/$defs/atom"}},
+        "head": {"type": "array", "items": {"$ref": "#/$defs/output"}},
+        "contradiction": {"type": "boolean", "default": false}
+      }
+    },
+    "initial": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["table", "rows"],
+        "properties": {
+          "table": {"$ref": "#/$defs/identifier"},
+          "rows": {"type": "array", "items": {"$ref": "#/$defs/row"}}
+        }
+      }
+    },
+    "updates": {"type": "array", "items": {"$ref": "#/$defs/update"}}
+  },
+  "$defs": {
+    "identifier": {"type": "string", "minLength": 1},
+    "positive_uint64": {"type": "integer", "minimum": 1, "maximum": 18446744073709551615},
+    "scalar_type": {"enum": ["int64", "string", "bool", "date", "decimal"]},
+    "value": {
+      "oneOf": [
+        {"type": "integer", "minimum": -9223372036854775808, "maximum": 9223372036854775807},
+        {"type": "string"},
+        {"type": "boolean"},
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["date"],
+          "properties": {"date": {"type": "string", "minLength": 10, "maxLength": 10, "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"}}
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["decimal"],
+          "properties": {"decimal": {"type": "string", "pattern": "^[+-]?[0-9]+(\\.[0-9]+)?$"}}
+        }
+      ]
+    },
+    "row": {"type": "array", "items": {"$ref": "#/$defs/value"}},
+    "column": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "type"],
+      "properties": {"name": {"$ref": "#/$defs/identifier"}, "type": {"$ref": "#/$defs/scalar_type"}}
+    },
+    "table": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "columns"],
+      "properties": {
+        "name": {"$ref": "#/$defs/identifier"},
+        "columns": {"type": "array", "items": {"$ref": "#/$defs/column"}}
+      }
+    },
+    "term": {
+      "oneOf": [
+        {"type": "object", "additionalProperties": false, "required": ["var"], "properties": {"var": {"$ref": "#/$defs/identifier"}}},
+        {"type": "object", "additionalProperties": false, "required": ["const"], "properties": {"const": {"$ref": "#/$defs/value"}}},
+        {"type": "object", "additionalProperties": false, "required": ["ignore"], "properties": {"ignore": {"const": true}}}
+      ]
+    },
+    "atom": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "table", "terms"],
+      "properties": {
+        "id": {"$ref": "#/$defs/identifier"},
+        "table": {"$ref": "#/$defs/identifier"},
+        "terms": {"type": "array", "items": {"$ref": "#/$defs/term"}}
+      }
+    },
+    "output": {
+      "type": "object", "additionalProperties": false,
+      "required": ["var"],
+      "properties": {"var": {"$ref": "#/$defs/identifier"}, "alias": {"type": "string"}}
+    },
+    "update": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "sequence", "table", "op", "values"],
+      "properties": {
+        "schema_version": {"type": "integer", "const": 2},
+        "sequence": {"$ref": "#/$defs/positive_uint64"},
+        "table": {"$ref": "#/$defs/identifier"},
+        "op": {"enum": ["insert", "delete"]},
+        "values": {"$ref": "#/$defs/row"}
+      }
+    }
+  }
+}

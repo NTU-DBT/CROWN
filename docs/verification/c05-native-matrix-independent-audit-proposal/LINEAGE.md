@@ -1,0 +1,13 @@
+# Authorship, evidence and remaining limits
+
+The author wrote the earlier C05 independent five-consumer/22-group fixtures, including literal selection, cache, byte framing, aggregate budgets and focused late-publication failures. The author also wrote the preceding C02 independent arithmetic/public fixtures and matrix auditor. The author did not implement the C05 selector or C02 ranker. This packet independently reconciles recorded execution and registration; it does not relabel those earlier oracles as newly independent authorship.
+
+The52 immutable input FILEs cover the actual execution freeze/application/capture, accepted C02 matrix/auditor/LastTest/narrow allocation record, accepted C05 preparation and final matching SAN receipts, staged application, held driver package, exact publication inventories/reviews, current C05 source/output contracts, native clean helper and the historical clean diagnostic log. Historical INPUT/source-manifest entries are never replayed. Additional raw sources, retained generated artifacts, current compiler/actual headers and terminal outputs are read and pinned by the root-run audit itself, with a closing stability pass.
+
+All158 outputs are examined; there is no invented numeric-row total. The retained96C parser recipe and warning policy remain independent of the C++ target inventory. Old143 test properties omit only generated `_BACKTRACE_TRIPLES`, whose source-line references moved when CMake registration was extended; runtime settings and argv remain exact.
+
+The current ordinary compiler database has238 entries, but the auditor must observe exactly24 new compile argv and214 preserved objects. Retained predecessor object bytes and project dependencies support that narrow equality claim. No historical system/generated-header digest was captured by the accepted C02 audit; current observations cannot establish retrospective equality. The clean238 fresh leg records the current inputs directly and separately.
+
+The accepted preparation does not establish exact positive real-normalized replay/normalization boundary thresholds from the DirectCQ algebra tests. Native O0 sanitizer duration also remains unproven before its leg runs. Existing per-test limits are unchanged, and a timeout fails. The auditor checks the explicit root quiet-window decision without claiming an operating-system process census.
+
+As of draft authoring, root reports current Release terminal158/158 while other legs remain pending or live. Those progress messages are not baked into static input acceptance or used to synthesize missing results. Root alone executes the auditor and all project tools. No result from a live log is promoted to pass, and this packet does not advance C05 or the full78-card goal.

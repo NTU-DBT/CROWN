@@ -1,0 +1,15 @@
+{
+  "status": "sealed_read_only_assigned_completion_audit",
+  "files": {
+    "assemble-before-inventory-fix.py": "3369e9ef4ed269ab76fbdbdf62d0fc8812f9da217fd84955d2f5b7a2a5efea55",
+    "assemble.py": "7f8f460fde807ad951ed9893bafa9c84740a134b5814945ac4bbc9a7a1f64a7d",
+    "current-source-pins.json": "2983e1bcebf34d01e3ae19c2d5ecf7d7a096e7f39ae44725c980a20e6b954f09",
+    "inventory-entry-errors-v1.json": "d39da2c3d49c3bc3b7aa2ca6418c526a4b6c3e48d07e439e9558dd58d29dfda1",
+    "inventory-entry-errors-v2.json": "a9db9090e1d172542405d2632ba0517b4291e5ac5158cbec7ec9fecdb8bff5c9",
+    "inventory-entry-errors.json": "a9db9090e1d172542405d2632ba0517b4291e5ac5158cbec7ec9fecdb8bff5c9",
+    "literal-tasks.json": "3a2f2b0ee7d48b1a4d0382276795fad82f56d08ec8ddc7572b67b46c1a553a24",
+    "receiving.json": "92d94f2f59cbe63f9f6faddfd6bc8bf80053c6033938106cd8c060d2c3baf9a9",
+    "requirements.json": "96f3f2023b0dc8719d02395255a6238a90158e8641b2f3a06b535054992b739f",
+    "review.md": "ff45807fc21243e3663079d1f829d59b1ecd08f8eaef7156b75804f7625aeb1f"
+  }
+}

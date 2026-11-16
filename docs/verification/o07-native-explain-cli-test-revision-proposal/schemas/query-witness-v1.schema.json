@@ -1,0 +1,1288 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Shape contract only. JSON/flags never mint typed planner authority; source accessors and independent semantic checks remain necessary.",
+  "additionalProperties": false,
+  "title": "Original typed checked witness export v1",
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "crown_query_witness"
+    },
+    "version": {
+      "const": 1
+    },
+    "authority": {
+      "const": "typed_checked_original_witness"
+    },
+    "height": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "binding": {
+      "$ref": "#/$defs/binding"
+    },
+    "tree": {
+      "$ref": "#/$defs/tree"
+    }
+  },
+  "required": [
+    "format",
+    "version",
+    "authority",
+    "height",
+    "binding",
+    "tree"
+  ],
+  "$defs": {
+    "scalar": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "int64"
+            },
+            "value": {
+              "type": "integer",
+              "minimum": -9223372036854775808,
+              "maximum": 9223372036854775807
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "bool"
+            },
+            "value": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "date"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "decimal"
+            },
+            "value": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "value"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "term": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "variable"
+            },
+            "variable": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            }
+          },
+          "required": [
+            "kind",
+            "variable"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "constant"
+            },
+            "constant": {
+              "$ref": "#/$defs/scalar"
+            }
+          },
+          "required": [
+            "kind",
+            "constant"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "ignored_column"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "decimal": {
+      "type": "object",
+      "properties": {
+        "precision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "scale": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        }
+      },
+      "required": [
+        "precision",
+        "scale"
+      ],
+      "additionalProperties": false
+    },
+    "column": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "int64",
+            "string",
+            "bool",
+            "date",
+            "decimal"
+          ]
+        },
+        "nullable": {
+          "type": "boolean"
+        },
+        "collation": {
+          "const": "binary"
+        },
+        "decimal": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/decimal"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "nullable",
+        "collation",
+        "decimal"
+      ],
+      "additionalProperties": false
+    },
+    "constraint": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "unique"
+            },
+            "name": {
+              "type": "string"
+            },
+            "status": {
+              "enum": [
+                "enforced",
+                "untrusted"
+              ]
+            },
+            "columns": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 18446744073709551615
+              }
+            }
+          },
+          "required": [
+            "kind",
+            "name",
+            "status",
+            "columns"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "foreign_key"
+            },
+            "name": {
+              "type": "string"
+            },
+            "status": {
+              "enum": [
+                "enforced",
+                "untrusted"
+              ]
+            },
+            "columns": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 18446744073709551615
+              }
+            },
+            "referenced_table": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "referenced_columns": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 18446744073709551615
+              }
+            }
+          },
+          "required": [
+            "kind",
+            "name",
+            "status",
+            "columns",
+            "referenced_table",
+            "referenced_columns"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "table": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "source_schema_version": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/column"
+          }
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/constraint"
+          }
+        },
+        "statistics": {
+          "type": "object",
+          "properties": {
+            "row_count": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "distinct_counts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "columns": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 18446744073709551615
+                    }
+                  },
+                  "estimate": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 18446744073709551615
+                  }
+                },
+                "required": [
+                  "columns",
+                  "estimate"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "row_count",
+            "distinct_counts"
+          ],
+          "additionalProperties": false
+        },
+        "key_hints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "columns": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                }
+              },
+              "reason": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "columns",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "name",
+        "source_schema_version",
+        "columns",
+        "constraints",
+        "statistics",
+        "key_hints"
+      ],
+      "additionalProperties": false
+    },
+    "catalog": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "tables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/table"
+          }
+        }
+      },
+      "required": [
+        "version",
+        "tables"
+      ],
+      "additionalProperties": false
+    },
+    "query": {
+      "type": "object",
+      "properties": {
+        "contradiction": {
+          "type": "boolean"
+        },
+        "variables": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "type": {
+                "enum": [
+                  "int64",
+                  "string",
+                  "bool",
+                  "date",
+                  "decimal"
+                ]
+              }
+            },
+            "required": [
+              "name",
+              "type"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "atoms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "occurrence": {
+                "type": "string"
+              },
+              "table": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 18446744073709551615
+              },
+              "terms": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/term"
+                }
+              }
+            },
+            "required": [
+              "occurrence",
+              "table",
+              "terms"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "head": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "variable": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 18446744073709551615
+              },
+              "alias": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "variable",
+              "alias"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "contradiction",
+        "variables",
+        "atoms",
+        "head"
+      ],
+      "additionalProperties": false
+    },
+    "binding": {
+      "type": "object",
+      "properties": {
+        "catalog": {
+          "$ref": "#/$defs/catalog"
+        },
+        "query": {
+          "$ref": "#/$defs/query"
+        }
+      },
+      "required": [
+        "catalog",
+        "query"
+      ],
+      "additionalProperties": false
+    },
+    "tree": {
+      "type": "object",
+      "properties": {
+        "root": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "claimed_connex": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 18446744073709551615
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "claimed_native_height": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "kind": {
+                "enum": [
+                  "native",
+                  "generalized"
+                ]
+              },
+              "scope": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                }
+              },
+              "children": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                }
+              },
+              "occurrence": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 18446744073709551615
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "claimed_separator": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 18446744073709551615
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "scope",
+              "children",
+              "occurrence",
+              "claimed_separator"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "root",
+        "claimed_connex",
+        "claimed_native_height",
+        "nodes"
+      ],
+      "additionalProperties": false
+    },
+    "counters": {
+      "type": "object",
+      "properties": {
+        "attempted": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "committed_transitions": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "allocation_failures": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "active_nanoseconds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "current_depth": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "peak_depth": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "active_nanoseconds_at_cap": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "attempted",
+        "committed_transitions",
+        "allocation_failures",
+        "active_nanoseconds",
+        "current_depth",
+        "peak_depth",
+        "active_nanoseconds_at_cap"
+      ],
+      "additionalProperties": false
+    },
+    "phase_limit": {
+      "type": "object",
+      "properties": {
+        "work": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "active_nanoseconds": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "work",
+        "active_nanoseconds"
+      ],
+      "additionalProperties": false
+    },
+    "search_limits": {
+      "type": "object",
+      "properties": {
+        "producer": {
+          "$ref": "#/$defs/phase_limit"
+        },
+        "replay": {
+          "$ref": "#/$defs/phase_limit"
+        },
+        "logical_depth": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "producer",
+        "replay",
+        "logical_depth"
+      ],
+      "additionalProperties": false
+    },
+    "replay_limits": {
+      "type": "object",
+      "properties": {
+        "phase": {
+          "$ref": "#/$defs/phase_limit"
+        },
+        "logical_depth": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "phase",
+        "logical_depth"
+      ],
+      "additionalProperties": false
+    },
+    "statistics": {
+      "type": "object",
+      "properties": {
+        "work": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "states": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "partitions": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "candidates": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "cache_hits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "certificate_work": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "hierarchy_tests": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "hierarchy_hits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "singleton_hits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "empty_body_hits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "component_splits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "symmetry_skips": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "bound_prunes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        }
+      },
+      "required": [
+        "work",
+        "states",
+        "partitions",
+        "candidates",
+        "cache_hits",
+        "certificate_work",
+        "hierarchy_tests",
+        "hierarchy_hits",
+        "singleton_hits",
+        "empty_body_hits",
+        "component_splits",
+        "symmetry_skips",
+        "bound_prunes"
+      ],
+      "additionalProperties": false
+    },
+    "search": {
+      "type": "object",
+      "properties": {
+        "policy": {
+          "enum": [
+            "strict",
+            "best_found"
+          ]
+        },
+        "phase": {
+          "enum": [
+            "admitted",
+            "preprocess",
+            "search",
+            "build_incumbent",
+            "validate_incumbent",
+            "export_proof",
+            "replay",
+            "complete",
+            "failed",
+            "cancelled",
+            "moved_from"
+          ]
+        },
+        "recorded_last_stop": {
+          "enum": [
+            "none",
+            "quantum_work",
+            "quantum_time",
+            "total_work",
+            "total_time",
+            "depth_limit",
+            "allocation_failure",
+            "counter_overflow",
+            "invalid_quantum",
+            "invalid_certificate",
+            "internal_failure",
+            "complete",
+            "cancelled",
+            "moved_from"
+          ]
+        },
+        "result_kind": {
+          "enum": [
+            "unfinished",
+            "verified_optimum",
+            "verified_infeasible",
+            "failed"
+          ]
+        },
+        "stop_scope": {
+          "const": "owner_last_stop; nonmutating_zero_quantum_return_is_not_retained"
+        },
+        "observed_height_interval": {
+          "type": "object",
+          "properties": {
+            "lower": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "upper": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "lower_evidence": {
+              "enum": [
+                "universal",
+                "independently_checked"
+              ]
+            },
+            "infeasible": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "lower",
+            "upper",
+            "lower_evidence",
+            "infeasible"
+          ],
+          "additionalProperties": false
+        },
+        "producer_complete": {
+          "type": "boolean"
+        },
+        "proof_complete": {
+          "type": "boolean"
+        },
+        "limit_revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "producer": {
+          "$ref": "#/$defs/counters"
+        },
+        "replay": {
+          "$ref": "#/$defs/counters"
+        },
+        "structural_counters": {
+          "$ref": "#/$defs/statistics"
+        },
+        "limits": {
+          "$ref": "#/$defs/search_limits"
+        }
+      },
+      "required": [
+        "policy",
+        "phase",
+        "recorded_last_stop",
+        "result_kind",
+        "stop_scope",
+        "observed_height_interval",
+        "producer_complete",
+        "proof_complete",
+        "limit_revision",
+        "producer",
+        "replay",
+        "structural_counters",
+        "limits"
+      ],
+      "additionalProperties": false
+    },
+    "replay": {
+      "type": "object",
+      "properties": {
+        "phase": {
+          "enum": [
+            "admitted",
+            "dispatch",
+            "validate_upper",
+            "build_scopes",
+            "classify_scope_orbits",
+            "index_claims",
+            "order_claims",
+            "prove_claim",
+            "match_root",
+            "complete",
+            "failed",
+            "cancelled",
+            "moved_from"
+          ]
+        },
+        "recorded_last_stop": {
+          "enum": [
+            "none",
+            "quantum_work",
+            "quantum_time",
+            "total_work",
+            "total_time",
+            "depth_limit",
+            "allocation_failure",
+            "counter_overflow",
+            "invalid_quantum",
+            "invalid_certificate",
+            "internal_failure",
+            "complete",
+            "cancelled",
+            "moved_from"
+          ]
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "valid": {
+          "type": "boolean"
+        },
+        "checked_claims": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "limit_revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "work": {
+          "$ref": "#/$defs/counters"
+        },
+        "claim_scope": {
+          "const": "unchecked_input_claim_details_not_exposed_until_checked_handle"
+        },
+        "stop_scope": {
+          "const": "owner_last_stop; nonmutating_zero_quantum_return_is_not_retained"
+        },
+        "limits": {
+          "$ref": "#/$defs/replay_limits"
+        }
+      },
+      "required": [
+        "phase",
+        "recorded_last_stop",
+        "complete",
+        "valid",
+        "checked_claims",
+        "limit_revision",
+        "work",
+        "claim_scope",
+        "stop_scope",
+        "limits"
+      ],
+      "additionalProperties": false
+    },
+    "height": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "enum": [
+            "unknown",
+            "owner_checked_upper_unpublished",
+            "checked_upper",
+            "verified_optimum",
+            "verified_infeasible"
+          ]
+        },
+        "lower": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "upper": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lower_evidence": {
+          "enum": [
+            "typed_independent_proof",
+            "p06_universal_nonempty_or_empty_body_bound"
+          ]
+        },
+        "upper_evidence": {
+          "enum": [
+            "typed_checked_original_witness",
+            "owner_observed_checked_upper_witness_unpublished",
+            "none"
+          ]
+        },
+        "minimum_proven": {
+          "type": "boolean"
+        },
+        "infeasible_proven": {
+          "type": "boolean"
+        },
+        "witness_exportable": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "status",
+        "lower",
+        "upper",
+        "lower_evidence",
+        "upper_evidence",
+        "minimum_proven",
+        "infeasible_proven",
+        "witness_exportable"
+      ],
+      "additionalProperties": false
+    },
+    "witness": {
+      "type": "object",
+      "properties": {
+        "authority": {
+          "const": "typed_validated_incumbent_exact_original_binding"
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "tree": {
+          "$ref": "#/$defs/tree"
+        }
+      },
+      "required": [
+        "authority",
+        "height",
+        "tree"
+      ],
+      "additionalProperties": false
+    },
+    "certificate": {
+      "type": "object",
+      "properties": {
+        "authority": {
+          "const": "typed_independently_checked_original_binding"
+        },
+        "algorithm": {
+          "type": "string"
+        },
+        "minimum_height": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tree": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/tree"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lower_bounds": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "occurrences": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                }
+              },
+              "generalized_allowed": {
+                "type": "boolean"
+              },
+              "connex_reachable": {
+                "type": "boolean"
+              },
+              "bound": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 18446744073709551615
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "occurrences",
+              "generalized_allowed",
+              "connex_reachable",
+              "bound"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "authority",
+        "algorithm",
+        "minimum_height",
+        "tree",
+        "lower_bounds"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

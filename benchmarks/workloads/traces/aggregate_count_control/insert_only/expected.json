@@ -1,0 +1,45 @@
+{
+  "epochs": [
+    {
+      "current_rows": [
+        [
+          1
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 1,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [
+        [
+          2
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 2,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [
+        [
+          3
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 3,
+      "signed_delta": []
+    }
+  ],
+  "initial_rows": [
+    [
+      0
+    ]
+  ],
+  "oracle": "independent_relational_and_sqlite",
+  "query": "aggregate_count_control",
+  "schema_version": 1
+}

@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "limits": {
+    "recognition": {
+      "work_limit": 0
+    }
+  }
+}

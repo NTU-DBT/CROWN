@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "semantics": "set",
+  "catalog": {
+    "version": 1,
+    "tables": [
+      {
+        "name": "R",
+        "columns": [
+          {"name": "x", "type": "string"},
+          {"name": "witness", "type": "int64"}
+        ]
+      }
+    ]
+  },
+  "query": {
+    "variables": [
+      {"name": "x", "type": "string"},
+      {"name": "z", "type": "int64"}
+    ],
+    "atoms": [
+      {"id": "r", "table": "R", "terms": [{"var": "x"}, {"var": "z"}]}
+    ],
+    "head": [{"var": "x"}]
+  },
+  "initial": [{"table": "R", "rows": []}],
+  "updates": [
+    {"schema_version": 1, "sequence": 1, "table": "R", "op": "insert", "values": ["a", 1]},
+    {"schema_version": 1, "sequence": 2, "table": "R", "op": "insert", "values": ["a", 2]},
+    {"schema_version": 1, "sequence": 3, "table": "R", "op": "delete", "values": ["a", 1]},
+    {"schema_version": 1, "sequence": 4, "table": "R", "op": "delete", "values": ["a", 2]}
+  ]
+}

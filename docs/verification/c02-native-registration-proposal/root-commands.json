@@ -1,0 +1,106 @@
+{
+  "scope": "Root-only direct strict publication execution; not a native CMake or matrix acceptance",
+  "cwd": "/home/userroot/Codex/CROWN",
+  "environment": {},
+  "guard_manifests": [
+    "docs/verification/c02-native-registration-proposal/PACKAGE_SHA256SUMS",
+    "docs/verification/c02-native-registration-proposal/INPUT_SHA256SUMS",
+    "docs/verification/c02-native-registration-proposal/source-files.sha256",
+    "docs/verification/c02-native-registration-proposal/build-evidence/ARTIFACT_SHA256SUMS",
+    "docs/verification/c02-native-registration-proposal/build-evidence/COMMAND_SHA256SUMS",
+    "docs/verification/c02-native-registration-proposal/build-evidence/REUSED_ARTIFACT_SHA256SUMS"
+  ],
+  "commands": [
+    {
+      "name": "ranking_binding",
+      "argv": [
+        "/tmp/crown-c02-native-registration-release-1/executables/ranking_binding"
+      ],
+      "timeout_seconds": 900
+    },
+    {
+      "name": "ranking_pure_link",
+      "argv": [
+        "/tmp/crown-c02-native-registration-release-1/executables/ranking_pure_link"
+      ],
+      "timeout_seconds": 900
+    },
+    {
+      "name": "ranking_contract",
+      "argv": [
+        "/tmp/crown-c02-native-registration-release-1/executables/ranking_contract"
+      ],
+      "timeout_seconds": 900
+    },
+    {
+      "name": "ranking_empty",
+      "argv": [
+        "/tmp/crown-c02-native-registration-release-1/executables/ranking_empty"
+      ],
+      "timeout_seconds": 900
+    },
+    {
+      "name": "ranking_payload_time",
+      "argv": [
+        "/tmp/crown-c02-native-registration-release-1/executables/ranking_payload_time"
+      ],
+      "timeout_seconds": 900
+    },
+    {
+      "name": "ranking_census",
+      "argv": [
+        "/tmp/crown-c02-native-registration-release-1/executables/ranking_census"
+      ],
+      "timeout_seconds": 900
+    },
+    {
+      "name": "ranking_exceptions",
+      "argv": [
+        "/tmp/crown-c02-native-registration-release-1/executables/ranking_exception"
+      ],
+      "timeout_seconds": 3600
+    },
+    {
+      "name": "ranking_normalized_exceptions",
+      "argv": [
+        "/tmp/crown-c02-native-registration-release-1/executables/ranking_normalized_exception"
+      ],
+      "timeout_seconds": 3600
+    },
+    {
+      "name": "ranking_public_independent",
+      "argv": [
+        "/tmp/crown-c02-native-registration-release-1/executables/ranking_public_independent",
+        "/home/userroot/Codex/CROWN"
+      ],
+      "timeout_seconds": 900
+    },
+    {
+      "name": "ranking_integer_independent",
+      "argv": [
+        "/tmp/crown-c02-native-registration-release-1/executables/ranking_integer_independent"
+      ],
+      "timeout_seconds": 900
+    },
+    {
+      "name": "json_cleanup",
+      "argv": [
+        "/tmp/crown-c02-native-registration-release-1/executables/json_patched",
+        "--cleanup"
+      ],
+      "timeout_seconds": 300
+    },
+    {
+      "name": "json_patch_compatibility",
+      "argv": [
+        "python3",
+        "/home/userroot/Codex/CROWN/docs/verification/c02-native-registration-proposal/overlay/tools/verify_json_cleanup.py",
+        "--original",
+        "/tmp/crown-c02-native-registration-release-1/executables/json_upstream",
+        "--patched",
+        "/tmp/crown-c02-native-registration-release-1/executables/json_patched"
+      ],
+      "timeout_seconds": 300
+    }
+  ]
+}

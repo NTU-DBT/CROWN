@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "parameters": [
+    {"type": "date"},
+    {"type": "decimal", "decimal": {"precision": 8, "scale": 2}}
+  ]
+}

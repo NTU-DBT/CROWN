@@ -1,0 +1,8 @@
+45f4099323d7ce731286f7bf1e14a632a088b867ff9631ce087a4681a72b63ed  docs/verification/c05-selection-implementation-proposal/checkpoints/api-1/CHECKPOINT_SHA256SUMS
+ad569a2c328a48fc3c6523d0f988ea571377576ae9555113cc03c20040658535  /tmp/crown-c05-selection-implementation-strict-3/INPUT_BEFORE_SHA256SUMS
+ad569a2c328a48fc3c6523d0f988ea571377576ae9555113cc03c20040658535  /tmp/crown-c05-selection-implementation-strict-3/INPUT_AFTER_SHA256SUMS
+d21fd31d21427d3611d5af0744c50213abb816fd9805b7a4c27927f50e2fd7e8  /tmp/crown-c05-selection-implementation-strict-3/ARTIFACT_SHA256SUMS
+f38522a3c9a19215e9185732039e371269b092f6c85837b4ae208e57313e3539  /tmp/crown-c05-selection-implementation-strict-3/commands.sh
+c672f30a4742c5b767b507fd8cf7af10af14e2433d9a4bc54755ff5c4a16f4ef  /tmp/crown-c05-selection-implementation-strict-3/status.tsv
+77f7806e3c58aedca31de9fcbcc73f4a0623aadc6f8b2e55dd1b5ee81b728043  /tmp/crown-c05-selection-implementation-strict-3/targets.tsv
+f07d5d121a5d47121834afc41ce262d413c1c2022838d1480f7a2b8ddcc81890  docs/verification/c05-selection-implementation-proposal/build-checkpoint-3.sh

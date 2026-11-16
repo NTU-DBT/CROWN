@@ -1,0 +1,8 @@
+{
+  "overlay/include/crown/io/query_explain.hpp": "b21222a3b3c260aa1ab7b344aac9ba61458c980990c8557bc0c28dfc0829050a",
+  "overlay/include/crown/observability/query_explain.hpp": "9d867ef6f21540e29a40a240c3fd59089169ddddd116830fca7636010cdab13b",
+  "overlay/src/io/query_explain.cpp": "8c0ac1c1601cc51a38466f3cd6cd2d0d6a6f81011340bac647c24fd4e0fef1ae",
+  "overlay/src/observability/query_explain.cpp": "83a8e0e0c8e019708a7e0d8085562ce3de7f9433e3278073cfe192fdd20cf895",
+  "schemas/query-explain-v1.schema.json": "b843e905e9a2a5c201847c2db8cd93fed85a836b56d6faa8d4319c70cd02979d",
+  "schemas/query-witness-v1.schema.json": "1e2121a6c7ce98f8e68650cf1bf54733db6eec0b4a254695dbafa84c10688f7e"
+}

@@ -1,0 +1,11 @@
+{
+  "overlay/apps/crown-explain/main.cpp": "2fa97fb07f43a0792b12749475715cae920a51336390712c31257a0e2c7d34f7",
+  "overlay/include/crown/io/explain.hpp": "857cb0979b024e193b1081c573458e856d9e91bb1f886a4d42e203255eef92ef",
+  "overlay/include/crown/observability/explain.hpp": "70f89d1fd8adaead4ec08165a8b25887f60814c2ac5b77daa74147ebfdf490f8",
+  "overlay/include/crown/runtime/session.hpp": "590658d4ef804a916ba0f8004da2a5bf797a4c2e6a8a20d80e00993a081e9e67",
+  "overlay/src/io/explain.cpp": "e2ac36d5071c0744e8970d543d1b55e47d2a76eee1ead423000b7764776a7a38",
+  "overlay/src/observability/explain.cpp": "632e0248507f62d0d69585448f5457b53f14382cac3a8cb1b7c41426b76f2303",
+  "overlay/src/runtime/session.cpp": "21912440bd3827aa9b8b92f86ad141291290c01bce4739255054ad3804645e95",
+  "schemas/explain-report-v2.schema.json": "08f500ea76d5c85100abb770c72aff608f7c902c822684129de2a5eee0f71326",
+  "schemas/explain-tree-v2.schema.json": "608154cd56f807a283d4a86e58b20af1cce6605b8a77a2727ff084d7a7967335"
+}

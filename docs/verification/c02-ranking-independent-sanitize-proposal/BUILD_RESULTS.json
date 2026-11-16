@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-07",
+  "scope": "excluded independent sanitizer compile and link; production ABI",
+  "author_test_or_checker_execution": false,
+  "native_modified": false,
+  "strict_packet_unchanged": true,
+  "strict_packet_manifest_sha256": "858177262891c22718b12254a9b6da9b8ae31910235ad89f1e280ac2f2fc53b8",
+  "final_build": {
+    "state": "compile_and_link_passed_execution_pending_root",
+    "directory": "/tmp/crown-c02-independent-sanitize-current-2",
+    "invocation_file": "commands.json",
+    "script_exit": 0,
+    "flags": ["-std=c++23", "-O1", "-g", "-UNDEBUG", "-Wall", "-Wextra", "-Wpedantic", "-Wconversion", "-Wsign-conversion", "-Werror", "-pthread", "-fsanitize=address,undefined", "-fno-omit-frame-pointer"],
+    "production_runtime_macro": "CROWN_RUNTIME_TESTING absent",
+    "producer_units": {"core": 31, "sql": 10, "plan": 3, "ranking": 3, "runtime": 15, "reference": 5},
+    "producer_compile_exits": {"zero": 67},
+    "producer_implementation_source_hashes_equal_strict": 67,
+    "producer_full_sanitizer_warning_flag_commands": 67,
+    "cached_native_cpp_archives_used": false,
+    "ordinary_cpp_objects_used": false,
+    "testing_runtime_used": false,
+    "parser_c_archive": "build/sanitize/_deps/libpg_query/libpg_query-18.1.0/libpg_query.a",
+    "parser_c_archive_sha256": "1e59d1caaf15beb5a2e0aaf664fa3f853f058c7eefdd4b80bae3a37c5f0f9bfc",
+    "patched_json_sha256": "f763c58b102e65242d09275aec4b2f343268280ab4587b15587ad143b2e2a406",
+    "complete_input_pins_before_after_equal": 590,
+    "compiler_tools_before_after_equal": true,
+    "original_strict_package_before_after_valid": true,
+    "consumers": [
+      {
+        "name": "ranking_integer_independent_test",
+        "source_sha256": "16acab19c9096db452abb5df8cabdafb7f5951b77e77fc19a75adc643263260f",
+        "compile_exit": 0,
+        "link_exit": 0,
+        "compile_log_bytes": 0,
+        "link_log_bytes": 0,
+        "binary_sha256": "2884dc76c31f84963eb027689c228f11a84cc2d607bf7e1e97f9c259c40dae96",
+        "execution": "pending_root"
+      },
+      {
+        "name": "ranking_public_independent_test",
+        "source_sha256": "b4426aad45a4ff35e66e49253e7e744c8bb01f1a7a68ad18d5440406d238e525",
+        "compile_exit": 0,
+        "link_exit": 0,
+        "compile_log_bytes": 0,
+        "link_log_bytes": 0,
+        "binary_sha256": "374c6a2b682c715694890669c7fb15f9d03b881af97a6da81c900156c364b717",
+        "execution": "pending_root"
+      }
+    ]
+  },
+  "preparatory_build": {
+    "directory": "/tmp/crown-c02-independent-sanitize-current-1",
+    "script_exit": 0,
+    "state": "compile_and_link_passed_never_executed",
+    "reason_superseded": "The complete dependency/compiler inventory was assembled after this build; final current-2 was compiled with all 590 input pins guarded before and after.",
+    "preserved_metadata": "build/preparation"
+  },
+  "accepted_root_context": [
+    {
+      "path": "build/verification/c02-independent-strict-root-attempt-2.json",
+      "sha256": "4dbaea8b8bea1308b024f6b8353515e8ef20868e8af40a6835d7b6bea9cd6645",
+      "scope": "same frozen independent sources, current strict ABI; all eight public groups and three arithmetic groups passed"
+    },
+    {
+      "path": "build/verification/c02-producer-strict-root-attempt-2.json",
+      "sha256": "295bbefe40b04f00554cf41860ac31ab1948dedb5765cf6f4d3aa33093ccf447",
+      "scope": "producer strict consumers and fault positions; separate from this sanitizer execution"
+    },
+    {
+      "path": "build/verification/c02-json-cleanup-root-attempt-2.json",
+      "sha256": "54450d525d1b474773f0eac81285a175142684289f722da8fa6d36c7d3c44f2e",
+      "scope": "ordinary and sanitizer header cleanup probes plus original control; not full runtime ranking sanitizer acceptance"
+    }
+  ],
+  "remaining_gates": [
+    "root execution of both independent sanitizer consumers with leak detection",
+    "root completion and reconciliation of all producer sanitizer consumers",
+    "native C02 registration, full matrix and final source gates",
+    "any remaining native C01 gates are root-owned and are not advanced by this packet"
+  ],
+  "limits": [
+    "same small finite semantic fixtures and decimal-digit oracle as the frozen strict packet",
+    "no new raw proof or observed-evidence factory authority",
+    "no ranking performance, allocator-total memory, transient-peak or global-cost-optimality claim"
+  ]
+}

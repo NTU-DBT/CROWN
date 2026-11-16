@@ -1,0 +1,340 @@
+{
+  "all_test_capture_transitions_mentions": [
+    {
+      "file": "tests/unit/prepared_epoch_exception_test.cpp",
+      "line": 108,
+      "text": "result.capture_transitions = true;"
+    },
+    {
+      "file": "tests/unit/support_api_test.cpp",
+      "line": 260,
+      "text": "SupportRuntime runtime(plan, SupportOptions{.capture_transitions = true});"
+    },
+    {
+      "file": "tests/unit/support_api_test.cpp",
+      "line": 365,
+      "text": "options.capture_transitions = true;"
+    },
+    {
+      "file": "tests/unit/support_api_test.cpp",
+      "line": 446,
+      "text": "fifo_options.capture_transitions = true;"
+    },
+    {
+      "file": "tests/unit/result_cursor_exception_test.cpp",
+      "line": 171,
+      "text": "result.support.capture_transitions = true;"
+    },
+    {
+      "file": "tests/unit/prepared_epoch_test.cpp",
+      "line": 219,
+      "text": "SupportRuntime runtime(unary_plan(), SupportOptions{.capture_transitions = true});"
+    },
+    {
+      "file": "tests/unit/prepared_epoch_test.cpp",
+      "line": 304,
+      "text": "options.capture_transitions = true;"
+    },
+    {
+      "file": "tests/unit/prepared_epoch_test.cpp",
+      "line": 403,
+      "text": "options.capture_transitions = true;"
+    },
+    {
+      "file": "tests/unit/delta_runtime_exception_test.cpp",
+      "line": 146,
+      "text": "result.physical.support.capture_transitions = true;"
+    },
+    {
+      "file": "tests/unit/support_exception_test.cpp",
+      "line": 90,
+      "text": "result.capture_transitions = true;"
+    },
+    {
+      "file": "tests/unit/physical_runtime_exception_test.cpp",
+      "line": 95,
+      "text": "result.support.capture_transitions = true;"
+    },
+    {
+      "file": "tests/unit/epoch_view_exception_test.cpp",
+      "line": 128,
+      "text": "result.capture_transitions = true;"
+    },
+    {
+      "file": "tests/unit/support_model_test.cpp",
+      "line": 209,
+      "text": "if (!runtime.options().capture_transitions) { check(journal.events.empty(),\"disabled trace captured payloads\"); return; }"
+    },
+    {
+      "file": "tests/unit/support_model_test.cpp",
+      "line": 291,
+      "text": "const auto plan=planner::lower_tree(document.catalog,document.query,tree); SupportOptions options; options.capture_transitions=true;"
+    },
+    {
+      "file": "tests/unit/support_model_test.cpp",
+      "line": 319,
+      "text": "std::mt19937_64 random(seed*0x9e3779b97f4a7c15ULL); SupportOptions options; options.capture_transitions=true; options.work_limit.reset();"
+    },
+    {
+      "file": "tests/unit/support_model_test.cpp",
+      "line": 369,
+      "text": "const auto plan=planner::lower_normalized(program,tree); SupportOptions options; options.capture_transitions=true; SupportRuntime runtime(plan,options);"
+    },
+    {
+      "file": "tests/unit/delta_lifecycle_exception_test.cpp",
+      "line": 120,
+      "text": "result.physical.support.capture_transitions = true;"
+    },
+    {
+      "file": "tests/unit/support_journal_test.cpp",
+      "line": 440,
+      "text": "check_event_trace(runtime, update, epoch, before, after, runtime.options().capture_transitions);"
+    },
+    {
+      "file": "tests/unit/support_journal_test.cpp",
+      "line": 447,
+      "text": "traced_options.capture_transitions = true;"
+    },
+    {
+      "file": "tests/unit/support_journal_test.cpp",
+      "line": 449,
+      "text": "quiet_options.capture_transitions = false;"
+    },
+    {
+      "file": "tests/unit/support_journal_test.cpp",
+      "line": 494,
+      "text": "options.capture_transitions = true;"
+    },
+    {
+      "file": "tests/unit/support_journal_test.cpp",
+      "line": 502,
+      "text": "options.capture_transitions = true;"
+    },
+    {
+      "file": "tests/unit/support_journal_test.cpp",
+      "line": 513,
+      "text": "options.capture_transitions = true;"
+    },
+    {
+      "file": "tests/unit/support_journal_test.cpp",
+      "line": 521,
+      "text": "options.capture_transitions = true;"
+    },
+    {
+      "file": "tests/unit/support_journal_test.cpp",
+      "line": 530,
+      "text": "options.capture_transitions = true;"
+    },
+    {
+      "file": "tests/unit/support_journal_test.cpp",
+      "line": 547,
+      "text": "options.capture_transitions = true;"
+    },
+    {
+      "file": "tests/unit/support_journal_test.cpp",
+      "line": 569,
+      "text": "options.capture_transitions = true;"
+    },
+    {
+      "file": "tests/unit/support_journal_test.cpp",
+      "line": 606,
+      "text": "options.capture_transitions = false;"
+    },
+    {
+      "file": "tests/unit/support_journal_test.cpp",
+      "line": 648,
+      "text": "options.capture_transitions = true;"
+    },
+    {
+      "file": "tests/unit/physical_runtime_test.cpp",
+      "line": 163,
+      "text": "PhysicalRuntimeOptions result; result.support.capture_transitions=true; result.support.order=order; return result;"
+    },
+    {
+      "file": "tests/unit/epoch_view_test.cpp",
+      "line": 428,
+      "text": "options.support.capture_transitions = true;"
+    },
+    {
+      "file": "tests/unit/initialization_exception_test.cpp",
+      "line": 550,
+      "text": "left.physical.support.capture_transitions =="
+    },
+    {
+      "file": "tests/unit/initialization_exception_test.cpp",
+      "line": 551,
+      "text": "right.physical.support.capture_transitions &&"
+    },
+    {
+      "file": "tests/integration/support.py",
+      "line": 69,
+      "text": "trace = {\"schema_version\": 1, \"options\": {\"capture_transitions\": True},"
+    },
+    {
+      "file": "tests/integration/support.py",
+      "line": 135,
+      "text": "trace[\"options\"][\"capture_transitions\"] = False"
+    },
+    {
+      "file": "tests/integration/support.py",
+      "line": 138,
+      "text": "require(alternate[\"options\"][\"capture_transitions\"] is False and all("
+    },
+    {
+      "file": "tests/integration/support.py",
+      "line": 170,
+      "text": "reject(lambda value: value[\"options\"].update(capture_transitions=1), \"invalid_document\")"
+    }
+  ],
+  "classification": "read-only native fixture compatibility audit",
+  "execution": {
+    "binaries_run": false,
+    "compiled": false,
+    "tests_run": false
+  },
+  "frozen_option_defaults": {
+    "observation_mode": "ObservationMode::timed",
+    "source_observation_header_sha256": "8ff201a70fd960dba6609ee82c45aa76a3a8d23a8960bacec051fe864becde32",
+    "source_support_header_sha256": "54f27d7b62479c88415ad3c26416e7086ddcc1920212707bd987f669c569f160",
+    "support_observation_member": "ObservationOptions observation = {};"
+  },
+  "native_cpp_capture_transitions_true_sites": 27,
+  "native_cpp_explicit_observation_off_plus_capture_true_sites": 0,
+  "native_cpp_translation_units_with_true_sites": 13,
+  "native_cpp_true_sites_by_file": [
+    {
+      "count": 1,
+      "file": "tests/unit/delta_lifecycle_exception_test.cpp",
+      "lines": [
+        120
+      ]
+    },
+    {
+      "count": 1,
+      "file": "tests/unit/delta_runtime_exception_test.cpp",
+      "lines": [
+        146
+      ]
+    },
+    {
+      "count": 1,
+      "file": "tests/unit/epoch_view_exception_test.cpp",
+      "lines": [
+        128
+      ]
+    },
+    {
+      "count": 1,
+      "file": "tests/unit/epoch_view_test.cpp",
+      "lines": [
+        428
+      ]
+    },
+    {
+      "count": 1,
+      "file": "tests/unit/physical_runtime_exception_test.cpp",
+      "lines": [
+        95
+      ]
+    },
+    {
+      "count": 1,
+      "file": "tests/unit/physical_runtime_test.cpp",
+      "lines": [
+        163
+      ]
+    },
+    {
+      "count": 1,
+      "file": "tests/unit/prepared_epoch_exception_test.cpp",
+      "lines": [
+        108
+      ]
+    },
+    {
+      "count": 3,
+      "file": "tests/unit/prepared_epoch_test.cpp",
+      "lines": [
+        219,
+        304,
+        403
+      ]
+    },
+    {
+      "count": 1,
+      "file": "tests/unit/result_cursor_exception_test.cpp",
+      "lines": [
+        171
+      ]
+    },
+    {
+      "count": 3,
+      "file": "tests/unit/support_api_test.cpp",
+      "lines": [
+        260,
+        365,
+        446
+      ]
+    },
+    {
+      "count": 1,
+      "file": "tests/unit/support_exception_test.cpp",
+      "lines": [
+        90
+      ]
+    },
+    {
+      "count": 9,
+      "file": "tests/unit/support_journal_test.cpp",
+      "lines": [
+        447,
+        494,
+        502,
+        513,
+        521,
+        530,
+        547,
+        569,
+        648
+      ]
+    },
+    {
+      "count": 3,
+      "file": "tests/unit/support_model_test.cpp",
+      "lines": [
+        291,
+        319,
+        369
+      ]
+    }
+  ],
+  "observation_off_search": {
+    "matches": [],
+    "searched": [
+      "ObservationMode::off in tests/",
+      "ObservationOptions in tests/",
+      "observation assignments in tests/"
+    ]
+  },
+  "remaining_gates": "Native integration, compilation, and runtime verification remain outside this read-only audit.",
+  "source_sha256": {
+    "docs/verification/o07-cursor-observation-proposal/overlay/include/crown/runtime/observation.hpp": "8ff201a70fd960dba6609ee82c45aa76a3a8d23a8960bacec051fe864becde32",
+    "docs/verification/o07-cursor-observation-proposal/overlay/include/crown/runtime/support.hpp": "54f27d7b62479c88415ad3c26416e7086ddcc1920212707bd987f669c569f160",
+    "tests/integration/support.py": "adbd1d6ea5955e380276a312fabf18c331a94e8e87bce92ba56e7118ea17997b",
+    "tests/unit/delta_lifecycle_exception_test.cpp": "e9423cf9e9f5f14d98daed38460e2f4bea47e39fe41ce2b10becbf64b7532576",
+    "tests/unit/delta_runtime_exception_test.cpp": "4fe9c1dec12a9d63532f8609c359f1ba55e5e399e6fb3196f7535a52e6b292d3",
+    "tests/unit/epoch_view_exception_test.cpp": "46516c40dcbd1b7588714d790fb266cf1ba18f6e735805a3d2863404067cdc21",
+    "tests/unit/epoch_view_test.cpp": "a56811595f867f5f1e1330384d36b3bf9feba2801f9370c9f9ad0bb1b6fa4af4",
+    "tests/unit/initialization_exception_test.cpp": "c3202c31b58682b550465e2a004236954fa78ad9ba1239b656222d1fc851a39c",
+    "tests/unit/physical_runtime_exception_test.cpp": "66e407caca9bc4f64b03e409b1a3b0f215c0d0ec32cb3481d6ae55dfbc53390f",
+    "tests/unit/physical_runtime_test.cpp": "57dac52bc8d239b9d91467900632aac2b9260699e6210a8da1d3f61428cdd154",
+    "tests/unit/prepared_epoch_exception_test.cpp": "0f78942fbbcb9575749ac67de29d6d9b6e434f5d35c8d80381dc9a0c21842459",
+    "tests/unit/prepared_epoch_test.cpp": "54b785502b08fca0bc0c9596d1bf6728b82fd4ec54b4eb04ee05a5a086ab7b09",
+    "tests/unit/result_cursor_exception_test.cpp": "a53f138fe78c6584bbcaf589d1a9ae20b5862c3c8c5c6f79d48361baf9179704",
+    "tests/unit/support_api_test.cpp": "32a70ddbedf05dda9a63aeff0c3c8c6d5ef68620d65b23069c6acbd6a86c2445",
+    "tests/unit/support_exception_test.cpp": "c9a70fd55fec1f653048f6b56152d186dc542cc4f3a1a96ad1f591a3a7133a58",
+    "tests/unit/support_journal_test.cpp": "6ed7c337a552ff003b50d796dbf19c6bbc136a31f17b841e3b5245624d449467",
+    "tests/unit/support_model_test.cpp": "a0780fb5b3596bc1a07729b68e2d7c1eeb7206972966a1ab32a4883710705156"
+  },
+  "status": "no compatibility migration required; O07 remains not_started pending native integration"
+}

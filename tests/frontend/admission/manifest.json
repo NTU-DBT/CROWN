@@ -1,0 +1,938 @@
+{
+  "schema_version": 1,
+  "catalog": "catalog.json",
+  "data": "data.json",
+  "cases": [
+    {
+      "name": "singleton",
+      "sql": "cases/singleton.sql",
+      "status": "admitted",
+      "features": [
+        "set",
+        "projection"
+      ],
+      "rows": [
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          4
+        ]
+      ],
+      "sqlite": true
+    },
+    {
+      "name": "full_path",
+      "sql": "cases/full_path.sql",
+      "status": "admitted",
+      "features": [
+        "using",
+        "equality_join"
+      ],
+      "rows": [
+        [
+          1,
+          7,
+          10
+        ],
+        [
+          1,
+          7,
+          11
+        ],
+        [
+          2,
+          7,
+          10
+        ],
+        [
+          2,
+          7,
+          11
+        ],
+        [
+          3,
+          8,
+          12
+        ]
+      ],
+      "sqlite": true
+    },
+    {
+      "name": "endpoint_path",
+      "sql": "cases/endpoint_path.sql",
+      "status": "non_free_connex",
+      "features": [
+        "non_free_head"
+      ],
+      "code": "non_free_connex"
+    },
+    {
+      "name": "cyclic_full_head",
+      "sql": "cases/cyclic_full_head.sql",
+      "status": "cyclic_body",
+      "features": [
+        "cyclic_body"
+      ],
+      "code": "cyclic_body"
+    },
+    {
+      "name": "cyclic_constant_empty",
+      "sql": "cases/cyclic_constant_empty.sql",
+      "status": "admitted",
+      "features": [
+        "contradiction",
+        "cyclic_body"
+      ],
+      "rows": [],
+      "route": "constant_empty",
+      "sqlite": true
+    },
+    {
+      "name": "fixed_output",
+      "sql": "cases/fixed_output.sql",
+      "status": "admitted",
+      "features": [
+        "constant_head"
+      ],
+      "rows": [
+        [
+          1,
+          10
+        ],
+        [
+          1,
+          11
+        ]
+      ],
+      "sqlite": true
+    },
+    {
+      "name": "fixed_join_key",
+      "sql": "cases/fixed_join_key.sql",
+      "status": "admitted",
+      "features": [
+        "constant_join"
+      ],
+      "rows": [
+        [
+          1,
+          10
+        ],
+        [
+          1,
+          11
+        ],
+        [
+          2,
+          10
+        ],
+        [
+          2,
+          11
+        ]
+      ],
+      "sqlite": true
+    },
+    {
+      "name": "repeated_variables",
+      "sql": "cases/repeated_variables.sql",
+      "status": "admitted",
+      "features": [
+        "repeated_variables"
+      ],
+      "rows": [],
+      "sqlite": true
+    },
+    {
+      "name": "repeated_constant_outputs",
+      "sql": "cases/repeated_constant_outputs.sql",
+      "status": "admitted",
+      "features": [
+        "constant_head",
+        "repeated_outputs"
+      ],
+      "rows": [
+        [
+          1,
+          1,
+          7
+        ]
+      ],
+      "sqlite": true
+    },
+    {
+      "name": "local_or_not",
+      "sql": "cases/local_or_not.sql",
+      "status": "admitted",
+      "features": [
+        "local_predicates",
+        "local_not"
+      ],
+      "rows": [
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          4
+        ]
+      ],
+      "sqlite": true
+    },
+    {
+      "name": "nullable_parameter",
+      "sql": "cases/nullable_parameter.sql",
+      "status": "admitted",
+      "features": [
+        "parameters",
+        "null_logic"
+      ],
+      "rows": [
+        [
+          2
+        ]
+      ],
+      "sqlite": true,
+      "options": "options/nullable_parameter.json"
+    },
+    {
+      "name": "null_equality",
+      "sql": "cases/null_equality.sql",
+      "status": "admitted",
+      "features": [
+        "exists",
+        "null_logic"
+      ],
+      "rows": [
+        [
+          false
+        ]
+      ],
+      "route": "constant_empty",
+      "sqlite": true
+    },
+    {
+      "name": "exists_true",
+      "sql": "cases/exists_true.sql",
+      "status": "admitted",
+      "features": [
+        "exists"
+      ],
+      "rows": [
+        [
+          true
+        ]
+      ],
+      "sqlite": true
+    },
+    {
+      "name": "nullary_source",
+      "sql": "cases/nullary_source.sql",
+      "status": "admitted",
+      "features": [
+        "nullary"
+      ],
+      "rows": [
+        []
+      ]
+    },
+    {
+      "name": "empty_conjunction",
+      "sql": "cases/empty_conjunction.sql",
+      "status": "admitted",
+      "features": [
+        "empty_body"
+      ],
+      "rows": [
+        [
+          1
+        ]
+      ],
+      "sqlite": true
+    },
+    {
+      "name": "cross_join",
+      "sql": "cases/cross_join.sql",
+      "status": "admitted",
+      "features": [
+        "cross_join",
+        "disconnected"
+      ],
+      "rows": [
+        [
+          1,
+          10
+        ],
+        [
+          1,
+          11
+        ],
+        [
+          1,
+          12
+        ],
+        [
+          2,
+          10
+        ],
+        [
+          2,
+          11
+        ],
+        [
+          2,
+          12
+        ],
+        [
+          3,
+          10
+        ],
+        [
+          3,
+          11
+        ],
+        [
+          3,
+          12
+        ],
+        [
+          4,
+          10
+        ],
+        [
+          4,
+          11
+        ],
+        [
+          4,
+          12
+        ]
+      ],
+      "sqlite": true
+    },
+    {
+      "name": "repeated_scopes",
+      "sql": "cases/repeated_scopes.sql",
+      "status": "admitted",
+      "features": [
+        "repeated_scopes",
+        "self_join"
+      ],
+      "rows": [
+        [
+          7
+        ],
+        [
+          8
+        ]
+      ],
+      "sqlite": true
+    },
+    {
+      "name": "self_join",
+      "sql": "cases/self_join.sql",
+      "status": "admitted",
+      "features": [
+        "self_join"
+      ],
+      "rows": [
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          4
+        ]
+      ],
+      "sqlite": true
+    },
+    {
+      "name": "natural_join",
+      "sql": "cases/natural_join.sql",
+      "status": "admitted",
+      "features": [
+        "natural_join"
+      ],
+      "rows": [
+        [
+          1,
+          7,
+          10
+        ],
+        [
+          1,
+          7,
+          11
+        ],
+        [
+          2,
+          7,
+          10
+        ],
+        [
+          2,
+          7,
+          11
+        ],
+        [
+          3,
+          8,
+          12
+        ]
+      ],
+      "sqlite": true
+    },
+    {
+      "name": "flat_only",
+      "sql": "cases/flat_only.sql",
+      "status": "admitted",
+      "features": [
+        "flat_catalog"
+      ],
+      "rows": [
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          4
+        ]
+      ]
+    },
+    {
+      "name": "unicode_alias",
+      "sql": "cases/unicode_alias.sql",
+      "status": "admitted",
+      "features": [
+        "quoted_identifiers"
+      ],
+      "rows": [
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          4
+        ]
+      ],
+      "sqlite": true
+    },
+    {
+      "name": "date_decimal_parameters",
+      "sql": "cases/date_decimal_parameters.sql",
+      "status": "admitted",
+      "features": [
+        "date",
+        "decimal",
+        "parameters"
+      ],
+      "rows": [
+        [
+          1
+        ]
+      ],
+      "sqlite": true,
+      "options": "options/date_decimal_parameters.json"
+    },
+    {
+      "name": "boolean_test",
+      "sql": "cases/boolean_test.sql",
+      "status": "admitted",
+      "features": [
+        "boolean",
+        "local_predicates"
+      ],
+      "rows": [
+        [
+          true
+        ]
+      ],
+      "sqlite": true
+    },
+    {
+      "name": "wide_projection",
+      "sql": "cases/wide_projection.sql",
+      "status": "admitted",
+      "features": [
+        "wide_arity"
+      ],
+      "rows": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64,
+          65,
+          66,
+          67,
+          68,
+          69
+        ]
+      ],
+      "sqlite": true
+    },
+    {
+      "name": "fanout_nine",
+      "sql": "cases/fanout_nine.sql",
+      "status": "admitted",
+      "features": [
+        "fanout",
+        "disconnected"
+      ]
+    },
+    {
+      "name": "plain_bag",
+      "sql": "cases/plain_bag.sql",
+      "status": "unsupported_semantics",
+      "features": [
+        "bag"
+      ],
+      "code": "unsupported_semantics",
+      "phase": "normalization"
+    },
+    {
+      "name": "count",
+      "sql": "cases/count.sql",
+      "status": "unsupported_semantics",
+      "features": [
+        "aggregates"
+      ]
+    },
+    {
+      "name": "sum_group",
+      "sql": "cases/sum_group.sql",
+      "status": "unsupported_semantics",
+      "features": [
+        "aggregates",
+        "group_by"
+      ]
+    },
+    {
+      "name": "theta",
+      "sql": "cases/theta.sql",
+      "status": "unsupported_semantics",
+      "features": [
+        "cross_theta"
+      ],
+      "code": "unsupported_cross_relation_predicate",
+      "phase": "normalization"
+    },
+    {
+      "name": "cross_or",
+      "sql": "cases/cross_or.sql",
+      "status": "unsupported_semantics",
+      "features": [
+        "cross_or"
+      ],
+      "code": "unsupported_cross_relation_predicate"
+    },
+    {
+      "name": "outer_join",
+      "sql": "cases/outer_join.sql",
+      "status": "unsupported_semantics",
+      "features": [
+        "outer_join"
+      ]
+    },
+    {
+      "name": "relational_not",
+      "sql": "cases/relational_not.sql",
+      "status": "unsupported_semantics",
+      "features": [
+        "relational_not"
+      ]
+    },
+    {
+      "name": "except",
+      "sql": "cases/except.sql",
+      "status": "unsupported_semantics",
+      "features": [
+        "except"
+      ]
+    },
+    {
+      "name": "union",
+      "sql": "cases/union.sql",
+      "status": "unsupported_semantics",
+      "features": [
+        "union"
+      ]
+    },
+    {
+      "name": "cte",
+      "sql": "cases/cte.sql",
+      "status": "unsupported_semantics",
+      "features": [
+        "cte"
+      ]
+    },
+    {
+      "name": "subquery",
+      "sql": "cases/subquery.sql",
+      "status": "unsupported_semantics",
+      "features": [
+        "subquery"
+      ]
+    },
+    {
+      "name": "ordering",
+      "sql": "cases/ordering.sql",
+      "status": "unsupported_semantics",
+      "features": [
+        "order_by"
+      ]
+    },
+    {
+      "name": "limit",
+      "sql": "cases/limit.sql",
+      "status": "unsupported_semantics",
+      "features": [
+        "limit"
+      ]
+    },
+    {
+      "name": "window",
+      "sql": "cases/window.sql",
+      "status": "unsupported_semantics",
+      "features": [
+        "window"
+      ]
+    },
+    {
+      "name": "arithmetic",
+      "sql": "cases/arithmetic.sql",
+      "status": "unsupported_semantics",
+      "features": [
+        "arithmetic"
+      ]
+    },
+    {
+      "name": "timestamp",
+      "sql": "cases/timestamp.sql",
+      "status": "unsupported_semantics",
+      "features": [
+        "timestamp"
+      ],
+      "code": "unsupported_type"
+    },
+    {
+      "name": "collation",
+      "sql": "cases/collation.sql",
+      "status": "unsupported_semantics",
+      "features": [
+        "collation"
+      ]
+    },
+    {
+      "name": "nullable_source",
+      "sql": "cases/nullable_source.sql",
+      "status": "unsupported_semantics",
+      "features": [
+        "null_source"
+      ],
+      "code": "unsupported_nullable_input"
+    },
+    {
+      "name": "nullable_output",
+      "sql": "cases/nullable_output.sql",
+      "status": "unsupported_semantics",
+      "features": [
+        "null_output"
+      ],
+      "code": "unsupported_null_output"
+    },
+    {
+      "name": "narrowing_cast",
+      "sql": "cases/narrowing_cast.sql",
+      "status": "unsupported_semantics",
+      "features": [
+        "casts"
+      ],
+      "code": "unsupported_cast"
+    },
+    {
+      "name": "bad_date",
+      "sql": "cases/bad_date.sql",
+      "status": "semantic_error",
+      "features": [
+        "date"
+      ],
+      "code": "invalid_scalar"
+    },
+    {
+      "name": "unknown_column",
+      "sql": "cases/unknown_column.sql",
+      "status": "semantic_error",
+      "features": [
+        "name_resolution"
+      ],
+      "code": "unknown_column"
+    },
+    {
+      "name": "ambiguous_unicode",
+      "sql": "cases/ambiguous_unicode.sql",
+      "status": "semantic_error",
+      "features": [
+        "source_diagnostics"
+      ],
+      "code": "ambiguous_column"
+    },
+    {
+      "name": "bad_boolean",
+      "sql": "cases/bad_boolean.sql",
+      "status": "semantic_error",
+      "features": [
+        "typing"
+      ],
+      "code": "type_mismatch"
+    },
+    {
+      "name": "untyped_parameter",
+      "sql": "cases/untyped_parameter.sql",
+      "status": "semantic_error",
+      "features": [
+        "parameters"
+      ],
+      "code": "unbound_parameter",
+      "phase": "binding"
+    },
+    {
+      "name": "missing_parameter_value",
+      "sql": "cases/missing_parameter_value.sql",
+      "status": "semantic_error",
+      "features": [
+        "parameters"
+      ],
+      "code": "unbound_parameter",
+      "phase": "parameters",
+      "options": "options/missing_parameter_value.json"
+    },
+    {
+      "name": "wrong_parameter_value",
+      "sql": "cases/wrong_parameter_value.sql",
+      "status": "semantic_error",
+      "features": [
+        "parameters"
+      ],
+      "code": "invalid_parameter",
+      "phase": "parameters",
+      "options": "options/wrong_parameter_value.json"
+    },
+    {
+      "name": "bad_syntax",
+      "sql": "cases/bad_syntax.sql",
+      "status": "syntax_error",
+      "features": [
+        "syntax"
+      ],
+      "code": "sql_syntax_error"
+    },
+    {
+      "name": "multiple_statements",
+      "sql": "cases/multiple_statements.sql",
+      "status": "syntax_error",
+      "features": [
+        "statement_boundary"
+      ],
+      "code": "multiple_statements"
+    },
+    {
+      "name": "empty_sql",
+      "sql": "cases/empty_sql.sql",
+      "status": "syntax_error",
+      "features": [
+        "statement_boundary"
+      ],
+      "code": "empty_sql"
+    },
+    {
+      "name": "ddl",
+      "sql": "cases/ddl.sql",
+      "status": "unsupported_semantics",
+      "features": [
+        "statement_kind"
+      ],
+      "code": "unsupported_statement"
+    },
+    {
+      "name": "limit_binding",
+      "sql": "cases/limit_binding.sql",
+      "status": "resource_limit",
+      "features": [
+        "resource_limit"
+      ],
+      "code": "resource_limit",
+      "phase": "binding",
+      "options": "options/limit_binding.json"
+    },
+    {
+      "name": "limit_normalization",
+      "sql": "cases/limit_normalization.sql",
+      "status": "resource_limit",
+      "features": [
+        "resource_limit"
+      ],
+      "code": "resource_limit",
+      "phase": "normalization",
+      "options": "options/limit_normalization.json"
+    },
+    {
+      "name": "limit_recognition",
+      "sql": "cases/limit_recognition.sql",
+      "status": "resource_limit",
+      "features": [
+        "resource_limit"
+      ],
+      "code": "resource_limit",
+      "phase": "recognition",
+      "options": "options/limit_recognition.json"
+    }
+  ],
+  "required_features": [
+    "aggregates",
+    "arithmetic",
+    "bag",
+    "boolean",
+    "casts",
+    "collation",
+    "constant_head",
+    "constant_join",
+    "contradiction",
+    "cross_join",
+    "cross_or",
+    "cross_theta",
+    "cte",
+    "cyclic_body",
+    "date",
+    "decimal",
+    "disconnected",
+    "empty_body",
+    "equality_join",
+    "except",
+    "exists",
+    "fanout",
+    "flat_catalog",
+    "group_by",
+    "limit",
+    "local_not",
+    "local_predicates",
+    "name_resolution",
+    "natural_join",
+    "non_free_head",
+    "null_logic",
+    "null_output",
+    "null_source",
+    "nullary",
+    "order_by",
+    "outer_join",
+    "parameters",
+    "projection",
+    "quoted_identifiers",
+    "relational_not",
+    "repeated_outputs",
+    "repeated_scopes",
+    "repeated_variables",
+    "resource_limit",
+    "self_join",
+    "set",
+    "source_diagnostics",
+    "statement_boundary",
+    "statement_kind",
+    "subquery",
+    "syntax",
+    "timestamp",
+    "typing",
+    "union",
+    "using",
+    "wide_arity",
+    "window"
+  ]
+}

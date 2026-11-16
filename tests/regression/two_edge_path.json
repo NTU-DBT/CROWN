@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "semantics": "set",
+  "catalog": {
+    "version": 1,
+    "tables": [
+      {
+        "name": "Edge",
+        "columns": [
+          {"name": "from", "type": "string"},
+          {"name": "to", "type": "string"}
+        ]
+      }
+    ]
+  },
+  "query": {
+    "variables": [
+      {"name": "a", "type": "string"},
+      {"name": "b", "type": "string"},
+      {"name": "c", "type": "string"}
+    ],
+    "atoms": [
+      {"id": "first", "table": "Edge", "terms": [{"var": "a"}, {"var": "b"}]},
+      {"id": "second", "table": "Edge", "terms": [{"var": "b"}, {"var": "c"}]}
+    ],
+    "head": [{"var": "a"}, {"var": "c"}]
+  },
+  "initial": [
+    {
+      "table": "Edge",
+      "rows": [["u", "v"], ["v", "w"], ["w", "x"], ["u", "z"], ["z", "x"]]
+    }
+  ],
+  "updates": [
+    {"schema_version": 1, "sequence": 1, "table": "Edge", "op": "insert", "values": ["w", "y"]},
+    {"schema_version": 1, "sequence": 2, "table": "Edge", "op": "insert", "values": ["y", "z"]},
+    {"schema_version": 1, "sequence": 3, "table": "Edge", "op": "delete", "values": ["v", "w"]}
+  ]
+}

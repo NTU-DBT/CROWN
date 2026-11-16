@@ -1,0 +1,37 @@
+{
+  "statement": {
+    "begin": 46,
+    "end": 89
+  },
+  "ast": {
+    "version": 180006,
+    "stmts": [
+      {
+        "stmt": {
+          "SelectStmt": {
+            "targetList": [
+              {
+                "ResTarget": {
+                  "name": "answer",
+                  "val": {
+                    "A_Const": {
+                      "ival": {
+                        "ival": 1
+                      },
+                      "location": 78
+                    }
+                  },
+                  "location": 78
+                }
+              }
+            ],
+            "limitOption": "LIMIT_OPTION_DEFAULT",
+            "op": "SETOP_NONE"
+          }
+        },
+        "stmt_location": 46,
+        "stmt_len": 43
+      }
+    ]
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "card": "C02",
+  "native_status": "not_started; final publication review pending",
+  "status": "accepted_scoped_preparation_execution",
+  "recorded_utc": "2026-11-07T06:30:08.926191+00:00",
+  "root_results": [
+    {
+      "path": "build/verification/c02-producer-strict-root-attempt-2.json",
+      "sha256": "295bbefe40b04f00554cf41860ac31ab1948dedb5765cf6f4d3aa33093ccf447",
+      "status": "passed",
+      "source_stable": true
+    },
+    {
+      "path": "build/verification/c02-independent-strict-root-attempt-2.json",
+      "sha256": "4dbaea8b8bea1308b024f6b8353515e8ef20868e8af40a6835d7b6bea9cd6645",
+      "status": "passed",
+      "source_stable": true
+    },
+    {
+      "path": "build/verification/c02-json-cleanup-root-attempt-2.json",
+      "sha256": "54450d525d1b474773f0eac81285a175142684289f722da8fa6d36c7d3c44f2e",
+      "status": "passed",
+      "source_stable": true
+    },
+    {
+      "path": "build/verification/c02-independent-sanitize-root-attempt-1.json",
+      "sha256": "f2de554cf3ffccaaad2156b4ef92125960a26156e2a704d57eebcabfe178484e",
+      "status": "passed",
+      "source_stable": true
+    },
+    {
+      "path": "build/verification/c02-producer-sanitize-root-attempt-1.json",
+      "sha256": "cb50105893664d5e414c10d0b3ba7adea9f818b1f414cfe215e8f0e703911c62",
+      "status": "passed",
+      "source_stable": true
+    }
+  ],
+  "producer_sanitize_stages": 12,
+  "normalized_replay_faults": {
+    "normalized_replay_faults_strict": {
+      "positions": 38763,
+      "recovered_cleanup_positions": 0
+    },
+    "normalized_replay_faults_san": {
+      "positions": 38763,
+      "recovered_cleanup_positions": 0
+    }
+  },
+  "no_live_root_execution_sessions": true,
+  "closed_sessions": [
+    75022,
+    49676,
+    14123,
+    30363,
+    82345
+  ],
+  "raw_result_pending_field_scope": "The producer sanitizer raw driver retained a hardcoded pending entry naming the sanitizer closure. All12 terminal stage records, source guard and this completion record resolve that entry; raw evidence is not rewritten. Native registration/matrix/final source gates remain pending.",
+  "limits": "Excluded preparation only; no C02 native verification, release, C03 model or S05 byte-bound acceptance."
+}

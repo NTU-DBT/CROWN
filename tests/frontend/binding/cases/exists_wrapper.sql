@@ -1,0 +1,1 @@
+SELECT EXISTS (SELECT 1 FROM A AS a WHERE a.id = 999) AS found;

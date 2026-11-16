@@ -1,0 +1,184 @@
+{
+  "seed": 0,
+  "shape": "singleton_projection",
+  "failure": "test_wrapper_duplicate_delta",
+  "normalized_cq": {
+    "variables": [
+      {
+        "name": "x",
+        "type": "int64"
+      },
+      {
+        "name": "z",
+        "type": "int64"
+      }
+    ],
+    "atoms": [
+      {
+        "id": "r",
+        "table": "R",
+        "terms": [
+          {
+            "var": "x"
+          },
+          {
+            "var": "z"
+          }
+        ]
+      }
+    ],
+    "head": [
+      {
+        "var": "x"
+      }
+    ]
+  },
+  "sql": "SELECT DISTINCT \"a0\".\"key\" FROM \"R\" AS \"a0\"",
+  "sql_parameters": [],
+  "trace": {
+    "initial": [
+      {
+        "table": "R",
+        "rows": []
+      }
+    ],
+    "updates": [
+      {
+        "schema_version": 1,
+        "sequence": 1,
+        "table": "R",
+        "op": "insert",
+        "values": [
+          1,
+          -2
+        ]
+      }
+    ]
+  },
+  "document": {
+    "schema_version": 1,
+    "semantics": "set",
+    "catalog": {
+      "version": 1,
+      "tables": [
+        {
+          "name": "R",
+          "columns": [
+            {
+              "name": "key",
+              "type": "int64"
+            },
+            {
+              "name": "witness",
+              "type": "int64"
+            }
+          ]
+        }
+      ]
+    },
+    "query": {
+      "variables": [
+        {
+          "name": "x",
+          "type": "int64"
+        },
+        {
+          "name": "z",
+          "type": "int64"
+        }
+      ],
+      "atoms": [
+        {
+          "id": "r",
+          "table": "R",
+          "terms": [
+            {
+              "var": "x"
+            },
+            {
+              "var": "z"
+            }
+          ]
+        }
+      ],
+      "head": [
+        {
+          "var": "x"
+        }
+      ]
+    },
+    "initial": [
+      {
+        "table": "R",
+        "rows": []
+      }
+    ],
+    "updates": [
+      {
+        "schema_version": 1,
+        "sequence": 1,
+        "table": "R",
+        "op": "insert",
+        "values": [
+          1,
+          -2
+        ]
+      }
+    ]
+  },
+  "initial_row_count": 0,
+  "update_count": 1,
+  "expected": {
+    "schema_version": 1,
+    "backend": "reference_recompute",
+    "semantics": "set",
+    "initial": [],
+    "epochs": [
+      {
+        "sequence": 1,
+        "input_changed": true,
+        "current": [
+          [
+            1
+          ]
+        ],
+        "delta": {
+          "added": [
+            [
+              1
+            ]
+          ],
+          "removed": []
+        }
+      }
+    ]
+  },
+  "injected_actual": {
+    "backend": "reference_recompute",
+    "epochs": [
+      {
+        "current": [
+          [
+            1
+          ]
+        ],
+        "delta": {
+          "added": [
+            [
+              1
+            ],
+            [
+              1
+            ]
+          ],
+          "removed": []
+        },
+        "input_changed": true,
+        "sequence": 1
+      }
+    ],
+    "initial": [],
+    "schema_version": 1,
+    "semantics": "set"
+  }
+}

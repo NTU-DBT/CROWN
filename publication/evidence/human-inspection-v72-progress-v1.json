@@ -1,0 +1,149 @@
+{
+  "status": "sealed_V72_X08_exact_set_bag_difference",
+  "received_utc": "2026-11-16T07:31:14.398641+00:00",
+  "goal": "active",
+  "ledger": {
+    "verified": 75,
+    "in_progress": 1,
+    "not_started": 2,
+    "total": 78
+  },
+  "baseline": {
+    "path": "build/verification/human-inspection-v71-progress-v1.json",
+    "sha256": "f9fe003b236d9d98e3d4e555ed5e7eef06fa8cbcc52210ea5d2c35cf85b4fedf"
+  },
+  "current_source_manifest": {
+    "path": "build/verification/v72-difference-root-v1/source-point-v72-v1.json",
+    "sha256": "cd5bf69de8f879d4b929b508900cb4d8afb86883f88b1aa4974e939f09588fa5"
+  },
+  "current_code_inventory": {
+    "path": "build/verification/v72-difference-root-v1/source-lineage.json",
+    "sha256": "b025d90bf6cfc4d2ac9792ca297c1c2fce7ed013ff6f15f116a01d2d33485344"
+  },
+  "source_manifest_format": "Explicit inherited per-file V71 immutable providers plus V72 changed/added overlay; not a single-root copy.",
+  "source_paths": 4994,
+  "code_paths": 902,
+  "primary_paths": 497,
+  "production_paths": 414,
+  "test_helper_paths": 405,
+  "root_closure": {
+    "path": "build/verification/v72-difference-root-v1/root-closure.json",
+    "sha256": "54025853668c99a234aea468aa5b9fac0923d45015d4456772abd720e344fefb"
+  },
+  "root_receiving": {
+    "path": "build/verification/v72-difference-root-v1/receiving.json",
+    "sha256": "3930368fb49cc6e800ab246f13ff7d64086f74a2f381ee60d7cf9760d7ce16c0"
+  },
+  "final_document_receiving": {
+    "path": "build/verification/v72-difference-root-v1/final-document-receiving.json",
+    "sha256": "474871e856481ffc4839524fb2562c6d8339132a2bead601630a137ddf40934d"
+  },
+  "registry": {
+    "path": "docs/code_specs/reviewed_contracts.json",
+    "sha256": "3247022772f30449a086aae71bfbc3bb620cfbe85261d3fc00529532ac453823"
+  },
+  "registry_records": 21731,
+  "code_review": {
+    "files": 900,
+    "lines": 202375,
+    "regions": 22533,
+    "nonblank_regions": 19205,
+    "blank_regions": 3328
+  },
+  "generated_local_links": 158448,
+  "guide_check": {
+    "path": "build/verification/v72-difference-root-v1/final-guide-links-v1/link-audit.json",
+    "sha256": "25a20b60c71a37fa991905876b4c8a84b01eeb40510c12656188ba6ef93eda18"
+  },
+  "native_profiles": {
+    "release": {
+      "build": {
+        "path": "build/verification/v72-difference-root-v1/release-build-v2/receiving.json",
+        "sha256": "cab837492698c85aeb7c820a41bb0ca6ee0ff18fa5ba580b296f31dff49ede2a"
+      },
+      "suite": {
+        "path": "build/verification/v72-difference-root-v1/release-checks-v1/receiving.json",
+        "sha256": "dacc8522dbadf484db104b6290d4ed5e89b09d44be84c385d36ca3678216da3c"
+      },
+      "registrations": {
+        "path": "build/verification/v72-difference-root-v1/release-checks-v1/registration-comparison.json",
+        "sha256": "0617c6b687630ee415ead94f56a49cd0b355938a0ab297c19ff0bb59bf044224"
+      },
+      "raw_oracles": {
+        "path": "build/verification/v72-difference-root-v1/release-oracle-capture-v1/receiving.json",
+        "sha256": "fec147a1f48b8fb5ead6aa3291aad492a40439574b86e3d8efbee52e1b92a942"
+      },
+      "difference_checks": 112398,
+      "authenticated_difference_allocation_prefixes": 284,
+      "difference_oracle_cases": 112,
+      "difference_events": 2380,
+      "difference_images": 2492,
+      "fallback_regression_checks": 61785,
+      "fallback_allocation_prefixes": 153,
+      "fallback_oracle_cases": 56,
+      "fallback_events": 850,
+      "fallback_images": 906,
+      "source_image_checks": 140,
+      "source_image_allocation_prefixes": 24,
+      "registered_commands_executed": [
+        "source_image",
+        "fallback",
+        "fallback_oracle",
+        "difference",
+        "difference_oracle"
+      ],
+      "full_current_396_suite": false
+    },
+    "sanitizer": {
+      "build": {
+        "path": "build/verification/v72-difference-root-v1/sanitizer-build-v2/receiving.json",
+        "sha256": "cab837492698c85aeb7c820a41bb0ca6ee0ff18fa5ba580b296f31dff49ede2a"
+      },
+      "suite": {
+        "path": "build/verification/v72-difference-root-v1/sanitizer-checks-v1/receiving.json",
+        "sha256": "fbb206bf2072d6740e4f28223350d60e8bee04b8c3e1cc6fbf3ecec4c77ef00c"
+      },
+      "registrations": {
+        "path": "build/verification/v72-difference-root-v1/sanitizer-checks-v1/registration-comparison.json",
+        "sha256": "0617c6b687630ee415ead94f56a49cd0b355938a0ab297c19ff0bb59bf044224"
+      },
+      "raw_oracles": {
+        "path": "build/verification/v72-difference-root-v1/sanitizer-oracle-capture-v1/receiving.json",
+        "sha256": "8604e42bfe2cecb39cee44e2439302e24827acf09d88b291561e44ce50d35183"
+      },
+      "difference_checks": 112398,
+      "authenticated_difference_allocation_prefixes": 284,
+      "difference_oracle_cases": 112,
+      "difference_events": 2380,
+      "difference_images": 2492,
+      "fallback_regression_checks": 61785,
+      "fallback_allocation_prefixes": 153,
+      "fallback_oracle_cases": 56,
+      "fallback_events": 850,
+      "fallback_images": 906,
+      "source_image_checks": 140,
+      "source_image_allocation_prefixes": 24,
+      "registered_commands_executed": [
+        "source_image",
+        "fallback",
+        "fallback_oracle",
+        "difference",
+        "difference_oracle"
+      ],
+      "full_current_396_suite": false
+    }
+  },
+  "full_current_396_suite": false,
+  "unchanged_old_production": 408,
+  "changed_old_production": 1,
+  "added_production": 5,
+  "X08": "verified_public_IR_set_and_bag",
+  "next": [
+    "full_original_scope_completion_audit",
+    "current_integrated_verification"
+  ],
+  "universal_correctness_proof": false,
+  "P11_algorithm": false,
+  "new_release_accepted": false,
+  "history_scope": "Earlier closed source/review/SDK/release artifacts retain original vintages; no full historical artifact rehash is claimed."
+}

@@ -1,0 +1,71 @@
+{
+  "statement": {
+    "begin": 0,
+    "end": 65
+  },
+  "ast": {
+    "version": 180006,
+    "stmts": [
+      {
+        "stmt": {
+          "SelectStmt": {
+            "targetList": [
+              {
+                "ResTarget": {
+                  "name": "MixedCase",
+                  "val": {
+                    "ColumnRef": {
+                      "fields": [
+                        {
+                          "String": {
+                            "sval": "foo"
+                          }
+                        }
+                      ],
+                      "location": 7
+                    }
+                  },
+                  "location": 7
+                }
+              },
+              {
+                "ResTarget": {
+                  "val": {
+                    "ColumnRef": {
+                      "fields": [
+                        {
+                          "String": {
+                            "sval": "Bar"
+                          }
+                        }
+                      ],
+                      "location": 27
+                    }
+                  },
+                  "location": 27
+                }
+              }
+            ],
+            "fromClause": [
+              {
+                "RangeVar": {
+                  "schemaname": "Sales",
+                  "relname": "OrderItems",
+                  "inh": true,
+                  "relpersistence": "p",
+                  "alias": {
+                    "aliasname": "O"
+                  },
+                  "location": 38
+                }
+              }
+            ],
+            "limitOption": "LIMIT_OPTION_DEFAULT",
+            "op": "SETOP_NONE"
+          }
+        },
+        "stmt_len": 65
+      }
+    ]
+  }
+}

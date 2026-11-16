@@ -1,0 +1,1636 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN measured cost calibration example v1",
+  "description": "Raw timings and counters are observations; fitted coefficient attribution and replay-horizon estimates are model assumptions. Transport validation grants no planning or state authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "kind": {
+      "const": "c03_measured_calibration"
+    },
+    "source_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "input_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "compiler": {
+      "type": "string"
+    },
+    "cpp_standard": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 18446744073709551615
+    },
+    "pointer_bytes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 18446744073709551615
+    },
+    "kernel": {
+      "type": "string"
+    },
+    "machine": {
+      "type": "string"
+    },
+    "candidate_count": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 8
+    },
+    "candidate_family_exhausted": {
+      "type": "boolean"
+    },
+    "repetitions": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "event_limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 256
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "candidate": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 18446744073709551615
+          },
+          "structural_key": {
+            "type": "string"
+          },
+          "physical_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "backend": {
+            "type": "string"
+          },
+          "modes": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "delta_owner": {
+                "type": "boolean"
+              },
+              "requested_mode": {
+                "enum": [
+                  "delta",
+                  "maintenance"
+                ]
+              },
+              "resolved_mode": {
+                "enum": [
+                  "delta",
+                  "maintenance"
+                ]
+              },
+              "requested_completion": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 18446744073709551615
+              },
+              "resolved_completion": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 18446744073709551615
+              },
+              "live_maintenance": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 18446744073709551615
+              },
+              "view": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 18446744073709551615
+              }
+            },
+            "required": [
+              "delta_owner",
+              "requested_mode",
+              "resolved_mode",
+              "requested_completion",
+              "resolved_completion",
+              "live_maintenance",
+              "view"
+            ]
+          },
+          "records_per_repetition": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 18446744073709551615
+          },
+          "delta_rows_per_repetition": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 18446744073709551615
+          },
+          "snapshot_rows_per_repetition": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 18446744073709551615
+          },
+          "final_rows": {
+            "type": "array",
+            "items": {
+              "$ref": "cq-v2.schema.json#/$defs/row"
+            }
+          },
+          "context": {
+            "type": "string"
+          },
+          "observations": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "repetition": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                "sequence": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 18446744073709551615
+                },
+                "phase": {
+                  "enum": [
+                    "input_decode_native_prepare_commit",
+                    "read_committed_output_spool",
+                    "materialize_committed_snapshot"
+                  ]
+                },
+                "elapsed_ns": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                "units": {
+                  "type": "array",
+                  "minItems": 22,
+                  "maxItems": 22,
+                  "items": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 18446744073709551615
+                  }
+                }
+              },
+              "required": [
+                "repetition",
+                "sequence",
+                "phase",
+                "elapsed_ns",
+                "units"
+              ]
+            }
+          },
+          "coefficients": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "base_input": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              },
+              "base_change": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              },
+              "adapter_visit": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              },
+              "derivation_change": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              },
+              "survivor_transition": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              },
+              "parent_count_update": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              },
+              "parent_presence_transition": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              },
+              "visible_count_update": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              },
+              "visible_presence_transition": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              },
+              "edge_lookup": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              },
+              "native_bucket_touch": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              },
+              "generalized_hit": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              },
+              "annotation_change": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              },
+              "snapshot_start": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              },
+              "snapshot_row": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              },
+              "snapshot_end": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              },
+              "delta_start": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              },
+              "delta_row": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              },
+              "delta_end": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              },
+              "encoded_byte": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              },
+              "checkpoint_start": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              },
+              "checkpoint_byte": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "rate": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "numerator": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 18446744073709551615
+                          },
+                          "denominator": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 18446744073709551615
+                          }
+                        },
+                        "required": [
+                          "numerator",
+                          "denominator"
+                        ]
+                      },
+                      "observed_samples": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "observed_units": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      },
+                      "origin": {
+                        "const": "fitted_linear_assumption"
+                      }
+                    },
+                    "required": [
+                      "rate",
+                      "observed_samples",
+                      "observed_units",
+                      "origin"
+                    ]
+                  }
+                ]
+              }
+            },
+            "required": [
+              "base_input",
+              "base_change",
+              "adapter_visit",
+              "derivation_change",
+              "survivor_transition",
+              "parent_count_update",
+              "parent_presence_transition",
+              "visible_count_update",
+              "visible_presence_transition",
+              "edge_lookup",
+              "native_bucket_touch",
+              "generalized_hit",
+              "annotation_change",
+              "snapshot_start",
+              "snapshot_row",
+              "snapshot_end",
+              "delta_start",
+              "delta_row",
+              "delta_end",
+              "encoded_byte",
+              "checkpoint_start",
+              "checkpoint_byte"
+            ]
+          },
+          "fit": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "algorithm": {
+                "const": "zero_initialized_fixed_order_nonnegative_coordinates_v1"
+              },
+              "iterations": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 18446744073709551615
+              },
+              "numerical_rank": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 22
+              },
+              "observed_features": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 22
+              },
+              "underdetermined": {
+                "type": "boolean"
+              },
+              "rmse_ns_on_calibration_data": {
+                "type": "number",
+                "minimum": 0
+              },
+              "max_error_ns_on_calibration_data": {
+                "type": "number",
+                "minimum": 0
+              },
+              "relative_tolerance": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "rank_tolerance": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "exclusiveMaximum": 1
+              },
+              "ridge_numerator": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 18446744073709551615
+              },
+              "ridge_denominator": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 18446744073709551615
+              },
+              "quantization_denominator": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 18446744073709551615
+              }
+            },
+            "required": [
+              "algorithm",
+              "iterations",
+              "numerical_rank",
+              "observed_features",
+              "underdetermined",
+              "rmse_ns_on_calibration_data",
+              "max_error_ns_on_calibration_data",
+              "relative_tolerance",
+              "rank_tolerance",
+              "ridge_numerator",
+              "ridge_denominator",
+              "quantization_denominator"
+            ]
+          },
+          "replay_horizon_estimate": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "maintenance_ns": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "numerator": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 18446744073709551615
+                      },
+                      "denominator": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      }
+                    },
+                    "required": [
+                      "numerator",
+                      "denominator"
+                    ]
+                  }
+                ]
+              },
+              "delta_ns": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "numerator": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 18446744073709551615
+                      },
+                      "denominator": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      }
+                    },
+                    "required": [
+                      "numerator",
+                      "denominator"
+                    ]
+                  }
+                ]
+              },
+              "snapshot_ns": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "numerator": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 18446744073709551615
+                      },
+                      "denominator": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      }
+                    },
+                    "required": [
+                      "numerator",
+                      "denominator"
+                    ]
+                  }
+                ]
+              },
+              "total_ns": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "numerator": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 18446744073709551615
+                      },
+                      "denominator": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 18446744073709551615
+                      }
+                    },
+                    "required": [
+                      "numerator",
+                      "denominator"
+                    ]
+                  }
+                ]
+              },
+              "issues": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 18446744073709551615
+              },
+              "memory_budget_bytes": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 18446744073709551615
+              },
+              "future_memory_unknown": {
+                "const": true
+              }
+            },
+            "required": [
+              "maintenance_ns",
+              "delta_ns",
+              "snapshot_ns",
+              "total_ns",
+              "issues",
+              "memory_budget_bytes",
+              "future_memory_unknown"
+            ]
+          }
+        },
+        "required": [
+          "candidate",
+          "structural_key",
+          "physical_sha256",
+          "backend",
+          "modes",
+          "records_per_repetition",
+          "delta_rows_per_repetition",
+          "snapshot_rows_per_repetition",
+          "final_rows",
+          "context",
+          "observations",
+          "coefficients",
+          "fit",
+          "replay_horizon_estimate"
+        ]
+      }
+    },
+    "scope": {
+      "type": "string"
+    },
+    "qualification": {
+      "type": "string"
+    },
+    "assertions_enabled": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "schema_version",
+    "kind",
+    "source_sha256",
+    "input_sha256",
+    "compiler",
+    "cpp_standard",
+    "pointer_bytes",
+    "kernel",
+    "machine",
+    "candidate_count",
+    "candidate_family_exhausted",
+    "repetitions",
+    "event_limit",
+    "candidates",
+    "scope",
+    "qualification",
+    "assertions_enabled"
+  ]
+}

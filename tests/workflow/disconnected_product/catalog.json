@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "catalog": {
+    "version": 1,
+    "tables": [
+      {
+        "name": "left_rel",
+        "source_schema_version": 1,
+        "columns": [
+          {
+            "name": "x",
+            "nullable": false,
+            "type": "string",
+            "collation": "binary"
+          }
+        ],
+        "constraints": [],
+        "statistics": {
+          "distinct_counts": []
+        },
+        "key_hints": []
+      },
+      {
+        "name": "right_rel",
+        "source_schema_version": 1,
+        "columns": [
+          {
+            "name": "y",
+            "nullable": false,
+            "type": "string",
+            "collation": "binary"
+          }
+        ],
+        "constraints": [],
+        "statistics": {
+          "distinct_counts": []
+        },
+        "key_hints": []
+      }
+    ]
+  }
+}

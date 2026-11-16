@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "semantics": "set",
+  "catalog": {"version": 1, "tables": [{"name": "R", "columns": [{"name": "x", "type": "string"}]}]},
+  "query": {
+    "variables": [{"name": "x", "type": "string"}],
+    "atoms": [{"id": "r", "table": "R", "terms": [{"var": "x"}]}],
+    "head": [{"var": "x"}]
+  },
+  "initial": [{"table": "R", "rows": [["a"]]}],
+  "updates": [{"schema_version": 1, "sequence": 1, "table": "R", "op": "insert", "values": ["b"]}]
+}

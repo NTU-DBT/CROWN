@@ -1,0 +1,1 @@
+SELECT DISTINCT r.x FROM r LEFT JOIN s ON r.y=s.y

@@ -1,0 +1,72 @@
+--- a/overlay/tests/support/statistics_acceptance.hpp
++++ b/overlay/tests/support/statistics_acceptance.hpp
+@@ -14,6 +14,11 @@
+ namespace ws = runtime::workload;
+ namespace st = runtime::statistics;
+ inline std::uint64_t checked_events{}, checked_derivations{}, checked_sources{}, checked_metadata_steps{};
++#ifdef CROWN_STATISTICS_LIFO
++inline constexpr auto requested_order = runtime::PropagationOrder::lifo;
++#else
++inline constexpr auto requested_order = runtime::PropagationOrder::fifo;
++#endif
+ 
+ inline void require(bool value, const std::string& label) {
+   if (!value) throw std::runtime_error("C01 acceptance: " + label);
+@@ -25,9 +30,11 @@
+   return value;
+ }
+ inline void enable(runtime::DeltaRuntime& runtime) {
++  require(runtime.options().physical.support.order == requested_order, "actual Delta propagation order differs");
+   runtime.configure_workload_statistics(census());
+ }
+ inline void enable(runtime::QuerySession& session) {
++  require(session.report_metadata().options().physical.support.order == requested_order, "actual session propagation order differs");
+   session.configure_workload_statistics(census());
+ }
+ inline st::OwnerRequest source_request(const Database& database) {
+@@ -151,6 +158,7 @@
+   }
+ }
+ inline void print() {
++  std::cout << "C01 propagation=" << (requested_order == runtime::PropagationOrder::lifo ? "lifo" : "fifo") << '\n';
+   std::cout << "C01 enabled acceptance physical_events=" << checked_events
+             << " derivation_events=" << checked_derivations << " source_components=" << checked_sources
+             << " metadata_only_steps=" << checked_metadata_steps << '\n';
+--- a/overlay/tests/unit/delta_runtime_test.cpp
++++ b/overlay/tests/unit/delta_runtime_test.cpp
+@@ -35,6 +35,7 @@
+   options.live_maintenance=selected_policy;
+   options.completion=selected_completion;
+ #ifdef CROWN_STATISTICS_ACCEPTANCE
++  options.physical.support.order = statistics_acceptance::requested_order;
+   DeltaRuntime runtime(std::move(plan),options);
+   statistics_acceptance::enable(runtime);
+   return runtime;
+--- a/overlay/tests/unit/delta_replay_test.cpp
++++ b/overlay/tests/unit/delta_replay_test.cpp
+@@ -68,6 +68,9 @@
+   result.mode = DeltaMode::maintenance;
+   result.live_maintenance = LiveMaintenance::on_output;
+   result.completion = DeltaCompletion::ordered_replay;
++#ifdef CROWN_STATISTICS_ACCEPTANCE
++  result.physical.support.order = statistics_acceptance::requested_order;
++#endif
+   return result;
+ }
+ 
+--- a/overlay/tests/unit/window_test.cpp
++++ b/overlay/tests/unit/window_test.cpp
+@@ -522,7 +522,13 @@
+       : plan(std::move(value)), options(std::move(windows)),
+         sql_exists_wrapper(wrap_sql_exists) {
+     if (initial.tables.empty()) initial.tables.resize(plan.source_catalog().tables.size());
++#ifdef CROWN_STATISTICS_ACCEPTANCE
++    SessionOptions c01_session_options;
++    c01_session_options.delta.physical.support.order = statistics_acceptance::requested_order;
++    session = QuerySession::create_windowed(plan, initial, options, {}, c01_session_options);
++#else
+     session = QuerySession::create_windowed(plan, initial, options);
++#endif
+ #ifdef CROWN_STATISTICS_ACCEPTANCE
+     statistics_acceptance::enable(*session);
+ #endif

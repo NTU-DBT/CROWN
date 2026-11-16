@@ -1,0 +1,12 @@
+@PACKAGE_INIT@
+include(CMakeFindDependencyMacro)
+find_dependency(Threads)
+if(NOT TARGET CROWN::pg_query)
+  add_library(CROWN::pg_query STATIC IMPORTED)
+  set_and_check(_crown_pg_query_archive "@PACKAGE_CMAKE_INSTALL_LIBDIR@/crown/deps/libpg_query.a")
+  set_target_properties(CROWN::pg_query PROPERTIES
+    IMPORTED_LOCATION "${_crown_pg_query_archive}"
+    INTERFACE_LINK_LIBRARIES Threads::Threads)
+endif()
+include("${CMAKE_CURRENT_LIST_DIR}/CrownTargets.cmake")
+check_required_components(Crown)

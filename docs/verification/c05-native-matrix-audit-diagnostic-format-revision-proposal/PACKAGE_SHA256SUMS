@@ -1,0 +1,10 @@
+fcdc2d07df91df7ff2e9b23748607e48764362190300cbcc8844cb78308fbdc9  docs/verification/c05-native-matrix-audit-diagnostic-format-revision-proposal/FROZEN.md
+c66d230a6e34bcc6e66a4305b19a9deb8dc13fa7d0e3e3d3227b0a70a2455b41  docs/verification/c05-native-matrix-audit-diagnostic-format-revision-proposal/INPUT_SHA256SUMS
+4366ccc500de9137d3d1d330792fc21121c93fb09c4d7c90ef275167595377eb  docs/verification/c05-native-matrix-audit-diagnostic-format-revision-proposal/LINEAGE.md
+9cad4474cdd9158eb378910eaca5b9072c49a95f11583019af8d125e09a607a4  docs/verification/c05-native-matrix-audit-diagnostic-format-revision-proposal/PINNED_INPUTS.json
+6a552699aeb840574e7a553d058f563089920361930d134e6cca35ed997988b2  docs/verification/c05-native-matrix-audit-diagnostic-format-revision-proposal/README.md
+d71cc4a48e820abcd46eff0d86fcccbe1b7ae736f04f39023cbb357f5b9cd56e  docs/verification/c05-native-matrix-audit-diagnostic-format-revision-proposal/ROOT_REPRODUCTION.md
+3549bf30025285ab6c668f326f2e20c93298ff2de12d5925d2bd6daabf79b62a  docs/verification/c05-native-matrix-audit-diagnostic-format-revision-proposal/SOURCE_MAP.tsv
+d817d53c999df06edf943a2da104d0090a03d7aa6dccac6a2781244d211ec1e2  docs/verification/c05-native-matrix-audit-diagnostic-format-revision-proposal/audit.py
+d46ebcfbaa859a1d84074c6428ceadb026419b894937a035296258fdf619cb32  docs/verification/c05-native-matrix-audit-diagnostic-format-revision-proposal/diagnostic-format.patch
+51633ece49acf2f7f5bb4f9ec60585721649c3f3fe3524e11d8d9bee8e5131ee  docs/verification/c05-native-matrix-audit-diagnostic-format-revision-proposal/source-files.sha256

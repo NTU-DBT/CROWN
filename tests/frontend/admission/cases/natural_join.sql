@@ -1,0 +1,1 @@
+SELECT DISTINCT r.x,r.y,s.z FROM r NATURAL JOIN s

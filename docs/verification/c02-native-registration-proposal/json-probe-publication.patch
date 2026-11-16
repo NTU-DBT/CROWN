@@ -1,0 +1,49 @@
+--- docs/verification/c02-json-cleanup-tests-proposal/probe.cpp	2026-11-07 13:29:17.847010375 +0800
++++ docs/verification/c02-native-registration-proposal/overlay/tests/unit/json_cleanup_test.cpp	2026-11-07 14:27:14.565765489 +0800
+@@ -129,7 +129,9 @@
+ 
+ }  // namespace cleanup_probe
+ 
+-void* operator new(std::size_t size) {
++// Keep the replacement allocation pair opaque to optimized caller analysis,
++// as in the native persistent-fault tests. The storage is paired malloc/free.
++[[gnu::noinline]] void* operator new(std::size_t size) {
+   if (cleanup_probe::before_new()) {
+     throw std::bad_alloc{};
+   }
+@@ -145,7 +147,7 @@
+   return ::operator new(size);
+ }
+ 
+-void* operator new(std::size_t size, std::align_val_t alignment) {
++[[gnu::noinline]] void* operator new(std::size_t size, std::align_val_t alignment) {
+   if (cleanup_probe::before_new()) {
+     throw std::bad_alloc{};
+   }
+@@ -171,7 +173,7 @@
+   return ::operator new(size, alignment);
+ }
+ 
+-void operator delete(void* pointer) noexcept {
++[[gnu::noinline]] void operator delete(void* pointer) noexcept {
+   if (pointer != nullptr) {
+     cleanup_probe::deallocated();
+     std::free(pointer);
+@@ -554,7 +556,7 @@
+ int serialize_all() {
+   serialize_type<DefaultJson>("json");
+   serialize_type<OrderedJson>("ordered_json");
+-  serialize_type<CustomArrayJson>("deque_json");
++  serialize_type<CustomArrayJson>("custom_vector_json");
+   return std::cout ? 0 : 2;
+ }
+ 
+@@ -563,7 +565,7 @@
+   Counter points = 0;
+   const bool default_ok = cleanup_type<DefaultJson>("json", cases, points);
+   const bool ordered_ok = cleanup_type<OrderedJson>("ordered_json", cases, points);
+-  const bool custom_ok = cleanup_type<CustomArrayJson>("deque_json", cases, points);
++  const bool custom_ok = cleanup_type<CustomArrayJson>("custom_vector_json", cases, points);
+   const bool valid = default_ok && ordered_ok && custom_ok;
+   std::cout << "cleanup-summary cases=" << cases << " fault-points=" << points
+             << " result=" << (valid ? "pass" : "fail") << '\n';

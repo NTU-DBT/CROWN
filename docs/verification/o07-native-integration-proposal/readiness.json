@@ -1,0 +1,39 @@
+{
+  "status": "unapplied native-integration proposal; compiler/linker only; O07 NS",
+  "package_sha256": "ae3aee4c94e185e96bef3755556ac0c8528927583463a1a5ae5e44096104ee78",
+  "files": {
+    "README.md": "0f70e1aaad35a56cc568a83fd9f3da09dbc79974853bc2332162661228cc4b11",
+    "baseline-sha256.json": "b60095b0037c8a94ae4859c0e410bc0b99f7eb09f0f95d16caade41d7b7bef94",
+    "build_cli.py": "a3fc045aec842fe327c565284275ade09b64ece86fa1ea2fd773287261cfdc01",
+    "compile-evidence-production.json": "7f93a0c780fb4bf542bb6a82816a88b7cbc8afd5d17065e8f07cd58a032b481e",
+    "compile-evidence-testing.json": "76e4ca55b3cd11dbb6acf7dd6c5d4cf46cac0de3a0017e54e04211a68946c336",
+    "finalize.py": "131505d37abbe07e9a665e87053fbedb3f4193883bab68f91c8c67a3657b8023",
+    "make_patch.py": "cfe81d82b80d86a04081052657ed4e218124abd9d970735f02d722618ecef3c4",
+    "native-integration-complete.patch": "7c3f4888d39d30936f77342ce3f74d0ba86ee7b1509b5994f8f953ab1f7eaa83",
+    "native-integration-incremental.patch": "9beea7e6a911e89069435300ed3888f724e1100a2ba228c07e3bcc1d16be614e",
+    "overlay/CMakeLists.txt": "8d4545863bb04675e14b605ebfbd7bfe3bf792309532c4dcf4d6125a814eb851",
+    "overlay/apps/crown/explain.cpp": "7fc01d06f7dcc63f06da2556dd7d385e2310aea6811784318afc7c41c512bf68",
+    "overlay/apps/crown/explain.hpp": "29cf9661aac780e70332fc7a1e8d5df6407ac7bc9e20b51ab3f63b36dd4b9350",
+    "overlay/apps/crown/main.cpp": "80e3c4592cfee63dc8991544e5366a0a2eb67939a57671fa09209023b27b0e1e",
+    "overlay/src/io/explain.cpp": "31a3d3f13347dbd84f2c81b56f389891d71c8ccdace259c7d81c0fa4149ca8be",
+    "prepare.py": "c2bad8ae0aff403d562324a06d13ed988e672ea6d0f9e7faedbdf2efa2d62078",
+    "preservation-checks.json": "1a0ce4dfd4f69d89f166a4c9e17840030f148dad6b09df0236142eb71dc445b9",
+    "proposal-sha256.json": "97feb8fb7ca2d1efef612997778dfdb1b082e8d79af58c0d6ba798936ba321a0",
+    "schemas/explain-report-v2.schema.json": "c4aa8c7c62e0608d7b035128a9bd9b561387c0c16491efa704d8b95b469c9f74",
+    "schemas/explain-tree-v2.schema.json": "608154cd56f807a283d4a86e58b20af1cce6605b8a77a2727ff084d7a7967335",
+    "schemas/query-explain-v1.schema.json": "b843e905e9a2a5c201847c2db8cd93fed85a836b56d6faa8d4319c70cd02979d",
+    "schemas/query-witness-v1.schema.json": "1e2121a6c7ce98f8e68650cf1bf54733db6eec0b4a254695dbafa84c10688f7e",
+    "source-map.json": "74a1b904f006d68e88380dc9014a07fa7dbc2e9b7d9f2449f470419c1b672774"
+  },
+  "artifacts": {
+    "testing": {
+      "binary": "/tmp/crown-o07-native-integration-testing/crown",
+      "binary_sha256": "b33ee6dde90f27d65cbb4560cdba7cdf616e61a13f8ffec012440dc8970bd1cd"
+    },
+    "production": {
+      "binary": "/tmp/crown-o07-native-integration-production/crown",
+      "binary_sha256": "399b83154aa16c1a12e946729d60e5d5fd3c2f9844aaffac3d58468c9f56e9ff"
+    }
+  },
+  "baseline_pins": 205
+}

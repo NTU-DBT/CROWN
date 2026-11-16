@@ -1,0 +1,7 @@
+CMakeLists.txt: OK
+README.md: OK
+dependencies.lock.json: OK
+docs/native_build.md: OK
+docs/source_baselines.md: OK
+src/planner/candidates.cpp: OK
+third_party/nlohmann/json.hpp: OK

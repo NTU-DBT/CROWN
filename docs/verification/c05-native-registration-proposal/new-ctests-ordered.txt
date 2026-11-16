@@ -1,0 +1,15 @@
+selection_pure_link
+selection_contract
+selection_cache
+selection_source
+selection_current
+selection_binding
+selection_resources
+selection_census
+selection_exception
+selection_normalized_exception
+selection_public_independent
+selection_cache_independent
+selection_resources_independent
+selection_binding_independent
+selection_publication_fault_independent

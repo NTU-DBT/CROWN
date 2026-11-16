@@ -1,0 +1,3038 @@
+--- /dev/null
++++ b/apps/crown-explain-proposal/main.cpp
+@@ -0,0 +1,78 @@
++#include "crown/io/explain.hpp"
++#include "crown/io/physical.hpp"
++#include "crown/io/oracle.hpp"
++#include "crown/api/error.hpp"
++#include <charconv>
++#include <fstream>
++#include <iostream>
++#include <optional>
++
++namespace {
++std::string read(const std::string& path) {
++  constexpr std::size_t limit=16*1024*1024;
++  std::ifstream stream(path,std::ios::binary);
++  if (!stream) throw crown::Error("io_error","cannot open input artifact");
++  std::string result; char buffer[4096];
++  while (stream) {
++    stream.read(buffer,sizeof(buffer)); const auto count=static_cast<std::size_t>(stream.gcount());
++    if (count>limit-result.size()) throw crown::Error("resource_limit","input artifact exceeds 16 MiB");
++    result.append(buffer,count);
++  }
++  if (!stream.eof()) throw crown::Error("io_error","cannot read complete input artifact");
++  return result;
++}
++std::size_t size(std::string_view value) {
++  std::size_t result=0; const auto parsed=std::from_chars(value.data(),value.data()+value.size(),result);
++  if (parsed.ec!=std::errc{} || parsed.ptr!=value.data()+value.size()) throw crown::Error("usage","invalid --max-bytes");
++  return result;
++}
++}
++int main(int argc,char** argv) {
++  try {
++    if (argc<2) throw crown::Error("usage","crown-explain-proposal PLAN.json [--format text|json|dot] [--certificate FILE] [--max-bytes N]");
++    std::string format="text"; std::optional<std::string> certificate; crown::io::ExplainTextLimits limits;
++    for (int i=2;i<argc;i+=2) {
++      if (i+1>=argc) throw crown::Error("usage","every option needs one value");
++      const std::string_view key=argv[i];
++      if (key=="--format") format=argv[i+1];
++      else if (key=="--certificate") certificate=argv[i+1];
++      else if (key=="--max-bytes") limits.bytes=size(argv[i+1]);
++      else throw crown::Error("usage","unknown option");
++    }
++    if (format!="text" && format!="json" && format!="dot") throw crown::Error("usage","unknown output format");
++    auto plan=crown::io::read_physical(read(argv[1]));
++    crown::observability::HeightEvidence evidence;
++    if (certificate) {
++      auto claims=crown::io::read_height_certificate(read(*certificate),plan.catalog(),plan.query());
++      auto replay=crown::planner::CertificateReplay::create(plan.catalog(),plan.query(),std::move(claims));
++      while (!replay.checked()) {
++        const auto step=replay.advance({100000,{}});
++        if (step.stopped_for!=crown::planner::StopReason::quantum_work && step.stopped_for!=crown::planner::StopReason::quantum_time &&
++            step.stopped_for!=crown::planner::StopReason::complete)
++          throw crown::Error("certificate_replay","independent replay did not establish checked authority within its resource limits");
++      }
++      auto proof=replay.checked()->optimum();
++      if (!proof) throw crown::Error("explain_evidence","infeasibility proof cannot certify an executable physical plan");
++      evidence=std::move(*proof);
++    }
++    const auto report=crown::observability::PlanExplanation::create(std::move(plan),std::move(evidence));
++    const auto result=format=="json"?crown::io::write_explain_json(report,limits):
++        format=="dot"?crown::io::write_explain_dot(report,limits):crown::io::write_explain_text(report,limits);
++    std::cout.write(result.data(),static_cast<std::streamsize>(result.size()));
++    if (!std::cout) throw crown::Error("io_error","report output failed");
++    return 0;
++  } catch (const crown::Error& error) {
++    // Do not echo untrusted native diagnostics or query bytes into a terminal.
++    std::cerr << "error: ";
++    for (const char ch:error.code()) {
++      const bool safe=(ch>='a' && ch<='z') || (ch>='0' && ch<='9') || ch=='_';
++      std::cerr.put(safe?ch:'?');
++    }
++    std::cerr.put('\n');
++    return error.code()=="usage"?2:error.code()=="text_encoding"?3:error.code()=="resource_limit"?4:1;
++  } catch (const std::bad_alloc&) {
++    std::cerr << "resource_limit: report allocation failed\n"; return 4;
++  } catch (const std::exception&) {
++    std::cerr << "invalid_document: artifact processing failed\n"; return 1;
++  }
++}
+--- /dev/null
++++ b/include/crown/io/explain.hpp
+@@ -0,0 +1,12 @@
++#pragma once
++#include "crown/observability/explain.hpp"
++
++namespace crown::io {
++struct ExplainTextLimits { std::size_t bytes=16*1024*1024; };
++// Strict UTF-8 text transport. Native admission remains arbitrary-byte safe.
++// Invalid UTF-8 or encoded-byte exhaustion fails this export only. No JSON DOM
++// is built, and returned strings contain a complete artifact or are not returned.
++[[nodiscard]] std::string write_explain_json(const observability::PlanExplanation&,ExplainTextLimits={});
++[[nodiscard]] std::string write_explain_text(const observability::PlanExplanation&,ExplainTextLimits={});
++[[nodiscard]] std::string write_explain_dot(const observability::PlanExplanation&,ExplainTextLimits={});
++} // namespace crown::io
+--- /dev/null
++++ b/include/crown/observability/explain.hpp
+@@ -0,0 +1,59 @@
++#pragma once
++
++#include "crown/planner/candidates.hpp"
++#include "crown/runtime/delta.hpp"
++#include <memory>
++#include <variant>
++
++namespace crown::observability {
++// Mode identity is captured from a real runtime. It is not a history of prior
++// attempts: the current observation overlay has no per-attempt mode generation.
++class ModeDescriptor {
++ public:
++  [[nodiscard]] static ModeDescriptor compile_only(PhysicalPlan);
++  [[nodiscard]] static ModeDescriptor capture(const runtime::DeltaRuntime&);
++  [[nodiscard]] const PhysicalPlan& plan() const;
++  [[nodiscard]] bool running() const;
++  [[nodiscard]] std::uint64_t owner() const;
++  [[nodiscard]] std::uint64_t sequence() const;
++  [[nodiscard]] runtime::DeltaState state() const;
++  [[nodiscard]] const std::optional<runtime::DeltaOptions>& options() const;
++  [[nodiscard]] const std::optional<runtime::DeltaRuntimeProfile>& profile() const;
++ private:
++  struct Data;
++  explicit ModeDescriptor(std::shared_ptr<const Data>);
++  [[nodiscard]] const Data& data() const;
++  std::shared_ptr<const Data> data_;
++};
++using HeightEvidence=std::variant<std::monostate,planner::ValidatedIncumbent,
++    planner::VerifiedOptimum,planner::MinimumHeightCandidate>;
++enum class HeightStatus { checked_upper, verified_original_minimum };
++struct ExplainLimits {
++  std::size_t nodes=100000;
++};
++// Admission uses exact native Catalog/Query comparison, never JSON, a digest,
++// a caller-supplied validation flag, or alpha-equivalence. The immutable plan
++// was already admitted by P08. Serialization is a separate explicit operation.
++class PlanExplanation {
++ public:
++  [[nodiscard]] static PlanExplanation create(PhysicalPlan,HeightEvidence={},
++      std::optional<planner::CandidateSnapshot> family={},ExplainLimits={});
++  [[nodiscard]] static PlanExplanation capture(const runtime::DeltaRuntime&,HeightEvidence={},
++      std::optional<planner::CandidateSnapshot> family={},ExplainLimits={});
++  [[nodiscard]] const PhysicalPlan& plan() const;
++  [[nodiscard]] const ModeDescriptor& mode() const;
++  [[nodiscard]] HeightStatus height_status() const;
++  [[nodiscard]] std::size_t selected_height() const;
++  [[nodiscard]] const HeightEvidence& evidence() const;
++  [[nodiscard]] std::optional<planner::VerifiedOptimum> optimum() const;
++  [[nodiscard]] const std::optional<planner::CandidateSnapshot>& family() const;
++  [[nodiscard]] const std::optional<runtime::ObservationSnapshot>& observation() const;
++ private:
++  struct Data;
++  explicit PlanExplanation(std::shared_ptr<const Data>);
++  [[nodiscard]] static PlanExplanation make(ModeDescriptor,HeightEvidence,
++      std::optional<planner::CandidateSnapshot>,std::optional<runtime::ObservationSnapshot>,ExplainLimits);
++  [[nodiscard]] const Data& data() const;
++  std::shared_ptr<const Data> data_;
++};
++} // namespace crown::observability
+--- /dev/null
++++ b/schemas/explain-report-v1.schema.json
+@@ -0,0 +1,2257 @@
++{
++  "$schema": "https://json-schema.org/draft/2020-12/schema",
++  "$id": "https://crown.invalid/schemas/explain-report-v1.schema.json",
++  "title": "Excluded CROWN EXPLAIN report v1 (diagnostic only)",
++  "type": "object",
++  "properties": {
++    "schema_version": {
++      "const": 1
++    },
++    "artifact": {
++      "const": "crown_explain"
++    },
++    "authority": {
++      "const": "diagnostic_export_only"
++    },
++    "identity": {
++      "type": "object",
++      "properties": {
++        "physical_sha256": {
++          "type": "string",
++          "pattern": "^[0-9a-f]{64}$"
++        },
++        "semantic_sha256": {
++          "type": "string",
++          "pattern": "^[0-9a-f]{64}$"
++        },
++        "output_contract_sha256": {
++          "type": "string",
++          "pattern": "^[0-9a-f]{64}$"
++        },
++        "cost_inputs_sha256": {
++          "type": "string",
++          "pattern": "^[0-9a-f]{64}$"
++        },
++        "plan_cache_sha256": {
++          "type": "string",
++          "pattern": "^[0-9a-f]{64}$"
++        },
++        "core_catalog_version": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "source_catalog_version": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "binding_rule": {
++          "const": "exact_original_native_catalog_query; digests_are_navigation_only"
++        }
++      },
++      "required": [
++        "physical_sha256",
++        "semantic_sha256",
++        "output_contract_sha256",
++        "cost_inputs_sha256",
++        "plan_cache_sha256",
++        "core_catalog_version",
++        "source_catalog_version",
++        "binding_rule"
++      ],
++      "additionalProperties": false
++    },
++    "route": {
++      "enum": [
++        "tree",
++        "constant_true",
++        "constant_false"
++      ]
++    },
++    "recognized_class": {
++      "type": "string"
++    },
++    "query": {
++      "$ref": "#/$defs/query"
++    },
++    "structure": {
++      "type": "object",
++      "properties": {
++        "validity_source": {
++          "enum": [
++            "p08_constant_operator",
++            "p08_independently_validated_tree"
++          ]
++        },
++        "native_height": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "edge_depth": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "selected_tree": {
++          "$ref": "#/$defs/tree"
++        }
++      },
++      "required": [
++        "validity_source",
++        "native_height",
++        "edge_depth",
++        "selected_tree"
++      ],
++      "additionalProperties": false
++    },
++    "height_evidence": {
++      "$ref": "#/$defs/height"
++    },
++    "candidate_family": {
++      "anyOf": [
++        {
++          "type": "object",
++          "properties": {
++            "family": {
++              "const": "exact-seed/residual-seed/normal-form-v1"
++            },
++            "exhausted": {
++              "type": "boolean"
++            },
++            "count": {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            "exhaustion_scope": {
++              "const": "admitted_seeds_and_normal_form_v1_only"
++            },
++            "global_cost_complete": {
++              "const": false
++            }
++          },
++          "required": [
++            "family",
++            "exhausted",
++            "count",
++            "exhaustion_scope",
++            "global_cost_complete"
++          ],
++          "additionalProperties": false
++        },
++        {
++          "type": "null"
++        }
++      ]
++    },
++    "selected_candidate": {
++      "anyOf": [
++        {
++          "type": "object",
++          "properties": {
++            "source": {
++              "enum": [
++                "exact_witness",
++                "residual_seed",
++                "normal_form"
++              ]
++            },
++            "sequence": {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            "structural_key": {
++              "type": "string"
++            },
++            "key_scope": {
++              "const": "exact_binding_and_candidate_context_only"
++            }
++          },
++          "required": [
++            "source",
++            "sequence",
++            "structural_key",
++            "key_scope"
++          ],
++          "additionalProperties": false
++        },
++        {
++          "type": "null"
++        }
++      ]
++    },
++    "physical": {
++      "$ref": "#/$defs/physical"
++    },
++    "cost": {
++      "type": "object",
++      "properties": {
++        "selection": {
++          "const": "not_implemented"
++        },
++        "statistics": {
++          "const": "unavailable"
++        },
++        "estimated_state": {
++          "const": "unavailable"
++        },
++        "global_optimality": {
++          "const": false
++        }
++      },
++      "required": [
++        "selection",
++        "statistics",
++        "estimated_state",
++        "global_optimality"
++      ],
++      "additionalProperties": false
++    },
++    "mode": {
++      "$ref": "#/$defs/mode"
++    },
++    "observations": {
++      "$ref": "#/$defs/observations"
++    },
++    "open_gates": {
++      "type": "array",
++      "items": {
++        "enum": [
++          "S05_total_allocator_bytes",
++          "O04_checkpoint",
++          "O05_recovery",
++          "O06_durable_delivery",
++          "C01_statistics",
++          "C02_ranking",
++          "B03_benchmark",
++          "per_attempt_mode_generation"
++        ]
++      }
++    }
++  },
++  "required": [
++    "schema_version",
++    "artifact",
++    "authority",
++    "identity",
++    "route",
++    "recognized_class",
++    "query",
++    "structure",
++    "height_evidence",
++    "candidate_family",
++    "selected_candidate",
++    "physical",
++    "cost",
++    "mode",
++    "observations",
++    "open_gates"
++  ],
++  "additionalProperties": false,
++  "$defs": {
++    "scalar": {
++      "type": "object",
++      "properties": {
++        "type": {
++          "enum": [
++            "int64",
++            "string",
++            "bool",
++            "date",
++            "decimal"
++          ]
++        },
++        "value": {
++          "type": [
++            "integer",
++            "string",
++            "boolean"
++          ]
++        }
++      },
++      "required": [
++        "type",
++        "value"
++      ],
++      "additionalProperties": false,
++      "allOf": [
++        {
++          "if": {
++            "properties": {
++              "type": {
++                "const": "int64"
++              }
++            }
++          },
++          "then": {
++            "properties": {
++              "value": {
++                "type": "integer",
++                "minimum": -9223372036854775808,
++                "maximum": 9223372036854775807
++              }
++            }
++          }
++        },
++        {
++          "if": {
++            "properties": {
++              "type": {
++                "const": "bool"
++              }
++            }
++          },
++          "then": {
++            "properties": {
++              "value": {
++                "type": "boolean"
++              }
++            }
++          }
++        },
++        {
++          "if": {
++            "properties": {
++              "type": {
++                "enum": [
++                  "string",
++                  "date",
++                  "decimal"
++                ]
++              }
++            }
++          },
++          "then": {
++            "properties": {
++              "value": {
++                "type": "string"
++              }
++            }
++          }
++        }
++      ]
++    },
++    "term": {
++      "oneOf": [
++        {
++          "type": "object",
++          "properties": {
++            "kind": {
++              "const": "variable"
++            },
++            "variable": {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            }
++          },
++          "required": [
++            "kind",
++            "variable"
++          ],
++          "additionalProperties": false
++        },
++        {
++          "type": "object",
++          "properties": {
++            "kind": {
++              "const": "constant"
++            },
++            "constant": {
++              "$ref": "#/$defs/scalar"
++            }
++          },
++          "required": [
++            "kind",
++            "constant"
++          ],
++          "additionalProperties": false
++        },
++        {
++          "type": "object",
++          "properties": {
++            "kind": {
++              "const": "ignored_column"
++            }
++          },
++          "required": [
++            "kind"
++          ],
++          "additionalProperties": false
++        }
++      ]
++    },
++    "tree": {
++      "type": "object",
++      "properties": {
++        "root": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "nodes": {
++          "type": "array",
++          "items": {
++            "type": "object",
++            "properties": {
++              "id": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "label": {
++                "type": "string"
++              },
++              "kind": {
++                "enum": [
++                  "native",
++                  "generalized"
++                ]
++              },
++              "occurrence": {
++                "anyOf": [
++                  {
++                    "type": "integer",
++                    "minimum": 0,
++                    "maximum": 18446744073709551615
++                  },
++                  {
++                    "type": "null"
++                  }
++                ]
++              },
++              "scope": {
++                "type": "array",
++                "items": {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                }
++              },
++              "children": {
++                "type": "array",
++                "items": {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                }
++              },
++              "separator": {
++                "anyOf": [
++                  {
++                    "type": "array",
++                    "items": {
++                      "type": "integer",
++                      "minimum": 0,
++                      "maximum": 18446744073709551615
++                    }
++                  },
++                  {
++                    "type": "null"
++                  }
++                ]
++              },
++              "connex": {
++                "anyOf": [
++                  {
++                    "type": "boolean"
++                  },
++                  {
++                    "type": "null"
++                  }
++                ]
++              }
++            },
++            "required": [
++              "id",
++              "label",
++              "kind",
++              "occurrence",
++              "scope",
++              "children",
++              "separator",
++              "connex"
++            ],
++            "additionalProperties": false
++          }
++        }
++      },
++      "required": [
++        "root",
++        "nodes"
++      ],
++      "additionalProperties": false
++    },
++    "output_type": {
++      "type": "object",
++      "properties": {
++        "precision": {
++          "type": "integer",
++          "minimum": 1,
++          "maximum": 38
++        },
++        "scale": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 38
++        }
++      },
++      "required": [
++        "precision",
++        "scale"
++      ],
++      "additionalProperties": false
++    },
++    "sql_output": {
++      "oneOf": [
++        {
++          "type": "object",
++          "properties": {
++            "name": {
++              "type": "string"
++            },
++            "type": {
++              "enum": [
++                "unknown",
++                "int32",
++                "int64",
++                "string",
++                "bool",
++                "date",
++                "decimal"
++              ]
++            },
++            "nullable": {
++              "type": "boolean"
++            },
++            "decimal": {
++              "anyOf": [
++                {
++                  "$ref": "#/$defs/output_type"
++                },
++                {
++                  "type": "null"
++                }
++              ]
++            },
++            "kind": {
++              "const": "core_column"
++            },
++            "column": {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            }
++          },
++          "required": [
++            "name",
++            "type",
++            "nullable",
++            "decimal",
++            "kind",
++            "column"
++          ],
++          "additionalProperties": false
++        },
++        {
++          "type": "object",
++          "properties": {
++            "name": {
++              "type": "string"
++            },
++            "type": {
++              "enum": [
++                "unknown",
++                "int32",
++                "int64",
++                "string",
++                "bool",
++                "date",
++                "decimal"
++              ]
++            },
++            "nullable": {
++              "type": "boolean"
++            },
++            "decimal": {
++              "anyOf": [
++                {
++                  "$ref": "#/$defs/output_type"
++                },
++                {
++                  "type": "null"
++                }
++              ]
++            },
++            "kind": {
++              "const": "constant"
++            },
++            "constant": {
++              "$ref": "#/$defs/scalar"
++            }
++          },
++          "required": [
++            "name",
++            "type",
++            "nullable",
++            "decimal",
++            "kind",
++            "constant"
++          ],
++          "additionalProperties": false
++        }
++      ]
++    },
++    "query": {
++      "type": "object",
++      "properties": {
++        "contradiction": {
++          "type": "boolean"
++        },
++        "variables": {
++          "type": "array",
++          "items": {
++            "type": "object",
++            "properties": {
++              "id": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "name": {
++                "type": "string"
++              },
++              "type": {
++                "enum": [
++                  "int64",
++                  "string",
++                  "bool",
++                  "date",
++                  "decimal"
++                ]
++              }
++            },
++            "required": [
++              "id",
++              "name",
++              "type"
++            ],
++            "additionalProperties": false
++          }
++        },
++        "occurrences": {
++          "type": "array",
++          "items": {
++            "type": "object",
++            "properties": {
++              "id": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "name": {
++                "type": "string"
++              },
++              "table": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "table_name": {
++                "type": "string"
++              },
++              "terms": {
++                "type": "array",
++                "items": {
++                  "$ref": "#/$defs/term"
++                }
++              }
++            },
++            "required": [
++              "id",
++              "name",
++              "table",
++              "table_name",
++              "terms"
++            ],
++            "additionalProperties": false
++          }
++        },
++        "head": {
++          "type": "array",
++          "items": {
++            "type": "object",
++            "properties": {
++              "variable": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "alias": {
++                "type": "string"
++              }
++            },
++            "required": [
++              "variable",
++              "alias"
++            ],
++            "additionalProperties": false
++          }
++        },
++        "sql": {
++          "anyOf": [
++            {
++              "type": "object",
++              "properties": {
++                "source": {
++                  "type": "string"
++                },
++                "wrapper": {
++                  "enum": [
++                    "exists",
++                    "rows"
++                  ]
++                },
++                "parameters": {
++                  "type": "array",
++                  "items": {
++                    "anyOf": [
++                      {
++                        "$ref": "#/$defs/scalar"
++                      },
++                      {
++                        "type": "null"
++                      }
++                    ]
++                  }
++                },
++                "outputs": {
++                  "type": "array",
++                  "items": {
++                    "$ref": "#/$defs/sql_output"
++                  }
++                }
++              },
++              "required": [
++                "source",
++                "wrapper",
++                "parameters",
++                "outputs"
++              ],
++              "additionalProperties": false
++            },
++            {
++              "type": "null"
++            }
++          ]
++        }
++      },
++      "required": [
++        "contradiction",
++        "variables",
++        "occurrences",
++        "head",
++        "sql"
++      ],
++      "additionalProperties": false
++    },
++    "height": {
++      "type": "object",
++      "properties": {
++        "status": {
++          "enum": [
++            "checked_upper",
++            "verified_original_minimum"
++          ]
++        },
++        "selected_height": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "scope": {
++          "const": "original_core_query"
++        },
++        "search_progress": {
++          "const": "not_attached"
++        },
++        "source": {
++          "enum": [
++            "p08_checked_upper_only",
++            "p06_verified_optimum",
++            "p07_checked_candidate_with_original_p06_proof"
++          ]
++        },
++        "original_minimum": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "algorithm": {
++          "anyOf": [
++            {
++              "type": "string"
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "certificate_role": {
++          "enum": [
++            "none",
++            "typed_handle_retained; diagnostic_not_certificate_input"
++          ]
++        },
++        "original_witness": {
++          "anyOf": [
++            {
++              "$ref": "#/$defs/tree"
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "lower_bound_claims": {
++          "anyOf": [
++            {
++              "type": "array",
++              "items": {
++                "type": "object",
++                "properties": {
++                  "occurrences": {
++                    "type": "array",
++                    "items": {
++                      "type": "integer",
++                      "minimum": 0,
++                      "maximum": 18446744073709551615
++                    }
++                  },
++                  "generalized_allowed": {
++                    "type": "boolean"
++                  },
++                  "connex_reachable": {
++                    "type": "boolean"
++                  },
++                  "bound": {
++                    "anyOf": [
++                      {
++                        "type": "integer",
++                        "minimum": 0,
++                        "maximum": 18446744073709551615
++                      },
++                      {
++                        "type": "null"
++                      }
++                    ]
++                  }
++                },
++                "required": [
++                  "occurrences",
++                  "generalized_allowed",
++                  "connex_reachable",
++                  "bound"
++                ],
++                "additionalProperties": false
++              }
++            },
++            {
++              "type": "null"
++            }
++          ]
++        }
++      },
++      "required": [
++        "status",
++        "selected_height",
++        "scope",
++        "search_progress",
++        "source",
++        "original_minimum",
++        "algorithm",
++        "certificate_role",
++        "original_witness",
++        "lower_bound_claims"
++      ],
++      "additionalProperties": false,
++      "allOf": [
++        {
++          "if": {
++            "properties": {
++              "status": {
++                "const": "checked_upper"
++              }
++            }
++          },
++          "then": {
++            "properties": {
++              "source": {
++                "const": "p08_checked_upper_only"
++              },
++              "original_minimum": {
++                "type": "null"
++              },
++              "algorithm": {
++                "type": "null"
++              },
++              "certificate_role": {
++                "const": "none"
++              },
++              "original_witness": {
++                "type": "null"
++              },
++              "lower_bound_claims": {
++                "type": "null"
++              }
++            }
++          }
++        },
++        {
++          "if": {
++            "properties": {
++              "status": {
++                "const": "verified_original_minimum"
++              }
++            }
++          },
++          "then": {
++            "properties": {
++              "source": {
++                "enum": [
++                  "p06_verified_optimum",
++                  "p07_checked_candidate_with_original_p06_proof"
++                ]
++              },
++              "original_minimum": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "algorithm": {
++                "type": "string"
++              },
++              "certificate_role": {
++                "const": "typed_handle_retained; diagnostic_not_certificate_input"
++              },
++              "original_witness": {
++                "$ref": "#/$defs/tree"
++              },
++              "lower_bound_claims": {
++                "type": "array",
++                "items": {
++                  "type": "object",
++                  "properties": {
++                    "occurrences": {
++                      "type": "array",
++                      "items": {
++                        "type": "integer",
++                        "minimum": 0,
++                        "maximum": 18446744073709551615
++                      }
++                    },
++                    "generalized_allowed": {
++                      "type": "boolean"
++                    },
++                    "connex_reachable": {
++                      "type": "boolean"
++                    },
++                    "bound": {
++                      "anyOf": [
++                        {
++                          "type": "integer",
++                          "minimum": 0,
++                          "maximum": 18446744073709551615
++                        },
++                        {
++                          "type": "null"
++                        }
++                      ]
++                    }
++                  },
++                  "required": [
++                    "occurrences",
++                    "generalized_allowed",
++                    "connex_reachable",
++                    "bound"
++                  ],
++                  "additionalProperties": false
++                }
++              }
++            }
++          }
++        }
++      ]
++    },
++    "guarantee": {
++      "type": "object",
++      "properties": {
++        "semantics": {
++          "type": "string"
++        },
++        "query_class": {
++          "type": "string"
++        },
++        "arithmetic": {
++          "type": "string"
++        },
++        "backend": {
++          "type": "string"
++        },
++        "update_contract": {
++          "type": "string"
++        },
++        "state_bound": {
++          "type": "string"
++        },
++        "maintenance_bound": {
++          "type": "string"
++        },
++        "preparation_bound": {
++          "type": "string"
++        },
++        "candidate_bound": {
++          "type": "string"
++        },
++        "accepted_bound": {
++          "type": "string"
++        },
++        "finalization_bound": {
++          "type": "string"
++        },
++        "public_startup_bound": {
++          "type": "string"
++        },
++        "ordered_costs": {
++          "type": "string"
++        },
++        "assumptions": {
++          "type": "string"
++        },
++        "output_accounting": {
++          "type": "string"
++        },
++        "public_first_record_constant_delay": {
++          "const": false
++        }
++      },
++      "required": [
++        "semantics",
++        "query_class",
++        "arithmetic",
++        "backend",
++        "update_contract",
++        "state_bound",
++        "maintenance_bound",
++        "preparation_bound",
++        "candidate_bound",
++        "accepted_bound",
++        "finalization_bound",
++        "public_startup_bound",
++        "ordered_costs",
++        "assumptions",
++        "output_accounting",
++        "public_first_record_constant_delay"
++      ],
++      "additionalProperties": false
++    },
++    "runtime_mode": {
++      "type": "object",
++      "properties": {
++        "owner": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "committed_sequence": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "state": {
++          "enum": [
++            "ready",
++            "pending_delta",
++            "paused",
++            "draining",
++            "epoch_prepared",
++            "committed_output",
++            "committed",
++            "aborted"
++          ]
++        },
++        "mode": {
++          "enum": [
++            "maintenance",
++            "delta"
++          ]
++        },
++        "requested_initial_mode": {
++          "enum": [
++            "maintenance",
++            "delta"
++          ]
++        },
++        "requested_completion": {
++          "enum": [
++            "automatic",
++            "ordered_replay",
++            "anchored",
++            "root_first"
++          ]
++        },
++        "resolved_completion": {
++          "enum": [
++            "ordered_replay",
++            "anchored",
++            "root_first"
++          ]
++        },
++        "live_maintenance": {
++          "enum": [
++            "on_output",
++            "incremental",
++            "eager"
++          ]
++        },
++        "result_view": {
++          "enum": [
++            "core",
++            "sql"
++          ]
++        },
++        "propagation": {
++          "enum": [
++            "fifo",
++            "lifo"
++          ]
++        },
++        "observation": {
++          "enum": [
++            "off",
++            "counters",
++            "timed",
++            "trace"
++          ]
++        },
++        "legacy_full_transition_capture": {
++          "type": "boolean"
++        },
++        "observation_options": {
++          "type": "object",
++          "properties": {
++            "trace_capacity": {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            "sample_period": {
++              "type": "integer",
++              "minimum": 1,
++              "maximum": 18446744073709551615
++            },
++            "sample_offset": {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            "trace_timings": {
++              "type": "boolean"
++            }
++          },
++          "required": [
++            "trace_capacity",
++            "sample_period",
++            "sample_offset",
++            "trace_timings"
++          ],
++          "additionalProperties": false
++        },
++        "limits": {
++          "type": "object",
++          "properties": {
++            "delta_work": {
++              "anyOf": [
++                {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                },
++                {
++                  "type": "null"
++                }
++              ]
++            },
++            "physical_work": {
++              "anyOf": [
++                {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                },
++                {
++                  "type": "null"
++                }
++              ]
++            },
++            "support_work": {
++              "anyOf": [
++                {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                },
++                {
++                  "type": "null"
++                }
++              ]
++            },
++            "cursor_work": {
++              "anyOf": [
++                {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                },
++                {
++                  "type": "null"
++                }
++              ]
++            },
++            "view_work": {
++              "anyOf": [
++                {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                },
++                {
++                  "type": "null"
++                }
++              ]
++            },
++            "support_count": {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            "derivation_count": {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            "spool_rows": {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            "spool_accounted_bytes": {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            }
++          },
++          "required": [
++            "delta_work",
++            "physical_work",
++            "support_work",
++            "cursor_work",
++            "view_work",
++            "support_count",
++            "derivation_count",
++            "spool_rows",
++            "spool_accounted_bytes"
++          ],
++          "additionalProperties": false
++        },
++        "guarantee": {
++          "$ref": "#/$defs/guarantee"
++        }
++      },
++      "required": [
++        "owner",
++        "committed_sequence",
++        "state",
++        "mode",
++        "requested_initial_mode",
++        "requested_completion",
++        "resolved_completion",
++        "live_maintenance",
++        "result_view",
++        "propagation",
++        "observation",
++        "legacy_full_transition_capture",
++        "observation_options",
++        "limits",
++        "guarantee"
++      ],
++      "additionalProperties": false
++    },
++    "mode": {
++      "type": "object",
++      "properties": {
++        "scope": {
++          "enum": [
++            "compile_only",
++            "current_runtime_configuration"
++          ]
++        },
++        "historical_metric_mode_binding": {
++          "const": "see_each_attempt_mode_binding"
++        },
++        "codec": {
++          "const": "external_unmeasured"
++        },
++        "sink": {
++          "const": "external_unmeasured"
++        },
++        "retention_policy": {
++          "const": "per_attempt_not_recorded"
++        },
++        "input_adapter": {
++          "const": "not_recorded"
++        },
++        "initialization_method": {
++          "const": "not_recorded"
++        },
++        "durable_delivery": {
++          "const": "not_implemented"
++        },
++        "semantics": {
++          "type": "string"
++        },
++        "arithmetic": {
++          "type": "string"
++        },
++        "backend": {
++          "type": "string"
++        },
++        "runtime": {
++          "anyOf": [
++            {
++              "$ref": "#/$defs/runtime_mode"
++            },
++            {
++              "type": "null"
++            }
++          ]
++        }
++      },
++      "required": [
++        "scope",
++        "historical_metric_mode_binding",
++        "codec",
++        "sink",
++        "retention_policy",
++        "input_adapter",
++        "initialization_method",
++        "durable_delivery",
++        "semantics",
++        "arithmetic",
++        "backend",
++        "runtime"
++      ],
++      "additionalProperties": false,
++      "allOf": [
++        {
++          "if": {
++            "properties": {
++              "scope": {
++                "const": "compile_only"
++              }
++            }
++          },
++          "then": {
++            "properties": {
++              "runtime": {
++                "type": "null"
++              }
++            }
++          }
++        },
++        {
++          "if": {
++            "properties": {
++              "scope": {
++                "const": "current_runtime_configuration"
++              }
++            }
++          },
++          "then": {
++            "properties": {
++              "runtime": {
++                "$ref": "#/$defs/runtime_mode"
++              }
++            }
++          }
++        }
++      ]
++    },
++    "metric_descriptor": {
++      "type": "object",
++      "properties": {
++        "id": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "name": {
++          "type": "string"
++        },
++        "unit": {
++          "enum": [
++            "nanoseconds",
++            "accounted_bytes",
++            "abstract_actions",
++            "count"
++          ]
++        },
++        "kind": {
++          "enum": [
++            "counter",
++            "high_water",
++            "timing"
++          ]
++        },
++        "layer": {
++          "enum": [
++            "support",
++            "physical",
++            "delta"
++          ]
++        },
++        "accounting": {
++          "enum": [
++            "mandatory-runtime-v1",
++            "optional-observation-v1"
++          ]
++        },
++        "scope": {
++          "type": "string"
++        },
++        "includes": {
++          "type": "string"
++        }
++      },
++      "required": [
++        "id",
++        "name",
++        "unit",
++        "kind",
++        "layer",
++        "accounting",
++        "scope",
++        "includes"
++      ],
++      "additionalProperties": false
++    },
++    "metric_value": {
++      "oneOf": [
++        {
++          "type": "object",
++          "properties": {
++            "id": {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            "availability": {
++              "const": "available"
++            },
++            "value": {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            "saturated": {
++              "type": "boolean"
++            }
++          },
++          "required": [
++            "id",
++            "availability",
++            "value",
++            "saturated"
++          ],
++          "additionalProperties": false
++        },
++        {
++          "type": "object",
++          "properties": {
++            "id": {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            "availability": {
++              "enum": [
++                "unavailable",
++                "disabled"
++              ]
++            },
++            "value": {
++              "type": "null"
++            },
++            "saturated": {
++              "type": "null"
++            }
++          },
++          "required": [
++            "id",
++            "availability",
++            "value",
++            "saturated"
++          ],
++          "additionalProperties": false
++        }
++      ]
++    },
++    "requested_options": {
++      "type": "object",
++      "properties": {
++        "mode": {
++          "enum": [
++            "maintenance",
++            "delta"
++          ]
++        },
++        "view": {
++          "enum": [
++            "core",
++            "sql"
++          ]
++        },
++        "live_maintenance": {
++          "enum": [
++            "on_output",
++            "incremental",
++            "eager"
++          ]
++        },
++        "completion": {
++          "enum": [
++            "automatic",
++            "ordered_replay",
++            "anchored",
++            "root_first"
++          ]
++        },
++        "work_limit": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "cursor_work_limit": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "view_work_limit": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "spool_row_limit": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "spool_byte_limit": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "physical": {
++          "type": "object",
++          "properties": {
++            "work_limit": {
++              "anyOf": [
++                {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                },
++                {
++                  "type": "null"
++                }
++              ]
++            },
++            "derivation_limit": {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            "support": {
++              "type": "object",
++              "properties": {
++                "work_limit": {
++                  "anyOf": [
++                    {
++                      "type": "integer",
++                      "minimum": 0,
++                      "maximum": 18446744073709551615
++                    },
++                    {
++                      "type": "null"
++                    }
++                  ]
++                },
++                "support_limit": {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                },
++                "order": {
++                  "enum": [
++                    "fifo",
++                    "lifo"
++                  ]
++                },
++                "capture_transitions": {
++                  "type": "boolean"
++                },
++                "observation": {
++                  "type": "object",
++                  "properties": {
++                    "mode": {
++                      "enum": [
++                        "off",
++                        "counters",
++                        "timed",
++                        "trace"
++                      ]
++                    },
++                    "trace_capacity": {
++                      "type": "integer",
++                      "minimum": 0,
++                      "maximum": 18446744073709551615
++                    },
++                    "sample_period": {
++                      "type": "integer",
++                      "minimum": 1,
++                      "maximum": 18446744073709551615
++                    },
++                    "sample_offset": {
++                      "type": "integer",
++                      "minimum": 0,
++                      "maximum": 18446744073709551615
++                    },
++                    "trace_timings": {
++                      "type": "boolean"
++                    }
++                  },
++                  "required": [
++                    "mode",
++                    "trace_capacity",
++                    "sample_period",
++                    "sample_offset",
++                    "trace_timings"
++                  ],
++                  "additionalProperties": false
++                }
++              },
++              "required": [
++                "work_limit",
++                "support_limit",
++                "order",
++                "capture_transitions",
++                "observation"
++              ],
++              "additionalProperties": false
++            }
++          },
++          "required": [
++            "work_limit",
++            "derivation_limit",
++            "support"
++          ],
++          "additionalProperties": false
++        }
++      },
++      "required": [
++        "mode",
++        "view",
++        "live_maintenance",
++        "completion",
++        "work_limit",
++        "cursor_work_limit",
++        "view_work_limit",
++        "spool_row_limit",
++        "spool_byte_limit",
++        "physical"
++      ],
++      "additionalProperties": false
++    },
++    "configuration": {
++      "type": "object",
++      "properties": {
++        "format_version": {
++          "const": 1
++        },
++        "support_owner": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "generation": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "generation_saturated": {
++          "type": "boolean"
++        },
++        "mode": {
++          "enum": [
++            "maintenance",
++            "delta"
++          ]
++        },
++        "completion": {
++          "enum": [
++            "ordered_replay",
++            "anchored",
++            "root_first"
++          ]
++        },
++        "live_maintenance": {
++          "enum": [
++            "on_output",
++            "incremental",
++            "eager"
++          ]
++        },
++        "view": {
++          "enum": [
++            "core",
++            "sql"
++          ]
++        },
++        "query_factors": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "requested_options": {
++          "$ref": "#/$defs/requested_options"
++        },
++        "identity_scope": {
++          "const": "process_local_owner_generation; saturated_generation_is_not_unique"
++        },
++        "guarantee_prose": {
++          "const": "not_copied_from_current_profile"
++        }
++      },
++      "required": [
++        "format_version",
++        "support_owner",
++        "generation",
++        "generation_saturated",
++        "mode",
++        "completion",
++        "live_maintenance",
++        "view",
++        "query_factors",
++        "requested_options",
++        "identity_scope",
++        "guarantee_prose"
++      ],
++      "additionalProperties": false
++    },
++    "summary": {
++      "type": "object",
++      "properties": {
++        "attempt": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "sequence": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "owner_layer": {
++          "enum": [
++            "support",
++            "physical",
++            "delta"
++          ]
++        },
++        "outcome": {
++          "enum": [
++            "pending",
++            "committed",
++            "aborted"
++          ]
++        },
++        "mode_binding": {
++          "enum": [
++            "exact_begin_configuration",
++            "not_recorded"
++          ]
++        },
++        "configuration": {
++          "anyOf": [
++            {
++              "$ref": "#/$defs/configuration"
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "values": {
++          "type": "array",
++          "items": {
++            "$ref": "#/$defs/metric_value"
++          }
++        }
++      },
++      "required": [
++        "attempt",
++        "sequence",
++        "owner_layer",
++        "outcome",
++        "mode_binding",
++        "configuration",
++        "values"
++      ],
++      "additionalProperties": false,
++      "allOf": [
++        {
++          "if": {
++            "properties": {
++              "mode_binding": {
++                "const": "not_recorded"
++              }
++            }
++          },
++          "then": {
++            "properties": {
++              "configuration": {
++                "type": "null"
++              }
++            }
++          }
++        },
++        {
++          "if": {
++            "properties": {
++              "mode_binding": {
++                "const": "exact_begin_configuration"
++              }
++            }
++          },
++          "then": {
++            "properties": {
++              "configuration": {
++                "$ref": "#/$defs/configuration"
++              }
++            }
++          }
++        }
++      ]
++    },
++    "observations": {
++      "type": "object",
++      "properties": {
++        "version": {
++          "const": "runtime-observation-v1"
++        },
++        "availability": {
++          "enum": [
++            "available",
++            "unavailable",
++            "disabled"
++          ]
++        },
++        "scope": {
++          "const": "admitted_attempt; aborted values are attempted work, not committed changes"
++        },
++        "mode_binding": {
++          "const": "per_attempt_configuration_or_not_recorded"
++        },
++        "current_configuration": {
++          "anyOf": [
++            {
++              "$ref": "#/$defs/configuration"
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "mandatory_accounting": {
++          "const": true
++        },
++        "registry": {
++          "type": "array",
++          "items": {
++            "$ref": "#/$defs/metric_descriptor"
++          }
++        },
++        "current": {
++          "anyOf": [
++            {
++              "$ref": "#/$defs/summary"
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "last": {
++          "anyOf": [
++            {
++              "$ref": "#/$defs/summary"
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "lifetime": {
++          "anyOf": [
++            {
++              "type": "object",
++              "properties": {
++                "attempts": {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                },
++                "commits": {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                },
++                "aborts": {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                },
++                "saturated": {
++                  "type": "boolean"
++                }
++              },
++              "required": [
++                "attempts",
++                "commits",
++                "aborts",
++                "saturated"
++              ],
++              "additionalProperties": false
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "trace": {
++          "anyOf": [
++            {
++              "type": "object",
++              "properties": {
++                "disposition": {
++                  "enum": [
++                    "disabled",
++                    "not_sampled",
++                    "pending",
++                    "committed",
++                    "aborted",
++                    "released"
++                  ]
++                },
++                "support_owner": {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                },
++                "attempt": {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                },
++                "sequence": {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                },
++                "retained_records": {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                },
++                "dropped_records": {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                },
++                "dropped_saturated": {
++                  "type": "boolean"
++                },
++                "truncated": {
++                  "type": "boolean"
++                },
++                "records": {
++                  "const": "not_copied_by_explain"
++                }
++              },
++              "required": [
++                "disposition",
++                "support_owner",
++                "attempt",
++                "sequence",
++                "retained_records",
++                "dropped_records",
++                "dropped_saturated",
++                "truncated",
++                "records"
++              ],
++              "additionalProperties": false
++            },
++            {
++              "type": "null"
++            }
++          ]
++        }
++      },
++      "required": [
++        "version",
++        "availability",
++        "scope",
++        "mode_binding",
++        "current_configuration",
++        "mandatory_accounting",
++        "registry",
++        "current",
++        "last",
++        "lifetime",
++        "trace"
++      ],
++      "additionalProperties": false,
++      "allOf": [
++        {
++          "if": {
++            "properties": {
++              "availability": {
++                "enum": [
++                  "disabled",
++                  "unavailable"
++                ]
++              }
++            }
++          },
++          "then": {
++            "properties": {
++              "current": {
++                "type": "null"
++              },
++              "last": {
++                "type": "null"
++              },
++              "lifetime": {
++                "type": "null"
++              }
++            }
++          }
++        }
++      ]
++    },
++    "physical": {
++      "type": "object",
++      "properties": {
++        "policy": {
++          "type": "object",
++          "properties": {
++            "arithmetic": {
++              "type": "string"
++            },
++            "planner": {
++              "type": "string"
++            },
++            "optimization": {
++              "type": "string"
++            },
++            "cost_model": {
++              "type": "string"
++            }
++          },
++          "required": [
++            "arithmetic",
++            "planner",
++            "optimization",
++            "cost_model"
++          ],
++          "additionalProperties": false
++        },
++        "inputs": {
++          "type": "array",
++          "items": {
++            "type": "object",
++            "properties": {
++              "occurrence": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "node": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "source_table": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "source_name": {
++                "type": "string"
++              },
++              "projection_fields": {
++                "type": "array",
++                "items": {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                }
++              }
++            },
++            "required": [
++              "occurrence",
++              "node",
++              "source_table",
++              "source_name",
++              "projection_fields"
++            ],
++            "additionalProperties": false
++          }
++        },
++        "indexes": {
++          "type": "array",
++          "items": {
++            "type": "object",
++            "properties": {
++              "id": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "relation": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "fields": {
++                "type": "array",
++                "items": {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                }
++              },
++              "uses": {
++                "type": "array",
++                "items": {
++                  "enum": [
++                    "reverse_child_support",
++                    "visible_enumeration"
++                  ]
++                }
++              }
++            },
++            "required": [
++              "id",
++              "relation",
++              "fields",
++              "uses"
++            ],
++            "additionalProperties": false
++          }
++        },
++        "enumeration_nodes": {
++          "type": "array",
++          "items": {
++            "type": "integer",
++            "minimum": 0,
++            "maximum": 18446744073709551615
++          }
++        },
++        "enumeration": {
++          "const": "nary_visible_assignments"
++        },
++        "enumeration_depth": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "update_contract": {
++          "type": "string"
++        },
++        "assumptions": {
++          "type": "array",
++          "items": {
++            "type": "string"
++          }
++        }
++      },
++      "required": [
++        "policy",
++        "inputs",
++        "indexes",
++        "enumeration_nodes",
++        "enumeration",
++        "enumeration_depth",
++        "update_contract",
++        "assumptions"
++      ],
++      "additionalProperties": false
++    }
++  }
++}
+--- /dev/null
++++ b/src/io/explain.cpp
+@@ -0,0 +1,449 @@
++#include "crown/io/explain.hpp"
++#include "crown/api/error.hpp"
++#include <charconv>
++#include <limits>
++#include <type_traits>
++#include <utility>
++
++namespace crown::io {
++namespace {
++using observability::PlanExplanation;
++using namespace runtime;
++void utf8(std::string_view text) {
++  for (std::size_t i=0;i<text.size();) {
++    const auto first=static_cast<unsigned char>(text[i++]);
++    if (first<0x80) continue;
++    unsigned remaining=0; std::uint32_t code=0,minimum=0;
++    if (first>=0xc2 && first<=0xdf) { remaining=1; code=first&0x1fU; minimum=0x80; }
++    else if (first>=0xe0 && first<=0xef) { remaining=2; code=first&0x0fU; minimum=0x800; }
++    else if (first>=0xf0 && first<=0xf4) { remaining=3; code=first&0x07U; minimum=0x10000; }
++    else throw Error("text_encoding","EXPLAIN text requires valid UTF-8; native values are unchanged");
++    if (remaining>text.size()-i) throw Error("text_encoding","truncated UTF-8 in EXPLAIN text");
++    while (remaining--) {
++      const auto next=static_cast<unsigned char>(text[i++]);
++      if ((next&0xc0U)!=0x80U) throw Error("text_encoding","invalid UTF-8 continuation in EXPLAIN text");
++      code=(code<<6U)|(next&0x3fU);
++    }
++    if (code<minimum || code>0x10ffff || (code>=0xd800 && code<=0xdfff))
++      throw Error("text_encoding","non-scalar UTF-8 in EXPLAIN text");
++  }
++}
++struct Writer {
++  std::string out;
++  std::size_t limit;
++  explicit Writer(std::size_t bytes):limit(bytes) {}
++  void raw(std::string_view value) {
++    if (out.size()>limit || value.size()>limit-out.size()) throw Error("resource_limit","EXPLAIN encoded-byte limit exceeded");
++    out.append(value);
++  }
++  void quote(std::string_view value,bool dot=false) {
++    utf8(value); raw("\"");
++    constexpr char hex[]="0123456789abcdef";
++    for (const char ch:value) {
++      const auto byte=static_cast<unsigned char>(ch);
++      if (ch=='\"') raw("\\\""); else if (ch=='\\') raw("\\\\");
++      else if (byte<32) { if (dot) raw("\\"); const char encoded[]={'\\','u','0','0',hex[byte>>4U],hex[byte&15U]}; raw({encoded,6}); }
++      else raw({&ch,1});
++    }
++    raw("\"");
++  }
++  template<class Integer> void number(Integer value) {
++    char buffer[32]; const auto result=std::to_chars(buffer,buffer+sizeof(buffer),value);
++    if (result.ec!=std::errc{}) throw Error("explain_encoding","integer encoding failed");
++    raw({buffer,static_cast<std::size_t>(result.ptr-buffer)});
++  }
++  void boolean(bool value) { raw(value?"true":"false"); }
++  void null() { raw("null"); }
++  template<class T> void optional(const std::optional<T>& value) { if (value) number(*value); else null(); }
++  template<class Range,class Fn> void array(const Range& values,Fn fn) {
++    raw("["); bool first=true; for (const auto& value:values) { if (!first) raw(","); first=false; fn(value); } raw("]");
++  }
++  struct Object {
++    Writer& w; bool first=true;
++    template<class Fn> void field(std::string_view key,Fn fn) { if (!first) w.raw(","); first=false; w.quote(key); w.raw(":"); fn(); }
++    void text(std::string_view key,std::string_view value) { field(key,[&] { w.quote(value); }); }
++    template<class Integer> void number(std::string_view key,Integer value) { field(key,[&] { w.number(value); }); }
++    void boolean(std::string_view key,bool value) { field(key,[&] { w.boolean(value); }); }
++    void null(std::string_view key) { field(key,[&] { w.null(); }); }
++  };
++  template<class Fn> void object(Fn fn) { raw("{"); Object o{*this}; fn(o); raw("}"); }
++  template<class Range> void ids(const Range& values) { array(values,[&](const auto& value) { number(value.value); }); }
++};
++#define CASE(Type,Item) case Type::Item: return #Item
++const char* name(PhysicalRoute value) {
++  switch (value) { CASE(PhysicalRoute,tree); CASE(PhysicalRoute,constant_true); CASE(PhysicalRoute,constant_false); }
++  throw Error("explain_enum","unknown physical route");
++}
++const char* name(NodeKind value) {
++  switch (value) { CASE(NodeKind,native); CASE(NodeKind,generalized); }
++  throw Error("explain_enum","unknown node kind");
++}
++const char* name(DeltaMode value) { switch(value) { CASE(DeltaMode,maintenance); CASE(DeltaMode,delta); } throw Error("explain_enum","unknown delta mode"); }
++const char* name(LiveMaintenance value) { switch(value) { CASE(LiveMaintenance,on_output); CASE(LiveMaintenance,incremental); CASE(LiveMaintenance,eager); } throw Error("explain_enum","unknown live mode"); }
++const char* name(DeltaCompletion value) { switch(value) { CASE(DeltaCompletion,automatic); CASE(DeltaCompletion,ordered_replay); CASE(DeltaCompletion,anchored); CASE(DeltaCompletion,root_first); } throw Error("explain_enum","unknown completion"); }
++const char* name(ResultView value) { switch(value) { CASE(ResultView,core); CASE(ResultView,sql); } throw Error("explain_enum","unknown result view"); }
++const char* name(PropagationOrder value) { switch(value) { CASE(PropagationOrder,fifo); CASE(PropagationOrder,lifo); } throw Error("explain_enum","unknown propagation order"); }
++const char* name(ObservationMode value) { switch(value) { CASE(ObservationMode,off); CASE(ObservationMode,counters); CASE(ObservationMode,timed); CASE(ObservationMode,trace); } throw Error("explain_enum","unknown observation mode"); }
++const char* name(DeltaState value) {
++  switch(value) { CASE(DeltaState,ready); CASE(DeltaState,pending_delta); CASE(DeltaState,paused); CASE(DeltaState,draining); CASE(DeltaState,epoch_prepared); CASE(DeltaState,committed_output); CASE(DeltaState,committed); CASE(DeltaState,aborted); }
++  throw Error("explain_enum","unknown delta state");
++}
++const char* name(ObservationLayer value) { switch(value) { CASE(ObservationLayer,support); CASE(ObservationLayer,physical); CASE(ObservationLayer,delta); } throw Error("explain_enum","unknown observation layer"); }
++const char* name(ObservationOutcome value) { switch(value) { CASE(ObservationOutcome,pending); CASE(ObservationOutcome,committed); CASE(ObservationOutcome,aborted); } throw Error("explain_enum","unknown observation outcome"); }
++const char* name(MetricAvailability value) { switch(value) { CASE(MetricAvailability,unavailable); CASE(MetricAvailability,disabled); CASE(MetricAvailability,available); } throw Error("explain_enum","unknown metric availability"); }
++const char* name(MetricKind value) { switch(value) { CASE(MetricKind,counter); CASE(MetricKind,high_water); CASE(MetricKind,timing); } throw Error("explain_enum","unknown metric kind"); }
++const char* name(TraceDisposition value) {
++  switch(value) { CASE(TraceDisposition,disabled); CASE(TraceDisposition,not_sampled); CASE(TraceDisposition,pending); CASE(TraceDisposition,committed); CASE(TraceDisposition,aborted); CASE(TraceDisposition,released); }
++  throw Error("explain_enum","unknown trace disposition");
++}
++const char* name(planner::CandidateSource value) { switch(value) { CASE(planner::CandidateSource,exact_witness); CASE(planner::CandidateSource,residual_seed); CASE(planner::CandidateSource,normal_form); } throw Error("explain_enum","unknown candidate source"); }
++#undef CASE
++const char* height_status(const PlanExplanation& report) { return report.height_status()==observability::HeightStatus::verified_original_minimum?"verified_original_minimum":"checked_upper"; }
++void scalar(Writer& w,const Value& value) {
++  w.object([&](auto& o) {
++    o.text("type",type_name(type_of(value)));
++    o.field("value",[&] { std::visit([&](const auto& item) {
++      using T=std::decay_t<decltype(item)>;
++      if constexpr(std::is_same_v<T,std::int64_t>) w.number(item);
++      else if constexpr(std::is_same_v<T,bool>) w.boolean(item);
++      else if constexpr(std::is_same_v<T,std::string>) w.quote(item);
++      else w.quote(item.to_string());
++    },value); });
++  });
++}
++void term(Writer& w,const Term& value) {
++  w.object([&](auto& o) {
++    if (const auto* variable=std::get_if<VariableId>(&value)) { o.text("kind","variable"); o.number("variable",variable->value); }
++    else if (const auto* constant=std::get_if<Value>(&value)) { o.text("kind","constant"); o.field("constant",[&] { scalar(w,*constant); }); }
++    else o.text("kind","ignored_column");
++  });
++}
++void tree(Writer& w,const FreeConnexTree& value,const planner::ValidationReport* validation=nullptr) {
++  // Diagnostic scratch is linear in the admitted tree size. Do not scan C*
++  // afresh for each node: large validated trees must not become quadratic IO.
++  std::vector<bool> connex;
++  if (validation) {
++    connex.resize(value.nodes.size());
++    for (const auto id:validation->maximal_connex) connex.at(id.value)=true;
++  }
++  w.object([&](auto& o) {
++    o.field("root",[&] { if (value.root) w.number(value.root->value); else w.null(); });
++    o.field("nodes",[&] {
++      std::size_t index=0;
++      w.array(value.nodes,[&](const TreeNode& node) {
++        const auto id=index++;
++        w.object([&](auto& n) {
++          n.number("id",id); n.text("label",node.id); n.text("kind",name(node.kind));
++          n.field("occurrence",[&] { w.optional(node.occurrence); });
++          n.field("scope",[&] { w.ids(node.scope); }); n.field("children",[&] { w.ids(node.children); });
++          n.field("separator",[&] { if (validation) w.ids(validation->separators.at(id)); else w.null(); });
++          n.field("connex",[&] {
++            if (!validation) { w.null(); return; }
++            w.boolean(connex.at(id));
++          });
++        });
++      });
++    });
++  });
++}
++void profile(Writer& w,const DeltaRuntimeProfile& p) {
++  w.object([&](auto& o) {
++    o.text("semantics",p.semantics); o.text("query_class",p.query_class); o.text("arithmetic",p.arithmetic);
++    o.text("backend",p.backend); o.text("update_contract",p.update_contract);
++    o.text("state_bound",p.state_bound); o.text("maintenance_bound",p.maintenance_bound); o.text("preparation_bound",p.preparation_bound);
++    o.text("candidate_bound",p.candidate_bound); o.text("accepted_bound",p.accepted_bound); o.text("finalization_bound",p.finalization_bound);
++    o.text("public_startup_bound",p.public_startup_bound); o.boolean("public_first_record_constant_delay",p.public_first_record_constant_delay);
++    o.text("ordered_costs",p.ordered_costs); o.text("assumptions",p.assumptions); o.text("output_accounting",p.output_accounting);
++  });
++}
++void mode(Writer& w,const observability::ModeDescriptor& m) {
++  w.object([&](auto& o) {
++    o.text("scope",m.running()?"current_runtime_configuration":"compile_only");
++    o.text("historical_metric_mode_binding","see_each_attempt_mode_binding");
++    o.text("codec","external_unmeasured"); o.text("sink","external_unmeasured");
++    o.text("retention_policy","per_attempt_not_recorded"); o.text("input_adapter","not_recorded");
++    o.text("initialization_method","not_recorded"); o.text("durable_delivery","not_implemented");
++    o.text("semantics",m.plan().guarantee().semantics); o.text("arithmetic",m.plan().guarantee().arithmetic);
++    o.text("backend",m.plan().guarantee().storage_backend);
++    if (!m.running()) { o.null("runtime"); return; }
++    const auto& opts=*m.options(); const auto& p=*m.profile();
++    o.field("runtime",[&] { w.object([&](auto& r) {
++      r.number("owner",m.owner()); r.number("committed_sequence",m.sequence()); r.text("state",name(m.state()));
++      r.text("mode",name(p.mode)); r.text("requested_initial_mode",name(opts.mode)); r.text("requested_completion",name(opts.completion)); r.text("resolved_completion",name(p.completion));
++      r.text("live_maintenance",name(p.live_maintenance)); r.text("result_view",name(p.view));
++      r.text("propagation",name(opts.physical.support.order)); r.text("observation",name(opts.physical.support.observation.mode));
++      r.boolean("legacy_full_transition_capture",opts.physical.support.capture_transitions);
++      r.field("observation_options",[&] { w.object([&](auto& a) {
++        const auto& obs=opts.physical.support.observation;
++        a.number("trace_capacity",obs.trace_capacity); a.number("sample_period",obs.sample_period); a.number("sample_offset",obs.sample_offset); a.boolean("trace_timings",obs.trace_timings);
++      }); });
++      r.field("limits",[&] { w.object([&](auto& l) {
++        l.field("delta_work",[&] { w.optional(opts.work_limit); }); l.field("physical_work",[&] { w.optional(opts.physical.work_limit); });
++        l.field("support_work",[&] { w.optional(opts.physical.support.work_limit); }); l.number("support_count",opts.physical.support.support_limit);
++        l.number("derivation_count",opts.physical.derivation_limit); l.field("cursor_work",[&] { w.optional(opts.cursor.work_limit); });
++        l.field("view_work",[&] { w.optional(opts.epoch_view.work_limit); });
++        l.number("spool_rows",opts.spool_row_limit); l.number("spool_accounted_bytes",opts.spool_byte_limit);
++      }); });
++      r.field("guarantee",[&] { profile(w,p); });
++    }); });
++  });
++}
++[[maybe_unused]] void requested_options(Writer& w,const DeltaOptions& opts) {
++  w.object([&](auto& o) {
++    o.text("mode",name(opts.mode)); o.text("view",name(opts.view)); o.text("live_maintenance",name(opts.live_maintenance)); o.text("completion",name(opts.completion));
++    o.field("work_limit",[&] { w.optional(opts.work_limit); });
++    o.field("cursor_work_limit",[&] { w.optional(opts.cursor.work_limit); }); o.field("view_work_limit",[&] { w.optional(opts.epoch_view.work_limit); });
++    o.number("spool_row_limit",opts.spool_row_limit); o.number("spool_byte_limit",opts.spool_byte_limit);
++    o.field("physical",[&] { w.object([&](auto& p) {
++      p.field("work_limit",[&] { w.optional(opts.physical.work_limit); }); p.number("derivation_limit",opts.physical.derivation_limit);
++      p.field("support",[&] { w.object([&](auto& a) {
++        const auto& support=opts.physical.support;
++        a.field("work_limit",[&] { w.optional(support.work_limit); }); a.number("support_limit",support.support_limit);
++        a.text("order",name(support.order)); a.boolean("capture_transitions",support.capture_transitions);
++        a.field("observation",[&] { w.object([&](auto& v) {
++          const auto& obs=support.observation;
++          v.text("mode",name(obs.mode)); v.number("trace_capacity",obs.trace_capacity); v.number("sample_period",obs.sample_period);
++          v.number("sample_offset",obs.sample_offset); v.boolean("trace_timings",obs.trace_timings);
++        }); });
++      }); });
++    }); });
++  });
++}
++template<class Configuration> void configuration(Writer& w,const Configuration& c) {
++  w.object([&](auto& o) {
++    o.number("format_version",c.format_version()); o.number("support_owner",c.support_owner());
++    o.number("generation",c.generation()); o.boolean("generation_saturated",c.generation_saturated());
++    o.text("mode",name(c.mode())); o.text("completion",name(c.completion()));
++    o.text("live_maintenance",name(c.live_maintenance())); o.text("view",name(c.view())); o.number("query_factors",c.query_factors());
++    o.field("requested_options",[&] { requested_options(w,c.requested_options()); });
++    o.text("identity_scope","process_local_owner_generation; saturated_generation_is_not_unique");
++    o.text("guarantee_prose","not_copied_from_current_profile");
++  });
++}
++template<class Summary> bool mode_bound(const Summary& s) {
++  if constexpr(requires { s.configuration; }) return s.configuration.has_value();
++  else return false;
++}
++template<class Summary> void historical_mode(Writer& w,Writer::Object& o,const Summary& s) {
++  o.text("mode_binding",mode_bound(s)?"exact_begin_configuration":"not_recorded");
++  o.field("configuration",[&] {
++    if constexpr(requires { s.configuration; }) { if (s.configuration) { configuration(w,*s.configuration); return; } }
++    w.null();
++  });
++}
++template<class Snapshot> void current_configuration(Writer& w,const Snapshot& snapshot) {
++  if constexpr(requires { snapshot.current_configuration; }) {
++    if (snapshot.current_configuration) { configuration(w,*snapshot.current_configuration); return; }
++  }
++  w.null();
++}
++void summary(Writer& w,const std::optional<ObservationSummary>& value) {
++  if (!value) { w.null(); return; }
++  w.object([&](auto& o) {
++    o.number("attempt",value->attempt); o.number("sequence",value->sequence); o.text("owner_layer",name(value->owner)); o.text("outcome",name(value->outcome));
++    historical_mode(w,o,*value);
++    o.field("values",[&] { w.array(observation_registry(),[&](const auto& descriptor) {
++      const auto& metric=value->metric(descriptor.id);
++      w.object([&](auto& m) {
++        m.number("id",static_cast<std::size_t>(descriptor.id)); m.text("availability",name(metric.availability));
++        // An unavailable metric can retain a stale internal payload. It is not
++        // a numeric report value and MUST NOT escape as a plausible total.
++        if (metric.availability==MetricAvailability::available) { m.number("value",metric.value); m.boolean("saturated",metric.saturated); }
++        else { m.null("value"); m.null("saturated"); }
++      });
++    }); });
++  });
++}
++void observations(Writer& w,const PlanExplanation& report) {
++  w.object([&](auto& o) {
++    o.text("version","runtime-observation-v1");
++    const auto& obs=report.observation();
++    const bool collected=obs && obs->options.mode!=ObservationMode::off;
++    o.text("availability",!obs?"unavailable":collected?"available":"disabled");
++    o.text("scope","admitted_attempt; aborted values are attempted work, not committed changes");
++    o.text("mode_binding","per_attempt_configuration_or_not_recorded"); o.boolean("mandatory_accounting",true);
++    o.field("current_configuration",[&] { if (obs) current_configuration(w,*obs); else w.null(); });
++    o.field("registry",[&] { w.array(observation_registry(),[&](const auto& d) { w.object([&](auto& entry) {
++      entry.number("id",static_cast<std::size_t>(d.id)); entry.text("name",d.name); entry.text("unit",d.unit);
++      entry.text("kind",name(d.kind)); entry.text("layer",name(d.layer)); entry.text("accounting",d.accounting);
++      entry.text("scope",d.scope); entry.text("includes",d.includes);
++    }); }); });
++    o.field("current",[&] { if (obs) summary(w,obs->current); else w.null(); });
++    o.field("last",[&] { if (obs) summary(w,obs->last); else w.null(); });
++    o.field("lifetime",[&] {
++      if (!collected) { w.null(); return; }
++      w.object([&](auto& a) { a.number("attempts",obs->attempts); a.number("commits",obs->commits); a.number("aborts",obs->aborts); a.boolean("saturated",obs->lifetime_counts_saturated); });
++    });
++    o.field("trace",[&] {
++      if (!obs) { w.null(); return; }
++      w.object([&](auto& t) {
++        t.text("disposition",name(obs->trace)); t.number("support_owner",obs->support_owner);
++        t.number("attempt",obs->trace_attempt); t.number("sequence",obs->trace_sequence);
++        t.number("retained_records",obs->trace_records); t.number("dropped_records",obs->trace_dropped);
++        t.boolean("dropped_saturated",obs->trace_dropped_saturated); t.boolean("truncated",obs->trace_truncated);
++        t.text("records","not_copied_by_explain");
++      });
++    });
++  });
++}
++void query(Writer& w,const PhysicalPlan& plan) {
++  const auto& q=plan.query();
++  w.object([&](auto& o) {
++    o.boolean("contradiction",q.contradiction);
++    o.field("variables",[&] { std::size_t index=0; w.array(q.variables,[&](const auto& variable) { w.object([&](auto& v) { v.number("id",index++); v.text("name",variable.name); v.text("type",type_name(variable.type)); }); }); });
++    o.field("occurrences",[&] { std::size_t index=0; w.array(q.atoms,[&](const auto& atom) { w.object([&](auto& a) {
++      a.number("id",index++); a.text("name",atom.occurrence); a.number("table",atom.table.value);
++      a.text("table_name",plan.catalog().tables.at(atom.table.value).name); a.field("terms",[&] { w.array(atom.terms,[&](const auto& t) { term(w,t); }); });
++    }); }); });
++    o.field("head",[&] { w.array(q.head,[&](const auto& output) { w.object([&](auto& a) { a.number("variable",output.variable.value); a.text("alias",output.alias); }); }); });
++    o.field("sql",[&] {
++      if (!plan.normalized()) { w.null(); return; }
++      const auto& normalized=*plan.normalized();
++      w.object([&](auto& a) {
++        a.text("source",normalized.binding.source); a.text("wrapper",normalized.binding.wrapper==frontend::SqlWrapper::exists?"exists":"rows");
++        a.field("parameters",[&] { w.array(normalized.parameters,[&](const auto& value) { if (value) scalar(w,*value); else w.null(); }); });
++        a.field("outputs",[&] { w.array(normalized.outputs,[&](const auto& output) { w.object([&](auto& v) {
++          v.text("name",output.name); v.text("type",frontend::sql_kind_name(output.type.kind));
++          v.boolean("nullable",output.type.nullable);
++          v.field("decimal",[&] { if (!output.type.decimal) { w.null(); return; }
++            w.object([&](auto& d) { d.number("precision",output.type.decimal->precision); d.number("scale",output.type.decimal->scale); });
++          });
++          if (const auto* core=std::get_if<frontend::CoreOutput>(&output.value)) { v.text("kind","core_column"); v.number("column",core->column); }
++          else { v.text("kind","constant"); v.field("constant",[&] { scalar(w,std::get<frontend::ConstantOutput>(output.value).value); }); }
++        }); }); });
++      });
++    });
++  });
++}
++void json(Writer& w,const PlanExplanation& e) {
++  const auto& plan=e.plan();
++  w.object([&](auto& o) {
++    o.number("schema_version",1); o.text("artifact","crown_explain"); o.text("authority","diagnostic_export_only");
++    o.field("identity",[&] { const auto& i=plan.identity(); w.object([&](auto& x) {
++      x.text("physical_sha256",plan.physical_sha256()); x.text("semantic_sha256",i.semantic_sha256); x.text("output_contract_sha256",i.output_contract_sha256);
++      x.text("cost_inputs_sha256",i.cost_inputs_sha256); x.text("plan_cache_sha256",i.plan_cache_sha256);
++      x.number("core_catalog_version",plan.catalog().version); x.number("source_catalog_version",plan.source_catalog().version);
++      x.text("binding_rule","exact_original_native_catalog_query; digests_are_navigation_only");
++    }); });
++    o.text("route",name(plan.route())); o.text("recognized_class",plan.guarantee().query_class);
++    o.field("query",[&] { query(w,plan); });
++    o.field("structure",[&] { w.object([&](auto& s) {
++      s.text("validity_source",plan.route()==PhysicalRoute::constant_false?"p08_constant_operator":"p08_independently_validated_tree");
++      s.number("native_height",e.selected_height()); s.field("edge_depth",[&] { w.optional(plan.validation().edge_depth); });
++      s.field("selected_tree",[&] { tree(w,plan.tree(),&plan.validation()); });
++    }); });
++    o.field("height_evidence",[&] { w.object([&](auto& h) {
++      h.text("status",height_status(e)); h.number("selected_height",e.selected_height());
++      h.text("scope","original_core_query"); h.text("search_progress","not_attached");
++      if (const auto original=e.optimum()) {
++        const auto& cert=original->certificate();
++        h.text("source",std::holds_alternative<planner::MinimumHeightCandidate>(e.evidence())?"p07_checked_candidate_with_original_p06_proof":"p06_verified_optimum");
++        h.number("original_minimum",original->height()); h.text("algorithm",cert.algorithm);
++        h.text("certificate_role","typed_handle_retained; diagnostic_not_certificate_input");
++        h.field("original_witness",[&] { tree(w,original->upper().tree()); });
++        h.field("lower_bound_claims",[&] { w.array(cert.lower_bounds,[&](const auto& claim) { w.object([&](auto& c) {
++          c.field("occurrences",[&] { w.array(claim.occurrences,[&](auto id) { w.number(id); }); });
++          c.boolean("generalized_allowed",claim.generalized_allowed); c.boolean("connex_reachable",claim.connex_reachable); c.field("bound",[&] { w.optional(claim.bound); });
++        }); }); });
++      } else { h.text("source","p08_checked_upper_only"); h.null("original_minimum"); h.null("algorithm"); h.null("original_witness"); h.null("lower_bound_claims"); h.text("certificate_role","none"); }
++    }); });
++    o.field("candidate_family",[&] {
++      if (!e.family()) { w.null(); return; }
++      const auto& f=*e.family();
++      w.object([&](auto& c) { c.text("family","exact-seed/residual-seed/normal-form-v1"); c.boolean("exhausted",f.family_exhausted()); c.number("count",f.candidate_count()); c.text("exhaustion_scope","admitted_seeds_and_normal_form_v1_only"); c.boolean("global_cost_complete",false); });
++    });
++    o.field("selected_candidate",[&] {
++      const auto* c=std::get_if<planner::MinimumHeightCandidate>(&e.evidence()); if (!c) { w.null(); return; }
++      const auto provenance=c->provenance(); w.object([&](auto& a) {
++        a.text("source",name(provenance.source)); a.number("sequence",provenance.sequence); a.text("structural_key",c->structural_key());
++        a.text("key_scope","exact_binding_and_candidate_context_only");
++      });
++    });
++    o.field("physical",[&] { w.object([&](auto& p) {
++      p.field("policy",[&] { const auto& policy=plan.options().policy; w.object([&](auto& a) {
++        a.text("arithmetic",policy.arithmetic); a.text("planner",policy.planner); a.text("optimization",policy.optimization); a.text("cost_model",policy.cost_model);
++      }); });
++      p.field("inputs",[&] { w.array(plan.inputs(),[&](const auto& input) { w.object([&](auto& i) {
++        i.number("occurrence",input.occurrence.value); i.number("node",input.node.value); i.number("source_table",input.base.value);
++        i.text("source_name",plan.source_catalog().tables.at(input.base.value).name); i.field("projection_fields",[&] { w.ids(input.projection.fields()); });
++      }); }); });
++      p.field("indexes",[&] { w.array(plan.indexes(),[&](const auto& index) { w.object([&](auto& i) {
++        i.number("id",index.id.value); i.number("relation",index.relation.value); i.field("fields",[&] { w.ids(index.projection.fields()); });
++        i.field("uses",[&] { w.array(index.uses,[&](auto use) { w.quote(use==IndexUse::reverse_child_support?"reverse_child_support":"visible_enumeration"); }); });
++      }); }); });
++      p.field("enumeration_nodes",[&] { w.array(plan.enumeration().steps,[&](const auto& step) { w.number(step.node.value); }); });
++      p.text("enumeration","nary_visible_assignments"); p.number("enumeration_depth",plan.enumeration().depth);
++      p.text("update_contract",plan.guarantee().update_contract); p.field("assumptions",[&] { w.array(plan.guarantee().assumptions,[&](const auto& item) { w.quote(item); }); });
++    }); });
++    o.field("cost",[&] { w.object([&](auto& c) { c.text("selection","not_implemented"); c.text("statistics","unavailable"); c.text("estimated_state","unavailable"); c.boolean("global_optimality",false); }); });
++    o.field("mode",[&] { mode(w,e.mode()); });
++    o.field("observations",[&] { observations(w,e); });
++    o.field("open_gates",[&] { w.array(std::array{"S05_total_allocator_bytes","O04_checkpoint","O05_recovery","O06_durable_delivery","C01_statistics","C02_ranking","B03_benchmark","per_attempt_mode_generation"},[&](auto item) { w.quote(item); }); });
++  });
++}
++void human_metrics(Writer& w,const char* label,const std::optional<ObservationSummary>& summary_value) {
++  if (!summary_value) return;
++  const auto& s=*summary_value;
++  w.raw(label); w.raw(" attempt "); w.number(s.attempt); w.raw(", physical sequence "); w.number(s.sequence); w.raw(", "); w.raw(name(s.outcome)); w.raw(mode_bound(s)?". Historical mode: exact begin configuration.\n":". Historical mode: not recorded.\n");
++  if (mode_bound(s)) { w.raw("  Historical configuration: "); w.object([&](auto& o) { historical_mode(w,o,s); }); w.raw("\n"); }
++  for (const auto& d:observation_registry()) {
++    const auto& m=s.metric(d.id); w.raw("  "); w.raw(d.name); w.raw(" = ");
++    if (m.availability==MetricAvailability::available) { w.number(m.value); if (m.saturated) w.raw(" (saturated)"); }
++    else w.raw(name(m.availability));
++    w.raw(" ["); w.raw(d.unit); w.raw("; "); w.raw(d.accounting); w.raw("]");
++    if (!d.includes.empty()) { w.raw(" "); w.raw(d.includes); } w.raw("\n");
++  }
++}
++}
++std::string write_explain_json(const PlanExplanation& report,ExplainTextLimits limits) { Writer w(limits.bytes); json(w,report); return std::move(w.out); }
++std::string write_explain_text(const PlanExplanation& report,ExplainTextLimits limits) {
++  Writer w(limits.bytes); const auto& plan=report.plan();
++  w.raw("CROWN EXPLAIN v1 — diagnostic export, not proof input\nPhysical plan: "); w.raw(plan.physical_sha256());
++  w.raw("\nSemantic/output identity: "); w.raw(plan.identity().semantic_sha256); w.raw(" / "); w.raw(plan.identity().output_contract_sha256);
++  w.raw("\nRoute/class: "); w.raw(name(plan.route())); w.raw(" / "); w.quote(plan.guarantee().query_class);
++  w.raw("\nHeight: "); w.number(report.selected_height()); w.raw(" ("); w.raw(height_status(report)); w.raw(")\n");
++  if (const auto p=report.optimum()) { w.raw("Original-query proof: "); w.quote(p->certificate().algorithm); w.raw("; lower-bound claims "); w.number(p->certificate().lower_bounds.size()); w.raw("; certificate keeps its original witness.\nOriginal witness: "); tree(w,p->upper().tree()); w.raw("\n"); }
++  else w.raw("Minimum height is not proved by the supplied plan.\n");
++  w.raw("Cost selection: not implemented; statistics and estimated state unavailable.\n");
++  if (report.family()) { w.raw("Candidate family: exact seeds/residual seeds/normal form; retained "); w.number(report.family()->candidate_count()); w.raw(report.family()->family_exhausted()?"; family exhausted":"; family not exhausted"); w.raw("; no global cost completeness.\n"); }
++  w.raw("Occurrences:\n"); std::size_t id=0;
++  for (const auto& atom:plan.query().atoms) { w.raw("  "); w.number(id++); w.raw(" "); w.quote(atom.occurrence); w.raw(" table "); w.quote(plan.catalog().tables.at(atom.table.value).name); w.raw(" "); w.array(atom.terms,[&](const auto& t) { term(w,t); }); w.raw("\n"); }
++  w.raw("Ordered core head: "); w.array(plan.query().head,[&](const auto& output) { w.object([&](auto& a) { a.number("variable",output.variable.value); a.text("alias",output.alias); }); }); w.raw("\n");
++  if (plan.normalized()) { w.raw("Normalized SQL/output mapping: "); query(w,plan); w.raw("\n"); }
++  w.raw("Selected tree (scope/separator IDs; C* marks connex membership):\n");
++  for (const auto& n:plan.nodes()) {
++    w.raw("  n"); w.number(n.id.value); w.raw(" "); w.raw(name(n.kind)); w.raw(" "); w.quote(plan.tree().nodes.at(n.id.value).id);
++    w.raw(" scope="); w.ids(n.scope); w.raw(" separator="); w.ids(plan.validation().separators.at(n.id.value)); w.raw(n.connex?" C*":""); w.raw(" children="); w.ids(n.children); w.raw("\n");
++  }
++  w.raw("Required indexes:\n"); for (const auto& index:plan.indexes()) { w.raw("  "); w.number(index.id.value); w.raw(" relation="); w.number(index.relation.value); w.raw(" fields="); w.ids(index.projection.fields()); w.raw("\n"); }
++  w.raw("Enumeration: nary_visible_assignments; depth "); w.number(plan.enumeration().depth);
++  w.raw("\nArithmetic/update contract: "); w.quote(plan.guarantee().arithmetic); w.raw(" / "); w.quote(plan.guarantee().update_contract);
++  w.raw("\nMode descriptor: "); mode(w,report.mode()); w.raw("\n");
++  if (report.observation()) {
++    if (report.observation()->options.mode==ObservationMode::off) w.raw("Runtime observation disabled; mandatory accounting remains active.\n");
++    human_metrics(w,"Current",report.observation()->current); human_metrics(w,"Last",report.observation()->last);
++  }
++  else w.raw("Runtime metrics unavailable: compile-only report.\n");
++  w.raw("Metric scope: admitted attempt; aborted values are attempted work, not committed changes. Unavailable/disabled numeric payloads are omitted.\n");
++  w.raw("Open: allocator-total bytes, durable delivery/recovery, statistics/ranking, benchmark validation, historical mode binding.\n");
++  return std::move(w.out);
++}
++std::string write_explain_dot(const PlanExplanation& report,ExplainTextLimits limits) {
++  Writer w(limits.bytes); const auto& plan=report.plan();
++  w.raw("digraph crown {\n  graph [label=");
++  Writer caption(limits.bytes); caption.raw("CROWN native height "); caption.number(report.selected_height()); caption.raw(" "); caption.raw(height_status(report));
++  w.quote(caption.out,true); w.raw("];\n");
++  for (const auto& node:plan.nodes()) {
++    w.raw("  n"); w.number(node.id.value); w.raw(node.kind==NodeKind::native?" [shape=box,":" [shape=diamond,");
++    if (node.connex) w.raw("style=filled,fillcolor=lightblue,");
++    Writer label(limits.bytes); label.raw(plan.tree().nodes.at(node.id.value).id); label.raw(" scope="); label.ids(node.scope); if (node.connex) label.raw(" C*");
++    w.raw("label="); w.quote(label.out,true); w.raw("];\n");
++  }
++  for (const auto& edge:plan.edges()) {
++    w.raw("  n"); w.number(edge.parent.value); w.raw(" -> n"); w.number(edge.child.value); w.raw(" [label=");
++    Writer label(limits.bytes); label.raw("separator="); label.ids(plan.validation().separators.at(edge.child.value)); w.quote(label.out,true); w.raw("];\n");
++  }
++  if (plan.nodes().empty()) { w.raw("  constant [shape=plaintext,label="); w.quote(name(plan.route())); w.raw("];\n"); }
++  w.raw("}\n"); return std::move(w.out);
++}
++} // namespace crown::io
+--- /dev/null
++++ b/src/observability/explain.cpp
+@@ -0,0 +1,165 @@
++#include "crown/observability/explain.hpp"
++#include "crown/api/error.hpp"
++#include <type_traits>
++#include <utility>
++
++namespace crown::observability {
++namespace {
++void require(bool condition,const char* code,const char* message) {
++  if (!condition) throw Error(code,message);
++}
++template<class A,class B,class Equal> bool same_range(const A& a,const B& b,Equal equal) {
++  if (a.size()!=b.size()) return false;
++  for (std::size_t i=0;i<a.size();++i) if (!equal(a[i],b[i])) return false;
++  return true;
++}
++bool same_constraint(const Constraint& a,const Constraint& b) {
++  if (a.index()!=b.index()) return false;
++  if (const auto* x=std::get_if<UniqueConstraint>(&a)) {
++    const auto& y=std::get<UniqueConstraint>(b);
++    return x->name==y.name && x->columns==y.columns && x->status==y.status;
++  }
++  const auto& x=std::get<ForeignKeyConstraint>(a); const auto& y=std::get<ForeignKeyConstraint>(b);
++  return x.name==y.name && x.columns==y.columns && x.status==y.status &&
++      x.referenced_table==y.referenced_table && x.referenced_columns==y.referenced_columns;
++}
++bool same_catalog(const Catalog& a,const Catalog& b) {
++  return a.version==b.version && same_range(a.tables,b.tables,[](const Table& x,const Table& y) {
++    return x.name==y.name && x.source_schema_version==y.source_schema_version &&
++      same_range(x.columns,y.columns,[](const Column& c,const Column& d) {
++        return c.name==d.name && c.type==d.type && c.nullable==d.nullable && c.collation==d.collation && c.decimal==d.decimal;
++      }) && same_range(x.constraints,y.constraints,same_constraint) &&
++      x.statistics.row_count==y.statistics.row_count &&
++      same_range(x.statistics.distinct_counts,y.statistics.distinct_counts,[](const DistinctEstimate& c,const DistinctEstimate& d) {
++        return c.columns==d.columns && c.estimate==d.estimate;
++      }) && same_range(x.key_hints,y.key_hints,[](const KeyHint& c,const KeyHint& d) {
++        return c.columns==d.columns && c.reason==d.reason;
++      });
++  });
++}
++bool same_term(const Term& a,const Term& b) {
++  if (a.index()!=b.index()) return false;
++  if (const auto* id=std::get_if<VariableId>(&a)) return *id==std::get<VariableId>(b);
++  if (const auto* value=std::get_if<Value>(&a)) return *value==std::get<Value>(b);
++  return true; // Both are IgnoredColumn, the third closed variant alternative.
++}
++bool same_query(const Query& a,const Query& b) {
++  return a.contradiction==b.contradiction &&
++    same_range(a.variables,b.variables,[](const Variable& x,const Variable& y) { return x.name==y.name && x.type==y.type; }) &&
++    same_range(a.atoms,b.atoms,[](const Atom& x,const Atom& y) {
++      return x.occurrence==y.occurrence && x.table==y.table && same_range(x.terms,y.terms,same_term);
++    }) && same_range(a.head,b.head,[](const Output& x,const Output& y) { return x.variable==y.variable && x.alias==y.alias; });
++}
++bool same_tree(const FreeConnexTree& a,const FreeConnexTree& b) {
++  return a.root==b.root && a.claimed_connex==b.claimed_connex && a.claimed_native_height==b.claimed_native_height &&
++    same_range(a.nodes,b.nodes,[](const TreeNode& x,const TreeNode& y) {
++      return x.id==y.id && x.kind==y.kind && x.scope==y.scope && x.children==y.children &&
++        x.occurrence==y.occurrence && x.claimed_separator==y.claimed_separator;
++    });
++}
++void binding(const PhysicalPlan& plan,const planner::SearchBinding& value) {
++  require(value.valid() && same_catalog(plan.catalog(),value.catalog()) && same_query(plan.query(),value.query()),
++      "explain_binding","height evidence is not bound to the exact original core catalog/query");
++}
++void context(const PhysicalPlan& plan,const planner::CandidateContext& value) {
++  const auto& policy=plan.options().policy;
++  require(value.updates==planner::CandidateUpdateProfile::mixed_full_row_set_v1 &&
++      value.arithmetic==policy.arithmetic && value.planner==policy.planner &&
++      value.optimization==policy.optimization && value.cost_model==policy.cost_model &&
++      value.canonicalization=="structural-tree-key-v1","explain_context","candidate context differs from selected physical policy");
++}
++std::optional<planner::VerifiedOptimum> proof(const HeightEvidence& evidence) {
++  if (const auto* value=std::get_if<planner::VerifiedOptimum>(&evidence)) return *value;
++  if (const auto* value=std::get_if<planner::MinimumHeightCandidate>(&evidence)) return value->original_proof();
++  return {};
++}
++}
++struct ModeDescriptor::Data {
++  PhysicalPlan plan;
++  bool running=false;
++  std::uint64_t owner=0,sequence=0;
++  runtime::DeltaState state=runtime::DeltaState::ready;
++  std::optional<runtime::DeltaOptions> options;
++  std::optional<runtime::DeltaRuntimeProfile> profile;
++  explicit Data(PhysicalPlan value):plan(std::move(value)) {}
++};
++ModeDescriptor::ModeDescriptor(std::shared_ptr<const Data> value):data_(std::move(value)) {}
++const ModeDescriptor::Data& ModeDescriptor::data() const { require(bool(data_),"invalid_explanation","moved-from mode descriptor"); return *data_; }
++ModeDescriptor ModeDescriptor::compile_only(PhysicalPlan plan) { return ModeDescriptor(std::make_shared<const Data>(std::move(plan))); }
++ModeDescriptor ModeDescriptor::capture(const runtime::DeltaRuntime& runtime) {
++  auto result=std::make_shared<Data>(runtime.plan()); result->running=true;
++  result->owner=runtime.owner().value; result->sequence=runtime.sequence(); result->state=runtime.state();
++  result->options=runtime.options(); result->profile=runtime.profile();
++  return ModeDescriptor(std::move(result));
++}
++const PhysicalPlan& ModeDescriptor::plan() const { return data().plan; }
++bool ModeDescriptor::running() const { return data().running; }
++std::uint64_t ModeDescriptor::owner() const { return data().owner; }
++std::uint64_t ModeDescriptor::sequence() const { return data().sequence; }
++runtime::DeltaState ModeDescriptor::state() const { return data().state; }
++const std::optional<runtime::DeltaOptions>& ModeDescriptor::options() const { return data().options; }
++const std::optional<runtime::DeltaRuntimeProfile>& ModeDescriptor::profile() const { return data().profile; }
++struct PlanExplanation::Data {
++  ModeDescriptor mode;
++  HeightEvidence evidence;
++  std::optional<planner::CandidateSnapshot> family;
++  std::optional<runtime::ObservationSnapshot> observation;
++  HeightStatus status=HeightStatus::checked_upper;
++  std::size_t height=0;
++  Data(ModeDescriptor m,HeightEvidence e,std::optional<planner::CandidateSnapshot> f,
++      std::optional<runtime::ObservationSnapshot> o):mode(std::move(m)),evidence(std::move(e)),family(std::move(f)),observation(std::move(o)) {}
++};
++PlanExplanation::PlanExplanation(std::shared_ptr<const Data> value):data_(std::move(value)) {}
++const PlanExplanation::Data& PlanExplanation::data() const { require(bool(data_),"invalid_explanation","moved-from plan explanation"); return *data_; }
++PlanExplanation PlanExplanation::make(ModeDescriptor mode,HeightEvidence evidence,
++    std::optional<planner::CandidateSnapshot> family,std::optional<runtime::ObservationSnapshot> observation,ExplainLimits limits) {
++  const auto& plan=mode.plan();
++  require(plan.tree().nodes.size()<=limits.nodes,"resource_limit","EXPLAIN node limit exceeded");
++  require(plan.validation().valid && plan.validation().native_height.has_value(),"explain_plan","physical plan has no checked height");
++  // P08's immutable handle is the authority for validity. No report or imported
++  // JSON validation flag can enter this factory in its place.
++  std::visit([&](const auto& value) {
++    using T=std::decay_t<decltype(value)>;
++    if constexpr (!std::is_same_v<T,std::monostate>) {
++      require(value.valid(),"explain_evidence","moved-from height evidence");
++      if constexpr (std::is_same_v<T,planner::MinimumHeightCandidate>) {
++        binding(plan,value.original_proof().binding()); context(plan,value.context());
++        require(same_tree(plan.tree(),value.tree()),"explain_candidate","candidate is not the selected tree");
++      } else binding(plan,value.binding());
++      if constexpr (std::is_same_v<T,planner::ValidatedIncumbent>)
++        require(same_tree(plan.tree(),value.tree()),"explain_upper","incumbent is not the selected tree");
++      require(value.height()==*plan.validation().native_height,"explain_height","evidence and selected height differ");
++    }
++  },evidence);
++  if (const auto original=proof(evidence))
++    require(original->upper().tree().nodes.size()<=limits.nodes,"resource_limit","EXPLAIN original witness node limit exceeded");
++  if (family) {
++    require(family->valid(),"explain_family","moved-from candidate family");
++    const auto original=proof(evidence);
++    require(original.has_value(),"explain_family","family metadata requires explicit original minimum-height evidence");
++    binding(plan,family->original_proof().binding()); context(plan,family->context());
++    require(family->original_proof().height()==original->height(),"explain_family","family proof height differs");
++  }
++  auto result=std::make_shared<Data>(std::move(mode),std::move(evidence),std::move(family),std::move(observation));
++  result->height=*result->mode.plan().validation().native_height;
++  if (proof(result->evidence)) result->status=HeightStatus::verified_original_minimum;
++  return PlanExplanation(std::move(result));
++}
++PlanExplanation PlanExplanation::create(PhysicalPlan plan,HeightEvidence evidence,std::optional<planner::CandidateSnapshot> family,ExplainLimits limits) {
++  return make(ModeDescriptor::compile_only(std::move(plan)),std::move(evidence),std::move(family),{},limits);
++}
++PlanExplanation PlanExplanation::capture(const runtime::DeltaRuntime& runtime,HeightEvidence evidence,std::optional<planner::CandidateSnapshot> family,ExplainLimits limits) {
++  // Exclusive owner call: no advance, mode change, drain, inspection, or callback.
++  auto mode=ModeDescriptor::capture(runtime); auto observation=runtime.observations();
++  require(observation.options==runtime.options().physical.support.observation,"explain_mode","runtime observation options differ");
++  return make(std::move(mode),std::move(evidence),std::move(family),std::move(observation),limits);
++}
++const PhysicalPlan& PlanExplanation::plan() const { return data().mode.plan(); }
++const ModeDescriptor& PlanExplanation::mode() const { return data().mode; }
++HeightStatus PlanExplanation::height_status() const { return data().status; }
++std::size_t PlanExplanation::selected_height() const { return data().height; }
++const HeightEvidence& PlanExplanation::evidence() const { return data().evidence; }
++std::optional<planner::VerifiedOptimum> PlanExplanation::optimum() const { return proof(data().evidence); }
++const std::optional<planner::CandidateSnapshot>& PlanExplanation::family() const { return data().family; }
++const std::optional<runtime::ObservationSnapshot>& PlanExplanation::observation() const { return data().observation; }
++} // namespace crown::observability

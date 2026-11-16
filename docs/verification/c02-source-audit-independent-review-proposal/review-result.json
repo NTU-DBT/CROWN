@@ -1,0 +1,59 @@
+{
+  "card": "C02",
+  "review_state": "static_review_with_separate_proposed_revision",
+  "original_draft_accepted_for_final_use": false,
+  "revision_ready_for_root_review_and_execution": true,
+  "revision_executed_by_reviewer": false,
+  "native_or_final_matrix_accepted_by_this_review": false,
+  "changes_project_status": false,
+  "original": {
+    "path": "/tmp/crown-ranking-source-audit-draft.py",
+    "sha256": "bb8c62824c1c678c0f75532aae203db594fd9983ca5b208d866721f64534aeb5",
+    "preserved_copy": "reviewed-root-draft.py",
+    "preliminary_receipt": "build/verification/ranking-source-preliminary-audit-attempt-1.json",
+    "preliminary_receipt_sha256": "1a47f1095c3b7c33ef4f00a0b2c0c0ed689612077ee3959f0adaf31dcd8ceefd"
+  },
+  "proposed_revision": {
+    "path": "source_audit_revision.py",
+    "sha256": "43669daf321dc5e40e23fdc33374f1da826ba678410b2f0a5ca6c9acb81a790e",
+    "diff_sha256": "a9e35f423a0c0f653a47cda6be6a0185eb5d1e3bd2f8d336e175883a930ef501",
+    "syntax_or_runtime_validation": "root_pending"
+  },
+  "findings_addressed_in_proposal": [
+    "Bind fresh C02 integration and C01 publication namespace FILE identities before use",
+    "Require explicit final mode for final acceptance",
+    "Validate every guide approval and consume a separate immutable metadata authority",
+    "Restore documented schema-path mention resolution with C01/C02 publication and declared-package namespaces",
+    "Require exact external raw-pin whitelist without mandatory-pin overrides",
+    "Bind exact214 compile/dependency and143 outcome populations, link recipes and symbol metadata to raw evidence",
+    "Stop before importing a changed utility and preserve malformed-evidence failures",
+    "Recheck all read FILEs and ordinary/Markdown inventories before publishing a result"
+  ],
+  "preserved_scope": {
+    "ordinary_sources": 764,
+    "prior_pathnames_only": 733,
+    "new_destinations": 31,
+    "removed_destinations": 0,
+    "native_files": 648,
+    "execution_files": 705,
+    "historical_manifest_FILE_identities": 11,
+    "historical_entry_checks_performed": false,
+    "current_schema_documents": 29,
+    "original_task_ids": 78,
+    "tests_per_configuration": 143,
+    "compile_target_source_entries": 214,
+    "symbol_roles": 9
+  },
+  "matrix_schema": {
+    "first_package_manifest": "fcaaccae1a37880c65b648c953465d706f17967c92b7abb8154fc4304c30ee4a",
+    "alias_revision_package_manifest": "b63701dd900464cbc7ed69b740fe591b668f5a6c179acef2033e08a33f3986a0",
+    "allocation_differences_approved_here": false
+  },
+  "lineage": "Reviewer authored the independent8public/3integer fixtures and matrix auditor, not the ranking implementation or reviewed root source draft. The separate helper revision is reviewer-authored; root must review and execute it.",
+  "limits": [
+    "No Python/syntax checker, compiler, project program, CMake, CTest, symbol command, network, git or process poll by reviewer",
+    "Prose classification remains an explicit root decision; byte/diff binding does not prove semantic status-only scope automatically",
+    "The later completion checkpoint is deliberately not an audit input",
+    "Native matrix, final metadata, source acceptance and full goal remain root gates"
+  ]
+}

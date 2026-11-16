@@ -1,0 +1,89 @@
+--- docs/verification/c02-matrix-audit-proposal/audit.py	2026-11-07 15:29:06.960742075 +0800
++++ docs/verification/c02-matrix-audit-alias-revision-proposal/audit.py	2026-11-07 15:44:49.989314652 +0800
+@@ -695,6 +695,10 @@
+     results = []
+     dependency_scopes = {}
+     json_consumers = set()
++    frozen_files = data(V / "ranking-execution-freeze.json")["execution_file_sha256"]
++    source_root = source.resolve()
++    alias_identities = {}
++    canonical_identities = {}
+     for target, unit in sorted(expected_sources):
+         rel = f"CMakeFiles/{target}.dir/{unit}.o.d"
+         text = read(dependency_root / rel).replace("\\\n", " ")
+@@ -705,32 +709,57 @@
+         output = Path(lhs[0])
+         output = output if output.is_absolute() else build / output
+         need(output == build / rel.removesuffix(".d"), "dependency target does not match compile target/source")
+-        dependencies = [Path(word) if Path(word).is_absolute() else build / word for word in shlex.split(right)]
++        dependency_words = shlex.split(right)
++        dependencies = [Path(word) if Path(word).is_absolute() else build / word for word in dependency_words]
++        canonical_dependencies = [path.resolve() for path in dependencies]
+         need(source / unit in dependencies, "dependency rule omits its source")
+         need(not any("docs/verification" in str(p) or "/tmp/crown-c02-" in str(p) for p in dependencies),
+              "proposal/cached source in dependency rule")
+-        json_headers = [p for p in dependencies if "nlohmann" in p.parts]
++        json_headers = [canonical for observed, canonical in zip(dependencies, canonical_dependencies)
++                        if "nlohmann" in observed.parts or "nlohmann" in canonical.parts]
+         wanted = source / ("third_party/nlohmann/upstream/nlohmann/json.hpp" if target == "crown_json_upstream_control_test"
+                            else "third_party/nlohmann/json.hpp")
+-        need(not json_headers or set(json_headers) == {wanted}, "mixed/wrong active JSON header: " + target)
++        need(not json_headers or set(json_headers) == {wanted.resolve()}, "mixed/wrong active JSON header: " + target)
+         if target in {"crown_json_cleanup_test", "crown_json_upstream_control_test"}:
+             need(json_headers, "JSON probe dependency does not include its intended header")
+         if json_headers:
+             json_consumers.add((target, unit))
+         native_deps = []
+-        for dep in dependencies:
+-            need(not (name == "clean-source" and dep.is_relative_to(ROOT)), "working-tree dependency leaked into fresh clean build")
+-            if dep.is_relative_to(source):
+-                relative = dep.relative_to(source).as_posix()
++        spellings = []
++        for word, dep, canonical in zip(dependency_words, dependencies, canonical_dependencies):
++            need(not (name == "clean-source" and (dep.is_relative_to(ROOT) or canonical.is_relative_to(ROOT))),
++                 "working-tree dependency leaked into fresh clean build")
++            inside = dep.is_relative_to(source)
++            need(inside == canonical.is_relative_to(source_root), "dependency alias crosses the source boundary: " + word)
++            if inside:
++                observed_relative = dep.relative_to(source).as_posix()
++                relative = canonical.relative_to(source_root).as_posix()
+                 if relative.startswith("build/"):
+                     continue
+-                need((ROOT / relative).is_file(), "source dependency outside frozen source inventory")
++                expected = frozen_files.get(relative)
++                need(expected is not None, "canonical source dependency outside frozen execution inventory: " + relative)
++                observed_current = ROOT / observed_relative
++                canonical_current = ROOT / relative
++                need(observed_current.resolve() == canonical_current.resolve() and canonical_current.resolve().is_relative_to(ROOT),
++                     "clean/current source alias resolves inconsistently: " + word)
++                need(digest(observed_current) == digest(canonical_current) == expected,
++                     "source alias bytes differ from the canonical frozen input: " + word)
++                identity = (relative, expected)
++                need(str(dep) not in alias_identities or alias_identities[str(dep)] == identity,
++                     "one observed dependency spelling has contradictory identities")
++                need(relative not in canonical_identities or canonical_identities[relative] == expected,
++                     "aliases disagree on canonical dependency bytes")
++                alias_identities[str(dep)] = identity
++                canonical_identities[relative] = expected
+                 native_deps.append(relative)
++                spellings.append({"compiler_spelling": word, "source_relative_spelling": observed_relative,
++                                  "canonical_source_relative": relative, "frozen_sha256": expected})
+         if target in {"crown_json_cleanup_test", "crown_json_upstream_control_test"}:
+             need(set(native_deps) == {unit, wanted.relative_to(source).as_posix()}, "header-only JSON probe gained CROWN dependencies")
+         results.append({"target": target, "source": unit, "dependency_file": label(dependency_root / rel),
+                         "json_header": wanted.relative_to(source).as_posix() if json_headers else None,
+-                        "source_dependencies": native_deps, "dependency_count": len(dependencies)})
++                        "source_dependencies": native_deps, "source_dependency_spellings": spellings,
++                        "dependency_count": len(dependencies)})
+         dependency_scopes[(target, unit)] = native_deps
+     additions = {(target, unit) for target, unit in expected_sources if target.startswith("crown_ranking") or target.startswith("crown_json_")}
+     # Every JSON-dependent object must be compiled with the new header during
+@@ -767,7 +796,7 @@
+             "actual_compile_commands": [{"target": target, "source": unit, "command": compiled[(target, unit)]}
+                                         for target, unit in sorted(compiled)],
+             "unchanged_non_JSON_units_not_recompiled": cached_provenance,
+-            "scope": "all direct .o.d records inspected; every JSON consumer/new unit visibly compiled; clean all214 compiled"}
++            "scope": "all direct .o.d records inspected; project spellings mapped to same-byte canonical frozen paths with no boundary escapes; every JSON consumer/new unit visibly compiled; clean all214 compiled"}
+ 
+ 
+ def compile_audit(name, folder, source, build, expected_sources, make_original, configure_text, build_text, freeze):

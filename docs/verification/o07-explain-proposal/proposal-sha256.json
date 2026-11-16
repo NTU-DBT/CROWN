@@ -1,0 +1,8 @@
+{
+  "overlay/src/io/explain.cpp": "61335b9d531b35b7926f363090a1d3d239b0e2a2da8e3210c963942457fd15a0",
+  "overlay/src/observability/explain.cpp": "f96ebe8c9bd171acc4890064b285e72111f17011194b60b03792624988dd99af",
+  "overlay/apps/crown-explain-proposal/main.cpp": "e64cc95fca65816e382064200def0daaf8db5e3c6f07a68512b84510eaea390d",
+  "overlay/include/crown/io/explain.hpp": "22cd0cf3862f4ae1019e0a2214c84da252dcba6f793c461c35dd4f0fc5a3d929",
+  "overlay/include/crown/observability/explain.hpp": "04ad1c692aa261fc8579ee031566e38904d5cf83ded9609d524b291df64685bc",
+  "schemas/explain-report-v1.schema.json": "78c04c2e29d42619de2f05f21e0f8c07fbe4c00d1da3a0aaf536629cfe6a198a"
+}

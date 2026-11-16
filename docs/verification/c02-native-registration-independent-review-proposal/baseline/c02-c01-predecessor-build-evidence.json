@@ -1,0 +1,3042 @@
+{
+  "status": "retained_and_hash_verified",
+  "scope": "Preserve accepted C01 generated metadata and archive bytes before C02 reconfiguration. No historical source-manifest entries checked.",
+  "authority": "build/verification/statistics-matrix-evidence-audit.json",
+  "authority_sha256": "327cb135d48394a15cc0fd151d7f8f32c749d14bde70f4cb3f5372b36028fc8e",
+  "recorded_utc": "2026-11-07T06:34:55.964879+00:00",
+  "files": [
+    {
+      "previous_path": "build/clang-debug/CMakeCache.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeCache.txt",
+      "sha256": "b840bbd8fa0e604333036d72dea3b457e4a497644df1eacfee95642bcd71a3b4",
+      "bytes": 18063
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/3.28.3/CMakeCCompiler.cmake",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/3.28.3/CMakeCCompiler.cmake",
+      "sha256": "7eb4b2537e24f784ffe17bb7ff8273e83930ac9b6b7525f530decf2e107ef304",
+      "bytes": 2679
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/3.28.3/CMakeCXXCompiler.cmake",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/3.28.3/CMakeCXXCompiler.cmake",
+      "sha256": "92272e1666c68e688adb452dfdb1f4da016c69cb435f72c3d1deba1d9d69f729",
+      "bytes": 5698
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/_crown_pg_query_build.dir/build.make",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/_crown_pg_query_build.dir/build.make",
+      "sha256": "75eb60a97f8f22dd8ed63d2b83eb5f7c14e925c4698698adc439d54da2de9125",
+      "bytes": 4582
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown.dir/link.txt",
+      "sha256": "97dad2d48c89fc66a53e2af16edc2e957c86f6af307175cde30ce47eebb86737",
+      "bytes": 361
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_admission_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_admission_test.dir/link.txt",
+      "sha256": "ee6c8679ff761154c5b429cfa87c151c45b7694db6dff0246082b24b88055bfc",
+      "bytes": 276
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_arena_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_arena_exception_test.dir/link.txt",
+      "sha256": "47599d67761c6294bd114e47f3375bc15df6975e9fed28bb88049d5c49ddef3c",
+      "bytes": 207
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_arena_model_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_arena_model_test.dir/link.txt",
+      "sha256": "973fb19b9600982d25bfedf710c5802843dca3c930dfc869ac19961f43908888",
+      "bytes": 195
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_arena_storage_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_arena_storage_test.dir/link.txt",
+      "sha256": "8d80fa19644d5b22cd201a1f682ba5ca2c8f14b38a898dc2bdac3f525ca4ebe5",
+      "bytes": 283
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_batch_window_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_batch_window_exception_test.dir/link.txt",
+      "sha256": "c4958abdd95eab5369ab97f0d3842ccadba35fa1ebda114a6e781ba955c401e5",
+      "bytes": 329
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_binding_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_binding_test.dir/link.txt",
+      "sha256": "ed24fec60ad5012071a13f7dd5a305b80d760a598e1f5bf01c30e8283c1c62ad",
+      "bytes": 249
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_catalog_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_catalog_test.dir/link.txt",
+      "sha256": "1575ebb7236584201bce083bfadbe37a89c4ca64341d5cdc39f40ed01370af08",
+      "bytes": 204
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_composed_explain_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_composed_explain_test.dir/link.txt",
+      "sha256": "46afd7e2a6bd81b9efc20f703b3835406c456f4daa0ad7f1409ce46fa6394493",
+      "bytes": 392
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_core.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_core.dir/link.txt",
+      "sha256": "24da16f9aefe177e81be8c464e34d4a6420d6b3e482fdd7c324402de792ea8d5",
+      "bytes": 1682
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_cursor_observation_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_cursor_observation_test.dir/link.txt",
+      "sha256": "f78929319b8b9a57631ea8a46012e0477d74dc5129979f92909462fdd93d8a77",
+      "bytes": 398
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_delta_anchor_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_delta_anchor_test.dir/link.txt",
+      "sha256": "68c777a46368b93a6ff6b91fb8c2c3868a08aaf5139e5962094e789dd441a6e8",
+      "bytes": 320
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_delta_factor_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_delta_factor_test.dir/link.txt",
+      "sha256": "9fd1d19893b8384c2fb81dee25ee5065feaf0ced7a501cc0df514c63c9dbbd84",
+      "bytes": 299
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_delta_lifecycle_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_delta_lifecycle_exception_test.dir/link.txt",
+      "sha256": "de33abfe4888926f1f45a2870f37dbaf941422f8775ba9cbd70d8bd59081afbd",
+      "bytes": 338
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_delta_lifecycle_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_delta_lifecycle_test.dir/link.txt",
+      "sha256": "e5177c3bc1d97e93e58b8526a766164dc39afda0b7c50329df0d95be30fbc72a",
+      "bytes": 329
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_delta_live_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_delta_live_test.dir/link.txt",
+      "sha256": "c08a841ada6ec3ecdd07fd4abd42f86cbf72c8912e0c7f3dbe1a1a771e738c5c",
+      "bytes": 314
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_delta_replay_scale_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_delta_replay_scale_test.dir/link.txt",
+      "sha256": "370a39653a57d11a00ed451836d1fb97c9af128ec4675791504181692e1ecd14",
+      "bytes": 338
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_delta_replay_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_delta_replay_test.dir/link.txt",
+      "sha256": "e85d7f5e833c543906d9e6ed7a607e7e3669d5440cc46f71319a88b83b9233f9",
+      "bytes": 320
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_delta_runtime_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_delta_runtime_exception_test.dir/link.txt",
+      "sha256": "bc48ec868c10785b495a0a1ab400096afa2ec057bd6e4949055d746b6fb38ddd",
+      "bytes": 332
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_delta_runtime_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_delta_runtime_test.dir/link.txt",
+      "sha256": "8b5f3ca7388d1540db7fbb70f5dad25e34b4848cef7a491c23a7af39a60f17c7",
+      "bytes": 323
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_delta_spec_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_delta_spec_test.dir/link.txt",
+      "sha256": "b41c9d2fbcc8362494c84d166d353d7ddba6bde9f3a527531dc05fefe0902040",
+      "bytes": 213
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_epoch_index_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_epoch_index_test.dir/link.txt",
+      "sha256": "0f361c7ac8ed1602e50958ad1b4411a5242670c710c8f979d2a6400fb98307f8",
+      "bytes": 296
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_epoch_view_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_epoch_view_exception_test.dir/link.txt",
+      "sha256": "94b458188b3815026e73dc784485518438e75fa6976db2bf5e4c84ff879b9e31",
+      "bytes": 323
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_epoch_view_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_epoch_view_test.dir/link.txt",
+      "sha256": "5c11b3d124539d735f635d27c12bdca1544ef40926819f66636c0a121251f2be",
+      "bytes": 314
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_exact_oracle_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_exact_oracle_test.dir/link.txt",
+      "sha256": "eea9dc90e6c4118d3b7a0553f2dcf94419e1e703de4c89f3b07ce7c479ab2b0e",
+      "bytes": 219
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_explain.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_explain.dir/link.txt",
+      "sha256": "a7298f6427d57fa6491246b04931c750dd72983cd4f4eb0c22751607a9964ff6",
+      "bytes": 428
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_explain_testing.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_explain_testing.dir/link.txt",
+      "sha256": "5a82b3d75bb1435dc10dfe8080843ba9c61c1e67be5e237fd3bab28e97bc3f8e",
+      "bytes": 492
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_fragment_cursor_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_fragment_cursor_exception_test.dir/link.txt",
+      "sha256": "e3f1630ccbe02aa0f42da75e3c7f313f20ab16faafed3da1a036cf376a4a6e42",
+      "bytes": 338
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_fragment_cursor_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_fragment_cursor_test.dir/link.txt",
+      "sha256": "c26dad6625c496a791d28237104163ba82ece88c40b26bc10a6849cc30e48ff5",
+      "bytes": 329
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_ingest_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_ingest_exception_test.dir/link.txt",
+      "sha256": "b3b3daa5bcd536a33901f0b5b5643e5aa9c1b16818e1e287f21353a7d8315cbd",
+      "bytes": 311
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_ingest_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_ingest_test.dir/link.txt",
+      "sha256": "d874c745ed8562b9bbcadf4ba318b122bced1e47a11d5bd0ff1efbe984629cde",
+      "bytes": 302
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_initialization_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_initialization_exception_test.dir/link.txt",
+      "sha256": "c66fcb2003589a1aee27a333c3ad357d7d0b6ebe84d41e27d1324d817f9f1f2c",
+      "bytes": 356
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_initialization_scale_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_initialization_scale_test.dir/link.txt",
+      "sha256": "e44407a1259a8fd03743a18e76a2a3608f1ab72662a1d2b284621c79e800c1f4",
+      "bytes": 344
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_initialization_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_initialization_test.dir/link.txt",
+      "sha256": "b2fd0ef6b35105bcef1026f31463fea6fd106f2789bc0ca9019b0a5973ed829e",
+      "bytes": 326
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_layout_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_layout_test.dir/link.txt",
+      "sha256": "ab5bb85f4d687865afb482a813b4eb952734a28a9afbf713d5520e59a30b1619",
+      "bytes": 180
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_normalization_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_normalization_test.dir/link.txt",
+      "sha256": "14f4b980248010fe4ff526781ccf7c3b3ba7c164548ac7714142ff1f96be74f8",
+      "bytes": 288
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_observation_mode_binding_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_observation_mode_binding_test.dir/link.txt",
+      "sha256": "d478ac088f6ccadf9643f19bbb6191875e806f2d3788f4371c33987903fffd5b",
+      "bytes": 416
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_observation_run_context_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_observation_run_context_test.dir/link.txt",
+      "sha256": "19116525b0fb75accb5f9cce71e45daf97a0906f10cbc63c175bc9d9787489fe",
+      "bytes": 413
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_parser_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_parser_test.dir/link.txt",
+      "sha256": "f1d583616afc26b4a87a66a3c07b0ea131365698e510aa600826ecf39a40b872",
+      "bytes": 246
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_physical_api_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_physical_api_test.dir/link.txt",
+      "sha256": "5d81b468157126d7050c09a6903bcbc8f13195980afb79f363c0af4bfb4d3970",
+      "bytes": 280
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_physical_lowering_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_physical_lowering_test.dir/link.txt",
+      "sha256": "9315e083330a4b6a8a2c72bc6fb47586d83b3ddaf50d73ae89af99e2b3977a38",
+      "bytes": 316
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_physical_runtime_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_physical_runtime_exception_test.dir/link.txt",
+      "sha256": "fd83b5a6f6d8c3570933b3bf3277c675dc2e58f2e5be3f26dc63d449df13a83a",
+      "bytes": 341
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_physical_runtime_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_physical_runtime_test.dir/link.txt",
+      "sha256": "0cd8bdac6ebdb8e7dd64aea07fc762cde9cc46b2d3bdc318915d93a4453ec94d",
+      "bytes": 332
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_plan.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_plan.dir/link.txt",
+      "sha256": "daf8e0e6d0e8261c6cedb0b8f4bd69ef5cfbd1def5df3ad8f5649adece406c98",
+      "bytes": 214
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_planner_candidates_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_planner_candidates_exception_test.dir/link.txt",
+      "sha256": "0167d1a2cc1bc4dd5cadcb3e61e2ebbdc5c8e2d9651c64beeaff06e273306a69",
+      "bytes": 238
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_planner_candidates_io_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_planner_candidates_io_test.dir/link.txt",
+      "sha256": "0d0692d9f590582e0e5a82e84042bfe16d31bc57f3421d6f143cd08aac938f8d",
+      "bytes": 217
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_planner_candidates_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_planner_candidates_test.dir/link.txt",
+      "sha256": "759cfee01306eb021fd0b75cd04543d7cc59e5f67a85339547985e6e6a7e171b",
+      "bytes": 229
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_planner_certificate_codec_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_planner_certificate_codec_test.dir/link.txt",
+      "sha256": "7f600f23dbda3f6af1c6e022313a4f3dfa45d3b7d518b9457b9002c1979d59d5",
+      "bytes": 264
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_planner_continuation_edge_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_planner_continuation_edge_test.dir/link.txt",
+      "sha256": "7486cef0c36289e59ca5db44ec8def0e32abad818b35437ff839ad4ec32ab57e",
+      "bytes": 264
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_planner_continuation_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_planner_continuation_exception_test.dir/link.txt",
+      "sha256": "d428ec544cc32282f907d0f5431bca11162182f49a46ee9697bf7bbe9bbec528",
+      "bytes": 279
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_planner_continuation_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_planner_continuation_test.dir/link.txt",
+      "sha256": "b66a7af0ba7745b7803b636f2c54bd7ca3697e92e373c4707c18621a547332dd",
+      "bytes": 270
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_planner_fast_paths_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_planner_fast_paths_test.dir/link.txt",
+      "sha256": "e5a1267dd2c1dbffeaccd07a9e20cedb02c150aa161f90b03a75b19f84027a4b",
+      "bytes": 264
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_planner_progress_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_planner_progress_test.dir/link.txt",
+      "sha256": "f686b9ac7faad36ed957d2da846683de45c401395421d68d5f05a86ed5337acb",
+      "bytes": 237
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_planner_residual_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_planner_residual_exception_test.dir/link.txt",
+      "sha256": "35f79dcfe98c3096e66702cbc773eff82cb2234f39338404198c38f4e8801803",
+      "bytes": 232
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_planner_residual_io_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_planner_residual_io_test.dir/link.txt",
+      "sha256": "3fcb199e3f37e7606b5e144e106fc1d750fb3cec44a4efd76f2cd616967638a6",
+      "bytes": 211
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_planner_residual_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_planner_residual_test.dir/link.txt",
+      "sha256": "85da6fc757ccaca4cef89a11bd887b88875ffa64fa3eb5327f6556e6875992aa",
+      "bytes": 223
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_planner_search_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_planner_search_exception_test.dir/link.txt",
+      "sha256": "c06c518c3b8d28c8d50c3db66afc060e9ea35a56ebc7fc9106d5c51892d340fb",
+      "bytes": 261
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_planner_testing.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_planner_testing.dir/link.txt",
+      "sha256": "f385d1b9927b28fa6d2b538b1b9ce494ba60bfd7c1ead391452a459bad2c844c",
+      "bytes": 165
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_prepared_epoch_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_prepared_epoch_exception_test.dir/link.txt",
+      "sha256": "bdb463f7d2ef36c3cb6a37fe2b1e80c1f4bcf5c228791cbfd4df225fa00e14cf",
+      "bytes": 335
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_prepared_epoch_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_prepared_epoch_test.dir/link.txt",
+      "sha256": "e9f5081a58a1c6f01a738da00abbbb3a595fefe539645112d2df104940c8c3ee",
+      "bytes": 326
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_query_explain.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_query_explain.dir/link.txt",
+      "sha256": "9fd34ae5b88caff377bea5ec23a0871d6b75e698e4bc68906a4c08a001ada80d",
+      "bytes": 216
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_query_explain_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_query_explain_test.dir/link.txt",
+      "sha256": "0b1b418f5d215631af9af490a27c2cb26cfa026f5ee257fc3d2b81ec8cf1ed7f",
+      "bytes": 247
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_recognition_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_recognition_test.dir/link.txt",
+      "sha256": "eb499ef6b5012d29cf6a95a8008844b914113165f3d83458a3c2faf613f8b551",
+      "bytes": 195
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_reference.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_reference.dir/link.txt",
+      "sha256": "7f43509cb761e0752788b9dbe32219208907ef69f3c8f1f9005bba4609252047",
+      "bytes": 402
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_result_cursor_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_result_cursor_exception_test.dir/link.txt",
+      "sha256": "936d0d06a1ea03b25369f50f0833b5be350d7619946040a9cc5b61a94f416597",
+      "bytes": 332
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_result_cursor_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_result_cursor_test.dir/link.txt",
+      "sha256": "313b0aac2058f0d2a8cbea8a8a710a3ca4ec64f3cdfb3a9855a90cf8ee4fa7e2",
+      "bytes": 323
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_runtime.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_runtime.dir/link.txt",
+      "sha256": "00f7577e346a97f7d81b53d3ac25bfeef65ee70918fae94f43d7668014297b6f",
+      "bytes": 883
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_runtime_inspection_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_runtime_inspection_test.dir/link.txt",
+      "sha256": "75f1552c02960352fe36ea45796c9a268c9d4369b600373a1362a69c50b988e4",
+      "bytes": 346
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_runtime_observation_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_runtime_observation_test.dir/link.txt",
+      "sha256": "ed1582ceec36fa8d714d2f99968eec7d1572d022f3fddaeaf530206ca20a7f6a",
+      "bytes": 401
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_runtime_testing.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_runtime_testing.dir/link.txt",
+      "sha256": "8cc25cc7f60f8d3fe91b5e3a7b5a465f314753cb33099bb0eda2577ee8aa3f2c",
+      "bytes": 1011
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_scalar_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_scalar_test.dir/link.txt",
+      "sha256": "3ed9e042fa9329be9234b3e7c6e1d139b26c3b0367f640fd9fb36896e15d08a6",
+      "bytes": 201
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_schema_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_schema_test.dir/link.txt",
+      "sha256": "56d0587d003deb0277398d260ce911a7e1af4014004e0601bac3a8c7063c0c7f",
+      "bytes": 267
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_semantics_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_semantics_test.dir/link.txt",
+      "sha256": "9fd59764e7d1892a086c341b9f99b7d20bb4f51d0a408b8e7b7e33bcccc6c585",
+      "bytes": 210
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_session_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_session_exception_test.dir/link.txt",
+      "sha256": "aa3ed38a81a803d2829cd01bd355feb1bbee4fd3d4f1d218681affacbac23142",
+      "bytes": 314
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_session_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_session_test.dir/link.txt",
+      "sha256": "6b06ed84543753bbb47ca028580115c71e88b203fc52c34252b11a1abd6f810d",
+      "bytes": 305
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_sql.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_sql.dir/link.txt",
+      "sha256": "dd4e7c4c9eef8b7cd30172774592ef9fce84a25895f75d165bd86d3d8b317b9b",
+      "bytes": 556
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_capture_exceptions_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_capture_exceptions_test.dir/link.txt",
+      "sha256": "b35bc3724dfe7d8f88cc759fab7bd0e3eca98e6d0dd9fddf171cf2205ceb6b28",
+      "bytes": 349
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_capture_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_capture_test.dir/link.txt",
+      "sha256": "f3ca0ecb3312fb4a738de9d493f4e87b614a1df97179d62b0b86638bc653795a",
+      "bytes": 317
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_collection_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_collection_test.dir/link.txt",
+      "sha256": "00abfeda136ab59ab3f6934e8e7870d8aa4331eeddbeb4522834aabfe41fd13a",
+      "bytes": 334
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_combined_exceptions_production_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_combined_exceptions_production_test.dir/link.txt",
+      "sha256": "21ce550dd625299105bb00e16cfc8dd0934ca7834ea0725378b886f7fda9417b",
+      "bytes": 374
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_combined_exceptions_testing_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_combined_exceptions_testing_test.dir/link.txt",
+      "sha256": "0922c37b5ea81ec2599555fe25dea2c848e7a6f4530451647b84fb321d31313b",
+      "bytes": 376
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_combined_production_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_combined_production_test.dir/link.txt",
+      "sha256": "7e143af52548bff1fa053318373b78856adeaefaefedfa3a0e752106a232ab53",
+      "bytes": 342
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_combined_testing_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_combined_testing_test.dir/link.txt",
+      "sha256": "253f11d0228030968fcbb7344ed13a22e50e71edd73cacc079c8104fadc6b4cc",
+      "bytes": 344
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_delta_replay_fifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_delta_replay_fifo_test.dir/link.txt",
+      "sha256": "9b294aa5515a986033d3d0d7626fd4d51bae3831b3652455b548bc27fc3c97d2",
+      "bytes": 352
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_delta_replay_lifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_delta_replay_lifo_test.dir/link.txt",
+      "sha256": "07f6006896309ea8fcc859b4cce530e1b7a96be2e012910d701c970e50830971",
+      "bytes": 352
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_delta_runtime_fifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_delta_runtime_fifo_test.dir/link.txt",
+      "sha256": "229eb674accedd662e272433b120150ed68eb3bf4f529c5a452b84fd5133461e",
+      "bytes": 355
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_delta_runtime_lifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_delta_runtime_lifo_test.dir/link.txt",
+      "sha256": "d0e3a6a83e1bfeac83628c376f55d96c02f667a813e5a0100854a940a447ece2",
+      "bytes": 355
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_owner_exceptions_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_owner_exceptions_test.dir/link.txt",
+      "sha256": "cc96b8d81fbfd0d94fed4ac05b2fb215f7a0ec26d0406960dc94fe23a5e040cc",
+      "bytes": 343
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_owner_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_owner_test.dir/link.txt",
+      "sha256": "fc6d86a5b4fc8206a3b1455799bdb640cfdc37aed7613085bf20f69c12cd0460",
+      "bytes": 332
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_report_exceptions_production_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_report_exceptions_production_test.dir/link.txt",
+      "sha256": "0a70593cdb0433e72fb23cf44dbeeca9aefd584ca828ed00870bdc674a029282",
+      "bytes": 413
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_report_exceptions_testing_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_report_exceptions_testing_test.dir/link.txt",
+      "sha256": "54a72552af0e41576f4e040748dcf7907adc73582c1ee71bce56a15637c56baf",
+      "bytes": 423
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_report_production_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_report_production_test.dir/link.txt",
+      "sha256": "3031f4ee042704f2ab10d0f8f84db9fd14b7bff92d43ec00ffd69bd6e8b15942",
+      "bytes": 381
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_report_testing_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_report_testing_test.dir/link.txt",
+      "sha256": "c758d3f92e145fa95f2863b9dfb8f38654feac658d24f4dc4e655365dd623037",
+      "bytes": 391
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_runtime_only_production_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_runtime_only_production_test.dir/link.txt",
+      "sha256": "903c4cae5103ea3b61374a39a6cac457651d62dd5797cb4e9042bb2fda33541b",
+      "bytes": 354
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_runtime_only_testing_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_runtime_only_testing_test.dir/link.txt",
+      "sha256": "91496a9929303e405e5baf0c0ec4ee0b1a2ec4f88fc6a937f527ee76b05627d9",
+      "bytes": 356
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_scalars_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_scalars_test.dir/link.txt",
+      "sha256": "7370ffa2859bd2d7eae11b3920130fb8ba2307b85008d62a75a0c99bb1191a3c",
+      "bytes": 316
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_window_fifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_window_fifo_test.dir/link.txt",
+      "sha256": "f8cf6976b347580322b3d4113d819e120ff0c3229820d7b5463c6be9898f5171",
+      "bytes": 334
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_window_lifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_window_lifo_test.dir/link.txt",
+      "sha256": "05160a6571c236508512a64bc64639d4c28cc1bc0fd9216f8ee1b2b57ffa0c38",
+      "bytes": 334
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_workload_exceptions_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_workload_exceptions_test.dir/link.txt",
+      "sha256": "ca54d594d902bc3d715e80df6521a43a6ab17a112f938e2143c605a7521fc2b4",
+      "bytes": 360
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_statistics_workload_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_statistics_workload_test.dir/link.txt",
+      "sha256": "e35efcc9b5ce690da01d2b306a7d23b3d270bcc7afd339125d8c8d3f0794acb0",
+      "bytes": 328
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_storage_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_storage_exception_test.dir/link.txt",
+      "sha256": "a035c92b14e922a94378dc3930e84280afbf1c09cf82f02a1dadfdaaa78f05d9",
+      "bytes": 213
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_storage_journal_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_storage_journal_exception_test.dir/link.txt",
+      "sha256": "074f6d0ceb43b9bbc08bc49d20a88aaba9df44cf695b47b795850fdb12c77cd1",
+      "bytes": 237
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_storage_journal_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_storage_journal_test.dir/link.txt",
+      "sha256": "faa3eecf55338ffa7ad1dc9894f21036dc8ad4d02a648e2e561ced51a29651e2",
+      "bytes": 207
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_storage_model_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_storage_model_test.dir/link.txt",
+      "sha256": "949f654fa1a4186b56b954a5d027e78917d8e1b58e07078fb8490f05e503fb13",
+      "bytes": 201
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_support_api_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_support_api_test.dir/link.txt",
+      "sha256": "dfed191f1518e18e40a00fcb005b45dd121b67491d284e9489639d0380f5f2d5",
+      "bytes": 296
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_support_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_support_exception_test.dir/link.txt",
+      "sha256": "c8ed7dc31059e8ba99a0aaffa7be1f5a1fffe5bd7dc414fca5149d7b59e7bb8f",
+      "bytes": 314
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_support_journal_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_support_journal_test.dir/link.txt",
+      "sha256": "87cbfa2c8b6e0f6e9d35d746b90d0f1cedb851e5d2fbefec4fc523ec00658829",
+      "bytes": 308
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_support_model_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_support_model_test.dir/link.txt",
+      "sha256": "21d2e42daee92f455b1df48f3156ba1e1d74b49f0ffe840ab7498688a44e9e15",
+      "bytes": 323
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_transport_batch_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_transport_batch_test.dir/link.txt",
+      "sha256": "d571fd38853679fa2476b9319f507f81d53937fb3eab776eeb015fe73d74d2b5",
+      "bytes": 329
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_tree_verifier_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_tree_verifier_test.dir/link.txt",
+      "sha256": "35e560c2c60dc817ef8af72f492f2fc09e9603dd1ed35cf066191346b63dda36",
+      "bytes": 201
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_window_sequence_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_window_sequence_test.dir/link.txt",
+      "sha256": "6a354cb9bc9b8b99937a7d44aaa768011af138e5d6aab585eea9f3e0c15b3822",
+      "bytes": 316
+    },
+    {
+      "previous_path": "build/clang-debug/CMakeFiles/crown_window_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CMakeFiles/crown_window_test.dir/link.txt",
+      "sha256": "c756494cc31d3f8d5049c57d5c3299f03a2d267c375cb8dfed9054ead8bdae15",
+      "bytes": 302
+    },
+    {
+      "previous_path": "build/clang-debug/CTestTestfile.cmake",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/CTestTestfile.cmake",
+      "sha256": "07b85d7409427aa7ab7e13ac5eda0d528f3a6614463bbcd555e9736d9032917f",
+      "bytes": 45316
+    },
+    {
+      "previous_path": "build/clang-debug/_deps/libpg_query-build-config.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/_deps/libpg_query-build-config.txt",
+      "sha256": "f4a10f5680d9aeb567bebe0fa2dbfda263098e68cdd11fd1b14dd372bc83aa91",
+      "bytes": 210
+    },
+    {
+      "previous_path": "build/clang-debug/_deps/libpg_query/libpg_query-18.1.0/Makefile",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/_deps/libpg_query/libpg_query-18.1.0/Makefile",
+      "sha256": "763556c9260fe1b71c3ea4f3fdaca53869be6145672c44568d6b6032cf0fdb29",
+      "bytes": 18829
+    },
+    {
+      "previous_path": "build/clang-debug/compile_commands.json",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/compile_commands.json",
+      "sha256": "0f4a7a4d2bc78f6315f0633b60d8cb75a242f5aa52e6be61e61f5b23e7bb4d24",
+      "bytes": 127598
+    },
+    {
+      "previous_path": "build/clang-debug/libcrown_explain.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/libcrown_explain.a",
+      "sha256": "d2b5c3308e9411d69cb5a67e6ec09dcefa1b1de15fc74ba1ec1903780da16821",
+      "bytes": 6985100
+    },
+    {
+      "previous_path": "build/clang-debug/libcrown_explain_testing.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/libcrown_explain_testing.a",
+      "sha256": "d2b5c3308e9411d69cb5a67e6ec09dcefa1b1de15fc74ba1ec1903780da16821",
+      "bytes": 6985100
+    },
+    {
+      "previous_path": "build/clang-debug/libcrown_plan.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/libcrown_plan.a",
+      "sha256": "00b6a76a47c54efbdcdd7036f66334b220f4ab54ccf37639ee511a59cca124c2",
+      "bytes": 16929648
+    },
+    {
+      "previous_path": "build/clang-debug/libcrown_planner_testing.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/libcrown_planner_testing.a",
+      "sha256": "75be4ac3c133e3ae1a6599a0d706392aeea4dd67f7f9b7a44e51380cb9e53614",
+      "bytes": 1705062
+    },
+    {
+      "previous_path": "build/clang-debug/libcrown_runtime.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/libcrown_runtime.a",
+      "sha256": "b6ea723d75c4a57b560020870db27b7d548b95fc761b8c7d54904343566c3a2d",
+      "bytes": 34114032
+    },
+    {
+      "previous_path": "build/clang-debug/libcrown_runtime_testing.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/clang-debug/libcrown_runtime_testing.a",
+      "sha256": "8851cb9cc22ed703dc86d981bd3a6bbd122fd3bcc28075bb5b6f069f29013efe",
+      "bytes": 34197194
+    },
+    {
+      "previous_path": "build/debug/CMakeCache.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeCache.txt",
+      "sha256": "e96577f6e6a6b15b61641f9e66d7749fe73004586b5708a95d34c3606ed0ad34",
+      "bytes": 17599
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/3.28.3/CMakeCCompiler.cmake",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/3.28.3/CMakeCCompiler.cmake",
+      "sha256": "b5aad1667b4986e327d85cefeec26e17c6cb3dedf285649b05c522599a3cb824",
+      "bytes": 2525
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/3.28.3/CMakeCXXCompiler.cmake",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/3.28.3/CMakeCXXCompiler.cmake",
+      "sha256": "12aa7c8bbf1cab72086c6cf13c49e3efb595ce9a89e3a1cbc73bf019b660bd12",
+      "bytes": 5539
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/_crown_pg_query_build.dir/build.make",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/_crown_pg_query_build.dir/build.make",
+      "sha256": "48b67f60c4357be805413e403e52880ba45ba6cca4cc6510563d106d7bf57c88",
+      "bytes": 4448
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown.dir/link.txt",
+      "sha256": "2dfd2100bb342660a03f49080f4dd60ede2b14336863d7cfa496ad50f3258ef6",
+      "bytes": 298
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_admission_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_admission_test.dir/link.txt",
+      "sha256": "b09b6ac9d09c4ba4fa2982edab8831aa1b97e9f1bb2051f89f5dd814330c3325",
+      "bytes": 213
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_arena_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_arena_exception_test.dir/link.txt",
+      "sha256": "21e36eab8b17dd637834770333acd79cb287e6669608a27f72cc0c4dcc17d148",
+      "bytes": 144
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_arena_model_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_arena_model_test.dir/link.txt",
+      "sha256": "676bcdcf1a12f91db1a139f204fb3971452e8ff8db0958d9a62ca7942a5f7ad6",
+      "bytes": 132
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_arena_storage_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_arena_storage_test.dir/link.txt",
+      "sha256": "050a3816f1b628d085f057aa32bffe152f5766c2b2f767947a5560e90f6dc9e0",
+      "bytes": 220
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_batch_window_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_batch_window_exception_test.dir/link.txt",
+      "sha256": "cf06673d6c476bcdbcfcf51dcfc96dc79ebe70269e35a3c1a11a92b293f1ad6b",
+      "bytes": 266
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_binding_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_binding_test.dir/link.txt",
+      "sha256": "34c5e128ab6429ddaad438ca387dd5a098065c996b18401740e2a851d95f80ff",
+      "bytes": 186
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_catalog_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_catalog_test.dir/link.txt",
+      "sha256": "0f2d25d79175cd04f164f0b501554c8e7e56d5dea9ebb5e90723891efc765f76",
+      "bytes": 141
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_composed_explain_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_composed_explain_test.dir/link.txt",
+      "sha256": "6778ce62e8dfa66a2438a00dd57dafc5da97acbd31c4ca522fa1426a51cd0b7c",
+      "bytes": 329
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_core.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_core.dir/link.txt",
+      "sha256": "24da16f9aefe177e81be8c464e34d4a6420d6b3e482fdd7c324402de792ea8d5",
+      "bytes": 1682
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_cursor_observation_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_cursor_observation_test.dir/link.txt",
+      "sha256": "5d7372cbf1e59adfbe2ed3917a7c95b37473dc176317accec8ad2bce4de99a14",
+      "bytes": 335
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_delta_anchor_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_delta_anchor_test.dir/link.txt",
+      "sha256": "7549a4535c366a98cb2e1b3b82a0393459aed0a0b9d018e31735f70fc0fd690b",
+      "bytes": 257
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_delta_factor_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_delta_factor_test.dir/link.txt",
+      "sha256": "bda4a444a23393f031ca6e8e5a7f11417ca94d1b271c81c3cb4c22c82d4d3a76",
+      "bytes": 236
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_delta_lifecycle_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_delta_lifecycle_exception_test.dir/link.txt",
+      "sha256": "e12a5e82a330a0338f1f8a2503e01e8ca42a3570e3f8855f45995a7eaec4c0d6",
+      "bytes": 275
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_delta_lifecycle_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_delta_lifecycle_test.dir/link.txt",
+      "sha256": "fb001822bb09da240b14c8f4ffcd4ab89b07860106e621cac499d3b4ea7a803e",
+      "bytes": 266
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_delta_live_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_delta_live_test.dir/link.txt",
+      "sha256": "8bff3405e44af700f51e642992d09f2149d177461c1aaccdefadaac597d25510",
+      "bytes": 251
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_delta_replay_scale_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_delta_replay_scale_test.dir/link.txt",
+      "sha256": "9b2b776e17ac88e8beb0cc67815e21e8c96efa476718c1f924e4ae7aa9639bc3",
+      "bytes": 275
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_delta_replay_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_delta_replay_test.dir/link.txt",
+      "sha256": "1c27df7cab3240c3ce3ccb968ab72f8cf348bb48e13c0bdff5ebaf31150302c7",
+      "bytes": 257
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_delta_runtime_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_delta_runtime_exception_test.dir/link.txt",
+      "sha256": "57d96985637064fe0c9443b2fbf81ef3413baae36a3415c534aa14fda007e3f3",
+      "bytes": 269
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_delta_runtime_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_delta_runtime_test.dir/link.txt",
+      "sha256": "6e5fd94e8c3431e47ebb1ee49c7e89f89e721107d04bc37928db6afbf6e2095f",
+      "bytes": 260
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_delta_spec_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_delta_spec_test.dir/link.txt",
+      "sha256": "03cfa152b0144a466bbb50e967da9711199af61b97a339b0d4e45661be1c938d",
+      "bytes": 150
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_epoch_index_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_epoch_index_test.dir/link.txt",
+      "sha256": "43b9cd41c62b80abaf3634619287940952a1bff6e7c74799095785d49cae9f26",
+      "bytes": 233
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_epoch_view_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_epoch_view_exception_test.dir/link.txt",
+      "sha256": "bc82c615c312edd7a0d3b64155767fe33c74544222006813f4cdb1c46d1ba131",
+      "bytes": 260
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_epoch_view_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_epoch_view_test.dir/link.txt",
+      "sha256": "2317c4af6d47e8f77ccc8dce5c0dc3f14f29dd34c180f62d448a328eb71932a8",
+      "bytes": 251
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_exact_oracle_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_exact_oracle_test.dir/link.txt",
+      "sha256": "2235e5af526e7fa6c5ab2c0dd7e3f4d8f3760a653a516e90e575a49db34c7f9f",
+      "bytes": 156
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_explain.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_explain.dir/link.txt",
+      "sha256": "a7298f6427d57fa6491246b04931c750dd72983cd4f4eb0c22751607a9964ff6",
+      "bytes": 428
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_explain_testing.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_explain_testing.dir/link.txt",
+      "sha256": "5a82b3d75bb1435dc10dfe8080843ba9c61c1e67be5e237fd3bab28e97bc3f8e",
+      "bytes": 492
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_fragment_cursor_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_fragment_cursor_exception_test.dir/link.txt",
+      "sha256": "e829861b76bd1948bf93c140cd176ca9d5deeab7ecac221565ca15ef41361de8",
+      "bytes": 275
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_fragment_cursor_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_fragment_cursor_test.dir/link.txt",
+      "sha256": "de5e92353230cc7ea784deba74652e4876887592be603531e0556b8334895a6d",
+      "bytes": 266
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_ingest_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_ingest_exception_test.dir/link.txt",
+      "sha256": "01a026b572595f979f57507f2cc8fb2aa012fcabe72bc3dea4da15c0fa0a2ca9",
+      "bytes": 248
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_ingest_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_ingest_test.dir/link.txt",
+      "sha256": "0e5dd516520da58e88b8228f743c8df368e49208865ffe1603445d912c4c1b1a",
+      "bytes": 239
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_initialization_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_initialization_exception_test.dir/link.txt",
+      "sha256": "39259298d2cfdac0c73497fe2e64d615f3c9f214c82bcb341872010283a6559a",
+      "bytes": 293
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_initialization_scale_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_initialization_scale_test.dir/link.txt",
+      "sha256": "fa92270ac8237f4236030701aad6cf9e8763c44a53bdbbe2bf0d41acac20a1d8",
+      "bytes": 281
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_initialization_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_initialization_test.dir/link.txt",
+      "sha256": "5ac174261a8a085d6c1a6d2d22802e3448f0663efc19f33aacf4b07276d35b48",
+      "bytes": 263
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_layout_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_layout_test.dir/link.txt",
+      "sha256": "ce376bf38268f3e65c1a08e32ec86d1e87f0955bc552ffef1fb3127e86e6e5da",
+      "bytes": 117
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_normalization_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_normalization_test.dir/link.txt",
+      "sha256": "186e1bcb9a8f778340e4af5a6b83b45775f8d21965210f4258a54adc9c5a1f22",
+      "bytes": 225
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_observation_mode_binding_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_observation_mode_binding_test.dir/link.txt",
+      "sha256": "475572d598fe71987c65457cd0019c493778f5b77af85893246ab9889c2b7104",
+      "bytes": 353
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_observation_run_context_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_observation_run_context_test.dir/link.txt",
+      "sha256": "4635e753af4993de664415c7a1ec8c4286871f9530527a26ed229b93ecef1d18",
+      "bytes": 350
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_parser_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_parser_test.dir/link.txt",
+      "sha256": "dcb1fb666533d6340a5219a05947bb376706c9de9230540febdc76d1dc4e47d6",
+      "bytes": 183
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_physical_api_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_physical_api_test.dir/link.txt",
+      "sha256": "ecd36d9b59ce84d1675d48a06d2f8aa9416c418881a3c2ddecf831069739cd5f",
+      "bytes": 217
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_physical_lowering_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_physical_lowering_test.dir/link.txt",
+      "sha256": "b4b711ee308ce15f677d159df31517f68cba231b4ea247f45d34ec4124fafb47",
+      "bytes": 253
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_physical_runtime_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_physical_runtime_exception_test.dir/link.txt",
+      "sha256": "170fba38620209dc61a23c5a48355c3e4e1d2ca9c1d484de615411d9937b47c9",
+      "bytes": 278
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_physical_runtime_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_physical_runtime_test.dir/link.txt",
+      "sha256": "e521433f04eb387f49798c56f5b8057fba0c802fff1792e60c736303f843e112",
+      "bytes": 269
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_plan.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_plan.dir/link.txt",
+      "sha256": "daf8e0e6d0e8261c6cedb0b8f4bd69ef5cfbd1def5df3ad8f5649adece406c98",
+      "bytes": 214
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_planner_candidates_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_planner_candidates_exception_test.dir/link.txt",
+      "sha256": "32596dced1d3234e01803e017f4688e33d0dc706104dc72afde4d7bf37c6bee0",
+      "bytes": 175
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_planner_candidates_io_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_planner_candidates_io_test.dir/link.txt",
+      "sha256": "0017698a73ed02bf438afba97d3847ed8d048e3e58abec6b96033a5d0cc3560d",
+      "bytes": 154
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_planner_candidates_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_planner_candidates_test.dir/link.txt",
+      "sha256": "26681d7edcd6d6bd41804e2e99aafc48e64a20376a39fb3d6543b74792ef9a45",
+      "bytes": 166
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_planner_certificate_codec_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_planner_certificate_codec_test.dir/link.txt",
+      "sha256": "881d114afc00140a92a889a07a275e8029f6d7710976230350045d483a7e60a3",
+      "bytes": 201
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_planner_continuation_edge_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_planner_continuation_edge_test.dir/link.txt",
+      "sha256": "d8aaa29869e48fee6818f02bd120577e91b7d9ec67960bfde68d3c4410275547",
+      "bytes": 201
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_planner_continuation_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_planner_continuation_exception_test.dir/link.txt",
+      "sha256": "55f849a4415ed2dedd8576abc46671862ec7c584dea1a866b4e4f835ee21ed6b",
+      "bytes": 216
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_planner_continuation_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_planner_continuation_test.dir/link.txt",
+      "sha256": "b0e79aad8ba6a5b884aab0c37a93ad54468ac6d9be8b60279384424decaa0d97",
+      "bytes": 207
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_planner_fast_paths_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_planner_fast_paths_test.dir/link.txt",
+      "sha256": "5faafbb3bc9bbf79299e4aa323f89628fa1b08e7e4d6afbc6109d6cac76fec86",
+      "bytes": 201
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_planner_progress_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_planner_progress_test.dir/link.txt",
+      "sha256": "9aeaa6574c8d8b1585b306389f08daf0cf1b946127f805fb912c59e92422c2a2",
+      "bytes": 174
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_planner_residual_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_planner_residual_exception_test.dir/link.txt",
+      "sha256": "87887124b37d06c137f5e84e888cf6279e690ddeb2bd767460885a4878c05975",
+      "bytes": 169
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_planner_residual_io_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_planner_residual_io_test.dir/link.txt",
+      "sha256": "796027f2770ed292c227a0674ff9375c49a167fbc0d235ab55e9f05283c24778",
+      "bytes": 148
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_planner_residual_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_planner_residual_test.dir/link.txt",
+      "sha256": "f8fb8d9ce30593e3e52f26bebd0ed1f315198a674759449b8656f6ad13702ac2",
+      "bytes": 160
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_planner_search_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_planner_search_exception_test.dir/link.txt",
+      "sha256": "df995fd461ab41b9de77547dfe49a1293e1fcfe1ac8f222a9cbd0f745fe13af5",
+      "bytes": 198
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_planner_testing.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_planner_testing.dir/link.txt",
+      "sha256": "f385d1b9927b28fa6d2b538b1b9ce494ba60bfd7c1ead391452a459bad2c844c",
+      "bytes": 165
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_prepared_epoch_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_prepared_epoch_exception_test.dir/link.txt",
+      "sha256": "ff2f4c105a93b3aaae0e665b512499ec07c122fd43a1e3c57276110fab6b4ce3",
+      "bytes": 272
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_prepared_epoch_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_prepared_epoch_test.dir/link.txt",
+      "sha256": "f15babc3121233519e2655ce3f6d2b427770b97c272c312609137d79b7f78696",
+      "bytes": 263
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_query_explain.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_query_explain.dir/link.txt",
+      "sha256": "9fd34ae5b88caff377bea5ec23a0871d6b75e698e4bc68906a4c08a001ada80d",
+      "bytes": 216
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_query_explain_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_query_explain_test.dir/link.txt",
+      "sha256": "746adc8d4fb42f7098cc72780a6435187dd165201187807ab7ae28bbc1d2f9c7",
+      "bytes": 184
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_recognition_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_recognition_test.dir/link.txt",
+      "sha256": "a92e999e65c4537d97e2de284611a24783c897134e38f2617a8f106a357e375a",
+      "bytes": 132
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_reference.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_reference.dir/link.txt",
+      "sha256": "7f43509cb761e0752788b9dbe32219208907ef69f3c8f1f9005bba4609252047",
+      "bytes": 402
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_result_cursor_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_result_cursor_exception_test.dir/link.txt",
+      "sha256": "d56449356c718d6387078092c29e08e34b6c216cd1d8237c231522044276ff79",
+      "bytes": 269
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_result_cursor_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_result_cursor_test.dir/link.txt",
+      "sha256": "f770e4b6e6a3d198c8a487fdf87942170eb4b704ca441b8697ee6b660fbbaddf",
+      "bytes": 260
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_runtime.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_runtime.dir/link.txt",
+      "sha256": "00f7577e346a97f7d81b53d3ac25bfeef65ee70918fae94f43d7668014297b6f",
+      "bytes": 883
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_runtime_inspection_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_runtime_inspection_test.dir/link.txt",
+      "sha256": "bf807c40b0abe0b1bc8af38636479dbf0a3f91041e4a793cf7bdd3c5b1bd23ff",
+      "bytes": 283
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_runtime_observation_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_runtime_observation_test.dir/link.txt",
+      "sha256": "41a79d3775ec5e848d6f88f2107f4e8ba14c1cb7289302098c0b9e75d535452b",
+      "bytes": 338
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_runtime_testing.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_runtime_testing.dir/link.txt",
+      "sha256": "8cc25cc7f60f8d3fe91b5e3a7b5a465f314753cb33099bb0eda2577ee8aa3f2c",
+      "bytes": 1011
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_scalar_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_scalar_test.dir/link.txt",
+      "sha256": "c3ac7f5fe2a660e311efa759f080284836e28bc5a7261af4d3f3db97d6407e67",
+      "bytes": 138
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_schema_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_schema_test.dir/link.txt",
+      "sha256": "30d499db1f8c722f67e8dcf544078f1a3d5faf45d4189bd5efefeb3f7baa89df",
+      "bytes": 204
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_semantics_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_semantics_test.dir/link.txt",
+      "sha256": "6d1adcd39d8cd29698abb9c2ca54e850409087d9566eedb95033da089d649840",
+      "bytes": 147
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_session_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_session_exception_test.dir/link.txt",
+      "sha256": "dc9d46277f3dea47e608bcffd06d0ca68c3caa5dabcda89dd674e70343df4817",
+      "bytes": 251
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_session_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_session_test.dir/link.txt",
+      "sha256": "314b26e976b3762455f59830d7ded5c5214aa08f3b0be17c8f5ec7fe71d59545",
+      "bytes": 242
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_sql.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_sql.dir/link.txt",
+      "sha256": "dd4e7c4c9eef8b7cd30172774592ef9fce84a25895f75d165bd86d3d8b317b9b",
+      "bytes": 556
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_capture_exceptions_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_capture_exceptions_test.dir/link.txt",
+      "sha256": "b5ceecfc20201538d2dd98053bcfb6cb6989f5da4b077c71742d85fa4141ecb8",
+      "bytes": 286
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_capture_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_capture_test.dir/link.txt",
+      "sha256": "be49e26253acb21732c06ce374959d04e1648b4334f197c96e71fd4e636b8e54",
+      "bytes": 254
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_collection_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_collection_test.dir/link.txt",
+      "sha256": "ba1da4a3dc41cbac5ed05bb27ed4eda9c917b14ba977cc27de22cccd81936205",
+      "bytes": 271
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_combined_exceptions_production_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_combined_exceptions_production_test.dir/link.txt",
+      "sha256": "75d8df0376969de3cfe379c24567653cc4133c25436dd162520015cbbfb144e6",
+      "bytes": 311
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_combined_exceptions_testing_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_combined_exceptions_testing_test.dir/link.txt",
+      "sha256": "c121890ea5c2d38ab595c8bc9ed2e38e97e0df493b8fa46a21d111ce26e739e5",
+      "bytes": 313
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_combined_production_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_combined_production_test.dir/link.txt",
+      "sha256": "99e6396d43d09564cb59f86e747c8ba94db28ca91bb7f86a1b80060b5d00392e",
+      "bytes": 279
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_combined_testing_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_combined_testing_test.dir/link.txt",
+      "sha256": "366e83a699c9df953142c52ffd21c17ec75ed62b836025bd7a8ec4996865ed7c",
+      "bytes": 281
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_delta_replay_fifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_delta_replay_fifo_test.dir/link.txt",
+      "sha256": "1b569761a83b587d773f4b0ed864b3f1b1b8a9c766d6c1c4034dbd14dc6c087f",
+      "bytes": 289
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_delta_replay_lifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_delta_replay_lifo_test.dir/link.txt",
+      "sha256": "cd6ea766539d2c04f6300ac34a55d9ce8775526ad1f8feffb1c9b66d95f43d25",
+      "bytes": 289
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_delta_runtime_fifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_delta_runtime_fifo_test.dir/link.txt",
+      "sha256": "cdc84234025541cfe48d0ce7848d2a293df29d3d694c490a597068e33c577d3c",
+      "bytes": 292
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_delta_runtime_lifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_delta_runtime_lifo_test.dir/link.txt",
+      "sha256": "1c4eb2dc24b10713d4bc8789874553646ea44402bcdbba4670fb09dcdb742d40",
+      "bytes": 292
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_owner_exceptions_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_owner_exceptions_test.dir/link.txt",
+      "sha256": "5f45a660ec57024904254cfea1966e4e2a4a4003c3b34550edb25edbce1b9bce",
+      "bytes": 280
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_owner_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_owner_test.dir/link.txt",
+      "sha256": "47ce443d3227ea1d3b7131185b0bf61835c69853a12e973291fc383f349bb6b3",
+      "bytes": 269
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_report_exceptions_production_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_report_exceptions_production_test.dir/link.txt",
+      "sha256": "47bbae609d482515daf3a0de3962a8090886eed63cc206285ccc1fa1c8190d23",
+      "bytes": 350
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_report_exceptions_testing_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_report_exceptions_testing_test.dir/link.txt",
+      "sha256": "8539e97030991d922dc56eb4feaf5062b993400f0186eb9bfbc8324574517d58",
+      "bytes": 360
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_report_production_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_report_production_test.dir/link.txt",
+      "sha256": "3349941d1ae4c789d95b11eb0478bc234b0fb9b3cfeb355d97d8996e17001013",
+      "bytes": 318
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_report_testing_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_report_testing_test.dir/link.txt",
+      "sha256": "748340cbce268357b4e638d03f79ac86d8b30c623bd614be3329d373e7f5c999",
+      "bytes": 328
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_runtime_only_production_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_runtime_only_production_test.dir/link.txt",
+      "sha256": "ad575a1f35b572e69594de5da341247eb857d3df8281e0903694c8f0bf6364f2",
+      "bytes": 291
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_runtime_only_testing_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_runtime_only_testing_test.dir/link.txt",
+      "sha256": "d4b759877c10b163771c4997f9c5c63d5a7c01d81b44a7552a22c4fa4439b0c8",
+      "bytes": 293
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_scalars_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_scalars_test.dir/link.txt",
+      "sha256": "8dc3019345b8e73997c218f4d57c8537acdc83374492afac1482c4b518a8b25f",
+      "bytes": 253
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_window_fifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_window_fifo_test.dir/link.txt",
+      "sha256": "dce6ec84dafc7f3899865b6077e0a67b59094f89b563f25e28c93ccbd4b52fc6",
+      "bytes": 271
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_window_lifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_window_lifo_test.dir/link.txt",
+      "sha256": "b9fa1224850eb231fa04760825bd85e4307fc0620a3443f0e41ee03d29440182",
+      "bytes": 271
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_workload_exceptions_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_workload_exceptions_test.dir/link.txt",
+      "sha256": "b1759fec7a1c26ab318f49c90ef23518fe0ae03deb773d98ca8d39d5882ef124",
+      "bytes": 297
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_statistics_workload_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_statistics_workload_test.dir/link.txt",
+      "sha256": "8e62286c1e06a4d8cbfafb5e9c060a051a804a837aa3abdcd54210e3a3e07fa5",
+      "bytes": 265
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_storage_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_storage_exception_test.dir/link.txt",
+      "sha256": "9695fa24ae701f54f1efa93c0e6792a60e7aecf11cdb81e0631b96b231e09f79",
+      "bytes": 150
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_storage_journal_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_storage_journal_exception_test.dir/link.txt",
+      "sha256": "adc606ebc72a6680273f6c9e026a2b9f9c7b9f753eeb7f2faa01972687c681c6",
+      "bytes": 174
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_storage_journal_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_storage_journal_test.dir/link.txt",
+      "sha256": "dcfece3a80594f1703e7101ff413c5911e10da459b5f903eba16b19a52f6946c",
+      "bytes": 144
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_storage_model_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_storage_model_test.dir/link.txt",
+      "sha256": "901e20151e5772b62efdd12c948219509348b112d64337c6e34dc6de15e556c6",
+      "bytes": 138
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_support_api_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_support_api_test.dir/link.txt",
+      "sha256": "f4f3ca6e0d0a87000c8777bcc0d1878d937647ccd87dac2b71df2a8fff230cc4",
+      "bytes": 233
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_support_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_support_exception_test.dir/link.txt",
+      "sha256": "b24e90bfa9d6241fd20638ac210ccbce379483136a686493706db8634b220f09",
+      "bytes": 251
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_support_journal_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_support_journal_test.dir/link.txt",
+      "sha256": "5a72658a8fc0a5db0ac6cbd7f96944be7f8cd29d3355fe85c84433d4c6fb4185",
+      "bytes": 245
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_support_model_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_support_model_test.dir/link.txt",
+      "sha256": "104102c3c4a3a76ae2cbf25f1ece01d5ca4e72339ab98628209fb3af935841d1",
+      "bytes": 260
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_transport_batch_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_transport_batch_test.dir/link.txt",
+      "sha256": "ab01a3b69166b684049bc5d61c9825dadaf82920d30c8928bd8121b1f895d20e",
+      "bytes": 266
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_tree_verifier_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_tree_verifier_test.dir/link.txt",
+      "sha256": "21a8a50171a066c47f696e6b62924e73e10539a5c2fc86a89eb4a1f457beb7ed",
+      "bytes": 138
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_window_sequence_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_window_sequence_test.dir/link.txt",
+      "sha256": "c5a9c3a31844bfdef6f900d9baf7c6aac8e15bc65320b637dcb70699604230fd",
+      "bytes": 253
+    },
+    {
+      "previous_path": "build/debug/CMakeFiles/crown_window_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CMakeFiles/crown_window_test.dir/link.txt",
+      "sha256": "9b1e25e6f58e12249795348e00622d35687d4500c97b3501b3a66353cbfa0cc1",
+      "bytes": 239
+    },
+    {
+      "previous_path": "build/debug/CTestTestfile.cmake",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/CTestTestfile.cmake",
+      "sha256": "74e40d4ff43051b1114b9ac617bf6a4a97a1d20d7c4d81604f7c16404fd7f12b",
+      "bytes": 44524
+    },
+    {
+      "previous_path": "build/debug/_deps/libpg_query-build-config.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/_deps/libpg_query-build-config.txt",
+      "sha256": "d7da1551e60cdaa3767f5f9ec6a91dfea7ee6330db603adad29ddd0a0c44ac7e",
+      "bytes": 146
+    },
+    {
+      "previous_path": "build/debug/_deps/libpg_query/libpg_query-18.1.0/Makefile",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/_deps/libpg_query/libpg_query-18.1.0/Makefile",
+      "sha256": "763556c9260fe1b71c3ea4f3fdaca53869be6145672c44568d6b6032cf0fdb29",
+      "bytes": 18829
+    },
+    {
+      "previous_path": "build/debug/compile_commands.json",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/compile_commands.json",
+      "sha256": "4c204fcc113c4f0ffec0a04d304a911ae0f0d0769ed13b8628b0a88a704b8310",
+      "bytes": 114083
+    },
+    {
+      "previous_path": "build/debug/libcrown_explain.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/libcrown_explain.a",
+      "sha256": "e1352059fd9d61e2550155eca4b7d3cff9c7a685b8080f1bb9061d7642f2e888",
+      "bytes": 19342876
+    },
+    {
+      "previous_path": "build/debug/libcrown_explain_testing.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/libcrown_explain_testing.a",
+      "sha256": "e1352059fd9d61e2550155eca4b7d3cff9c7a685b8080f1bb9061d7642f2e888",
+      "bytes": 19342876
+    },
+    {
+      "previous_path": "build/debug/libcrown_plan.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/libcrown_plan.a",
+      "sha256": "0ec2e32343d44b54e6426cb8fdb1f9fa28974d01219c0af3961d6be8966e78ca",
+      "bytes": 26899086
+    },
+    {
+      "previous_path": "build/debug/libcrown_planner_testing.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/libcrown_planner_testing.a",
+      "sha256": "85542c8031049e969a06696c878ae743991649a2c484a460de5f9555ce7823b6",
+      "bytes": 2484782
+    },
+    {
+      "previous_path": "build/debug/libcrown_runtime.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/libcrown_runtime.a",
+      "sha256": "976de167e637fdd0884c6d45fc75b974e8a7dd5deaa4cc550cf95b08b7f8c18a",
+      "bytes": 61377026
+    },
+    {
+      "previous_path": "build/debug/libcrown_runtime_testing.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/debug/libcrown_runtime_testing.a",
+      "sha256": "b65f55f09c4e7514d50227a831efd63cbd01c6886a29b764cfbd8c40bc9579b5",
+      "bytes": 63646560
+    },
+    {
+      "previous_path": "build/release/CMakeCache.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeCache.txt",
+      "sha256": "7aad1993738c87f1a6aa23c88a9ac974be2a850ab2b84b99db7998dbdcc88d49",
+      "bytes": 17609
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/3.28.3/CMakeCCompiler.cmake",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/3.28.3/CMakeCCompiler.cmake",
+      "sha256": "b5aad1667b4986e327d85cefeec26e17c6cb3dedf285649b05c522599a3cb824",
+      "bytes": 2525
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/3.28.3/CMakeCXXCompiler.cmake",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/3.28.3/CMakeCXXCompiler.cmake",
+      "sha256": "12aa7c8bbf1cab72086c6cf13c49e3efb595ce9a89e3a1cbc73bf019b660bd12",
+      "bytes": 5539
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/_crown_pg_query_build.dir/build.make",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/_crown_pg_query_build.dir/build.make",
+      "sha256": "4ddc5ca47f75efe947e9b6d537e8b7f1f64e81c62a5c76495a55300f2f16ddde",
+      "bytes": 4472
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown.dir/link.txt",
+      "sha256": "41b53984087e417906315db5d82ce7586f5b2b3577b292dee649cba7d8a18ddd",
+      "bytes": 308
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_admission_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_admission_test.dir/link.txt",
+      "sha256": "cf8feacc8f330a6593628202b3ffd31a5e3d517fbc26e592850ab48c46cbdd30",
+      "bytes": 223
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_arena_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_arena_exception_test.dir/link.txt",
+      "sha256": "918200ddd1b03c18d2cef336aab092e707ad1a97e05a18ff3c633650c81694e3",
+      "bytes": 154
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_arena_model_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_arena_model_test.dir/link.txt",
+      "sha256": "868d1fbd4bad16a012d1bf9d7646adda2dcc42bfc9b1479cbdc2676684fd90bc",
+      "bytes": 142
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_arena_storage_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_arena_storage_test.dir/link.txt",
+      "sha256": "dc19d1a77c3497a3141104c3813d869be224bf6b946e80ad03b96bacae1fd0fc",
+      "bytes": 230
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_batch_window_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_batch_window_exception_test.dir/link.txt",
+      "sha256": "0241663a4cc1a0550356d683feec5853e2e0ae075ad9783e7adf0ada11ea378d",
+      "bytes": 276
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_binding_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_binding_test.dir/link.txt",
+      "sha256": "f60dcadcf0024478f40f72d63fd6410376f4175915ce3a5154eeaa7be204e857",
+      "bytes": 196
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_catalog_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_catalog_test.dir/link.txt",
+      "sha256": "ab6c9d509838fb02c4a84241f7f96c6d53792785521763702f84253845ea3c0e",
+      "bytes": 151
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_composed_explain_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_composed_explain_test.dir/link.txt",
+      "sha256": "33c32388b7035cd7eae7bb0d91433cd376f1365a2a9e39633118be404061dd00",
+      "bytes": 339
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_core.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_core.dir/link.txt",
+      "sha256": "24da16f9aefe177e81be8c464e34d4a6420d6b3e482fdd7c324402de792ea8d5",
+      "bytes": 1682
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_cursor_observation_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_cursor_observation_test.dir/link.txt",
+      "sha256": "8a1133a60d1c09d20bd7898baa0e77137957b6365ec98c3e917dea8148b57403",
+      "bytes": 345
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_delta_anchor_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_delta_anchor_test.dir/link.txt",
+      "sha256": "cf607fc5555bf7d161b825c7335751771c5ede15ba979b62f11224018ce3f06e",
+      "bytes": 267
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_delta_factor_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_delta_factor_test.dir/link.txt",
+      "sha256": "e89ffa6bbac744b7d924631deee276bb31bf3c705f5666bc77221061a5926c8c",
+      "bytes": 246
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_delta_lifecycle_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_delta_lifecycle_exception_test.dir/link.txt",
+      "sha256": "6fbf7a71c93c35a962b89a402f72d1a82af301e8ede6b229ffae7b5fca5275da",
+      "bytes": 285
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_delta_lifecycle_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_delta_lifecycle_test.dir/link.txt",
+      "sha256": "2bb1e56a406a97a7b073a2464c75ee04feac0355528b23086314b508a48cc139",
+      "bytes": 276
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_delta_live_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_delta_live_test.dir/link.txt",
+      "sha256": "f9416439315d78d5c3aee93995855c8340ebd6c7c572893a45db66968b6e1649",
+      "bytes": 261
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_delta_replay_scale_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_delta_replay_scale_test.dir/link.txt",
+      "sha256": "9d0baf4583e05139aaf933100f45b94aaf093df1cab4a726e7e0531c98354123",
+      "bytes": 285
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_delta_replay_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_delta_replay_test.dir/link.txt",
+      "sha256": "dfa5d0dc03ee4fff8e72ae3eccd4f1d67bf5d99f13abd1a09d5ba820b7e65222",
+      "bytes": 267
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_delta_runtime_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_delta_runtime_exception_test.dir/link.txt",
+      "sha256": "f8eda43b9022875f6de05d9304e935e050e421e1d98e72469efb3979cb3e6f6a",
+      "bytes": 279
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_delta_runtime_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_delta_runtime_test.dir/link.txt",
+      "sha256": "5aaf33048632bdc422afb7cdac9fee31cbb2e275e604f0c8d7101b0ba22e650d",
+      "bytes": 270
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_delta_spec_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_delta_spec_test.dir/link.txt",
+      "sha256": "d057e64d3f43a0ec29314a34bd3775fed0a4de3b4c6e54d58601514581eb8377",
+      "bytes": 160
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_epoch_index_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_epoch_index_test.dir/link.txt",
+      "sha256": "5e75f8f22b38bad8e43e7ea677efc71338f2c504054d5b1e80e63e78b212516e",
+      "bytes": 243
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_epoch_view_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_epoch_view_exception_test.dir/link.txt",
+      "sha256": "5d476b845ea7ea3bb18e96da8f60dd4a431c3ff002c8f231542ee81c1da3144d",
+      "bytes": 270
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_epoch_view_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_epoch_view_test.dir/link.txt",
+      "sha256": "60489757863275714f7e99660b43e61e3d7f9f66e207e6d97a6b46c51cbcedd0",
+      "bytes": 261
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_exact_oracle_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_exact_oracle_test.dir/link.txt",
+      "sha256": "e29ebf3b2244aca6d4098a9e5cb8041c4611bf0d6cf67ead40be74befecbc0bf",
+      "bytes": 166
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_explain.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_explain.dir/link.txt",
+      "sha256": "a7298f6427d57fa6491246b04931c750dd72983cd4f4eb0c22751607a9964ff6",
+      "bytes": 428
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_explain_testing.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_explain_testing.dir/link.txt",
+      "sha256": "5a82b3d75bb1435dc10dfe8080843ba9c61c1e67be5e237fd3bab28e97bc3f8e",
+      "bytes": 492
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_fragment_cursor_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_fragment_cursor_exception_test.dir/link.txt",
+      "sha256": "c4df3a079d319b9b503ab815891e5266b9a4e8e4fb1e32a0237aacce0cdfb2ac",
+      "bytes": 285
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_fragment_cursor_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_fragment_cursor_test.dir/link.txt",
+      "sha256": "9710203b0000e000af1adadedbd5ef9ed6ac55ba477bc754ede14d0266bf9822",
+      "bytes": 276
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_ingest_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_ingest_exception_test.dir/link.txt",
+      "sha256": "3406e183afa092246f048defced3dc33fbf42b85bedca3c46e555323f874d051",
+      "bytes": 258
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_ingest_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_ingest_test.dir/link.txt",
+      "sha256": "39578d4b3cd3436ad1e6a05b5d572530fb812604d0bbe2ffa3f9c57697543aee",
+      "bytes": 249
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_initialization_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_initialization_exception_test.dir/link.txt",
+      "sha256": "2a9bafd90894a71d883ad7f4d86ec13ac80abd0a0df471d2a7ff4301aa79dceb",
+      "bytes": 303
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_initialization_scale_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_initialization_scale_test.dir/link.txt",
+      "sha256": "a476a6b7e2f6b374c9e4e80ba3951c8c35a60f7af1210f224f769393ce770add",
+      "bytes": 291
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_initialization_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_initialization_test.dir/link.txt",
+      "sha256": "f10e9874afe4003f531889084e72f0edfd167054be372bb4d506bfb1a3b6d8cc",
+      "bytes": 273
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_layout_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_layout_test.dir/link.txt",
+      "sha256": "9b9dfac3f6a309f2ed1b8f8afb8a3f6282865005f795684101ee9686663d4f91",
+      "bytes": 127
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_normalization_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_normalization_test.dir/link.txt",
+      "sha256": "78f52f53c13d500e70e04e0d536ccd475e815e87a38aa0c8b7eb5638b14c6fe4",
+      "bytes": 235
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_observation_mode_binding_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_observation_mode_binding_test.dir/link.txt",
+      "sha256": "57fd5168bd7a8255dfcbfdf90848482e67042efad2862609ed58e3bf9a02de9b",
+      "bytes": 363
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_observation_run_context_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_observation_run_context_test.dir/link.txt",
+      "sha256": "a16b3c97344a04f7a216054fed3e960aa54d2ad37892d6730b60b33e043f8822",
+      "bytes": 360
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_parser_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_parser_test.dir/link.txt",
+      "sha256": "02c6918284d9f4520a2e63c846e08b244204a4d4c43427ab18477366427da711",
+      "bytes": 193
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_physical_api_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_physical_api_test.dir/link.txt",
+      "sha256": "892c97b29c87be54b29621f5121b0ad2b1ee6118d913e6c05d8e9c72976fa01d",
+      "bytes": 227
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_physical_lowering_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_physical_lowering_test.dir/link.txt",
+      "sha256": "660d2ae3e5c0f3383819da954c582fb922161bf692ce006cc112e0f2b4a877ff",
+      "bytes": 263
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_physical_runtime_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_physical_runtime_exception_test.dir/link.txt",
+      "sha256": "8d600985c4aa2afb6ef207ce50d410a421df3087752b13fbd31b83792c04b92d",
+      "bytes": 288
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_physical_runtime_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_physical_runtime_test.dir/link.txt",
+      "sha256": "9b6d5b284848c1b81fa4e6de7acc9e7487e6329e5773a53dc902f7644e2a331d",
+      "bytes": 279
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_plan.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_plan.dir/link.txt",
+      "sha256": "daf8e0e6d0e8261c6cedb0b8f4bd69ef5cfbd1def5df3ad8f5649adece406c98",
+      "bytes": 214
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_planner_candidates_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_planner_candidates_exception_test.dir/link.txt",
+      "sha256": "91ab84a07eb026c12f6fa51787ff011701a14a2c256ae03e1f92ca9b954d1632",
+      "bytes": 185
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_planner_candidates_io_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_planner_candidates_io_test.dir/link.txt",
+      "sha256": "b96802fcacae686a22d459fe0d1ff761fa4c53e7862dd8a6e223ab6d8f7ab9a7",
+      "bytes": 164
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_planner_candidates_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_planner_candidates_test.dir/link.txt",
+      "sha256": "253f19e82be26fc3c56fbed3e67530f89e1c34814cd82d0d72faead28a7474fb",
+      "bytes": 176
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_planner_certificate_codec_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_planner_certificate_codec_test.dir/link.txt",
+      "sha256": "56ce1213b0b744e9cf4ab1b8df6ca153685a6640b3b4f69c6027d7e31a03e5f9",
+      "bytes": 211
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_planner_continuation_edge_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_planner_continuation_edge_test.dir/link.txt",
+      "sha256": "42afa40857dde8e8f5bcff10a6266c369aca946f39830a3103dc20b61a3973a0",
+      "bytes": 211
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_planner_continuation_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_planner_continuation_exception_test.dir/link.txt",
+      "sha256": "d131523701f8e204468096f455a3d9ce6f4f5c9ff74126c155f39ba833ae1248",
+      "bytes": 226
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_planner_continuation_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_planner_continuation_test.dir/link.txt",
+      "sha256": "243c74255d0c0914aabe265ccfb7b26325bd1ff6b1f64321556645d8200be135",
+      "bytes": 217
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_planner_fast_paths_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_planner_fast_paths_test.dir/link.txt",
+      "sha256": "7d5724355ed9e047653cb66901cf5ee635a0e7166974fa579b409381cb69a0d8",
+      "bytes": 211
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_planner_progress_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_planner_progress_test.dir/link.txt",
+      "sha256": "14e1e3af380e4c930b8d82f518a960f6bea66c19e39045d6704cbc70c5966b37",
+      "bytes": 184
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_planner_residual_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_planner_residual_exception_test.dir/link.txt",
+      "sha256": "edba9411868a8c0e9d1cbd59c1767de16d75574cc46155001604ff13a297da31",
+      "bytes": 179
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_planner_residual_io_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_planner_residual_io_test.dir/link.txt",
+      "sha256": "6f39c1ed865327bb33b362950be3c45f133d4efdc72104b3c49427bb59bf971d",
+      "bytes": 158
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_planner_residual_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_planner_residual_test.dir/link.txt",
+      "sha256": "6e619e5985616ea4d093dbb94ab8e06a2e5b258bd004334d0de261baef43556f",
+      "bytes": 170
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_planner_search_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_planner_search_exception_test.dir/link.txt",
+      "sha256": "1280c1eeb45f22d1f7ec9c72808adedd18e4f284669823bcb096f871df1e28f9",
+      "bytes": 208
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_planner_testing.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_planner_testing.dir/link.txt",
+      "sha256": "f385d1b9927b28fa6d2b538b1b9ce494ba60bfd7c1ead391452a459bad2c844c",
+      "bytes": 165
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_prepared_epoch_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_prepared_epoch_exception_test.dir/link.txt",
+      "sha256": "e33e7caa475630305232e63ceedb8a1366ec878f7ae1d1d2cb35b549549f6850",
+      "bytes": 282
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_prepared_epoch_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_prepared_epoch_test.dir/link.txt",
+      "sha256": "bb48fdd2dc17dcfea7631b87248947825d3e151225281684bc5bd24e2c54dabc",
+      "bytes": 273
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_query_explain.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_query_explain.dir/link.txt",
+      "sha256": "9fd34ae5b88caff377bea5ec23a0871d6b75e698e4bc68906a4c08a001ada80d",
+      "bytes": 216
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_query_explain_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_query_explain_test.dir/link.txt",
+      "sha256": "c05d149232172e6d24f9e0a2fe6cb83d6fdb5361ce3c8260b99e76e2c8077c0e",
+      "bytes": 194
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_recognition_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_recognition_test.dir/link.txt",
+      "sha256": "503f4384f67591b46d6977ec4ae0f0e6cdf565f7ebfc3d0eef92075d6b12ac3a",
+      "bytes": 142
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_reference.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_reference.dir/link.txt",
+      "sha256": "7f43509cb761e0752788b9dbe32219208907ef69f3c8f1f9005bba4609252047",
+      "bytes": 402
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_result_cursor_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_result_cursor_exception_test.dir/link.txt",
+      "sha256": "efbda78abab85da38a3595d47d3d3f1cbef66d148803b68a1aa789857df41650",
+      "bytes": 279
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_result_cursor_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_result_cursor_test.dir/link.txt",
+      "sha256": "324d52c4e002f76e418ae6ae2eb6a5326f41e139968ff392a47f4f7c66aa2b92",
+      "bytes": 270
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_runtime.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_runtime.dir/link.txt",
+      "sha256": "00f7577e346a97f7d81b53d3ac25bfeef65ee70918fae94f43d7668014297b6f",
+      "bytes": 883
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_runtime_inspection_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_runtime_inspection_test.dir/link.txt",
+      "sha256": "242721b1b6ad2f877955208242ec9637da95d12c47252f23495e58099ac47ade",
+      "bytes": 293
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_runtime_observation_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_runtime_observation_test.dir/link.txt",
+      "sha256": "c87ede8c17ea506c1f31334fa3bb7604217433ef6497b6ecbae95d9fc86ae1da",
+      "bytes": 348
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_runtime_testing.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_runtime_testing.dir/link.txt",
+      "sha256": "8cc25cc7f60f8d3fe91b5e3a7b5a465f314753cb33099bb0eda2577ee8aa3f2c",
+      "bytes": 1011
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_scalar_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_scalar_test.dir/link.txt",
+      "sha256": "8769d7936bff1b5fc8a5cf175af58abc8ad452f4dd09eabe5e4a9a59fa951787",
+      "bytes": 148
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_schema_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_schema_test.dir/link.txt",
+      "sha256": "0126c6201d468bd6a03d45642140c37b86da0d36e25fb3035697d045badc608f",
+      "bytes": 214
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_semantics_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_semantics_test.dir/link.txt",
+      "sha256": "a6b9da9a32c3a388a11bc52aca5b8a3b39d18a8e5dd4fa463d5be3fcda38db19",
+      "bytes": 157
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_session_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_session_exception_test.dir/link.txt",
+      "sha256": "6eb9918741de36de6afee68dd6d1729772414a44cdc3a9b12f6957c700997675",
+      "bytes": 261
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_session_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_session_test.dir/link.txt",
+      "sha256": "f34b98d2f5a85e799299e44a5e28dcaf892d4248507928b37dda1ecc20ee202c",
+      "bytes": 252
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_sql.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_sql.dir/link.txt",
+      "sha256": "dd4e7c4c9eef8b7cd30172774592ef9fce84a25895f75d165bd86d3d8b317b9b",
+      "bytes": 556
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_capture_exceptions_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_capture_exceptions_test.dir/link.txt",
+      "sha256": "9983f46ded97ee648071ce51db0b0419fed6d6ca1eaaafd21145e50912c313c9",
+      "bytes": 296
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_capture_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_capture_test.dir/link.txt",
+      "sha256": "77ad16dcb7e4faa40cf665358cc019054c8ab0dc4e9b52b6738dff800e29f988",
+      "bytes": 264
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_collection_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_collection_test.dir/link.txt",
+      "sha256": "a11ac9ba6ff188862ca8d718321e9d52a42ba890b01e49240ba3906aee27e2a5",
+      "bytes": 281
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_combined_exceptions_production_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_combined_exceptions_production_test.dir/link.txt",
+      "sha256": "ad6bc319d958f4685d2b78d26fea507bf0d66fbbbdb811ef27125543860e4537",
+      "bytes": 321
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_combined_exceptions_testing_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_combined_exceptions_testing_test.dir/link.txt",
+      "sha256": "82ade028e36631f8783c4250dac2ec4a93c828b73a29a2a2c018cd9ebc582493",
+      "bytes": 323
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_combined_production_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_combined_production_test.dir/link.txt",
+      "sha256": "d446380553923d0a5282f94e00ffabf53c49675dfccfcb1c0f49c0c739021579",
+      "bytes": 289
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_combined_testing_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_combined_testing_test.dir/link.txt",
+      "sha256": "8e09f416fe30c59f96365503d67929bad92889f29c04cb95da4405a677c484f1",
+      "bytes": 291
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_delta_replay_fifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_delta_replay_fifo_test.dir/link.txt",
+      "sha256": "9522df72eda80ac6b35348a580ec18931ee7276804d2018e2ef947cbddd7fd43",
+      "bytes": 299
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_delta_replay_lifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_delta_replay_lifo_test.dir/link.txt",
+      "sha256": "4ac194684eec23c27a43d75d543ef7a284d143aa2467b96576abd6a58a5a81de",
+      "bytes": 299
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_delta_runtime_fifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_delta_runtime_fifo_test.dir/link.txt",
+      "sha256": "7ba8649cb572e7694598fd8b267f6142eb09656ea87d0fe04d8e26975752f033",
+      "bytes": 302
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_delta_runtime_lifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_delta_runtime_lifo_test.dir/link.txt",
+      "sha256": "6cad2efa890c5a42be5e5bc41b3c26eca6bd823b7841b68052eee50298c831e4",
+      "bytes": 302
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_owner_exceptions_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_owner_exceptions_test.dir/link.txt",
+      "sha256": "08c301dc3a66d61a61f3d32d2db25068ef8b1d4ddac5dbbaf520492361513b84",
+      "bytes": 290
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_owner_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_owner_test.dir/link.txt",
+      "sha256": "66168e42cc5d4446ceed3c77f2a8a9dbb7c359e2b05fa48433803af4312d3c35",
+      "bytes": 279
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_report_exceptions_production_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_report_exceptions_production_test.dir/link.txt",
+      "sha256": "fc32c5628fbfe86ba6d7742d82def6a04be2680680ce321dc5640252d4b5e824",
+      "bytes": 360
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_report_exceptions_testing_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_report_exceptions_testing_test.dir/link.txt",
+      "sha256": "abaaef29287766f52331b4007f2849f2af7c7eb781000a5a93fefdaccdb33169",
+      "bytes": 370
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_report_production_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_report_production_test.dir/link.txt",
+      "sha256": "3bf865345f4443928746a21fcb677e0f3750784de2330e2d8626c4fab4c012f0",
+      "bytes": 328
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_report_testing_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_report_testing_test.dir/link.txt",
+      "sha256": "5548ead4932783edc24ec20b4680c69c1b2e8414ce846d4f7b8af2a4cf2de0fe",
+      "bytes": 338
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_runtime_only_production_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_runtime_only_production_test.dir/link.txt",
+      "sha256": "114ea66a1ceb3183a98021eae6872c7b943b85f2496aa0d98bd781960dfc4e8f",
+      "bytes": 301
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_runtime_only_testing_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_runtime_only_testing_test.dir/link.txt",
+      "sha256": "6ab06ff02f535824996f66b67c2e5ec378932855751d514b3c367793370667b8",
+      "bytes": 303
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_scalars_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_scalars_test.dir/link.txt",
+      "sha256": "a25cca0c7a74354f2ed335e9924ba854e56c26fad55c07ff78cb6382e2aaeaad",
+      "bytes": 263
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_window_fifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_window_fifo_test.dir/link.txt",
+      "sha256": "acb80aa0cf5783a2d4a71d87d1b2bfbdd6dd0932cedf44bf33207c7ff6783821",
+      "bytes": 281
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_window_lifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_window_lifo_test.dir/link.txt",
+      "sha256": "a71b94e8c9fb7626923ef20b43491fa247d90e5e29b0a2c8838d76e6fd5bae80",
+      "bytes": 281
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_workload_exceptions_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_workload_exceptions_test.dir/link.txt",
+      "sha256": "19b4016e8f615a088a7ca53e1dbe12e6c5471bbc9ee48fac176d614ac41f0cf8",
+      "bytes": 307
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_statistics_workload_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_statistics_workload_test.dir/link.txt",
+      "sha256": "943d515e3e7d82c6c381aea84cbc632caad539cd24cdf9be0ef5fa1540b5ea92",
+      "bytes": 275
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_storage_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_storage_exception_test.dir/link.txt",
+      "sha256": "b704eebe3d2b65ce4bf37b5539539f5cdcb80e36bccd1a666e263805ea5ef113",
+      "bytes": 160
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_storage_journal_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_storage_journal_exception_test.dir/link.txt",
+      "sha256": "c10fbdfd37e216e3670d9d5610366dd810e7165ae9ee70f8e1403ebd0a36c87a",
+      "bytes": 184
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_storage_journal_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_storage_journal_test.dir/link.txt",
+      "sha256": "af5065272211563246e8600d5d6ecd93da5349e72c6dc8d4cc67af9626db7c9d",
+      "bytes": 154
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_storage_model_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_storage_model_test.dir/link.txt",
+      "sha256": "129a5c2503251e35dd8f49eee64c7fbb3140b0b8d00f6688d59482137eb185cc",
+      "bytes": 148
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_support_api_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_support_api_test.dir/link.txt",
+      "sha256": "f9eb71c9e30ab955a33e666dcca5d03ecfb70227e30364b61d9e836f81ab07f8",
+      "bytes": 243
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_support_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_support_exception_test.dir/link.txt",
+      "sha256": "5c19c407d57991e6d4e6322b6c15a2570a0f8cca8d8ec77251f533f3bf74d630",
+      "bytes": 261
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_support_journal_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_support_journal_test.dir/link.txt",
+      "sha256": "f0fa20fd37cdffbb9a286529133c7a6c9eff2793c23251b33152334425ed8c0f",
+      "bytes": 255
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_support_model_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_support_model_test.dir/link.txt",
+      "sha256": "b71a1f4d2303f46d6638d2e64833d5994209687d2740b0213deb01ac9226403b",
+      "bytes": 270
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_transport_batch_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_transport_batch_test.dir/link.txt",
+      "sha256": "a6b5e9c47022bfd550c73fa6be021673484bd46a328c172010d8ae22638a0648",
+      "bytes": 276
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_tree_verifier_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_tree_verifier_test.dir/link.txt",
+      "sha256": "a7e591c6d250e0a6c1eda65af6d849ed58b17014651d9e739545a37088f34608",
+      "bytes": 148
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_window_sequence_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_window_sequence_test.dir/link.txt",
+      "sha256": "5d6301781da05830d7368c94fe561d92852ac107ee6d7da223477196bd10c359",
+      "bytes": 263
+    },
+    {
+      "previous_path": "build/release/CMakeFiles/crown_window_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CMakeFiles/crown_window_test.dir/link.txt",
+      "sha256": "42bc4053a26f176e20b6a06b9f189db5e8e813f268c2d21123497d986a070470",
+      "bytes": 249
+    },
+    {
+      "previous_path": "build/release/CTestTestfile.cmake",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/CTestTestfile.cmake",
+      "sha256": "e609e35e29f5d0d5421d65dbaaabcc558845378c9042c64447e016aa3a35f5a9",
+      "bytes": 44788
+    },
+    {
+      "previous_path": "build/release/_deps/libpg_query-build-config.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/_deps/libpg_query-build-config.txt",
+      "sha256": "d7da1551e60cdaa3767f5f9ec6a91dfea7ee6330db603adad29ddd0a0c44ac7e",
+      "bytes": 146
+    },
+    {
+      "previous_path": "build/release/_deps/libpg_query/libpg_query-18.1.0/Makefile",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/_deps/libpg_query/libpg_query-18.1.0/Makefile",
+      "sha256": "763556c9260fe1b71c3ea4f3fdaca53869be6145672c44568d6b6032cf0fdb29",
+      "bytes": 18829
+    },
+    {
+      "previous_path": "build/release/compile_commands.json",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/compile_commands.json",
+      "sha256": "a559f5050aa922de86d31e902ce221408528031b6cd86d41ee6ea22abf52260e",
+      "bytes": 116443
+    },
+    {
+      "previous_path": "build/release/libcrown_explain.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/libcrown_explain.a",
+      "sha256": "e6d6e477fd365c20aa3f30673a44abe60f16aedd52d6f6541fcc8d92ab9fb7f0",
+      "bytes": 822898
+    },
+    {
+      "previous_path": "build/release/libcrown_explain_testing.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/libcrown_explain_testing.a",
+      "sha256": "e6d6e477fd365c20aa3f30673a44abe60f16aedd52d6f6541fcc8d92ab9fb7f0",
+      "bytes": 822898
+    },
+    {
+      "previous_path": "build/release/libcrown_plan.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/libcrown_plan.a",
+      "sha256": "92a96fd0f01ade3862fb4fbbabe316337719f71eb43361f5eb6b250cdfe04d6a",
+      "bytes": 963982
+    },
+    {
+      "previous_path": "build/release/libcrown_planner_testing.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/libcrown_planner_testing.a",
+      "sha256": "8bf7b1d9b7ccb2da0bc7f0d1f5db00f495cfd28e30a24cc68f0f393fcb6157d3",
+      "bytes": 150582
+    },
+    {
+      "previous_path": "build/release/libcrown_runtime.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/libcrown_runtime.a",
+      "sha256": "8d779695ccc4ac9fe68e39f7d612b7e65cf2088191f32fc433de55b62cb24759",
+      "bytes": 2328088
+    },
+    {
+      "previous_path": "build/release/libcrown_runtime_testing.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/release/libcrown_runtime_testing.a",
+      "sha256": "9adbebb762123a47f9af49d60198cee9ad00928a71d82cda4241f0e010abc982",
+      "bytes": 2344160
+    },
+    {
+      "previous_path": "build/sanitize/CMakeCache.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeCache.txt",
+      "sha256": "eb7061a722f29c8ed505ea3ec7e902ac1f981f198e071387a4845587ee019e58",
+      "bytes": 17610
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/3.28.3/CMakeCCompiler.cmake",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/3.28.3/CMakeCCompiler.cmake",
+      "sha256": "b5aad1667b4986e327d85cefeec26e17c6cb3dedf285649b05c522599a3cb824",
+      "bytes": 2525
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/3.28.3/CMakeCXXCompiler.cmake",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/3.28.3/CMakeCXXCompiler.cmake",
+      "sha256": "12aa7c8bbf1cab72086c6cf13c49e3efb595ce9a89e3a1cbc73bf019b660bd12",
+      "bytes": 5539
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/_crown_pg_query_build.dir/build.make",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/_crown_pg_query_build.dir/build.make",
+      "sha256": "ee02a070c54b4d2bc4b3e339dc90657991159c3ef88b148193eb481d65da743d",
+      "bytes": 4547
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown.dir/link.txt",
+      "sha256": "58b09d94f3ccfccbe13a22b255e394d8c412691947354ddb8c5b067b21cee013",
+      "bytes": 327
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_admission_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_admission_test.dir/link.txt",
+      "sha256": "dafe93d19ec1414e325fdd03a5c4d3cdb9f4f458a0337570806773b92e32cd15",
+      "bytes": 242
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_arena_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_arena_exception_test.dir/link.txt",
+      "sha256": "9f95f29ea8d4033a318cc5c1c0f4c11b51dba5cb51d5bc112f2075bb0f273f41",
+      "bytes": 173
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_arena_model_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_arena_model_test.dir/link.txt",
+      "sha256": "02e600211d10fc6c0c11b56673da5119e6233fbaa9cdddbae65d66b24c0a0c6e",
+      "bytes": 161
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_arena_storage_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_arena_storage_test.dir/link.txt",
+      "sha256": "bb411e76b3e8032a162942daeb1fd415d0a2b575394e62e3e88484fa690a0f8a",
+      "bytes": 249
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_batch_window_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_batch_window_exception_test.dir/link.txt",
+      "sha256": "388bcdefebaa49292b4c12613a6ca343352205a643bb798e8385a8e992b5433a",
+      "bytes": 295
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_binding_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_binding_test.dir/link.txt",
+      "sha256": "fca99b51c67bd66fc36bbd2516971ee2c1828c0cf9771aea302d8e767737b24b",
+      "bytes": 215
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_catalog_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_catalog_test.dir/link.txt",
+      "sha256": "8e18e7a754d402f174a38e1bfa2c699fa87a118532ab27f74cc29aa10a87743f",
+      "bytes": 170
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_composed_explain_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_composed_explain_test.dir/link.txt",
+      "sha256": "18d856dca5894e14c4d608be9656c2afefccec3255ae616e285740c9569c02e4",
+      "bytes": 358
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_core.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_core.dir/link.txt",
+      "sha256": "24da16f9aefe177e81be8c464e34d4a6420d6b3e482fdd7c324402de792ea8d5",
+      "bytes": 1682
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_cursor_observation_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_cursor_observation_test.dir/link.txt",
+      "sha256": "43b10dc0b56dbe3e1e8cf10b3f912017c92d4515faed457b264ec8ff16e4be73",
+      "bytes": 364
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_delta_anchor_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_delta_anchor_test.dir/link.txt",
+      "sha256": "316c6a78d6d754545225301996e93753041f219bb9810c33bab7256f64f12bce",
+      "bytes": 286
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_delta_factor_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_delta_factor_test.dir/link.txt",
+      "sha256": "732b18f5a051d508dfbe58811d929c3b04866247cd9a7d4358c547fa8ef64cfc",
+      "bytes": 265
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_delta_lifecycle_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_delta_lifecycle_exception_test.dir/link.txt",
+      "sha256": "618fd6a10017f3466c5ceab3b2499bd3b6af4004d62ab81a83e4d1ff1303c34f",
+      "bytes": 304
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_delta_lifecycle_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_delta_lifecycle_test.dir/link.txt",
+      "sha256": "b2571194ab7a0d542a7f42d7d19ac3e63f3fbe2e324dfe95b3ab6e85e160bb34",
+      "bytes": 295
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_delta_live_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_delta_live_test.dir/link.txt",
+      "sha256": "614376928469e976b9651dc8440c73efd2f39ca580384c49d5217a81bc323eb9",
+      "bytes": 280
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_delta_replay_scale_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_delta_replay_scale_test.dir/link.txt",
+      "sha256": "1a785ca0a763f487205f3e757212a80180fcb37c4c39b21a8bc90d1cadff48fb",
+      "bytes": 304
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_delta_replay_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_delta_replay_test.dir/link.txt",
+      "sha256": "259da2336c31d5868094cabbcfbb36cb7e5e3afb7ad7609a18c093e4dd3909d1",
+      "bytes": 286
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_delta_runtime_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_delta_runtime_exception_test.dir/link.txt",
+      "sha256": "1eb6452e77bbdbc98e3dd2e42f1933f34d9ebb9c1b5168523506df3d44297700",
+      "bytes": 298
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_delta_runtime_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_delta_runtime_test.dir/link.txt",
+      "sha256": "716df87b0f4bd43a108867f407eef7b1a228f81bfc2f743faf2457e993ac9f77",
+      "bytes": 289
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_delta_spec_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_delta_spec_test.dir/link.txt",
+      "sha256": "c44460ada8895b5ae2b2755dfd1ad43ced76beb7dbb0facc9d28af8d900ebf58",
+      "bytes": 179
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_epoch_index_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_epoch_index_test.dir/link.txt",
+      "sha256": "2f8f4a6b7262a91b49e916eee581e113059e6941ce048ca83ecfb8fe0d8ac584",
+      "bytes": 262
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_epoch_view_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_epoch_view_exception_test.dir/link.txt",
+      "sha256": "8027d6e499ee040ab34009d96842e3b813b8a5b0812f3dfca2e637aeb56c09dc",
+      "bytes": 289
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_epoch_view_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_epoch_view_test.dir/link.txt",
+      "sha256": "fd9f98d30a6a8f3e940d3eff415d0ec4d9011aca782faa1146453b29278b33d8",
+      "bytes": 280
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_exact_oracle_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_exact_oracle_test.dir/link.txt",
+      "sha256": "71aa8e6f4efc984f38e77ba1a069cde96221fd7fd35afa3d9ad65f8836b37a4c",
+      "bytes": 185
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_explain.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_explain.dir/link.txt",
+      "sha256": "a7298f6427d57fa6491246b04931c750dd72983cd4f4eb0c22751607a9964ff6",
+      "bytes": 428
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_explain_testing.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_explain_testing.dir/link.txt",
+      "sha256": "5a82b3d75bb1435dc10dfe8080843ba9c61c1e67be5e237fd3bab28e97bc3f8e",
+      "bytes": 492
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_fragment_cursor_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_fragment_cursor_exception_test.dir/link.txt",
+      "sha256": "bc363f4ba4802b41131efab0906f97ac58707311bd638da6cd9bd3767370ccf5",
+      "bytes": 304
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_fragment_cursor_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_fragment_cursor_test.dir/link.txt",
+      "sha256": "fae5d7f9df1f89dd1a6735406d679288f2984a8af5dab3bbbe64d21c7eddc0ed",
+      "bytes": 295
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_ingest_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_ingest_exception_test.dir/link.txt",
+      "sha256": "e18fe8ad305079897241e2db70cd8ba62d308a44b0ef799c61c3ac5c9a9f26f7",
+      "bytes": 277
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_ingest_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_ingest_test.dir/link.txt",
+      "sha256": "2f6123ef4e730d7ca2b22635cf646ddfa1bc94f7189ffbdc26f9f3be899a8bf6",
+      "bytes": 268
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_initialization_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_initialization_exception_test.dir/link.txt",
+      "sha256": "479b2d84b97cf5be8d4be0156b2590c469e3eb6219d270a1e231436f7be91515",
+      "bytes": 322
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_initialization_scale_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_initialization_scale_test.dir/link.txt",
+      "sha256": "72684c50a0bef13c753819d5a9d587f0ad60dd62cdb1a586b75dd721933c3968",
+      "bytes": 310
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_initialization_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_initialization_test.dir/link.txt",
+      "sha256": "d9020b4b79be2197eff27146137dc1c8175c889a8f1e45e7e9cee51237defd5f",
+      "bytes": 292
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_layout_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_layout_test.dir/link.txt",
+      "sha256": "805855819b411fd59d2dff38135ab75380713f669b39ab11ac03f3b641258b07",
+      "bytes": 146
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_normalization_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_normalization_test.dir/link.txt",
+      "sha256": "1a915786a389f2f287654dba91bb4274ce9ac3b0b64bddcb8b8e198078085caf",
+      "bytes": 254
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_observation_mode_binding_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_observation_mode_binding_test.dir/link.txt",
+      "sha256": "eef66435f58e05dfd6339de8d860cb85dedefe393f48af0dcefe09cab62c08dd",
+      "bytes": 382
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_observation_run_context_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_observation_run_context_test.dir/link.txt",
+      "sha256": "eb6cd047f48e579befcad566e62596dc49f4977007f0025c8a7ea7128a0557d8",
+      "bytes": 379
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_parser_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_parser_test.dir/link.txt",
+      "sha256": "555800b8fa2f6e3725dc656aeb238ec4b8a5056782df1338c9734af50e3f4e76",
+      "bytes": 212
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_physical_api_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_physical_api_test.dir/link.txt",
+      "sha256": "9519278c27d6f5b863e01ff8aeb29197ddb90663452f323ecc91274e3097c565",
+      "bytes": 246
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_physical_lowering_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_physical_lowering_test.dir/link.txt",
+      "sha256": "b49cc089390718f6f264d27c7836f62f71238b966007395a89ea20c379fa2204",
+      "bytes": 282
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_physical_runtime_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_physical_runtime_exception_test.dir/link.txt",
+      "sha256": "efefcc9c61cc248052df15f5202d82b6c18f9af98104178cd75bd86fadef0b9c",
+      "bytes": 307
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_physical_runtime_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_physical_runtime_test.dir/link.txt",
+      "sha256": "5472fe59c2e5c191ab0588eb83f7cbc8cce92cb7ec0c1d6549b1e8faf4407ef6",
+      "bytes": 298
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_plan.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_plan.dir/link.txt",
+      "sha256": "daf8e0e6d0e8261c6cedb0b8f4bd69ef5cfbd1def5df3ad8f5649adece406c98",
+      "bytes": 214
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_planner_candidates_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_planner_candidates_exception_test.dir/link.txt",
+      "sha256": "549db3720b0caf9536cda0f8f01060d813c1211d61dce8d018a2a26a4a858613",
+      "bytes": 204
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_planner_candidates_io_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_planner_candidates_io_test.dir/link.txt",
+      "sha256": "51722c553510f5c5cc13660d3e6b616a2f8714ee572898b35a86fc6a569c712f",
+      "bytes": 183
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_planner_candidates_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_planner_candidates_test.dir/link.txt",
+      "sha256": "705597d8e6afba6b652884d9c79f3bdfd52d36d572180efc89904d8376a7fd90",
+      "bytes": 195
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_planner_certificate_codec_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_planner_certificate_codec_test.dir/link.txt",
+      "sha256": "4713fe75f7d67bcdaca08bb2ed1fab540867433a49d6ae7c09229c4c999cb486",
+      "bytes": 230
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_planner_continuation_edge_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_planner_continuation_edge_test.dir/link.txt",
+      "sha256": "ac6dfbedd78b609552a0a9f8fc607351bd44524c697eb7e4d3a12ea2f315bcdb",
+      "bytes": 230
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_planner_continuation_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_planner_continuation_exception_test.dir/link.txt",
+      "sha256": "169d114e489dc1e55554c5da46e4610db8f8f1fbb20591509beac20ab6fd2d24",
+      "bytes": 245
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_planner_continuation_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_planner_continuation_test.dir/link.txt",
+      "sha256": "d201fd0e809760097cc9da527885cc1de395e55b3c5272f2bbdab1ae1e1b86e2",
+      "bytes": 236
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_planner_fast_paths_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_planner_fast_paths_test.dir/link.txt",
+      "sha256": "5c34238cea0d4aaf8dc0685c5e4ddb897c0e2038fb4eae8705385c0b3961bcf0",
+      "bytes": 230
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_planner_progress_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_planner_progress_test.dir/link.txt",
+      "sha256": "47aaaa3891347968786f2c649e3e1cb652afe2e2361663c0f1fe116df5a7719b",
+      "bytes": 203
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_planner_residual_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_planner_residual_exception_test.dir/link.txt",
+      "sha256": "4c5050fac4b56ff8f47e533d87a02fd894509171d3df86f81869d53ac69bc4d0",
+      "bytes": 198
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_planner_residual_io_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_planner_residual_io_test.dir/link.txt",
+      "sha256": "a1f9b6cf3653874c1ae6c14ad509e9f3d0996be07a596436ec2223a36920f167",
+      "bytes": 177
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_planner_residual_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_planner_residual_test.dir/link.txt",
+      "sha256": "6020afcc787174944235c30ac8c324c36665fad18389cfd98c2fe46c76e9d412",
+      "bytes": 189
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_planner_search_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_planner_search_exception_test.dir/link.txt",
+      "sha256": "edc0409907dc021c7d82f721c1deab3e610e85740b7dfcb66bb15f0d1a0c52c2",
+      "bytes": 227
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_planner_testing.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_planner_testing.dir/link.txt",
+      "sha256": "f385d1b9927b28fa6d2b538b1b9ce494ba60bfd7c1ead391452a459bad2c844c",
+      "bytes": 165
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_prepared_epoch_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_prepared_epoch_exception_test.dir/link.txt",
+      "sha256": "0ee3627b31112714a589f4eaee6c4f42232247a327c64cc566e0b503e3203952",
+      "bytes": 301
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_prepared_epoch_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_prepared_epoch_test.dir/link.txt",
+      "sha256": "780f749f1a3b492295623c527c3bf0ee537a745c60620795fac44362da2a1511",
+      "bytes": 292
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_query_explain.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_query_explain.dir/link.txt",
+      "sha256": "9fd34ae5b88caff377bea5ec23a0871d6b75e698e4bc68906a4c08a001ada80d",
+      "bytes": 216
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_query_explain_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_query_explain_test.dir/link.txt",
+      "sha256": "9025499ca6a9d190a507f07526a60b4c47dd44949d2c5c2eb37b37defa540572",
+      "bytes": 213
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_recognition_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_recognition_test.dir/link.txt",
+      "sha256": "77a626daba33fc989be90dddecb4fee3acd2979a056b0b1f2e457ad412cfe855",
+      "bytes": 161
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_reference.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_reference.dir/link.txt",
+      "sha256": "7f43509cb761e0752788b9dbe32219208907ef69f3c8f1f9005bba4609252047",
+      "bytes": 402
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_result_cursor_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_result_cursor_exception_test.dir/link.txt",
+      "sha256": "a266b493beba96e4123a52950e718b4f81ae16aff450253a38056940dd604eb0",
+      "bytes": 298
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_result_cursor_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_result_cursor_test.dir/link.txt",
+      "sha256": "335a82054ef690264af342ea2c604c43ee732eab56f31bb045c6de4d6df6b150",
+      "bytes": 289
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_runtime.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_runtime.dir/link.txt",
+      "sha256": "00f7577e346a97f7d81b53d3ac25bfeef65ee70918fae94f43d7668014297b6f",
+      "bytes": 883
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_runtime_inspection_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_runtime_inspection_test.dir/link.txt",
+      "sha256": "f3fb6a35b1bef29f4005d5bbb4000c912e6093109a10dfba19f2f02c903c361d",
+      "bytes": 312
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_runtime_observation_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_runtime_observation_test.dir/link.txt",
+      "sha256": "02e0d5a388e33bbd6d688a1d7b78171ce80dbfefdf83005f516413b2411a97d9",
+      "bytes": 367
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_runtime_testing.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_runtime_testing.dir/link.txt",
+      "sha256": "8cc25cc7f60f8d3fe91b5e3a7b5a465f314753cb33099bb0eda2577ee8aa3f2c",
+      "bytes": 1011
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_scalar_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_scalar_test.dir/link.txt",
+      "sha256": "6995139961aea0869e6024cdefb7866b118d4bbeaae680038357704864e50690",
+      "bytes": 167
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_schema_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_schema_test.dir/link.txt",
+      "sha256": "6afb792e6ea89fc523749d4d3deee6dd363658f8a878a3b8b69c1e7b9936c8a2",
+      "bytes": 233
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_semantics_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_semantics_test.dir/link.txt",
+      "sha256": "001e1f8ba40ea4fa5a8c0d855c91e9fa5fdc2b419636be055bb6938bbea7e3f5",
+      "bytes": 176
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_session_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_session_exception_test.dir/link.txt",
+      "sha256": "816c86d787d18b77d5b107cb104d5b1e5d31f15530da56ec67b91ae9c7930902",
+      "bytes": 280
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_session_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_session_test.dir/link.txt",
+      "sha256": "a899ea0662e19856e9c665e7f3426ea631727f9cf4bc24f1de545e7fe3a668b2",
+      "bytes": 271
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_sql.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_sql.dir/link.txt",
+      "sha256": "dd4e7c4c9eef8b7cd30172774592ef9fce84a25895f75d165bd86d3d8b317b9b",
+      "bytes": 556
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_capture_exceptions_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_capture_exceptions_test.dir/link.txt",
+      "sha256": "67fe1e59f7e762a3813ff041d59de3ddb378c93b9dfd10fe6f5af1b0a075c245",
+      "bytes": 315
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_capture_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_capture_test.dir/link.txt",
+      "sha256": "82ac5a6315f33090d476e6878ca68cc1d4b5a5c6b7ea3de90b9cde66fb0f5e4c",
+      "bytes": 283
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_collection_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_collection_test.dir/link.txt",
+      "sha256": "aa001fd72abd2219317fa47f77408f26d8d0cbf95a096e67ef160f2cef68c396",
+      "bytes": 300
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_combined_exceptions_production_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_combined_exceptions_production_test.dir/link.txt",
+      "sha256": "d5e5482c97e92265c452d46713c18a3b1823ecf20357c6fecf761d867680ab09",
+      "bytes": 340
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_combined_exceptions_testing_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_combined_exceptions_testing_test.dir/link.txt",
+      "sha256": "482f11816b91bc6e7bf7bcd8afa163d2e2ef4c411374d3fb96ac87ef6483622b",
+      "bytes": 342
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_combined_production_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_combined_production_test.dir/link.txt",
+      "sha256": "ab021f4ec210cdd18d6837b663bcd6f2b97619768103a8a2f4b5da6179003062",
+      "bytes": 308
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_combined_testing_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_combined_testing_test.dir/link.txt",
+      "sha256": "52618c84417a5a8204b10ce51ee7bd3f564c0f739dff78b5649f48e0117fab3f",
+      "bytes": 310
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_delta_replay_fifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_delta_replay_fifo_test.dir/link.txt",
+      "sha256": "5c8609e33ce3ddf03b1741892c4e65478c147ea5c96772e717b35b18ef8dcf6b",
+      "bytes": 318
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_delta_replay_lifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_delta_replay_lifo_test.dir/link.txt",
+      "sha256": "1fd9b265502fb5d34d1b1a797c885fae90089c458692c969b611938da3404d3f",
+      "bytes": 318
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_delta_runtime_fifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_delta_runtime_fifo_test.dir/link.txt",
+      "sha256": "4e4d3545bcfa17578b830af1d111c884276dcccf5557ca99e145bb7b1f52d9bc",
+      "bytes": 321
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_delta_runtime_lifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_delta_runtime_lifo_test.dir/link.txt",
+      "sha256": "5e949e2c9cfd9b3c0e3e615cae692c86d67027dff0c21b8747dc255ef13a1fba",
+      "bytes": 321
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_owner_exceptions_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_owner_exceptions_test.dir/link.txt",
+      "sha256": "5ea125a3401ea1222c1ea7df9f4d829db576bee21013c977d233c815956b0d50",
+      "bytes": 309
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_owner_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_owner_test.dir/link.txt",
+      "sha256": "12ef90afb3cde5da4fa63eac0d92303643ecec9587f1cfd561544d6e94bd2d84",
+      "bytes": 298
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_report_exceptions_production_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_report_exceptions_production_test.dir/link.txt",
+      "sha256": "169da98f9e7bcd319918b60b67bd137bc3bcc87502a39c78d56603ce7b26f7d1",
+      "bytes": 379
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_report_exceptions_testing_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_report_exceptions_testing_test.dir/link.txt",
+      "sha256": "a5c7b4d7804a8d5383055a5f408815d879b389fa3405dd678bd533fa0edbf7c1",
+      "bytes": 389
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_report_production_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_report_production_test.dir/link.txt",
+      "sha256": "50089b4ceb31adb96bb61a56a99965a71aa089c3844d43c27a3952c742213373",
+      "bytes": 347
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_report_testing_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_report_testing_test.dir/link.txt",
+      "sha256": "7f017f17026ab1257c34f8b3d5e70a8910d717867588aac36358368cfae3614e",
+      "bytes": 357
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_runtime_only_production_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_runtime_only_production_test.dir/link.txt",
+      "sha256": "d5aed38b22c92484b48a21eda8295c150e7c258d064bcd17ada23230064c5930",
+      "bytes": 320
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_runtime_only_testing_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_runtime_only_testing_test.dir/link.txt",
+      "sha256": "9d2d36d394662791b30cc07e4404a343f28d2fe158fd230f8ab281b690d9987c",
+      "bytes": 322
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_scalars_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_scalars_test.dir/link.txt",
+      "sha256": "c1a7340eecce84eab53a36cb89351efd2599033d4f612c9c5f48c307afd2916c",
+      "bytes": 282
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_window_fifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_window_fifo_test.dir/link.txt",
+      "sha256": "d3b3ab4bcba5fbaaa58f3679c4a5a8cb20401ce44c2bd7063677e9a86b91c589",
+      "bytes": 300
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_window_lifo_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_window_lifo_test.dir/link.txt",
+      "sha256": "43aff3a82f1f2758bd59321cf0e7647c004015837578358601418108ae49706e",
+      "bytes": 300
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_workload_exceptions_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_workload_exceptions_test.dir/link.txt",
+      "sha256": "c146f2999b315696866e9fcc24964f0cd416930ee47dbbab44fe2c912b5036f9",
+      "bytes": 326
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_statistics_workload_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_statistics_workload_test.dir/link.txt",
+      "sha256": "f8ea9b68fb0c46d23180dc7f77324840a4f64b35aef165a115879c87a7a1024c",
+      "bytes": 294
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_storage_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_storage_exception_test.dir/link.txt",
+      "sha256": "12abba6f85f0d31db7a858c6de0eb5038e4e353ac4406eb5d7f610b8ebad532c",
+      "bytes": 179
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_storage_journal_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_storage_journal_exception_test.dir/link.txt",
+      "sha256": "2cbb5d843bc931046808fd0c2e1b197367449c41cccf98a2c04b36dd94070470",
+      "bytes": 203
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_storage_journal_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_storage_journal_test.dir/link.txt",
+      "sha256": "3a75e0b5cff3e295c0b92c409bfe639bf32af1042f109f6a9162fe3d2a530ae4",
+      "bytes": 173
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_storage_model_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_storage_model_test.dir/link.txt",
+      "sha256": "f4f2ae6ea40671d5911c7875a7d6a5400b8ae086398ce5f24e88f26cece7371d",
+      "bytes": 167
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_support_api_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_support_api_test.dir/link.txt",
+      "sha256": "a4d57a2f9c8e0a3d76ecdb1a3436c792c02e3af27954c38be8b619997a74212d",
+      "bytes": 262
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_support_exception_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_support_exception_test.dir/link.txt",
+      "sha256": "58f453b52b95ef5c74b52ea2a3efa6d2d6664e7179aea5474b3ce7c9a4503abc",
+      "bytes": 280
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_support_journal_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_support_journal_test.dir/link.txt",
+      "sha256": "e56e09248ad91f9152bb3ca1a6d90f3b3334100424d96edb26081c728588d5ce",
+      "bytes": 274
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_support_model_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_support_model_test.dir/link.txt",
+      "sha256": "ccc20c48e86d3f83b4996523c6660e48a6f588740fa05ba629bb9b6d87ce04b3",
+      "bytes": 289
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_transport_batch_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_transport_batch_test.dir/link.txt",
+      "sha256": "7b8b016c1de2651ca469aa429ba1d83c9f3d4de3bf83a287628e5cef1c67e7b2",
+      "bytes": 295
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_tree_verifier_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_tree_verifier_test.dir/link.txt",
+      "sha256": "4786f9fe57a62db7db6b811fbb5c14425c1a33f2149bfc73616668ab500d61b2",
+      "bytes": 167
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_window_sequence_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_window_sequence_test.dir/link.txt",
+      "sha256": "08180406d9f7f9650b8c98b440140714a051bda27aea1538e8839f5691d11ec4",
+      "bytes": 282
+    },
+    {
+      "previous_path": "build/sanitize/CMakeFiles/crown_window_test.dir/link.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CMakeFiles/crown_window_test.dir/link.txt",
+      "sha256": "469ce768738f63fed65b49e39c77575eaf9adbe55c979445dc2820cdea31f070",
+      "bytes": 268
+    },
+    {
+      "previous_path": "build/sanitize/CTestTestfile.cmake",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/CTestTestfile.cmake",
+      "sha256": "e5d9e1d21a6a47d3cbe2b5b46ebeafe58003f373c56e076e38d9831540323605",
+      "bytes": 58937
+    },
+    {
+      "previous_path": "build/sanitize/_deps/libpg_query-build-config.txt",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/_deps/libpg_query-build-config.txt",
+      "sha256": "cd68f78d6893fa9e6866b0679e30798ef2ddd5db3a8cb27d6a878ce81ae1e360",
+      "bytes": 145
+    },
+    {
+      "previous_path": "build/sanitize/_deps/libpg_query/libpg_query-18.1.0/Makefile",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/_deps/libpg_query/libpg_query-18.1.0/Makefile",
+      "sha256": "763556c9260fe1b71c3ea4f3fdaca53869be6145672c44568d6b6032cf0fdb29",
+      "bytes": 18829
+    },
+    {
+      "previous_path": "build/sanitize/_deps/libpg_query/libpg_query-18.1.0/libpg_query.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/_deps/libpg_query/libpg_query-18.1.0/libpg_query.a",
+      "sha256": "1e59d1caaf15beb5a2e0aaf664fa3f853f058c7eefdd4b80bae3a37c5f0f9bfc",
+      "bytes": 97731998
+    },
+    {
+      "previous_path": "build/sanitize/compile_commands.json",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/compile_commands.json",
+      "sha256": "f052d087dfb37be6c73afb870f3cc79a65641966edc11d8ed00a15a6c85d998a",
+      "bytes": 125033
+    },
+    {
+      "previous_path": "build/sanitize/libcrown_explain.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/libcrown_explain.a",
+      "sha256": "638126d76a90e42de65450817b0cf410bd264a246bfd4e1c723d2bb391f9f181",
+      "bytes": 30865706
+    },
+    {
+      "previous_path": "build/sanitize/libcrown_explain_testing.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/libcrown_explain_testing.a",
+      "sha256": "638126d76a90e42de65450817b0cf410bd264a246bfd4e1c723d2bb391f9f181",
+      "bytes": 30865706
+    },
+    {
+      "previous_path": "build/sanitize/libcrown_plan.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/libcrown_plan.a",
+      "sha256": "529e7859630cd38c1d567e157a23769232a8d3cbdffd63a0a546daa373ecd4a9",
+      "bytes": 49063988
+    },
+    {
+      "previous_path": "build/sanitize/libcrown_planner_testing.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/libcrown_planner_testing.a",
+      "sha256": "7941ff1d7e8c291371e58811a466e394ed5b020d3cc76f651d641cdee0ec7011",
+      "bytes": 5216774
+    },
+    {
+      "previous_path": "build/sanitize/libcrown_runtime.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/libcrown_runtime.a",
+      "sha256": "00ad3a41355c385104f3d33553598c35dfeb6bd5e80a829f923c24cb61c2d977",
+      "bytes": 107198408
+    },
+    {
+      "previous_path": "build/sanitize/libcrown_runtime_testing.a",
+      "retained_path": "build/verification/c02-c01-predecessor-build-evidence/build/sanitize/libcrown_runtime_testing.a",
+      "sha256": "c22e8553058d0c2a7c360ea22b9ff95cf59200a43ef36e0f143fbd369c8bb4bf",
+      "bytes": 109633008
+    }
+  ],
+  "file_count": 505,
+  "bytes": 733024790,
+  "seconds": 4.499
+}

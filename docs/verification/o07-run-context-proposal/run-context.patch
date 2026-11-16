@@ -1,0 +1,639 @@
+--- /dev/null
++++ b/include/crown/io/run_context.hpp
+@@ -0,0 +1,8 @@
++#pragma once
++#include "crown/runtime/session.hpp"
++namespace crown::io {
++// Explicit allocating export outside mutation. Strict UTF-8; native bytes are
++// accepted/retained unchanged. Missing metadata is null, never inferred.
++[[nodiscard]] std::string write_run_context_json(const runtime::ObservationSnapshot&,
++    std::size_t max_bytes=16*1024*1024);
++} // namespace crown::io
+--- a/include/crown/runtime/delta.hpp
++++ b/include/crown/runtime/delta.hpp
+@@ -197,6 +197,9 @@
+   DeltaRuntime& operator=(DeltaRuntime&&) noexcept;
+   [[nodiscard]] const PhysicalPlan& plan() const;
+   [[nodiscard]] ObservationSnapshot observations() const;
++  // Explicit diagnostic declaration; affects only future attempt bindings.
++  // Caller constructs immutable labels before mutation. No parsing or clocks.
++  void declare_benchmark_context(std::shared_ptr<const DeclaredBenchmarkContext>);
+   [[nodiscard]] ObservationTrace observation_trace() const;
+   [[nodiscard]] const DeltaOptions& options() const;
+   [[nodiscard]] DeltaCompletion completion() const;
+@@ -221,6 +224,7 @@
+   [[nodiscard]] std::optional<LiveSnapshot> live_snapshot() const;
+   [[nodiscard]] PhysicalStorageStatistics storage_statistics() const;
+   [[nodiscard]] const BuildMetrics& initialization_metrics() const;
++  [[nodiscard]] InitializationContext initialization_context() const;
+   [[nodiscard]] CanonicalDeltaState canonical_state() const;
+   [[nodiscard]] InvariantReport inspect_invariants(InspectionOptions options={}) const;
+   void check_invariants() const;
+--- a/include/crown/runtime/observation.hpp
++++ b/include/crown/runtime/observation.hpp
+@@ -1,5 +1,7 @@
+ #pragma once
+ 
++#include "crown/runtime/initialization.hpp"
++#include <string>
+ #include <array>
+ #include <cstddef>
+ #include <cstdint>
+@@ -67,6 +69,32 @@
+   bool capture_transitions_=false;
+   ObservationOptions observation_;
+   std::size_t spool_rows_=0,spool_bytes_=0;
++};
++// Successful construction metadata is independent of optional event counters.
++enum class InitializationRoute { empty_constructor, initialized_database, rebuilt_snapshot };
++struct InitializationContext {
++  InitializationRoute route=InitializationRoute::empty_constructor;
++  // No BuildOptions were applied by the empty constructor.
++  std::optional<BuildOptions> applied_build;
++};
++struct SessionRunContext;
++struct BenchmarkLabels {
++  std::optional<std::string> run, input_adapter, output_codec, sink;
++};
++// Explicit caller declarations only: no callback inspection, validation of
++// claims, durability, completeness, measured cost, or proof authority.
++class DeclaredBenchmarkContext {
++ public:
++  explicit DeclaredBenchmarkContext(BenchmarkLabels labels):labels_(std::move(labels)) {}
++  [[nodiscard]] const BenchmarkLabels& labels() const noexcept { return labels_; }
++ private:
++  const BenchmarkLabels labels_;
++};
++struct OutputDisposition {
++  bool discard_drain_requested=false, completion_drain_invoked=false, retention_disabled=false;
++  bool prepared=false, published=false, released=false;
++  bool transferred=false, serialization_invoked=false, sink_invoked=false;
++  bool unread_discarded=false;
+ };
+ enum class ObservationLayer { support, physical, delta };
+ enum class ObservationOutcome { pending, committed, aborted };
+@@ -149,9 +177,17 @@
+   bool saturated = false;
+ };
+ struct ObservationSummary {
++  ObservationSummary() noexcept = default;
++  ObservationSummary(const ObservationSummary&) noexcept = default;
++  ObservationSummary& operator=(const ObservationSummary&) noexcept = default;
++  ObservationSummary(ObservationSummary&&) noexcept = default;
++  ObservationSummary& operator=(ObservationSummary&&) noexcept = default;
+   // Captured once by the outer delta begin; never relabeled by set_mode().
+   // Lower-only attempts and disabled observation have no delta configuration.
+   std::optional<ObservationConfiguration> configuration;
++  std::optional<InitializationContext> initialization;
++  std::shared_ptr<const DeclaredBenchmarkContext> declared_benchmark;
++  std::optional<OutputDisposition> output;
+   std::uint64_t attempt = 0, sequence = 0;
+   ObservationLayer owner = ObservationLayer::support;
+   ObservationOutcome outcome = ObservationOutcome::pending;
+@@ -179,8 +215,16 @@
+   std::uint64_t before = 0, after = 0, role = observation_no_id, tuple = observation_no_id;
+ };
+ struct ObservationSnapshot {
++  ObservationSnapshot() noexcept = default;
++  ObservationSnapshot(const ObservationSnapshot&) noexcept = default;
++  ObservationSnapshot& operator=(const ObservationSnapshot&) noexcept = default;
++  ObservationSnapshot(ObservationSnapshot&&) noexcept = default;
++  ObservationSnapshot& operator=(ObservationSnapshot&&) noexcept = default;
+   // Current configuration is distinct from current/last attempt binding.
+   std::optional<ObservationConfiguration> current_configuration;
++  std::optional<InitializationContext> initialization;
++  std::shared_ptr<const DeclaredBenchmarkContext> current_declared_benchmark;
++  std::shared_ptr<const SessionRunContext> session_context;
+   ObservationOptions options;
+   bool mandatory_accounting = true;
+   std::uint64_t support_owner = 0;
+@@ -210,6 +254,15 @@
+   [[nodiscard]] ObservationTicket begin(ObservationLayer,std::uint64_t) noexcept;
+   void finish(ObservationTicket,ObservationOutcome) noexcept;
+   void bind_owner(std::uint64_t owner) noexcept { snapshot_.support_owner=owner; }
++  void initialize(InitializationContext value) noexcept { snapshot_.initialization=value; }
++  void declare_benchmark(std::shared_ptr<const DeclaredBenchmarkContext> value) noexcept {
++    snapshot_.current_declared_benchmark=std::move(value);
++  }
++  void output(ObservationTicket ticket,OutputDisposition value) noexcept {
++    auto* summary=target();
++    if (summary && summary->owner==ObservationLayer::delta && summary->attempt==ticket.attempt)
++      summary->output=value;
++  }
+   void configure(ObservationConfiguration value) noexcept { snapshot_.current_configuration=value; }
+   [[nodiscard]] const std::optional<ObservationConfiguration>& configuration() const noexcept {
+     return snapshot_.current_configuration;
+--- a/include/crown/runtime/physical.hpp
++++ b/include/crown/runtime/physical.hpp
+@@ -133,6 +133,7 @@
+   [[nodiscard]] std::optional<storage::Tuple> get_support(SupportHandle handle) const;
+   [[nodiscard]] PhysicalStorageStatistics storage_statistics() const;
+   [[nodiscard]] const BuildMetrics& initialization_metrics() const;
++  [[nodiscard]] InitializationContext initialization_context() const;
+   [[nodiscard]] CanonicalPhysicalState canonical_state() const;
+   [[nodiscard]] InvariantReport inspect_invariants(InspectionOptions options={}) const;
+   void check_invariants() const;
+--- a/include/crown/runtime/session.hpp
++++ b/include/crown/runtime/session.hpp
+@@ -34,6 +34,21 @@
+   io::InputOptions input;
+   DeltaOptions delta;
+   SnapshotLimits snapshot;
++  std::shared_ptr<const DeclaredBenchmarkContext> declared_benchmark;
++};
++enum class SessionInputKind { owned_stream, typed_physical, typed_window };
++// Constructed once during session admission, never copied by observation hooks.
++// Exact native bytes remain native bytes; strict text encoding is an export duty.
++struct SessionRunContext {
++  SessionInputKind input_kind;
++  io::InputOptions input;
++  std::optional<io::QueueLimits> queue;
++  std::optional<WindowOptions> window;
++  SnapshotLimits snapshot;
++  InitializationContext initialization;
++  DeltaOptions requested_delta;
++  DeltaMode resolved_mode;
++  DeltaCompletion resolved_completion;
+ };
+ struct SessionSnapshot {
+   std::uint64_t sequence;
+@@ -68,6 +83,7 @@
+   QuerySession(QuerySession&&)=delete;
+   QuerySession& operator=(QuerySession&&)=delete;
+   [[nodiscard]] SessionStatus status() const;
++  [[nodiscard]] std::shared_ptr<const SessionRunContext> run_context() const;
+   [[nodiscard]] ObservationSnapshot observations() const;
+   [[nodiscard]] ObservationTrace observation_trace() const;
+   [[nodiscard]] io::InputProgress progress() const;
+--- /dev/null
++++ b/src/io/run_context.cpp
+@@ -0,0 +1,161 @@
++#include "crown/io/run_context.hpp"
++#include "crown/api/error.hpp"
++#include <charconv>
++#include <utility>
++namespace crown::io {
++namespace {
++using namespace runtime;
++void utf8(std::string_view text) {
++  for (std::size_t i=0;i<text.size();) {
++    const auto first=static_cast<unsigned char>(text[i++]);
++    if (first<0x80) continue;
++    unsigned remaining=0; std::uint32_t code=0,minimum=0;
++    if (first>=0xc2 && first<=0xdf) { remaining=1; code=first&0x1fU; minimum=0x80; }
++    else if (first>=0xe0 && first<=0xef) { remaining=2; code=first&0x0fU; minimum=0x800; }
++    else if (first>=0xf0 && first<=0xf4) { remaining=3; code=first&0x07U; minimum=0x10000; }
++    else throw Error("text_encoding","run-context text requires valid UTF-8; native values are unchanged");
++    if (remaining>text.size()-i) throw Error("text_encoding","truncated UTF-8 in run-context text");
++    while (remaining--) {
++      const auto next=static_cast<unsigned char>(text[i++]);
++      if ((next&0xc0U)!=0x80U) throw Error("text_encoding","invalid UTF-8 continuation in run-context text");
++      code=(code<<6U)|(next&0x3fU);
++    }
++    if (code<minimum || code>0x10ffff || (code>=0xd800 && code<=0xdfff))
++      throw Error("text_encoding","non-scalar UTF-8 in run-context text");
++  }
++}
++struct Writer {
++  std::string out;
++  std::size_t limit;
++  explicit Writer(std::size_t bytes):limit(bytes) {}
++  void raw(std::string_view value) {
++    if (out.size()>limit || value.size()>limit-out.size()) throw Error("resource_limit","run-context encoded-byte limit exceeded");
++    out.append(value);
++  }
++  void quote(std::string_view value,bool dot=false) {
++    utf8(value); raw("\"");
++    constexpr char hex[]="0123456789abcdef";
++    for (const char ch:value) {
++      const auto byte=static_cast<unsigned char>(ch);
++      if (ch=='\"') raw("\\\""); else if (ch=='\\') raw("\\\\");
++      else if (byte<32) { if (dot) raw("\\"); const char encoded[]={'\\','u','0','0',hex[byte>>4U],hex[byte&15U]}; raw({encoded,6}); }
++      else raw({&ch,1});
++    }
++    raw("\"");
++  }
++  template<class Integer> void number(Integer value) {
++    char buffer[32]; const auto result=std::to_chars(buffer,buffer+sizeof(buffer),value);
++    if (result.ec!=std::errc{}) throw Error("explain_encoding","integer encoding failed");
++    raw({buffer,static_cast<std::size_t>(result.ptr-buffer)});
++  }
++  void boolean(bool value) { raw(value?"true":"false"); }
++  void null() { raw("null"); }
++  template<class T> void optional(const std::optional<T>& value) { if (value) number(*value); else null(); }
++  template<class Range,class Fn> void array(const Range& values,Fn fn) {
++    raw("["); bool first=true; for (const auto& value:values) { if (!first) raw(","); first=false; fn(value); } raw("]");
++  }
++  struct Object {
++    Writer& w; bool first=true;
++    template<class Fn> void field(std::string_view key,Fn fn) { if (!first) w.raw(","); first=false; w.quote(key); w.raw(":"); fn(); }
++    void text(std::string_view key,std::string_view value) { field(key,[&] { w.quote(value); }); }
++    template<class Integer> void number(std::string_view key,Integer value) { field(key,[&] { w.number(value); }); }
++    void boolean(std::string_view key,bool value) { field(key,[&] { w.boolean(value); }); }
++    void null(std::string_view key) { field(key,[&] { w.null(); }); }
++  };
++  template<class Fn> void object(Fn fn) { raw("{"); Object o{*this}; fn(o); raw("}"); }
++  template<class Range> void ids(const Range& values) { array(values,[&](const auto& value) { number(value.value); }); }
++};
++
++#define ENUM_NAME(T,V) case T::V:return #V
++const char* name(InitializationRoute v) { switch(v) {
++ ENUM_NAME(InitializationRoute,empty_constructor);ENUM_NAME(InitializationRoute,initialized_database);ENUM_NAME(InitializationRoute,rebuilt_snapshot);
++} return "unknown"; }
++const char* name(BuildMethod v) { switch(v) { ENUM_NAME(BuildMethod,direct);ENUM_NAME(BuildMethod,insertion_replay); } return "unknown"; }
++const char* name(SessionInputKind v) { switch(v) { ENUM_NAME(SessionInputKind,owned_stream);ENUM_NAME(SessionInputKind,typed_physical);ENUM_NAME(SessionInputKind,typed_window); } return "unknown"; }
++const char* name(InputFormat v) { switch(v) { ENUM_NAME(InputFormat,jsonl);ENUM_NAME(InputFormat,binary);ENUM_NAME(InputFormat,csv);ENUM_NAME(InputFormat,legacy_signed);ENUM_NAME(InputFormat,legacy_relations);ENUM_NAME(InputFormat,legacy_insert_only);ENUM_NAME(InputFormat,legacy_flags);ENUM_NAME(InputFormat,legacy_timestamp_flags); } return "unknown"; }
++const char* name(DeltaMode v) { switch(v) { ENUM_NAME(DeltaMode,maintenance);ENUM_NAME(DeltaMode,delta); } return "unknown"; }
++const char* name(DeltaCompletion v) { switch(v) { ENUM_NAME(DeltaCompletion,automatic);ENUM_NAME(DeltaCompletion,ordered_replay);ENUM_NAME(DeltaCompletion,anchored);ENUM_NAME(DeltaCompletion,root_first); } return "unknown"; }
++const char* name(LiveMaintenance v) { switch(v) { ENUM_NAME(LiveMaintenance,on_output);ENUM_NAME(LiveMaintenance,incremental);ENUM_NAME(LiveMaintenance,eager); } return "unknown"; }
++const char* name(ResultView v) { switch(v) { ENUM_NAME(ResultView,core);ENUM_NAME(ResultView,sql); } return "unknown"; }
++const char* name(PropagationOrder v) { switch(v) { ENUM_NAME(PropagationOrder,fifo);ENUM_NAME(PropagationOrder,lifo); } return "unknown"; }
++const char* name(ObservationMode v) { switch(v) { ENUM_NAME(ObservationMode,off);ENUM_NAME(ObservationMode,counters);ENUM_NAME(ObservationMode,timed);ENUM_NAME(ObservationMode,trace); } return "unknown"; }
++#undef ENUM_NAME
++void optional_text(Writer& w,const std::optional<std::string>& value) { if(value)w.quote(*value);else w.null(); }
++void initialization(Writer& w,const InitializationContext& c) { w.object([&](auto& o) {
++ o.text("provenance","recorded_successful_construction");o.text("route",name(c.route));
++ o.field("applied_build",[&] { if(!c.applied_build){w.null();return;}w.object([&](auto& b){
++ b.text("method",name(c.applied_build->method));b.field("work_limit",[&]{w.optional(c.applied_build->work_limit);});});});
++}); }
++void declared(Writer& w,const std::shared_ptr<const DeclaredBenchmarkContext>& c) {
++ if(!c){w.null();return;}w.object([&](auto& o){
++ o.text("provenance","caller_declared_unmeasured");o.text("authority","none");
++ const auto& labels=c->labels();
++ o.field("run",[&]{optional_text(w,labels.run);});o.field("input_adapter",[&]{optional_text(w,labels.input_adapter);});
++ o.field("output_codec",[&]{optional_text(w,labels.output_codec);});o.field("sink",[&]{optional_text(w,labels.sink);});
++ });
++}
++void delta_options(Writer& w,const DeltaOptions& d) { w.object([&](auto& o){
++ o.text("requested_mode",name(d.mode));o.text("requested_completion",name(d.completion));
++ o.text("live_maintenance",name(d.live_maintenance));o.text("view",name(d.view));
++ o.field("work_limit",[&]{w.optional(d.work_limit);});o.field("cursor_work_limit",[&]{w.optional(d.cursor.work_limit);});
++ o.field("epoch_view_work_limit",[&]{w.optional(d.epoch_view.work_limit);});
++ o.number("spool_rows",d.spool_row_limit);o.number("spool_accounted_bytes",d.spool_byte_limit);
++ o.field("physical_work_limit",[&]{w.optional(d.physical.work_limit);});o.number("derivation_limit",d.physical.derivation_limit);
++ const auto& s=d.physical.support;o.field("support_work_limit",[&]{w.optional(s.work_limit);});o.number("support_limit",s.support_limit);
++ o.text("propagation_order",name(s.order));o.boolean("capture_transitions",s.capture_transitions);
++ o.field("observation",[&]{w.object([&](auto& x){const auto& a=s.observation;x.text("mode",name(a.mode));x.number("trace_capacity",a.trace_capacity);
++ x.number("sample_period",a.sample_period);x.number("sample_offset",a.sample_offset);x.boolean("trace_timings",a.trace_timings);});});
++}); }
++void session(Writer& w,const std::shared_ptr<const SessionRunContext>& c) {
++ if(!c){w.null();return;}w.object([&](auto& o){
++ o.text("provenance","recorded_session_admission");o.text("input_kind",name(c->input_kind));
++ o.text("wire_format_scope",c->input_kind==SessionInputKind::owned_stream?"applied_to_owned_stream":"not_applicable_typed_input");
++ o.field("input_options",[&]{w.object([&](auto& x){const auto& i=c->input;x.text("format",name(i.format));
++ x.field("table",[&]{if(i.table)w.number(i.table->value);else w.null();});
++ x.number("delimiter_byte",static_cast<unsigned char>(i.delimiter));x.boolean("header",i.header);
++ x.text("csv_operation",i.csv_operation==SetOperation::insert?"insert":"erase");
++ x.field("relation_tokens",[&]{w.array(i.relation_tokens,[&](const auto& entry){w.object([&](auto& r){r.text("token",entry.first);r.number("table",entry.second.value);});});});
++ x.field("null_token",[&]{optional_text(w,i.null_token);});x.field("source",[&]{optional_text(w,i.source);});x.number("byte_offset",i.byte_offset);
++ x.field("limits",[&]{w.object([&](auto& l){l.number("record_bytes",i.limits.record_bytes);l.number("field_bytes",i.limits.field_bytes);
++ l.number("columns",i.limits.columns);l.number("source_bytes",i.limits.source_bytes);l.number("sources",i.limits.sources);
++ l.field("total_bytes",[&]{w.optional(i.limits.total_bytes);});l.field("records",[&]{w.optional(i.limits.records);});});});});});
++ o.field("queue",[&]{if(!c->queue){w.null();return;}w.object([&](auto& q){q.number("batches",c->queue->batches);q.number("events",c->queue->events);q.number("accounted_bytes",c->queue->bytes);});});
++ o.field("window",[&]{if(!c->window){w.null();return;}w.object([&](auto& x){const auto& v=*c->window;x.field("managed_tables",[&]{w.ids(v.managed_tables);});
++ x.number("width",v.width);x.text("fifo",v.fifo==WindowFifoPolicy::global?"global":"per_relation");x.number("max_labels",v.max_labels);x.number("max_accounted_bytes",v.max_accounted_bytes);x.number("command_work_limit",v.command_work_limit);});});
++ o.field("snapshot",[&]{w.object([&](auto& x){x.number("rows",c->snapshot.rows);x.number("accounted_bytes",c->snapshot.bytes);x.field("cursor_work_limit",[&]{w.optional(c->snapshot.cursor.work_limit);});});});
++ o.field("initialization",[&]{initialization(w,c->initialization);});o.field("requested_delta",[&]{delta_options(w,c->requested_delta);});
++ o.text("resolved_mode",name(c->resolved_mode));o.text("resolved_completion",name(c->resolved_completion));
++ });
++}
++void attempt(Writer& w,const std::optional<ObservationSummary>& s) {
++ if(!s){w.null();return;}w.object([&](auto& o){
++ o.number("attempt",s->attempt);o.number("sequence",s->sequence);
++ o.text("scope","attempt_begin_context_and_actual_output_lifecycle");
++ o.field("initialization",[&]{if(s->initialization)initialization(w,*s->initialization);else w.null();});
++ o.field("declared_benchmark",[&]{declared(w,s->declared_benchmark);});
++ o.field("configuration_owner",[&]{if(s->configuration)w.number(s->configuration->support_owner());else w.null();});
++ o.field("configuration_generation",[&]{if(s->configuration)w.number(s->configuration->generation());else w.null();});
++ o.field("configuration_generation_saturated",[&]{if(s->configuration)w.boolean(s->configuration->generation_saturated());else w.null();});
++ o.field("output",[&]{if(!s->output){w.null();return;}w.object([&](auto& x){const auto& v=*s->output;
++ x.text("provenance","observed_attempt_actions");x.text("initial_retention","retain");
++ x.boolean("discard_drain_requested",v.discard_drain_requested);x.boolean("completion_drain_invoked",v.completion_drain_invoked);
++ x.boolean("retention_disabled",v.retention_disabled);x.boolean("prepared",v.prepared);x.boolean("published",v.published);x.boolean("released",v.released);
++ x.boolean("transferred",v.transferred);x.boolean("serialization_invoked",v.serialization_invoked);x.boolean("sink_invoked",v.sink_invoked);x.boolean("unread_discarded",v.unread_discarded);
++ });});
++ });
++}
++} // namespace
++std::string write_run_context_json(const ObservationSnapshot& s,std::size_t max_bytes) {
++ Writer w(max_bytes);w.object([&](auto& o){
++ o.text("format","crown_run_context");o.number("version",1);
++ o.text("scope","diagnostic_metadata_companion_to_explain");o.text("missing_identity","null_not_inferred");
++ o.text("external_callback_identity","caller_declarations_do_not_identify_or_validate_std_function_targets");
++ o.text("external_guarantees","unmeasured_no_durability_or_recovery_claim");
++ o.text("accounted_byte_scope","component_payload_accounting_excludes_allocator_overhead_transients_and_metadata_not_total_memory");
++ o.field("current_initialization",[&]{if(s.initialization)initialization(w,*s.initialization);else w.null();});
++ o.field("current_declared_benchmark",[&]{declared(w,s.current_declared_benchmark);});
++ o.field("session",[&]{session(w,s.session_context);});
++ o.field("current_attempt",[&]{attempt(w,s.current);});o.field("last_attempt",[&]{attempt(w,s.last);});
++ });return std::move(w.out);
++}
++} // namespace crown::io
+--- a/src/runtime/delta.cpp
++++ b/src/runtime/delta.cpp
+@@ -88,6 +88,7 @@
+   DeltaMode mode=DeltaMode::maintenance;
+   DeltaMetrics bootstrap;
+   BuildMetrics initialization;
++  std::shared_ptr<const DeclaredBenchmarkContext> declared_benchmark;
+   bool processing=false, output_active=false;
+   DeltaState lifecycle=DeltaState::ready;
+ 
+@@ -669,6 +670,12 @@
+   std::size_t payload_bytes=0;
+   bool leased=false;
+   bool retain_output=true, delivering=false, discard_requested=false;
++  detail::ObservationTicket observation_ticket;
++  OutputDisposition disposition;
++  bool observation_closed=false;
++  void observe_output() noexcept {
++    if (observation && !observation_closed) observation->output(observation_ticket,disposition);
++  }
+   explicit Data(std::shared_ptr<Impl> runtime):owner(std::move(runtime)),observation(owner->observation),layout(owner->output_layout) {
+     stages.reserve(owner->physical.plan().inputs().size());
+   }
+@@ -695,6 +702,10 @@
+ 
+   void finish() noexcept {
+     if (delivering) { discard_requested=true; return; }
++    if (observation && !observation_closed) {
++      disposition.unread_discarded=disposition.unread_discarded || !rows.empty();
++      disposition.released=true; observe_output(); observation_closed=true;
++    }
+     if (leased) {
+       if (!owner || !owner->output_active) std::terminate();
+       owner->output_active=false; leased=false;
+@@ -736,6 +747,7 @@
+     payload_bytes=next_payload; metrics.spool_rows=rows.size(); metrics.spool_bytes=bytes; metrics.spool_capacity_rows=rows.size();
+   }
+   void disable_output() {
++    if (observation) { disposition.discard_drain_requested=true; observe_output(); }
+     if (!retain_output) return;
+     const auto start=metrics.work;
+     owner->metric(metrics,metrics.discarded_records,static_cast<std::uint64_t>(rows.size()));
+@@ -743,6 +755,10 @@
+     if (observation) {
+       observation->add(MetricId::delta_discarded_records,static_cast<std::uint64_t>(rows.size()));
+       observation->event(TraceKind::drain);
++    }
++    if (observation) {
++      disposition.retention_disabled=true;
++      disposition.unread_discarded=disposition.unread_discarded || !rows.empty(); observe_output();
+     }
+     retain_output=false; rows.clear(); payload_bytes=0;
+     for (auto& stage : stages) { stage.output_begin=0; stage.output_count=0; }
+@@ -978,7 +994,10 @@
+        sequence(update.sequence),operation(update.operation),before_answer(owner->physical.has_answer()) {
+     if (owner->mode==DeltaMode::delta && owner->options.live_maintenance!=LiveMaintenance::eager)
+       transaction.emplace(*owner,output->metrics,working);
+-    if (output->observation) observation_ticket=output->observation->begin(ObservationLayer::delta,sequence);
++    if (output->observation) {
++      observation_ticket=output->observation->begin(ObservationLayer::delta,sequence);
++      output->observation_ticket=observation_ticket;
++    }
+     owner->processing=true; owner->lifecycle=phase;
+     try {
+       PhaseTimer timing(output->timings.propagation_ns,output->observation,&output->timings.internal_delta_ns);
+@@ -1037,7 +1056,10 @@
+       metrics.finalization_work+=metrics.work-start;
+     }
+     set_phase(DeltaState::epoch_prepared);
+-    if (output->observation) output->observation->event(TraceKind::prepared);
++    if (output->observation) {
++      output->disposition.prepared=true; output->observe_output();
++      output->observation->event(TraceKind::prepared);
++    }
+   }
+   DeltaStep step() {
+     if (stage) {
+@@ -1113,6 +1135,9 @@
+ }
+ void DeltaRuntime::PendingEpoch::drain() {
+   require(bool(data_),"invalid_delta_epoch","moved-from pending delta epoch"); data_->validate();
++  if (data_->output->observation) {
++    data_->output->disposition.completion_drain_invoked=true; data_->output->observe_output();
++  }
+   if (data_->phase==DeltaState::paused) data_->set_phase(DeltaState::pending_delta);
+   while (step()!=DeltaStep::prepared) {}
+ }
+@@ -1137,6 +1162,12 @@
+     if (d.mode==DeltaMode::delta) { d.live=std::move(data_->working); d.live_sequence=data_->sequence; }
+   }
+   data_->output->observe();
++  if (data_->output->observation) {
++    data_->output->disposition.published=true;
++    data_->output->disposition.released=data_->output->rows.empty();
++    data_->output->observe_output();
++    if (data_->output->rows.empty()) data_->output->observation_closed=true;
++  }
+   if (data_->output->observation)
+     data_->output->observation->finish(data_->observation_ticket,ObservationOutcome::committed);
+   auto output=std::move(data_->output);
+@@ -1171,6 +1202,7 @@
+   if (data_->rows.empty()) return {};
+   std::optional<SignedResult> result{std::move(data_->rows.front())}; data_->rows.pop_front();
+   if (data_->observation) {
++    data_->disposition.transferred=true; data_->observe_output();
+     data_->observation->add(MetricId::delta_transferred_records);
+     data_->observation->event(TraceKind::transferred,result->ordinal);
+   }
+@@ -1192,6 +1224,7 @@
+     if (serialize) {
+       serializing=true;
+       if (data->observation) {
++        data->disposition.serialization_invoked=true; data->observe_output();
+         data->observation->add(MetricId::delta_serialization_attempts);
+         data->observation->event(TraceKind::serialization_attempt,data->rows.front().ordinal);
+       }
+@@ -1203,6 +1236,7 @@
+     }
+     serializing=false;
+     if (data->observation) {
++      data->disposition.sink_invoked=true; data->observe_output();
+       data->observation->add(MetricId::delta_sink_attempts);
+       data->observation->event(TraceKind::sink_attempt,data->rows.front().ordinal);
+     }
+@@ -1266,9 +1300,11 @@
+   auto options=d.options; options.mode=d.mode;
+   auto result=DeltaRuntime(d.physical.rebuilt(build),options,build);
+   result.impl().options=d.options;
++  result.declare_benchmark_context(d.declared_benchmark);
+   result.impl().observe_configuration(true); // New owner; restore requested initial options.
+   return result;
+ }
++InitializationContext DeltaRuntime::initialization_context() const { return impl().physical.initialization_context(); }
+ const BuildMetrics& DeltaRuntime::initialization_metrics() const { return impl().initialization; }
+ DeltaRuntime::~DeltaRuntime()=default;
+ DeltaRuntime::DeltaRuntime(DeltaRuntime&&) noexcept=default;
+@@ -1559,6 +1595,16 @@
+       rebuilt->parent_rows==d.live->parent_rows && rebuilt->child_index==d.live->child_index && rebuilt->child_rows==d.live->child_rows,
+       "runtime_contract","live cache or parent-separator counts differ from E-factor bootstrap");
+ }
+-ObservationSnapshot DeltaRuntime::observations() const { return impl().physical.observations(); }
+-ObservationTrace DeltaRuntime::observation_trace() const { return impl().physical.observation_trace(); }
++void DeltaRuntime::declare_benchmark_context(std::shared_ptr<const DeclaredBenchmarkContext> value) {
++  auto& d=impl(); d.declared_benchmark=std::move(value);
++  if (d.observation) d.observation->declare_benchmark(d.declared_benchmark);
++}
++ObservationSnapshot DeltaRuntime::observations() const {
++  const auto& d=impl(); auto result=d.physical.observations();
++  result.initialization=d.physical.initialization_context();
++  result.current_declared_benchmark=d.declared_benchmark; return result;
++}
++ObservationTrace DeltaRuntime::observation_trace() const {
++  auto result=impl().physical.observation_trace(); result.snapshot=observations(); return result;
++}
+ }  // namespace crown::runtime
+--- a/src/runtime/observation.cpp
++++ b/src/runtime/observation.cpp
+@@ -12,7 +12,10 @@
+ // scalar/optional members; keep this contract explicit when extending them.
+ static_assert(std::is_trivially_copyable_v<DeltaOptions>);
+ static_assert(std::is_trivially_copyable_v<ObservationConfiguration>);
+-static_assert(std::is_trivially_copyable_v<ObservationSnapshot>);
++// Owned immutable admission metadata adds shared handles; copying/refcounting
++// is nonallocating and cannot throw. Destruction may release owned metadata.
++static_assert(std::is_nothrow_copy_constructible_v<ObservationSnapshot>);
++static_assert(std::is_nothrow_copy_assignable_v<ObservationSnapshot>);
+ ObservationConfiguration ObservationConfiguration::capture(const DeltaOptions& options,
+     DeltaMode resolved,DeltaCompletion completion,std::uint64_t owner,
+     std::uint64_t generation,bool saturated,std::size_t factors) noexcept {
+@@ -146,7 +149,12 @@
+     snapshot_.current.emplace(); occurrence_=observation_no_id; prefix_=0;
+     auto& summary=*snapshot_.current;
+     summary.attempt=snapshot_.attempts; summary.sequence=sequence; summary.owner=layer;
+-    if (layer==ObservationLayer::delta) summary.configuration=snapshot_.current_configuration;
++    summary.initialization=snapshot_.initialization;
++    if (layer==ObservationLayer::delta) {
++      summary.configuration=snapshot_.current_configuration;
++      summary.declared_benchmark=snapshot_.current_declared_benchmark;
++      summary.output.emplace();
++    }
+     selected_=options_.mode==ObservationMode::trace && !snapshot_.lifetime_counts_saturated &&
+         sequence%options_.sample_period==options_.sample_offset;
+     snapshot_.trace=options_.mode!=ObservationMode::trace?TraceDisposition::disabled:
+--- a/src/runtime/physical.cpp
++++ b/src/runtime/physical.cpp
+@@ -36,6 +36,7 @@
+   std::vector<Counts> counts;
+   std::uint64_t sequence=0;
+   BuildMetrics build_metrics;
++  InitializationContext initialization_context;
+   bool updating=false, enforced_constraints=false;
+   Impl(PhysicalPlan plan,PhysicalRuntimeOptions value):options(value),kernel(std::move(plan),value.support),observation(kernel.observation_state()),counts(kernel.plan().inputs().size()) {
+     require(options.derivation_limit>0,"invalid_options","physical derivation limit must be positive");
+@@ -304,7 +305,9 @@
+   return result;
+ }
+ 
+-PhysicalRuntime::PhysicalRuntime(PhysicalPlan plan,PhysicalRuntimeOptions options):impl_(std::make_shared<Impl>(std::move(plan),options)) {}
++PhysicalRuntime::PhysicalRuntime(PhysicalPlan plan,PhysicalRuntimeOptions options):impl_(std::make_shared<Impl>(std::move(plan),options)) {
++  if (impl_->observation) impl_->observation->initialize(impl_->initialization_context);
++}
+ PhysicalRuntime PhysicalRuntime::initialize(PhysicalPlan plan,const Database& database,
+     PhysicalRuntimeOptions options,BuildOptions build) {
+   return initialize_at(std::move(plan),database,options,build,0);
+@@ -357,6 +360,8 @@
+     }
+   }
+   d.build_metrics=metrics; d.kernel.seed_sequence(sequence); d.sequence=sequence;
++  d.initialization_context={InitializationRoute::initialized_database,build};
++  if (d.observation) d.observation->initialize(d.initialization_context);
+   return result;
+ }
+ PhysicalRuntime PhysicalRuntime::rebuilt(BuildOptions build) const {
+@@ -373,7 +378,10 @@
+     detail::build_charge(prefix,build,detail::validation_product(source.size(),2*fields+3));
+   }
+   const auto database=d.database();
+-  return initialize_at(d.kernel.plan(),database,d.options,build,d.sequence,prefix);
++  auto result=initialize_at(d.kernel.plan(),database,d.options,build,d.sequence,prefix);
++  result.impl().initialization_context.route=InitializationRoute::rebuilt_snapshot;
++  if (result.impl().observation) result.impl().observation->initialize(result.impl().initialization_context);
++  return result;
+ }
+ PhysicalRuntime::~PhysicalRuntime()=default;
+ PhysicalRuntime::PhysicalRuntime(PhysicalRuntime&&) noexcept=default;
+@@ -447,6 +455,7 @@
+   for (const auto& counts : d.counts) add_size(result.derivation_keys,counts.size());
+   return result;
+ }
++InitializationContext PhysicalRuntime::initialization_context() const { return impl().initialization_context; }
+ const BuildMetrics& PhysicalRuntime::initialization_metrics() const { return impl().build_metrics; }
+ CanonicalPhysicalState PhysicalRuntime::canonical_state() const {
+   const auto& d=impl(); d.readable();
+@@ -578,6 +587,10 @@
+   }
+ }
+ std::shared_ptr<detail::ObservationState> PhysicalRuntime::observation_state() const { return impl().observation; }
+-ObservationSnapshot PhysicalRuntime::observations() const { return impl().kernel.observations(); }
+-ObservationTrace PhysicalRuntime::observation_trace() const { return impl().kernel.observation_trace(); }
++ObservationSnapshot PhysicalRuntime::observations() const {
++  auto result=impl().kernel.observations(); result.initialization=impl().initialization_context; return result;
++}
++ObservationTrace PhysicalRuntime::observation_trace() const {
++  auto result=impl().kernel.observation_trace(); result.snapshot.initialization=impl().initialization_context; return result;
++}
+ }  // namespace crown::runtime
+--- a/src/runtime/session.cpp
++++ b/src/runtime/session.cpp
+@@ -46,6 +46,7 @@
+   std::uint64_t committed_sequence=0;
+   bool input_failed=false,end_of_input=false,window_input_failed=false;
+   SnapshotLimits snapshot_limits;
++  std::shared_ptr<const SessionRunContext> run_context;
+   // Reader borrows this owned stream. Reverse destruction preserves lifetime,
+   // including when a later member's construction throws.
+   std::unique_ptr<std::istream> input;
+@@ -79,6 +80,9 @@
+     require(bool(input),"invalid_session_options","a session requires an owned input stream");
+     if (initial) runtime.emplace(DeltaRuntime::initialize(std::move(plan),*initial,std::move(options.delta),build));
+     else runtime.emplace(std::move(plan),std::move(options.delta));
++    run_context=std::make_shared<const SessionRunContext>(SessionRunContext{
++        SessionInputKind::owned_stream,options.input,{},{},options.snapshot,runtime->initialization_context(),runtime->options(),runtime->mode(),runtime->completion()});
++    runtime->declare_benchmark_context(std::move(options.declared_benchmark));
+     reader.emplace(*input,runtime->plan().source_catalog(),std::move(options.input));
+   }
+   Impl(PhysicalPlan plan,io::QueueLimits limits,SessionOptions options,
+@@ -98,6 +102,11 @@
+     }
+     if (initial) runtime.emplace(DeltaRuntime::initialize(std::move(plan),*initial,std::move(options.delta),build));
+     else runtime.emplace(std::move(plan),std::move(options.delta));
++    run_context=std::make_shared<const SessionRunContext>(SessionRunContext{
++        window?SessionInputKind::typed_window:SessionInputKind::typed_physical,
++        options.input,limits,window?std::optional<WindowOptions>{window->options()}:std::nullopt,
++        options.snapshot,runtime->initialization_context(),runtime->options(),runtime->mode(),runtime->completion()});
++    runtime->declare_benchmark_context(std::move(options.declared_benchmark));
+     queue.emplace(runtime->plan().source_catalog(),window?io::QueueMode::window:io::QueueMode::physical,
+         limits,options.input.limits);
+   }
+@@ -141,6 +150,7 @@
+   }
+   void retain_observation() noexcept {
+     if (runtime) retained_observation=runtime->observations();
++    retained_observation.session_context=run_context;
+     retained_observation.session_attached=true;
+     retained_observation.session_committed_sequence=committed_sequence;
+   }
+@@ -383,9 +393,13 @@
+ }
+ void QuerySession::stop() { auto& d=*data_; Impl::Guard guard(d); d.stop(); }
+ void QuerySession::drop() { auto& d=*data_; Impl::Guard guard(d); d.drop(); }
++std::shared_ptr<const SessionRunContext> QuerySession::run_context() const {
++  auto& d=*data_; Impl::Guard guard(d); return d.run_context;
++}
+ ObservationSnapshot QuerySession::observations() const {
+   auto& d=*data_; Impl::Guard guard(d);
+   auto result=d.runtime?d.runtime->observations():d.retained_observation;
++  result.session_context=d.run_context;
+   result.session_attached=true; result.session_committed_sequence=d.committed_sequence;
+   return result;
+ }
+@@ -393,6 +407,7 @@
+   auto& d=*data_; Impl::Guard guard(d);
+   // Drop releases optional trace storage, retaining only the fixed summary.
+   auto result=d.runtime?d.runtime->observation_trace():ObservationTrace{d.retained_observation,{}};
++  result.snapshot.session_context=d.run_context;
+   result.snapshot.session_attached=true;
+   result.snapshot.session_committed_sequence=d.committed_sequence;
+   return result;

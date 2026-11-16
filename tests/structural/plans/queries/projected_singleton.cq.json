@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "semantics": "set",
+  "catalog": {
+    "version": 1,
+    "tables": [
+      {
+        "name": "T_r",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          }
+        ]
+      }
+    ]
+  },
+  "query": {
+    "variables": [
+      {
+        "name": "hidden",
+        "type": "string"
+      },
+      {
+        "name": "x",
+        "type": "string"
+      }
+    ],
+    "atoms": [
+      {
+        "id": "r",
+        "table": "T_r",
+        "terms": [
+          {
+            "var": "x"
+          },
+          {
+            "var": "hidden"
+          }
+        ]
+      }
+    ],
+    "head": [
+      {
+        "var": "x"
+      }
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN independently checked equal-height candidate workflow v2",
+  "description": "The collector rebuilds/validates the physical upper tree, independently replays the unchanged original height certificate against its source, and requires equal candidate/proved height. It does not substitute the candidate into the original certificate or claim global minimum cost. The ordinary CLI compiled-workflow reader remains v1.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "physical", "height_certificate", "height_binding"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 2},
+    "height_binding": {"const": "independently_checked_equal_height_upper_v1"},
+    "physical": {"oneOf": [{"$ref": "physical-plan-v1.schema.json"}, {"$ref": "physical-plan-v2.schema.json"}]},
+    "height_certificate": {"oneOf": [{"$ref": "height-certificate-v1.schema.json"}, {"$ref": "height-certificate-v2.schema.json"}]}
+  }
+}

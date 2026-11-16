@@ -1,0 +1,51 @@
+--- frozen-publication-fault-consumer
++++ non-inline-replacement-boundaries
+@@ -26,6 +26,9 @@
+   if (posix_memalign(&result,alignment,size?size:1)!=0) throw std::bad_alloc{};
+   return result;
+ }
++// Keep each replacement allocation/deallocation boundary explicit at -O3.
++// Every delete form reaches the same nonallocating release operation.
++[[gnu::noinline]] void release(void* pointer) noexcept { std::free(pointer); }
+ struct Measure {
+   explicit Measure(std::size_t fail=std::numeric_limits<std::size_t>::max()) {
+     calls=0;remaining=fail;triggered=false;measuring=true;
+@@ -37,22 +40,22 @@
+ [[gnu::noinline]] void* operator new[](std::size_t n){return allocate(n);}
+ [[gnu::noinline]] void* operator new(std::size_t n,std::align_val_t a){return allocate_aligned(n,static_cast<std::size_t>(a));}
+ [[gnu::noinline]] void* operator new[](std::size_t n,std::align_val_t a){return allocate_aligned(n,static_cast<std::size_t>(a));}
+-void* operator new(std::size_t n,const std::nothrow_t&) noexcept{try{return allocate(n);}catch(...){return nullptr;}}
+-void* operator new[](std::size_t n,const std::nothrow_t&) noexcept{try{return allocate(n);}catch(...){return nullptr;}}
+-void* operator new(std::size_t n,std::align_val_t a,const std::nothrow_t&) noexcept{try{return allocate_aligned(n,static_cast<std::size_t>(a));}catch(...){return nullptr;}}
+-void* operator new[](std::size_t n,std::align_val_t a,const std::nothrow_t&) noexcept{try{return allocate_aligned(n,static_cast<std::size_t>(a));}catch(...){return nullptr;}}
+-[[gnu::noinline]] void operator delete(void* p) noexcept{std::free(p);}
+-[[gnu::noinline]] void operator delete[](void* p) noexcept{std::free(p);}
+-void operator delete(void* p,std::size_t) noexcept{std::free(p);}
+-void operator delete[](void* p,std::size_t) noexcept{std::free(p);}
+-void operator delete(void* p,std::align_val_t) noexcept{std::free(p);}
+-void operator delete[](void* p,std::align_val_t) noexcept{std::free(p);}
+-void operator delete(void* p,std::size_t,std::align_val_t) noexcept{std::free(p);}
+-void operator delete[](void* p,std::size_t,std::align_val_t) noexcept{std::free(p);}
+-void operator delete(void* p,const std::nothrow_t&) noexcept{std::free(p);}
+-void operator delete[](void* p,const std::nothrow_t&) noexcept{std::free(p);}
+-void operator delete(void* p,std::align_val_t,const std::nothrow_t&) noexcept{std::free(p);}
+-void operator delete[](void* p,std::align_val_t,const std::nothrow_t&) noexcept{std::free(p);}
++[[gnu::noinline]] void* operator new(std::size_t n,const std::nothrow_t&) noexcept{try{return allocate(n);}catch(...){return nullptr;}}
++[[gnu::noinline]] void* operator new[](std::size_t n,const std::nothrow_t&) noexcept{try{return allocate(n);}catch(...){return nullptr;}}
++[[gnu::noinline]] void* operator new(std::size_t n,std::align_val_t a,const std::nothrow_t&) noexcept{try{return allocate_aligned(n,static_cast<std::size_t>(a));}catch(...){return nullptr;}}
++[[gnu::noinline]] void* operator new[](std::size_t n,std::align_val_t a,const std::nothrow_t&) noexcept{try{return allocate_aligned(n,static_cast<std::size_t>(a));}catch(...){return nullptr;}}
++[[gnu::noinline]] void operator delete(void* p) noexcept{release(p);}
++[[gnu::noinline]] void operator delete[](void* p) noexcept{release(p);}
++[[gnu::noinline]] void operator delete(void* p,std::size_t) noexcept{release(p);}
++[[gnu::noinline]] void operator delete[](void* p,std::size_t) noexcept{release(p);}
++[[gnu::noinline]] void operator delete(void* p,std::align_val_t) noexcept{release(p);}
++[[gnu::noinline]] void operator delete[](void* p,std::align_val_t) noexcept{release(p);}
++[[gnu::noinline]] void operator delete(void* p,std::size_t,std::align_val_t) noexcept{release(p);}
++[[gnu::noinline]] void operator delete[](void* p,std::size_t,std::align_val_t) noexcept{release(p);}
++[[gnu::noinline]] void operator delete(void* p,const std::nothrow_t&) noexcept{release(p);}
++[[gnu::noinline]] void operator delete[](void* p,const std::nothrow_t&) noexcept{release(p);}
++[[gnu::noinline]] void operator delete(void* p,std::align_val_t,const std::nothrow_t&) noexcept{release(p);}
++[[gnu::noinline]] void operator delete[](void* p,std::align_val_t,const std::nothrow_t&) noexcept{release(p);}
+ 
+ namespace {
+ using namespace c05_independent;

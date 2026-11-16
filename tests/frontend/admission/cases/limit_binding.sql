@@ -1,0 +1,1 @@
+SELECT DISTINCT r.x,r.y,s.z FROM r JOIN s USING(y)

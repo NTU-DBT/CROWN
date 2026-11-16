@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN canonical query identity v1",
+  "description": "Complete canonical labeling or an explicit resource stop. A digest alone is not a trusted/executable plan. ID translation maps refer to the caller's original validated query.",
+  "oneOf": [{"$ref": "#/$defs/success"}, {"$ref": "#/$defs/resource_stop"}],
+  "$defs": {
+    "id": {"$ref": "sql-normalization-v1.schema.json#/$defs/uint64"},
+    "value": {"$ref": "cq-v3.schema.json#/$defs/value"},
+    "sql_type": {"$ref": "sql-binding-v1.schema.json#/$defs/sql_type"},
+    "scalar_type": {"$ref": "catalog-v1.schema.json#/$defs/scalar_type"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "ids": {"type": "array", "items": {"$ref": "#/$defs/id"}},
+    "constant": {
+      "type": "object", "additionalProperties": false, "required": ["constant"], "properties": {"constant": {"$ref": "#/$defs/value"}}
+    },
+    "ignored": {
+      "type": "object", "additionalProperties": false, "required": ["ignore"], "properties": {"ignore": {"const": true}}
+    },
+    "term": {
+      "oneOf": [
+        {"type": "object", "additionalProperties": false, "required": ["variable"], "properties": {"variable": {"$ref": "#/$defs/id"}}},
+        {"$ref": "#/$defs/constant"}, {"$ref": "#/$defs/ignored"}
+      ]
+    },
+    "shapes": {
+      "type": "array", "items": {"oneOf": [
+        {"type": "object", "additionalProperties": false, "required": ["variable_type"], "properties": {"variable_type": {"$ref": "#/$defs/scalar_type"}}},
+        {"$ref": "#/$defs/constant"}, {"$ref": "#/$defs/ignored"}
+      ]}
+    },
+    "expression": {
+      "oneOf": [
+        {"type": "object", "additionalProperties": false, "required": ["column"], "properties": {"column": {"$ref": "#/$defs/id"}}},
+        {"type": "object", "additionalProperties": false, "required": ["literal", "type"], "properties": {
+          "literal": {"oneOf": [{"$ref": "#/$defs/value"}, {"type": "null"}]}, "type": {"$ref": "#/$defs/sql_type"}
+        }},
+        {"type": "object", "additionalProperties": false, "required": ["operator", "arguments"], "properties": {
+          "operator": {"enum": ["equal", "not_equal", "less", "less_equal", "conjunction", "disjunction", "negation", "is_null", "is_not_null", "is_true", "is_not_true", "is_false", "is_not_false", "is_unknown", "is_not_unknown"]},
+          "arguments": {"type": "array", "items": {"$ref": "#/$defs/expression"}, "minItems": 1}
+        }}
+      ]
+    },
+    "input": {
+      "oneOf": [
+        {"type": "object", "additionalProperties": false, "required": ["base", "term_shapes"], "properties": {"base": {"$ref": "#/$defs/id"}, "term_shapes": {"$ref": "#/$defs/shapes"}}},
+        {"type": "object", "additionalProperties": false, "required": ["base", "term_shapes", "filters", "projection", "equal_columns", "non_null_columns"], "properties": {
+          "base": {"$ref": "#/$defs/id"}, "term_shapes": {"$ref": "#/$defs/shapes"},
+          "filters": {"type": "array", "items": {"$ref": "#/$defs/expression"}},
+          "projection": {"type": "array", "items": {"$ref": "#/$defs/expression"}},
+          "equal_columns": {"type": "array", "items": {"type": "array", "prefixItems": [{"$ref": "#/$defs/id"}, {"$ref": "#/$defs/id"}], "minItems": 2, "maxItems": 2}},
+          "non_null_columns": {"$ref": "#/$defs/ids"}
+        }}
+      ]
+    },
+    "atom": {
+      "type": "object", "additionalProperties": false, "required": ["input", "terms"],
+      "properties": {
+        "input": {"$ref": "#/$defs/input"}, "terms": {"type": "array", "items": {"$ref": "#/$defs/term"}},
+        "physical_classes": {"type": "array", "items": {"oneOf": [{"$ref": "#/$defs/id"}, {"type": "null"}]}}
+      }
+    },
+    "sql_output": {
+      "oneOf": [
+        {"type": "object", "additionalProperties": false, "required": ["type", "kind", "column"], "properties": {"type": {"$ref": "#/$defs/sql_type"}, "kind": {"const": "core"}, "column": {"$ref": "#/$defs/id"}}},
+        {"type": "object", "additionalProperties": false, "required": ["type", "kind", "value"], "properties": {"type": {"$ref": "#/$defs/sql_type"}, "kind": {"const": "constant"}, "value": {"$ref": "#/$defs/value"}}}
+      ]
+    },
+    "semantics": {
+      "oneOf": [
+        {"type": "object", "additionalProperties": false, "required": ["profile", "rows", "arithmetic"], "properties": {"profile": {"const": "direct-cq-v1"}, "rows": {"const": "set"}, "arithmetic": {"const": "exact-nonnull-v1"}}},
+        {"type": "object", "additionalProperties": false, "required": ["profile", "arithmetic", "requested_semantics", "inner_semantics", "wrapper", "parameters", "outputs"], "properties": {
+          "profile": {"const": "normalized-sql-v1"}, "arithmetic": {"const": "exact-nonnull-v1"},
+          "requested_semantics": {"enum": ["set", "bag"]}, "inner_semantics": {"enum": ["set", "bag", null]}, "wrapper": {"enum": ["rows", "exists"]},
+          "parameters": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["type", "value"], "properties": {
+            "type": {"$ref": "#/$defs/sql_type"}, "value": {"oneOf": [{"$ref": "#/$defs/value"}, {"type": "null"}]}
+          }}}, "outputs": {"type": "array", "items": {"$ref": "#/$defs/sql_output"}}
+        }}
+      ]
+    },
+    "canonical": {
+      "type": "object", "additionalProperties": false, "required": ["identity_version", "catalog", "semantics", "variables", "atoms", "head", "contradiction"],
+      "properties": {
+        "identity_version": {"const": 1}, "catalog": {"$ref": "catalog-v1.schema.json#/$defs/catalog_payload"},
+        "semantics": {"$ref": "#/$defs/semantics"}, "variables": {"type": "array", "items": {"$ref": "#/$defs/scalar_type"}},
+        "atoms": {"type": "array", "items": {"$ref": "#/$defs/atom"}}, "head": {"$ref": "#/$defs/ids"}, "contradiction": {"type": "boolean"}
+      }
+    },
+    "success": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_version", "identity_valid", "status", "algorithm", "semantic_sha256", "output_contract_sha256", "cost_inputs_sha256", "plan_cache_sha256", "canonical", "occurrence_order", "variable_order", "work"],
+      "properties": {
+        "schema_version": {"const": 1}, "identity_valid": {"const": true}, "status": {"const": "complete"}, "algorithm": {"const": "sha256"},
+        "semantic_sha256": {"$ref": "#/$defs/sha256"}, "output_contract_sha256": {"$ref": "#/$defs/sha256"}, "cost_inputs_sha256": {"$ref": "#/$defs/sha256"}, "plan_cache_sha256": {"$ref": "#/$defs/sha256"},
+        "canonical": {"$ref": "#/$defs/canonical"}, "occurrence_order": {"allOf": [{"$ref": "#/$defs/ids"}], "uniqueItems": true},
+        "variable_order": {"allOf": [{"$ref": "#/$defs/ids"}], "uniqueItems": true}, "work": {"$ref": "#/$defs/id"}
+      }
+    },
+    "resource_stop": {
+      "type": "object", "additionalProperties": false, "required": ["schema_version", "identity_valid", "status", "diagnostic"],
+      "properties": {
+        "schema_version": {"const": 1}, "identity_valid": {"const": false}, "status": {"const": "resource_limit"},
+        "diagnostic": {"type": "object", "additionalProperties": false, "required": ["code", "message"], "properties": {"code": {"const": "resource_limit"}, "message": {"type": "string", "minLength": 1}}}
+      }
+    }
+  }
+}

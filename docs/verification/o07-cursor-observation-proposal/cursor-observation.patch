@@ -1,0 +1,711 @@
+--- /dev/null
++++ b/include/crown/io/cursor_observation.hpp
+@@ -0,0 +1,6 @@
++#pragma once
++#include "crown/runtime/delta.hpp"
++namespace crown::io {
++[[nodiscard]] std::string write_cursor_observation_json(const runtime::CursorObservation&,std::size_t max_bytes=16*1024*1024);
++[[nodiscard]] std::string write_committed_state_gauges_json(const runtime::CommittedStateGauges&,std::size_t max_bytes=16*1024*1024);
++} // namespace crown::io
+--- a/include/crown/runtime/delta.hpp
++++ b/include/crown/runtime/delta.hpp
+@@ -197,6 +197,8 @@
+   DeltaRuntime& operator=(DeltaRuntime&&) noexcept;
+   [[nodiscard]] const PhysicalPlan& plan() const;
+   [[nodiscard]] ObservationSnapshot observations() const;
++  [[nodiscard]] std::optional<CursorObservation> last_cursor_observation() const;
++  [[nodiscard]] CommittedStateGauges committed_state_gauges() const;
+   // Explicit diagnostic declaration; affects only future attempt bindings.
+   // Caller constructs immutable labels before mutation. No parsing or clocks.
+   void declare_benchmark_context(std::shared_ptr<const DeclaredBenchmarkContext>);
+--- a/include/crown/runtime/observation.hpp
++++ b/include/crown/runtime/observation.hpp
+@@ -158,6 +158,7 @@
+   delta_serialization_ns,
+   delta_sink_wait_ns,
+   delta_clock_reads,
++  nested_cursor_clock_reads,
+   count
+ };
+ inline constexpr std::size_t observation_metric_count = static_cast<std::size_t>(MetricId::count);
+@@ -246,6 +247,8 @@
+   std::vector<TraceRecord> records;
+ };
+ namespace detail {
++// Shared monotonic/test clock without attributing a read to delta metrics.
++[[nodiscard]] std::uint64_t read_observation_clock() noexcept;
+ struct ObservationTicket { std::uint64_t attempt=0; bool owns=false; };
+ class ObservationState {
+  public:
+@@ -277,6 +280,10 @@
+       std::uint64_t node=observation_no_id,std::uint64_t occurrence=observation_no_id,
+       std::uint64_t prefix=0,std::uint64_t before=0,std::uint64_t after=0,
+       std::uint64_t role=observation_no_id,std::uint64_t tuple=observation_no_id) noexcept;
++  void note_cursor_clock_read() noexcept {
++    if(snapshot_.current && snapshot_.current->owner==ObservationLayer::delta)
++      add(MetricId::nested_cursor_clock_reads);
++  }
+   [[nodiscard]] bool clocks_enabled() const noexcept;
+   [[nodiscard]] std::uint64_t now() noexcept;
+   [[nodiscard]] ObservationSnapshot snapshot() const noexcept;
+--- a/include/crown/runtime/physical.hpp
++++ b/include/crown/runtime/physical.hpp
+@@ -108,6 +108,8 @@
+   PhysicalRuntime& operator=(PhysicalRuntime&& other) noexcept;
+   [[nodiscard]] const PhysicalPlan& plan() const;
+   [[nodiscard]] ObservationSnapshot observations() const;
++  [[nodiscard]] std::optional<CursorObservation> last_cursor_observation() const;
++  [[nodiscard]] CommittedStateGauges committed_state_gauges() const;
+   [[nodiscard]] ObservationTrace observation_trace() const;
+   [[nodiscard]] const PhysicalRuntimeOptions& options() const;
+   [[nodiscard]] SupportOwnerId owner() const;
+--- a/include/crown/runtime/session.hpp
++++ b/include/crown/runtime/session.hpp
+@@ -85,6 +85,7 @@
+   [[nodiscard]] SessionStatus status() const;
+   [[nodiscard]] std::shared_ptr<const SessionRunContext> run_context() const;
+   [[nodiscard]] ObservationSnapshot observations() const;
++  [[nodiscard]] std::optional<CursorObservation> last_cursor_observation() const;
+   [[nodiscard]] ObservationTrace observation_trace() const;
+   [[nodiscard]] io::InputProgress progress() const;
+   void start();
+--- a/include/crown/runtime/support.hpp
++++ b/include/crown/runtime/support.hpp
+@@ -178,6 +178,54 @@
+   std::uint64_t total_work = 0, max_result_work = 0;
+   // Uncharged, mandatory cleanup on cancellation/failure, at most frame count.
+   std::size_t cleanup_frames = 0;
++};
++
++enum class CursorObservationSource { committed_results, epoch_visible, epoch_witnesses, epoch_keys, epoch_bucket };
++enum class CursorTerminalReason { not_recorded, none, exhausted, explicit_cancel, destruction, move_replacement, invalidated, startup_failure, next_failure };
++enum class CursorMetricId { startup_ns, successful_next_ns, exhausted_next_ns,
++  failed_next_ns, cleanup_ns, successful_calls, exhausted_calls, failed_calls,
++  cancel_calls, cleanup_calls, clock_reads, clock_regressions, count };
++inline constexpr std::size_t cursor_metric_count=static_cast<std::size_t>(CursorMetricId::count);
++struct CursorMetricDescriptor {
++  CursorMetricId id;
++  std::string_view name,unit,scope;
++  MetricKind kind;
++};
++[[nodiscard]] std::span<const CursorMetricDescriptor> cursor_observation_registry() noexcept;
++struct CursorObservation {
++  ObservationOptions options;
++  std::optional<ObservationConfiguration> configuration;
++  std::uint64_t owner=0,sequence=0,cursor_id=0;
++  bool cursor_id_saturated=false,constructed=false,tentative_at_creation=false;
++  ResultView view=ResultView::core;
++  CursorObservationSource source=CursorObservationSource::committed_results;
++  std::optional<SnapshotSide> side;
++  ResultCursorOptions limits;
++  ResultCursorState state=ResultCursorState::active;
++  CursorTerminalReason terminal_reason=CursorTerminalReason::not_recorded;
++  ResultCursorMetrics mandatory;
++  std::array<MetricValue,cursor_metric_count> values{};
++  [[nodiscard]] const MetricValue& metric(CursorMetricId id) const noexcept {
++    const auto index=static_cast<std::size_t>(id);
++    static constexpr MetricValue unavailable{};
++    return index<values.size()?values[index]:unavailable;
++  }
++};
++struct NodeStateGauge {
++  NodeId node;
++  NodeKind kind;
++  std::uint64_t records=0,survivors=0,projected_parent_keys=0;
++  MetricValue visible_factor_assignments;
++};
++struct BaseStateGauge { TableId table; std::uint64_t tuples=0; };
++struct CommittedStateGauges {
++  std::uint64_t owner=0,sequence=0;
++  std::vector<BaseStateGauge> bases;
++  MetricValue base_tuples;
++  std::vector<NodeStateGauge> nodes;
++  // Unsupported facts remain unavailable, never fabricated as zero.
++  MetricValue full_result_count,allocated_bytes,live_bytes,checkpoint_bytes,
++      checkpoint_ns,recovery_replay_length;
+ };
+ 
+ // Logical support kernel with affected-record metadata/storage undo. Returned
+@@ -203,6 +251,7 @@
+     [[nodiscard]] SupportOwnerId owner() const;
+     [[nodiscard]] const storage::TupleLayout& layout() const;
+     [[nodiscard]] const ResultCursorMetrics& metrics() const;
++    [[nodiscard]] CursorObservation observation() const;
+     // Exhausted/cancelled cursors return nullopt repeatedly. A next failure
+     // closes the lease; a failed or moved-from cursor rejects further next().
+     [[nodiscard]] std::optional<storage::Tuple> next();
+@@ -303,6 +352,10 @@
+   SupportRuntime& operator=(SupportRuntime&& other) noexcept;
+   [[nodiscard]] const PhysicalPlan& plan() const;
+   [[nodiscard]] ObservationSnapshot observations() const;
++  // Latest enabled cursor lifecycle publication; not an aggregate or update metric.
++  [[nodiscard]] std::optional<CursorObservation> last_cursor_observation() const;
++  // Explicit allocating read of committed relation cardinalities, even when off.
++  [[nodiscard]] CommittedStateGauges committed_state_gauges() const;
+   [[nodiscard]] ObservationTrace observation_trace() const;
+   [[nodiscard]] const SupportOptions& options() const;
+   [[nodiscard]] SupportOwnerId owner() const;
+--- /dev/null
++++ b/src/io/cursor_observation.cpp
+@@ -0,0 +1,139 @@
++#include "crown/io/cursor_observation.hpp"
++#include "crown/api/error.hpp"
++#include <charconv>
++#include <utility>
++namespace crown::io {
++namespace {
++using namespace runtime;
++void utf8(std::string_view text) {
++  for (std::size_t i=0;i<text.size();) {
++    const auto first=static_cast<unsigned char>(text[i++]);
++    if (first<0x80) continue;
++    unsigned remaining=0; std::uint32_t code=0,minimum=0;
++    if (first>=0xc2 && first<=0xdf) { remaining=1; code=first&0x1fU; minimum=0x80; }
++    else if (first>=0xe0 && first<=0xef) { remaining=2; code=first&0x0fU; minimum=0x800; }
++    else if (first>=0xf0 && first<=0xf4) { remaining=3; code=first&0x07U; minimum=0x10000; }
++    else throw Error("text_encoding","run-context text requires valid UTF-8; native values are unchanged");
++    if (remaining>text.size()-i) throw Error("text_encoding","truncated UTF-8 in run-context text");
++    while (remaining--) {
++      const auto next=static_cast<unsigned char>(text[i++]);
++      if ((next&0xc0U)!=0x80U) throw Error("text_encoding","invalid UTF-8 continuation in run-context text");
++      code=(code<<6U)|(next&0x3fU);
++    }
++    if (code<minimum || code>0x10ffff || (code>=0xd800 && code<=0xdfff))
++      throw Error("text_encoding","non-scalar UTF-8 in run-context text");
++  }
++}
++struct Writer {
++  std::string out;
++  std::size_t limit;
++  explicit Writer(std::size_t bytes):limit(bytes) {}
++  void raw(std::string_view value) {
++    if (out.size()>limit || value.size()>limit-out.size()) throw Error("resource_limit","run-context encoded-byte limit exceeded");
++    out.append(value);
++  }
++  void quote(std::string_view value,bool dot=false) {
++    utf8(value); raw("\"");
++    constexpr char hex[]="0123456789abcdef";
++    for (const char ch:value) {
++      const auto byte=static_cast<unsigned char>(ch);
++      if (ch=='\"') raw("\\\""); else if (ch=='\\') raw("\\\\");
++      else if (byte<32) { if (dot) raw("\\"); const char encoded[]={'\\','u','0','0',hex[byte>>4U],hex[byte&15U]}; raw({encoded,6}); }
++      else raw({&ch,1});
++    }
++    raw("\"");
++  }
++  template<class Integer> void number(Integer value) {
++    char buffer[32]; const auto result=std::to_chars(buffer,buffer+sizeof(buffer),value);
++    if (result.ec!=std::errc{}) throw Error("explain_encoding","integer encoding failed");
++    raw({buffer,static_cast<std::size_t>(result.ptr-buffer)});
++  }
++  void boolean(bool value) { raw(value?"true":"false"); }
++  void null() { raw("null"); }
++  template<class T> void optional(const std::optional<T>& value) { if (value) number(*value); else null(); }
++  template<class Range,class Fn> void array(const Range& values,Fn fn) {
++    raw("["); bool first=true; for (const auto& value:values) { if (!first) raw(","); first=false; fn(value); } raw("]");
++  }
++  struct Object {
++    Writer& w; bool first=true;
++    template<class Fn> void field(std::string_view key,Fn fn) { if (!first) w.raw(","); first=false; w.quote(key); w.raw(":"); fn(); }
++    void text(std::string_view key,std::string_view value) { field(key,[&] { w.quote(value); }); }
++    template<class Integer> void number(std::string_view key,Integer value) { field(key,[&] { w.number(value); }); }
++    void boolean(std::string_view key,bool value) { field(key,[&] { w.boolean(value); }); }
++    void null(std::string_view key) { field(key,[&] { w.null(); }); }
++  };
++  template<class Fn> void object(Fn fn) { raw("{"); Object o{*this}; fn(o); raw("}"); }
++  template<class Range> void ids(const Range& values) { array(values,[&](const auto& value) { number(value.value); }); }
++};
++
++const char* name(ResultCursorState v){switch(v){case ResultCursorState::active:return "active";case ResultCursorState::exhausted:return "exhausted";case ResultCursorState::cancelled:return "cancelled";case ResultCursorState::failed:return "failed";}return "unknown";}
++const char* name(CursorTerminalReason v){switch(v){case CursorTerminalReason::not_recorded:return "not_recorded";case CursorTerminalReason::none:return "none";case CursorTerminalReason::exhausted:return "exhausted";case CursorTerminalReason::explicit_cancel:return "explicit_cancel";case CursorTerminalReason::destruction:return "destruction";case CursorTerminalReason::move_replacement:return "move_replacement";case CursorTerminalReason::invalidated:return "invalidated";case CursorTerminalReason::startup_failure:return "startup_failure";case CursorTerminalReason::next_failure:return "next_failure";}return "unknown";}
++const char* name(CursorObservationSource v){switch(v){case CursorObservationSource::committed_results:return "committed_results";case CursorObservationSource::epoch_visible:return "epoch_visible";case CursorObservationSource::epoch_witnesses:return "epoch_witnesses";case CursorObservationSource::epoch_keys:return "epoch_keys";case CursorObservationSource::epoch_bucket:return "epoch_bucket";}return "unknown";}
++const char* name(MetricAvailability v){switch(v){case MetricAvailability::unavailable:return "unavailable";case MetricAvailability::disabled:return "disabled";case MetricAvailability::available:return "available";}return "unknown";}
++const char* name(MetricKind v){switch(v){case MetricKind::counter:return "counter";case MetricKind::high_water:return "high_water";case MetricKind::timing:return "timing";}return "unknown";}
++const char* name(ResultView v){switch(v){case ResultView::core:return "core";case ResultView::sql:return "sql";}return "unknown";}
++const char* name(SnapshotSide v){switch(v){case SnapshotSide::before:return "before";case SnapshotSide::after:return "after";}return "unknown";}
++const char* name(ObservationMode v){switch(v){case ObservationMode::off:return "off";case ObservationMode::counters:return "counters";case ObservationMode::timed:return "timed";case ObservationMode::trace:return "trace";}return "unknown";}
++const char* name(DeltaMode v){switch(v){case DeltaMode::maintenance:return "maintenance";case DeltaMode::delta:return "delta";}return "unknown";}
++const char* name(DeltaCompletion v){switch(v){case DeltaCompletion::automatic:return "automatic";case DeltaCompletion::ordered_replay:return "ordered_replay";case DeltaCompletion::anchored:return "anchored";case DeltaCompletion::root_first:return "root_first";}return "unknown";}
++const char* name(LiveMaintenance v){switch(v){case LiveMaintenance::on_output:return "on_output";case LiveMaintenance::incremental:return "incremental";case LiveMaintenance::eager:return "eager";}return "unknown";}
++const char* name(PropagationOrder v){switch(v){case PropagationOrder::fifo:return "fifo";case PropagationOrder::lifo:return "lifo";}return "unknown";}
++const char* name(NodeKind v){switch(v){case NodeKind::native:return "native";case NodeKind::generalized:return "generalized";}return "unknown";}
++void work(Writer& w,const CursorWork& value){w.object([&](auto& o){o.number("work",value.work);o.number("calls",value.calls);o.number("route_checks",value.route_checks);o.number("descriptor_steps",value.descriptor_steps);o.number("frame_initializations",value.frame_initializations);o.number("cursor_opens",value.cursor_opens);o.number("cursor_advances",value.cursor_advances);o.number("frame_closes",value.frame_closes);o.number("tuple_lookups",value.tuple_lookups);o.number("selected_rows",value.selected_rows);o.number("bucket_lookups",value.bucket_lookups);o.number("key_fields",value.key_fields);o.number("equality_checks",value.equality_checks);o.number("output_fields",value.output_fields);o.number("rows_emitted",value.rows_emitted);o.number("binding_checks",value.binding_checks);o.number("binding_rejections",value.binding_rejections);o.number("direct_lookups",value.direct_lookups);o.number("overlay_rows",value.overlay_rows);o.number("fragment_steps",value.fragment_steps);o.number("binding_values",value.binding_values);o.number("witness_probes",value.witness_probes);o.number("witness_rows",value.witness_rows);o.number("join_rejections",value.join_rejections);});}
++void delta_options(Writer& w,const DeltaOptions& d) { w.object([&](auto& o){
++ o.text("requested_mode",name(d.mode));o.text("requested_completion",name(d.completion));
++ o.text("live_maintenance",name(d.live_maintenance));o.text("view",name(d.view));
++ o.field("work_limit",[&]{w.optional(d.work_limit);});o.field("cursor_work_limit",[&]{w.optional(d.cursor.work_limit);});
++ o.field("epoch_view_work_limit",[&]{w.optional(d.epoch_view.work_limit);});
++ o.number("spool_rows",d.spool_row_limit);o.number("spool_accounted_bytes",d.spool_byte_limit);
++ o.field("physical_work_limit",[&]{w.optional(d.physical.work_limit);});o.number("derivation_limit",d.physical.derivation_limit);
++ const auto& s=d.physical.support;o.field("support_work_limit",[&]{w.optional(s.work_limit);});o.number("support_limit",s.support_limit);
++ o.text("propagation_order",name(s.order));o.boolean("capture_transitions",s.capture_transitions);
++ o.field("observation",[&]{w.object([&](auto& x){const auto& a=s.observation;x.text("mode",name(a.mode));x.number("trace_capacity",a.trace_capacity);
++ x.number("sample_period",a.sample_period);x.number("sample_offset",a.sample_offset);x.boolean("trace_timings",a.trace_timings);});});
++}); }
++
++void metric(Writer& w,const MetricValue& value){w.object([&](auto& o){
++ o.text("availability",name(value.availability));o.field("value",[&]{if(value.availability==MetricAvailability::available)w.number(value.value);else w.null();});
++ o.field("saturated",[&]{if(value.availability==MetricAvailability::available)w.boolean(value.saturated);else w.null();});
++});}
++void configuration(Writer& w,const std::optional<ObservationConfiguration>& value){
++ if(!value){w.null();return;}w.object([&](auto& o){
++ o.text("provenance","cursor_begin_runtime_configuration");o.number("owner",value->support_owner());o.number("generation",value->generation());o.boolean("generation_saturated",value->generation_saturated());
++ o.text("mode",name(value->mode()));o.text("completion",name(value->completion()));o.number("query_factors",value->query_factors());
++ o.field("requested_options",[&]{delta_options(w,value->requested_options());});
++ });
++}
++} // namespace
++std::string write_cursor_observation_json(const CursorObservation& value,std::size_t max_bytes){
++ Writer w(max_bytes);w.object([&](auto& o){
++ o.text("format","crown_cursor_observation");o.number("version",1);o.text("scope","one_cursor_lifetime_not_delta_output_spooling");
++ o.number("owner",value.owner);o.number("sequence",value.sequence);
++ o.field("cursor_id",[&]{if(value.options.mode==ObservationMode::off)w.null();else w.number(value.cursor_id);});
++ o.field("cursor_id_saturated",[&]{if(value.options.mode==ObservationMode::off)w.null();else w.boolean(value.cursor_id_saturated);});
++ o.boolean("constructed",value.constructed);o.text("source",name(value.source));o.text("view",name(value.view));
++ o.field("side",[&]{if(value.side)w.quote(name(*value.side));else w.null();});o.boolean("tentative_at_creation",value.tentative_at_creation);
++ o.text("state",name(value.state));o.text("terminal_reason",name(value.terminal_reason));
++ o.field("cursor_work_limit",[&]{w.optional(value.limits.work_limit);});o.field("configuration",[&]{configuration(w,value.configuration);});
++ o.text("timing_partition","startup_then_disjoint_successful_exhausted_failed_calls_and_cleanup; excludes_caller_pause; failed_startup_includes_unwinding");
++ o.field("observation_options",[&]{w.object([&](auto& x){x.text("mode",name(value.options.mode));x.number("trace_capacity",value.options.trace_capacity);x.number("sample_period",value.options.sample_period);x.number("sample_offset",value.options.sample_offset);x.boolean("trace_timings",value.options.trace_timings);});});
++ o.text("sampling_scope","per_cursor_counters_and_timings_are_not_per_update_trace_sampling");
++ o.field("metrics",[&]{w.array(cursor_observation_registry(),[&](const auto& d){w.object([&](auto& x){x.number("id",static_cast<std::size_t>(d.id));x.text("name",d.name);x.text("unit",d.unit);x.text("scope",d.scope);x.text("kind",name(d.kind));x.field("measurement",[&]{metric(w,value.metric(d.id));});});});});
++ o.field("mandatory",[&]{w.object([&](auto& x){const auto& m=value.mandatory;x.number("total_work",m.total_work);x.number("max_result_work",m.max_result_work);x.number("cleanup_frames",m.cleanup_frames);
++ x.text("work_unit","existing_abstract_cursor_actions");x.text("last_scope","last_active_call_already_in_results_termination_or_failed_not_additive");
++ x.field("startup",[&]{work(w,m.startup);});x.field("results",[&]{work(w,m.results);});x.field("termination",[&]{work(w,m.termination);});x.field("failed",[&]{work(w,m.failed);});x.field("last",[&]{work(w,m.last);});});});
++ });return std::move(w.out);
++}
++std::string write_committed_state_gauges_json(const CommittedStateGauges& value,std::size_t max_bytes){
++ Writer w(max_bytes);w.object([&](auto& o){
++ o.text("format","crown_committed_state_gauges");o.number("version",1);o.number("owner",value.owner);o.number("sequence",value.sequence);
++ o.text("scope","explicit_committed_state_read_available_with_telemetry_off");o.text("cardinality_unit","tuples_or_distinct_keys_as_named");
++ o.text("visible_scope","per_node_E_factor_assignments_not_full_join_output_count");
++ o.field("base_tuples",[&]{metric(w,value.base_tuples);});o.field("bases",[&]{w.array(value.bases,[&](const auto& b){w.object([&](auto& x){x.number("table",b.table.value);x.number("tuples",b.tuples);});});});
++ o.field("nodes",[&]{w.array(value.nodes,[&](const auto& n){w.object([&](auto& x){x.number("node",n.node.value);x.text("kind",name(n.kind));x.number("records",n.records);x.number("survivors",n.survivors);x.number("projected_parent_keys",n.projected_parent_keys);x.field("visible_factor_assignments",[&]{metric(w,n.visible_factor_assignments);});});});});
++ o.field("full_result_count",[&]{metric(w,value.full_result_count);});o.field("allocated_bytes",[&]{metric(w,value.allocated_bytes);});o.field("live_bytes",[&]{metric(w,value.live_bytes);});
++ o.field("checkpoint_bytes",[&]{metric(w,value.checkpoint_bytes);});o.field("checkpoint_ns",[&]{metric(w,value.checkpoint_ns);});o.field("recovery_replay_length",[&]{metric(w,value.recovery_replay_length);});
++ o.text("limitations","no_total_memory_or_durable_recovery_claim; allocating_snapshot_metadata_not_an_update_charge");
++ });return std::move(w.out);
++}
++} // namespace crown::io
+--- a/src/runtime/delta.cpp
++++ b/src/runtime/delta.cpp
+@@ -1599,6 +1599,8 @@
+   auto& d=impl(); d.declared_benchmark=std::move(value);
+   if (d.observation) d.observation->declare_benchmark(d.declared_benchmark);
+ }
++std::optional<CursorObservation> DeltaRuntime::last_cursor_observation() const { return impl().physical.last_cursor_observation(); }
++CommittedStateGauges DeltaRuntime::committed_state_gauges() const { const auto& d=impl();d.readable();return d.physical.committed_state_gauges(); }
+ ObservationSnapshot DeltaRuntime::observations() const {
+   const auto& d=impl(); auto result=d.physical.observations();
+   result.initialization=d.physical.initialization_context();
+--- a/src/runtime/observation.cpp
++++ b/src/runtime/observation.cpp
+@@ -112,6 +112,7 @@
+   {MetricId::delta_serialization_ns, "delta.serialization_ns", "nanoseconds", "optional-observation-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::timing, "disjoint legacy delta timing phase"},
+   {MetricId::delta_sink_wait_ns, "delta.sink_wait_ns", "nanoseconds", "optional-observation-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::timing, "disjoint legacy delta timing phase"},
+   {MetricId::delta_clock_reads, "delta.clock_reads", "count", "optional-observation-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::counter, ""},
++  {MetricId::nested_cursor_clock_reads, "cursor.nested_clock_reads", "count", "optional-observation-v1", "cursor clock reads while this delta attempt is active; excludes later current-result reads", ObservationLayer::delta, MetricKind::counter, "subset of per-cursor clock_reads; do not add both; delta.clock_reads + this count reconciles active-attempt clock calls"},
+ }};
+ void increment(std::uint64_t& value,std::uint64_t amount,bool& saturated) noexcept {
+   const auto room=std::numeric_limits<std::uint64_t>::max()-value;
+@@ -214,6 +215,9 @@
+ }
+ std::uint64_t ObservationState::now() noexcept {
+   add(MetricId::delta_clock_reads);
++  return read_observation_clock();
++}
++std::uint64_t read_observation_clock() noexcept {
+ #ifdef CROWN_RUNTIME_TESTING
+   if (test_clock) return test_clock();
+ #endif
+--- a/src/runtime/physical.cpp
++++ b/src/runtime/physical.cpp
+@@ -587,6 +587,17 @@
+   }
+ }
+ std::shared_ptr<detail::ObservationState> PhysicalRuntime::observation_state() const { return impl().observation; }
++std::optional<CursorObservation> PhysicalRuntime::last_cursor_observation() const { return impl().kernel.last_cursor_observation(); }
++CommittedStateGauges PhysicalRuntime::committed_state_gauges() const {
++  const auto& d=impl();d.readable();auto result=d.kernel.committed_state_gauges();
++  result.base_tuples={0,MetricAvailability::available,false};result.bases.reserve(d.sources.size());
++  for(std::size_t i=0;i<d.sources.size();++i){
++    const auto count=static_cast<std::uint64_t>(d.sources[i].size());result.bases.push_back({TableId{i},count});
++    if(count>UINT64_MAX-result.base_tuples.value){result.base_tuples.value=UINT64_MAX;result.base_tuples.saturated=true;}
++    else result.base_tuples.value+=count;
++  }
++  return result;
++}
+ ObservationSnapshot PhysicalRuntime::observations() const {
+   auto result=impl().kernel.observations(); result.initialization=impl().initialization_context; return result;
+ }
+--- a/src/runtime/session.cpp
++++ b/src/runtime/session.cpp
+@@ -61,6 +61,7 @@
+   std::optional<DeltaRuntime::Epoch> output;
+   io::InputProgress final_progress;
+   ObservationSnapshot retained_observation;
++  std::optional<CursorObservation> retained_cursor_observation;
+ 
+   struct Guard {
+     Impl& data;
+@@ -149,7 +150,10 @@
+     window_pending.reset(); pending_command_sequence.reset(); metadata_ready=false; metadata_draining=false;
+   }
+   void retain_observation() noexcept {
+-    if (runtime) retained_observation=runtime->observations();
++    if (runtime) {
++      retained_observation=runtime->observations();
++      retained_cursor_observation=runtime->last_cursor_observation();
++    }
+     retained_observation.session_context=run_context;
+     retained_observation.session_attached=true;
+     retained_observation.session_committed_sequence=committed_sequence;
+@@ -396,6 +400,10 @@
+ std::shared_ptr<const SessionRunContext> QuerySession::run_context() const {
+   auto& d=*data_; Impl::Guard guard(d); return d.run_context;
+ }
++std::optional<CursorObservation> QuerySession::last_cursor_observation() const {
++  auto& d=*data_; Impl::Guard guard(d);
++  return d.runtime?d.runtime->last_cursor_observation():d.retained_cursor_observation;
++}
+ ObservationSnapshot QuerySession::observations() const {
+   auto& d=*data_; Impl::Guard guard(d);
+   auto result=d.runtime?d.runtime->observations():d.retained_observation;
+--- a/src/runtime/support.cpp
++++ b/src/runtime/support.cpp
+@@ -13,6 +13,7 @@
+ #include <map>
+ #include <set>
+ #include <utility>
++#include <type_traits>
+ 
+ namespace crown::runtime {
+ namespace {
+@@ -64,7 +65,45 @@
+   else for (const auto& output : sql.outputs) fields.push_back({output_scalar(output.type.kind),output.type.decimal});
+   return {LayoutId{plan.layouts().size()},std::move(fields),{plan.source_catalog().version,plan.physical_sha256()+":sql-result"}};
+ }
++
++constexpr std::array<CursorMetricDescriptor,cursor_metric_count> cursor_registry{{
++ {CursorMetricId::startup_ns,"cursor.startup_ns","nanoseconds","cursor construction/allocation/preparation; failed construction includes unwinding; epoch-view time may nest inside delta propagation/internal time, not additive with enclosing phase",MetricKind::timing},
++ {CursorMetricId::successful_next_ns,"cursor.successful_next_ns","nanoseconds","sum of successful active next calls; excludes caller pause; epoch-view time may nest inside delta propagation/internal time, not additive with enclosing phase",MetricKind::timing},
++ {CursorMetricId::exhausted_next_ns,"cursor.exhausted_next_ns","nanoseconds","first exhausted active next; excludes cleanup; epoch-view time may nest inside delta propagation/internal time, not additive with enclosing phase",MetricKind::timing},
++ {CursorMetricId::failed_next_ns,"cursor.failed_next_ns","nanoseconds","failed active next; excludes cleanup and later rejected calls; epoch-view time may nest inside delta propagation/internal time, not additive with enclosing phase",MetricKind::timing},
++ {CursorMetricId::cleanup_ns,"cursor.cleanup_ns","nanoseconds","one admitted cursor cleanup/lease release; excludes owning plan/layout destruction; epoch-view time may nest inside delta propagation/internal time, not additive with enclosing phase",MetricKind::timing},
++ {CursorMetricId::successful_calls,"cursor.successful_calls","count","active next returning one owning row",MetricKind::counter},
++ {CursorMetricId::exhausted_calls,"cursor.exhausted_calls","count","first active next returning no row",MetricKind::counter},
++ {CursorMetricId::failed_calls,"cursor.failed_calls","count","active next throwing; excludes construction and closed/moved rejection",MetricKind::counter},
++ {CursorMetricId::cancel_calls,"cursor.cancel_calls","count","explicit cancel while active; excludes idempotent closed cancel",MetricKind::counter},
++ {CursorMetricId::cleanup_calls,"cursor.cleanup_calls","count","one admitted cursor close",MetricKind::counter},
++ {CursorMetricId::clock_reads,"cursor.clock_reads","count","optional reads local to this cursor; excludes delta clock registry",MetricKind::counter},
++ {CursorMetricId::clock_regressions,"cursor.clock_regressions","count","backward clock intervals; affected timing becomes unavailable",MetricKind::counter}
++}};
++bool cursor_clocks(const CursorObservation& value) noexcept {
++ return value.options.mode==ObservationMode::timed ||
++     (value.options.mode==ObservationMode::trace && value.options.trace_timings);
++}
++void cursor_add(CursorObservation& value,CursorMetricId id,std::uint64_t amount=1) noexcept {
++ auto& metric=value.values[static_cast<std::size_t>(id)];
++ if(metric.availability!=MetricAvailability::available)return;
++ if(amount>UINT64_MAX-metric.value){metric.value=UINT64_MAX;metric.saturated=true;}
++ else metric.value+=amount;
++}
++std::uint64_t cursor_now(CursorObservation& value,const std::shared_ptr<detail::ObservationState>& observer) noexcept {
++ if(!cursor_clocks(value))return 0;
++ cursor_add(value,CursorMetricId::clock_reads);if(observer)observer->note_cursor_clock_read();return detail::read_observation_clock();
++}
++void cursor_elapsed(CursorObservation& value,CursorMetricId id,std::uint64_t start,const std::shared_ptr<detail::ObservationState>& observer) noexcept {
++ if(!cursor_clocks(value))return;
++ const auto finish=cursor_now(value,observer);
++ if(finish<start){cursor_add(value,CursorMetricId::clock_regressions);value.values[static_cast<std::size_t>(id)].availability=MetricAvailability::unavailable;}
++ else cursor_add(value,id,finish-start);
++}
+ }  // namespace
++
++std::span<const CursorMetricDescriptor> cursor_observation_registry() noexcept { return cursor_registry; }
++static_assert(std::is_trivially_copyable_v<CursorObservation>);
+ 
+ ProjectionSupportCount increment_support(ProjectionSupportCount value,std::uint64_t limit) {
+   require(value.value<limit,"support_overflow","projection support exceeds its configured exact counter limit");
+@@ -78,6 +117,9 @@
+   PhysicalPlan plan;
+   SupportOptions options;
+   std::shared_ptr<detail::ObservationState> observation;
++  std::optional<CursorObservation> last_cursor;
++  std::uint64_t next_cursor_id=0;
++  bool cursor_id_saturated=false;
+   storage::TupleLayout sql_output;
+   SupportOwnerId owner=new_owner();
+   std::uint64_t sequence=0;
+@@ -524,6 +566,51 @@
+   ResultView view;
+   storage::TupleLayout output_layout;
+   ResultCursorMetrics metrics;
++  ResultCursorMetrics* startup_sink=nullptr;
++  std::shared_ptr<detail::ObservationState> observation;
++  std::weak_ptr<Impl> diagnostic_owner;
++  CursorObservation diagnostic;
++  bool observation_admitted=false;
++  void publish() noexcept {
++    if(!observation || !observation_admitted)return;
++    diagnostic.mandatory=metrics;diagnostic.state=status;
++    if(auto owner=diagnostic_owner.lock())owner->last_cursor=diagnostic;
++  }
++  template<class Make> static std::unique_ptr<Data> create(const std::shared_ptr<Impl>& owner,
++      ResultCursorOptions limits,ResultView view,CursorObservationSource source,
++      std::optional<SnapshotSide> side,bool tentative,std::uint64_t epoch,Make make) {
++    CursorObservation summary;
++    summary.options=owner->options.observation;summary.owner=owner->owner.value;
++    summary.sequence=epoch;summary.limits=limits;summary.view=view;summary.source=source;
++    summary.side=side;summary.tentative_at_creation=tentative;
++    const bool enabled=bool(owner->observation);
++    if(enabled){
++      if(owner->next_cursor_id==UINT64_MAX)owner->cursor_id_saturated=true;else ++owner->next_cursor_id;
++      summary.cursor_id=owner->next_cursor_id;summary.cursor_id_saturated=owner->cursor_id_saturated;
++      summary.configuration=owner->observation->configuration();summary.terminal_reason=CursorTerminalReason::none;
++    }
++    for(const auto& entry:cursor_registry)summary.values[static_cast<std::size_t>(entry.id)].availability=
++      !enabled || (entry.kind==MetricKind::timing && !cursor_clocks(summary))?MetricAvailability::disabled:MetricAvailability::available;
++    const auto start=cursor_now(summary,owner->observation);
++    try {
++      auto cursor=make(enabled?&summary.mandatory:nullptr);
++      cursor->startup_sink=nullptr;
++      if(source==CursorObservationSource::committed_results){++owner->readers;cursor->leased=true;}
++      else cursor->link();
++      summary.constructed=true;summary.mandatory=cursor->metrics;
++      cursor_elapsed(summary,CursorMetricId::startup_ns,start,owner->observation);
++      cursor->diagnostic=summary;cursor->observation_admitted=enabled;cursor->publish();return cursor;
++    }catch(...){
++      if(enabled){
++        cursor_elapsed(summary,CursorMetricId::startup_ns,start,owner->observation);
++        summary.state=ResultCursorState::failed;summary.terminal_reason=CursorTerminalReason::startup_failure;
++        summary.values[static_cast<std::size_t>(CursorMetricId::cleanup_ns)].availability=MetricAvailability::unavailable;
++        summary.values[static_cast<std::size_t>(CursorMetricId::cleanup_calls)].availability=MetricAvailability::unavailable;
++        owner->last_cursor=summary;
++      }
++      throw;
++    }
++  }
+   ResultCursorState status=ResultCursorState::active;
+   std::uint64_t epoch;
+   SupportOwnerId identity;
+@@ -540,8 +627,9 @@
+   std::vector<std::vector<std::size_t>> probe_children;
+   const EnumerationProgram& program() const { return fragment_program?*fragment_program:plan.enumeration(); }
+ 
+-  Data(std::shared_ptr<Impl> owner,ResultCursorOptions limits,ResultView mode,bool initialize=true)
++  Data(std::shared_ptr<Impl> owner,ResultCursorOptions limits,ResultView mode,bool initialize=true,ResultCursorMetrics* startup=nullptr)
+       :runtime(std::move(owner)),plan(runtime->plan),options(limits),view(mode),output_layout(view==ResultView::sql?runtime->sql_output:plan.result_layout()),
++       startup_sink(startup),observation(runtime->observation),diagnostic_owner(observation?runtime:std::shared_ptr<Impl>{}),
+        epoch(runtime->sequence),identity(runtime->owner),answer(runtime->answer(*runtime->state)),
+        scalar(view==ResultView::sql && plan.normalized() && plan.normalized()->binding.wrapper==frontend::SqlWrapper::exists) {
+     metric(metrics.startup,&CursorWork::route_checks);
+@@ -550,8 +638,8 @@
+       frames.resize(plan.enumeration().steps.size());
+     }
+   }
+-  Data(std::shared_ptr<EpochView::Data> context,const FixedAssignment& bindings,VisibleFragment fragment,ResultCursorOptions limits)
+-      :Data(context->group->runtime,limits,ResultView::core,false) {
++  Data(std::shared_ptr<EpochView::Data> context,const FixedAssignment& bindings,VisibleFragment fragment,ResultCursorOptions limits,ResultCursorMetrics* startup=nullptr)
++      :Data(context->group->runtime,limits,ResultView::core,false,startup) {
+     bind(std::move(context),bindings);
+     if (fragment.root) {
+       require(fragment.root->value<plan.nodes().size() && plan.nodes()[fragment.root->value].connex,
+@@ -605,8 +693,8 @@
+       } else probe_program={};
+     }
+   }
+-  Data(std::shared_ptr<EpochView::Data> context,const FixedAssignment& bindings,WitnessFragment fragment,ResultCursorOptions limits)
+-      :Data(context->group->runtime,limits,ResultView::core,false) {
++  Data(std::shared_ptr<EpochView::Data> context,const FixedAssignment& bindings,WitnessFragment fragment,ResultCursorOptions limits,ResultCursorMetrics* startup=nullptr)
++      :Data(context->group->runtime,limits,ResultView::core,false,startup) {
+     bind(std::move(context),bindings); witness_mode=true;
+     fragment_program=survivors(fragment);
+     std::vector<VariableId> variables;
+@@ -618,8 +706,8 @@
+     if (fragment.root || fragment.nodes) answer=true;
+     initialize(program(),frames,{});
+   }
+-  Data(std::shared_ptr<EpochView::Data> context,NodeId id,ResultCursorOptions limits)
+-      :Data(context->group->runtime,limits,ResultView::core,false) {
++  Data(std::shared_ptr<EpochView::Data> context,NodeId id,ResultCursorOptions limits,ResultCursorMetrics* startup=nullptr)
++      :Data(context->group->runtime,limits,ResultView::core,false,startup) {
+     bind(std::move(context),{});
+     require(id.value<plan.nodes().size() && plan.nodes()[id.value].visible_relation,
+         "invalid_fragment","visible factor is outside C*");
+@@ -631,8 +719,8 @@
+     // A local E factor can contain rows even when the global answer is empty.
+     answer=true; initialize(walk,frames,{});
+   }
+-  Data(std::shared_ptr<EpochView::Data> context,NodeId id,const Row& separator,ResultCursorOptions limits)
+-      :Data(context->group->runtime,limits,ResultView::core,false) {
++  Data(std::shared_ptr<EpochView::Data> context,NodeId id,const Row& separator,ResultCursorOptions limits,ResultCursorMetrics* startup=nullptr)
++      :Data(context->group->runtime,limits,ResultView::core,false,startup) {
+     bind(std::move(context),{});
+     require(id.value<plan.nodes().size() && plan.nodes()[id.value].visible_relation,
+         "invalid_fragment","visible factor is outside C*");
+@@ -728,12 +816,16 @@
+     if (first) first->previous=this;
+     first=this;
+   }
+-  ~Data() { close(ResultCursorState::cancelled); }
++  ~Data() {
++    close(ResultCursorState::cancelled,CursorTerminalReason::destruction);
++    if(startup_sink)*startup_sink=metrics;
++  }
+   void metric(CursorWork& work,std::uint64_t CursorWork::* field,std::uint64_t amount=1) {
+     const auto used=metrics.total_work;
+     require(amount<=std::numeric_limits<std::uint64_t>::max()-used,"resource_limit","result cursor work counter exhausted");
+     require(!options.work_limit || (used<=*options.work_limit && amount<=*options.work_limit-used),"resource_limit","result cursor work limit exceeded; cursor closed");
+     metrics.total_work+=amount; work.work+=amount; work.*field+=amount;
++    if(startup_sink)*startup_sink=metrics;
+   }
+   static void merge(CursorWork& target,const CursorWork& value) noexcept {
+     constexpr std::array fields{&CursorWork::work,&CursorWork::calls,&CursorWork::route_checks,&CursorWork::descriptor_steps,&CursorWork::frame_initializations,
+@@ -745,8 +837,10 @@
+     // Every component is bounded by the already checked aggregate work.
+     for (const auto field : fields) target.*field+=value.*field;
+   }
+-  void close(ResultCursorState state) noexcept {
++  void close(ResultCursorState state,CursorTerminalReason reason) noexcept {
+     if (status!=ResultCursorState::active) return;
++    const auto start=observation_admitted?cursor_now(diagnostic,observation):0;
++    if(observation_admitted){diagnostic.terminal_reason=reason;cursor_add(diagnostic,CursorMetricId::cleanup_calls);}
+     if (snapshot) {
+       auto& first=snapshot->group->first;
+       if (previous) previous->next=next; else if (first==this) first=next;
+@@ -761,6 +855,7 @@
+       --runtime->readers; leased=false;
+     }
+     snapshot.reset(); runtime.reset(); status=state;
++    if(observation_admitted){cursor_elapsed(diagnostic,CursorMetricId::cleanup_ns,start,observation);publish();}
+   }
+   const Value& value(AssignmentSlot slot) const { return frames.at(slot.step).selected->values().at(slot.field.value); }
+   storage::Tuple emit(CursorWork& work) {
+@@ -942,13 +1037,16 @@
+ };
+ void SupportRuntime::EpochView::Group::abort() noexcept {
+   phase=Phase::aborted;
+-  while (first) first->close(ResultCursorState::failed);
++  while (first) first->close(ResultCursorState::failed,CursorTerminalReason::invalidated);
+   release(); patches.clear(); journal.reset(); runtime.reset();
+ }
+ SupportRuntime::ResultCursor::ResultCursor(std::unique_ptr<Data> data) noexcept:data_(std::move(data)) {}
+ SupportRuntime::ResultCursor::ResultCursor(ResultCursor&&) noexcept=default;
+ SupportRuntime::ResultCursor& SupportRuntime::ResultCursor::operator=(ResultCursor&& other) noexcept {
+-  if (this!=&other) data_=std::move(other.data_);
++  if (this!=&other) {
++    if(data_)data_->close(ResultCursorState::cancelled,CursorTerminalReason::move_replacement);
++    data_=std::move(other.data_);
++  }
+   return *this;
+ }
+ SupportRuntime::ResultCursor::~ResultCursor()=default;
+@@ -958,28 +1056,46 @@
+ SupportOwnerId SupportRuntime::ResultCursor::owner() const { require(bool(data_),"invalid_cursor","moved-from result cursor"); return data_->identity; }
+ const storage::TupleLayout& SupportRuntime::ResultCursor::layout() const { require(bool(data_),"invalid_cursor","moved-from result cursor"); return data_->output_layout; }
+ const ResultCursorMetrics& SupportRuntime::ResultCursor::metrics() const { require(bool(data_),"invalid_cursor","moved-from result cursor"); return data_->metrics; }
+-void SupportRuntime::ResultCursor::cancel() noexcept { if (data_) data_->close(ResultCursorState::cancelled); }
++CursorObservation SupportRuntime::ResultCursor::observation() const {
++  require(bool(data_),"invalid_cursor","moved-from result cursor");
++  auto result=data_->diagnostic;result.mandatory=data_->metrics;result.state=data_->status;return result;
++}
++void SupportRuntime::ResultCursor::cancel() noexcept {
++  if(data_ && data_->status==ResultCursorState::active){
++    if(data_->observation_admitted)cursor_add(data_->diagnostic,CursorMetricId::cancel_calls);
++    data_->close(ResultCursorState::cancelled,CursorTerminalReason::explicit_cancel);
++  }
++}
+ std::optional<storage::Tuple> SupportRuntime::ResultCursor::next() {
+   require(bool(data_),"invalid_cursor","moved-from result cursor");
+   require(data_->status!=ResultCursorState::failed,"invalid_cursor","result cursor failed and is closed");
+   if (data_->status!=ResultCursorState::active) return {};
+   CursorWork action;
++  const auto start=data_->observation_admitted?cursor_now(data_->diagnostic,data_->observation):0;
+   try {
+     auto result=data_->advance(action); data_->metrics.last=action;
+     if (result) {
+       Data::merge(data_->metrics.results,action); data_->metrics.max_result_work=std::max(data_->metrics.max_result_work,action.work);
+-    } else { Data::merge(data_->metrics.termination,action); data_->close(ResultCursorState::exhausted); }
++      if(data_->observation_admitted){cursor_add(data_->diagnostic,CursorMetricId::successful_calls);cursor_elapsed(data_->diagnostic,CursorMetricId::successful_next_ns,start,data_->observation);data_->publish();}
++    } else {
++      Data::merge(data_->metrics.termination,action);
++      if(data_->observation_admitted){cursor_add(data_->diagnostic,CursorMetricId::exhausted_calls);cursor_elapsed(data_->diagnostic,CursorMetricId::exhausted_next_ns,start,data_->observation);}
++      data_->close(ResultCursorState::exhausted,CursorTerminalReason::exhausted);
++    }
+     return result;
+   } catch (...) {
+-    data_->metrics.last=action; Data::merge(data_->metrics.failed,action); data_->close(ResultCursorState::failed); throw;
++    data_->metrics.last=action; Data::merge(data_->metrics.failed,action);
++    if(data_->observation_admitted){cursor_add(data_->diagnostic,CursorMetricId::failed_calls);cursor_elapsed(data_->diagnostic,CursorMetricId::failed_next_ns,start,data_->observation);}
++    data_->close(ResultCursorState::failed,CursorTerminalReason::next_failure); throw;
+   }
+ }
+ SupportRuntime::ResultCursor SupportRuntime::results(ResultCursorOptions options,ResultView view) const {
+   auto& d=impl(); d.readable();
+   require(view==ResultView::core || view==ResultView::sql,"invalid_cursor_options","unknown result view");
+   require(d.readers!=std::numeric_limits<std::size_t>::max(),"resource_limit","result cursor reader count exhausted");
+-  auto data=std::make_unique<ResultCursor::Data>(impl_,options,view);
+-  ++d.readers; data->leased=true; return ResultCursor(std::move(data));
++  auto data=ResultCursor::Data::create(impl_,options,view,CursorObservationSource::committed_results,{},false,d.sequence,
++      [&](ResultCursorMetrics* startup){return std::make_unique<ResultCursor::Data>(impl_,options,view,true,startup);});
++  return ResultCursor(std::move(data));
+ }
+ SupportRuntime::EpochView::EpochView(std::shared_ptr<Data> data) noexcept:data_(std::move(data)) {}
+ bool SupportRuntime::EpochView::valid() const noexcept { return data_ && data_->group->phase!=Group::Phase::aborted; }
+@@ -1001,22 +1117,30 @@
+ SupportRuntime::ResultCursor SupportRuntime::EpochView::results(ResultCursorOptions options) const { return completions({}, {},options); }
+ SupportRuntime::ResultCursor SupportRuntime::EpochView::completions(const FixedAssignment& fixed,VisibleFragment fragment,ResultCursorOptions options) const {
+   require(bool(data_),"invalid_snapshot","closed epoch view"); data_->readable();
+-  auto cursor=std::make_unique<ResultCursor::Data>(data_,fixed,fragment,options); cursor->link();
++  auto cursor=ResultCursor::Data::create(data_->group->runtime,options,ResultView::core,
++      CursorObservationSource::epoch_visible,data_->side,tentative(),sequence(),
++      [&](ResultCursorMetrics* startup){return std::make_unique<ResultCursor::Data>(data_,fixed,fragment,options,startup);});
+   return ResultCursor(std::move(cursor));
+ }
+ SupportRuntime::ResultCursor SupportRuntime::EpochView::witnesses(const FixedAssignment& fixed,WitnessFragment fragment,ResultCursorOptions options) const {
+   require(bool(data_),"invalid_snapshot","closed epoch view"); data_->readable();
+-  auto cursor=std::make_unique<ResultCursor::Data>(data_,fixed,std::move(fragment),options); cursor->link();
++  auto cursor=ResultCursor::Data::create(data_->group->runtime,options,ResultView::core,
++      CursorObservationSource::epoch_witnesses,data_->side,tentative(),sequence(),
++      [&](ResultCursorMetrics* startup){return std::make_unique<ResultCursor::Data>(data_,fixed,std::move(fragment),options,startup);});
+   return ResultCursor(std::move(cursor));
+ }
+ SupportRuntime::ResultCursor SupportRuntime::EpochView::visible_keys(NodeId node,ResultCursorOptions options) const {
+   require(bool(data_),"invalid_snapshot","closed epoch view"); data_->readable();
+-  auto cursor=std::make_unique<ResultCursor::Data>(data_,node,options); cursor->link();
++  auto cursor=ResultCursor::Data::create(data_->group->runtime,options,ResultView::core,
++      CursorObservationSource::epoch_keys,data_->side,tentative(),sequence(),
++      [&](ResultCursorMetrics* startup){return std::make_unique<ResultCursor::Data>(data_,node,options,startup);});
+   return ResultCursor(std::move(cursor));
+ }
+ SupportRuntime::ResultCursor SupportRuntime::EpochView::visible_bucket(NodeId node,const Row& separator,ResultCursorOptions options) const {
+   require(bool(data_),"invalid_snapshot","closed epoch view"); data_->readable();
+-  auto cursor=std::make_unique<ResultCursor::Data>(data_,node,separator,options); cursor->link();
++  auto cursor=ResultCursor::Data::create(data_->group->runtime,options,ResultView::core,
++      CursorObservationSource::epoch_bucket,data_->side,tentative(),sequence(),
++      [&](ResultCursorMetrics* startup){return std::make_unique<ResultCursor::Data>(data_,node,separator,options,startup);});
+   return ResultCursor(std::move(cursor));
+ }
+ SupportRuntime::EpochView SupportRuntime::current_view(EpochViewOptions options) const {
+@@ -1326,6 +1450,20 @@
+   }
+   return total;
+ }
++std::optional<CursorObservation> SupportRuntime::last_cursor_observation() const { return impl().last_cursor; }
++CommittedStateGauges SupportRuntime::committed_state_gauges() const {
++  const auto& d=impl();d.readable();CommittedStateGauges result;
++  result.owner=d.owner.value;result.sequence=d.sequence;result.nodes.reserve(d.plan.nodes().size());
++  for(const auto& node:d.plan.nodes()){
++    NodeStateGauge value{node.id,node.kind,
++      static_cast<std::uint64_t>(d.state->storage.table(node.records).size()),
++      static_cast<std::uint64_t>(d.state->storage.table(node.survivors).size()),
++      static_cast<std::uint64_t>(d.state->storage.table(node.parent_support).size()),{}};
++    if(node.visible_relation)value.visible_factor_assignments={static_cast<std::uint64_t>(d.state->storage.table(*node.visible_relation).size()),MetricAvailability::available,false};
++    result.nodes.push_back(value);
++  }
++  return result;
++}
+ SupportSnapshot SupportRuntime::snapshot() const {
+   const auto& d=impl(); d.readable(); return d.snapshot(d.sequence);
+ }

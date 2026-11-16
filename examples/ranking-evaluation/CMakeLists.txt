@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.25)
+project(crown_ranking_evaluation_example LANGUAGES CXX)
+find_package(Crown 0.1 CONFIG REQUIRED)
+add_executable(crown_export_ranking main.cpp)
+set_target_properties(crown_export_ranking PROPERTIES CXX_EXTENSIONS OFF)
+target_link_libraries(crown_export_ranking PRIVATE CROWN::selection_runtime)
+target_compile_options(crown_export_ranking PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror)

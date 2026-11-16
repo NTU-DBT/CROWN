@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://crown.local/schemas/workload-manifest-v1.schema.json",
+  "title": "Finite reproducible query and physical set update workloads",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kind", "generator", "licenses", "regimes", "queries", "workloads", "coverage_limits", "legacy_inventory", "external_imports"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "kind": {"const": "crown_workload_manifest"},
+    "legacy_inventory": {"$ref": "#/$defs/file"},
+    "external_imports": {"$ref": "#/$defs/file"},
+    "generator": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "sha256", "seed", "scale", "query_ids", "ordering"],
+      "properties": {
+        "path": {"enum": ["tools/generate_workloads.py", "tools/generate_adversarial_workloads.py"]},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "seed": {"type": "integer", "minimum": 0, "maximum": 18446744073709551615},
+        "scale": {"type": "integer", "minimum": 1, "maximum": 8},
+        "query_ids": {"$ref": "#/$defs/names"},
+        "ordering": {"const": "UTF8_JSON_SHA256_no_runtime_random_hash"}
+      }
+    },
+    "licenses": {
+      "type": "array", "minItems": 1, "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "origin", "data_license", "project_license", "redistribution"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "origin": {"const": "new_deterministic_synthetic_records_no_external_dataset"},
+          "data_license": {"const": "no_separate_license_grant_recorded"},
+          "project_license": {"const": "A02_undecided_local_development_only"},
+          "redistribution": {"const": "not_authorized_by_this_manifest"}
+        }
+      }
+    },
+    "regimes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/regime"}},
+    "queries": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/query"}},
+    "workloads": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/workload"}},
+    "coverage_limits": {"$ref": "#/$defs/names"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "names": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "file": {
+      "type": "object", "additionalProperties": false, "required": ["path", "sha256"],
+      "properties": {"path": {"type": "string", "pattern": "^[a-zA-Z0-9_./-]+$"}, "sha256": {"$ref": "#/$defs/sha256"}}
+    },
+    "regime": {"enum": ["insert_only", "delete_after_charged_load", "global_fifo", "per_relation_fifo", "mixed", "adversarial_churn", "rate_shift"]},
+    "atom": {
+      "type": "object", "additionalProperties": false, "required": ["alias", "table", "variables"],
+      "properties": {"alias": {"type": "string", "minLength": 1}, "table": {"type": "string", "minLength": 1},
+                     "variables": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}}
+    },
+    "query": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "sql", "catalog", "semantics", "head", "output_expressions", "structure", "expected_admission", "expected_backends", "output_modes", "origin"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+        "sql": {"$ref": "#/$defs/file"}, "catalog": {"$ref": "#/$defs/file"},
+        "semantics": {
+          "type": "object", "additionalProperties": false, "required": ["input", "output", "boolean_exists"],
+          "properties": {"input": {"const": "physical_set"}, "output": {"enum": ["set", "bag", "aggregate_count"]}, "boolean_exists": {"type": "boolean"}}
+        },
+        "head": {"$ref": "#/$defs/names"}, "output_expressions": {"$ref": "#/$defs/names"},
+        "structure": {
+          "type": "object", "additionalProperties": false,
+          "required": ["atoms", "variables", "body_alpha_acyclic", "free_connex", "tags", "distribution"],
+          "properties": {
+            "atoms": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/atom"}},
+            "variables": {"$ref": "#/$defs/names"}, "body_alpha_acyclic": {"type": "boolean"}, "free_connex": {"type": "boolean"},
+            "tags": {"$ref": "#/$defs/names"}, "distribution": {"enum": ["hot_key", "coherent_distinct_keys", "loop_and_chain_keys"]}
+          }
+        },
+        "expected_admission": {"enum": ["admitted", "cyclic_body", "non_free_connex", "unsupported_semantics"]},
+        "expected_backends": {"type": "array", "uniqueItems": true, "items": {"enum": ["reference_ordered_v1", "indexed_chained_v1"]}},
+        "output_modes": {"type": "array", "uniqueItems": true, "items": {"enum": ["maintenance", "full_snapshot_each_epoch", "delta_each_epoch"]}},
+        "origin": {"const": "new_synthetic_not_a_legacy_benchmark"}
+      }
+    },
+    "workload": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "query", "regime", "events", "oracle", "events_count", "charged_load_events", "max_result_rows", "initial_state", "source_id", "update_contract", "noop_policy", "catalog_binding", "license_record", "phase_labels"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9_]+/[a-z0-9_]+$"}, "query": {"type": "string", "minLength": 1},
+        "regime": {"$ref": "#/$defs/regime"}, "events": {"$ref": "#/$defs/file"}, "oracle": {"$ref": "#/$defs/file"},
+        "events_count": {"type": "integer", "minimum": 1}, "charged_load_events": {"type": "integer", "minimum": 0},
+        "max_result_rows": {"type": "integer", "minimum": 0}, "initial_state": {"const": "empty_all_tables"},
+        "source_id": {"type": "string", "minLength": 1},
+        "update_contract": {"const": "one_ordered_atomic_physical_set_update_per_record"},
+        "noop_policy": {"const": "duplicate_insert_and_absent_delete_commit_empty_epochs"},
+        "catalog_binding": {"const": "prepare_workflow_input.py_with_native_canonical_catalog"},
+        "license_record": {"type": "string", "minLength": 1}, "phase_labels": {"$ref": "#/$defs/names"}
+      }
+    }
+  }
+}

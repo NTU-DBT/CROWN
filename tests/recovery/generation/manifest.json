@@ -1,0 +1,79 @@
+{
+  "checkpoint_sha256": "8d1a75dd2d7ffc51ab7b9552cb7d9d04e0e215b29d23f468f3b65d8c8872a03f",
+  "checksum_sha256": "9e9f4830cfff432e9b5915cf56e1bc9a0357de1d5120f51b6c3f03df4268ed11",
+  "command_sequence": 13,
+  "first_generation": 3,
+  "flags": 0,
+  "format": "CROWNGR1",
+  "generation": 7,
+  "offsets": {
+    "checkpoint_sha256": {
+      "ascii": "8d1a75dd2d7ffc51ab7b9552cb7d9d04e0e215b29d23f468f3b65d8c8872a03f",
+      "length": 64,
+      "offset": 68
+    },
+    "command_sequence": {
+      "encoding": "little-endian u64",
+      "length": 8,
+      "offset": 140,
+      "value": 13
+    },
+    "first_generation": {
+      "encoding": "little-endian u64",
+      "length": 8,
+      "offset": 60,
+      "value": 3
+    },
+    "flags": {
+      "encoding": "little-endian u16",
+      "length": 2,
+      "offset": 10,
+      "value": 0
+    },
+    "generation": {
+      "encoding": "little-endian u64",
+      "length": 8,
+      "offset": 52,
+      "value": 7
+    },
+    "magic": {
+      "ascii": "CROWNGR1",
+      "length": 8,
+      "offset": 0
+    },
+    "payload_length": {
+      "encoding": "little-endian u64",
+      "length": 8,
+      "offset": 12,
+      "value": 128
+    },
+    "physical_sequence": {
+      "encoding": "little-endian u64",
+      "length": 8,
+      "offset": 132,
+      "value": 11
+    },
+    "query_id": {
+      "ascii": "0123456789abcdef0123456789abcdef",
+      "length": 32,
+      "offset": 20
+    },
+    "record_sha256": {
+      "ascii": "9e9f4830cfff432e9b5915cf56e1bc9a0357de1d5120f51b6c3f03df4268ed11",
+      "length": 64,
+      "offset": 148
+    },
+    "version": {
+      "encoding": "little-endian u16",
+      "length": 2,
+      "offset": 8,
+      "value": 1
+    }
+  },
+  "payload_length": 128,
+  "physical_sequence": 11,
+  "query_id": "0123456789abcdef0123456789abcdef",
+  "record_sha256": "bc82d64bb74bdf4ca99958b41d9bf83d33025e15c08407b3cfceef0168543d9c",
+  "total_length": 212,
+  "version": 1
+}

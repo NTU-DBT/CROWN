@@ -1,0 +1,147 @@
+{
+  "statement": {
+    "begin": 0,
+    "end": 95
+  },
+  "ast": {
+    "version": 180006,
+    "stmts": [
+      {
+        "stmt": {
+          "SelectStmt": {
+            "targetList": [
+              {
+                "ResTarget": {
+                  "val": {
+                    "ColumnRef": {
+                      "fields": [
+                        {
+                          "String": {
+                            "sval": "region"
+                          }
+                        }
+                      ],
+                      "location": 7
+                    }
+                  },
+                  "location": 7
+                }
+              },
+              {
+                "ResTarget": {
+                  "name": "n",
+                  "val": {
+                    "FuncCall": {
+                      "funcname": [
+                        {
+                          "String": {
+                            "sval": "count"
+                          }
+                        }
+                      ],
+                      "agg_star": true,
+                      "funcformat": "COERCE_EXPLICIT_CALL",
+                      "location": 15
+                    }
+                  },
+                  "location": 15
+                }
+              }
+            ],
+            "fromClause": [
+              {
+                "RangeVar": {
+                  "relname": "orders",
+                  "inh": true,
+                  "relpersistence": "p",
+                  "location": 34
+                }
+              }
+            ],
+            "groupClause": [
+              {
+                "ColumnRef": {
+                  "fields": [
+                    {
+                      "String": {
+                        "sval": "region"
+                      }
+                    }
+                  ],
+                  "location": 50
+                }
+              }
+            ],
+            "havingClause": {
+              "A_Expr": {
+                "kind": "AEXPR_OP",
+                "name": [
+                  {
+                    "String": {
+                      "sval": ">"
+                    }
+                  }
+                ],
+                "lexpr": {
+                  "FuncCall": {
+                    "funcname": [
+                      {
+                        "String": {
+                          "sval": "count"
+                        }
+                      }
+                    ],
+                    "agg_star": true,
+                    "funcformat": "COERCE_EXPLICIT_CALL",
+                    "location": 64
+                  }
+                },
+                "rexpr": {
+                  "A_Const": {
+                    "ival": {
+                      "ival": 1
+                    },
+                    "location": 75
+                  }
+                },
+                "location": 73
+              }
+            },
+            "sortClause": [
+              {
+                "SortBy": {
+                  "node": {
+                    "ColumnRef": {
+                      "fields": [
+                        {
+                          "String": {
+                            "sval": "n"
+                          }
+                        }
+                      ],
+                      "location": 86
+                    }
+                  },
+                  "sortby_dir": "SORTBY_DEFAULT",
+                  "sortby_nulls": "SORTBY_NULLS_DEFAULT",
+                  "location": -1
+                }
+              }
+            ],
+            "limitCount": {
+              "A_Const": {
+                "ival": {
+                  "ival": 5
+                },
+                "location": 94
+              }
+            },
+            "limitOption": "LIMIT_OPTION_COUNT",
+            "op": "SETOP_NONE"
+          }
+        },
+        "stmt_len": 95
+      }
+    ]
+  }
+}

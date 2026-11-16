@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN version-1 SQL syntax result",
+  "description": "Syntax-only output from the pinned libpg_query parser. A successful parse is not semantic or query admission.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "parser", "parser_version", "postgres_version", "admission_status", "syntax_valid"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "parser": {"type": "string", "const": "libpg_query"},
+    "parser_version": {"type": "string", "const": "18.1.0"},
+    "postgres_version": {"type": "integer", "const": 180006},
+    "admission_status": {"type": "string", "const": "not_checked"},
+    "syntax_valid": {"type": "boolean"},
+    "source": {"type": "string"},
+    "statement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["begin", "end"],
+      "properties": {
+        "begin": {"type": "integer", "minimum": 0},
+        "end": {"type": "integer", "minimum": 0}
+      }
+    },
+    "ast": {
+      "type": "object",
+      "description": "Complete owned upstream parse JSON, including PostgreSQL RawStmt and all upstream location fields."
+    },
+    "diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "byte_offset", "character_position", "line", "column"],
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": ["sql_syntax_error", "empty_sql", "multiple_statements", "invalid_encoding", "resource_limit"]
+        },
+        "message": {"type": "string", "minLength": 1},
+        "byte_offset": {"type": ["integer", "null"], "minimum": 0},
+        "character_position": {"type": ["integer", "null"], "minimum": 1},
+        "line": {"type": ["integer", "null"], "minimum": 1},
+        "column": {"type": ["integer", "null"], "minimum": 1}
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "properties": {"syntax_valid": {"const": true}},
+      "required": ["source", "statement", "ast"],
+      "not": {"required": ["diagnostic"]}
+    },
+    {
+      "properties": {"syntax_valid": {"const": false}},
+      "required": ["diagnostic"],
+      "not": {
+        "anyOf": [
+          {"required": ["source"]},
+          {"required": ["statement"]},
+          {"required": ["ast"]}
+        ]
+      }
+    }
+  ]
+}

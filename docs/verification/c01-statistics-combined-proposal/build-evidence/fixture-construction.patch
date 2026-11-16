@@ -1,0 +1,11 @@
+--- docs/verification/c01-statistics-online-proposal/overlay/tests/unit/workload_statistics_fixture.hpp	2026-11-07 09:14:11.678234569 +0800
++++ docs/verification/c01-statistics-combined-proposal/overlay/tests/unit/workload_statistics_fixture.hpp	2026-11-07 09:58:24.599730253 +0800
+@@ -32,7 +32,7 @@
+   if (payload) catalog.tables[0].columns.push_back({"ignored",ScalarType::int64});
+   Query query{{{"x",ScalarType::int64},{"y",ScalarType::int64}},
+       {{"R",TableId{0},{VariableId{0},VariableId{1}}},{"S",TableId{1},{VariableId{1}}}},{{VariableId{0},"x"}},false};
+-  if (payload) query.atoms[0].terms.push_back(IgnoredColumn{});
++  if (payload) query.atoms[0].terms.emplace_back(std::in_place_type<IgnoredColumn>);
+   if (generalized) {
+     query.head={{VariableId{1},"y"}};
+     return planner::lower_tree(catalog,query,FreeConnexTree{NodeId{0},

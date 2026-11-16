@@ -1,0 +1,248 @@
+--- a/include/crown/runtime/observation.hpp
++++ b/include/crown/runtime/observation.hpp
+@@ -19,6 +19,54 @@
+   std::uint64_t sample_period = 1, sample_offset = 0;
+   bool trace_timings = true;
+   bool operator==(const ObservationOptions&) const = default;
++};
++// Forward declarations keep the observation header below the support/physical/
++// delta include chain. Definitions remain in their existing owning headers.
++enum class DeltaMode;
++enum class LiveMaintenance;
++enum class DeltaCompletion;
++enum class ResultView;
++enum class PropagationOrder;
++struct DeltaOptions;
++class DeltaRuntime;
++
++// Immutable, inline copy of all requested DeltaOptions and the resolved runtime
++// configuration. It owns no runtime, rows, allocation, clock or mutable lookup.
++// Owner/generation is process-local identity, not proof/durable authority. Once
++// generation_saturated() is true the generation is only a capped diagnostic;
++// the exact requested options and resolved mode remain available.
++class ObservationConfiguration {
++ public:
++  ObservationConfiguration(const ObservationConfiguration&) noexcept = default;
++  ObservationConfiguration& operator=(const ObservationConfiguration&) noexcept = default;
++  [[nodiscard]] static constexpr std::uint32_t format_version() noexcept { return 1; }
++  [[nodiscard]] DeltaOptions requested_options() const noexcept;
++  [[nodiscard]] DeltaMode mode() const noexcept { return resolved_mode_; }
++  [[nodiscard]] LiveMaintenance live_maintenance() const noexcept { return live_; }
++  [[nodiscard]] DeltaCompletion completion() const noexcept { return resolved_completion_; }
++  [[nodiscard]] ResultView view() const noexcept { return view_; }
++  [[nodiscard]] std::uint64_t support_owner() const noexcept { return owner_; }
++  [[nodiscard]] std::uint64_t generation() const noexcept { return generation_; }
++  [[nodiscard]] bool generation_saturated() const noexcept { return generation_saturated_; }
++  [[nodiscard]] std::size_t query_factors() const noexcept { return factors_; }
++ private:
++  friend class DeltaRuntime;
++  ObservationConfiguration() noexcept = default;
++  [[nodiscard]] static ObservationConfiguration capture(const DeltaOptions&,
++      DeltaMode,DeltaCompletion,std::uint64_t,std::uint64_t,bool,std::size_t) noexcept;
++  std::uint64_t owner_=0,generation_=0;
++  bool generation_saturated_=false;
++  std::size_t factors_=0;
++  DeltaMode requested_mode_{},resolved_mode_{};
++  LiveMaintenance live_{};
++  DeltaCompletion requested_completion_{},resolved_completion_{};
++  ResultView view_{};
++  std::optional<std::uint64_t> support_work_,physical_work_,delta_work_,cursor_work_,view_work_;
++  std::uint64_t support_limit_=0,derivation_limit_=0;
++  PropagationOrder order_{};
++  bool capture_transitions_=false;
++  ObservationOptions observation_;
++  std::size_t spool_rows_=0,spool_bytes_=0;
+ };
+ enum class ObservationLayer { support, physical, delta };
+ enum class ObservationOutcome { pending, committed, aborted };
+@@ -101,6 +149,9 @@
+   bool saturated = false;
+ };
+ struct ObservationSummary {
++  // Captured once by the outer delta begin; never relabeled by set_mode().
++  // Lower-only attempts and disabled observation have no delta configuration.
++  std::optional<ObservationConfiguration> configuration;
+   std::uint64_t attempt = 0, sequence = 0;
+   ObservationLayer owner = ObservationLayer::support;
+   ObservationOutcome outcome = ObservationOutcome::pending;
+@@ -128,6 +179,8 @@
+   std::uint64_t before = 0, after = 0, role = observation_no_id, tuple = observation_no_id;
+ };
+ struct ObservationSnapshot {
++  // Current configuration is distinct from current/last attempt binding.
++  std::optional<ObservationConfiguration> current_configuration;
+   ObservationOptions options;
+   bool mandatory_accounting = true;
+   std::uint64_t support_owner = 0;
+@@ -157,6 +210,10 @@
+   [[nodiscard]] ObservationTicket begin(ObservationLayer,std::uint64_t) noexcept;
+   void finish(ObservationTicket,ObservationOutcome) noexcept;
+   void bind_owner(std::uint64_t owner) noexcept { snapshot_.support_owner=owner; }
++  void configure(ObservationConfiguration value) noexcept { snapshot_.current_configuration=value; }
++  [[nodiscard]] const std::optional<ObservationConfiguration>& configuration() const noexcept {
++    return snapshot_.current_configuration;
++  }
+   void route(std::uint64_t occurrence,std::uint64_t prefix) noexcept {
+     occurrence_=occurrence; prefix_=prefix;
+   }
+@@ -186,6 +243,10 @@
+ // Exclusive test ownership only; nullptr restores the real steady clock.
+ using ObservationClock = std::uint64_t (*)() noexcept;
+ void set_observation_clock_for_testing(ObservationClock) noexcept;
++// Exclusive test construction override for the diagnostic generation boundary.
++// Zero restores normal initial generation. Does not mutate an existing owner.
++void set_observation_initial_generation_for_testing(std::uint64_t) noexcept;
++[[nodiscard]] std::uint64_t observation_initial_generation_for_testing() noexcept;
+ #endif
+ } // namespace detail
+ } // namespace crown::runtime
+--- a/src/runtime/delta.cpp
++++ b/src/runtime/delta.cpp
+@@ -134,6 +134,25 @@
+       if (parent) factors[*parent].children.push_back(i);
+     }
+   }
++  // Called only after successful construction or a semantic mode switch.
++  // Bootstrap runs before initial binding, with temporarily adjusted build
++  // budgets; those temporary budgets must never become the retained identity.
++  void observe_configuration(bool initial=false) noexcept {
++    if (!observation) return;
++    const auto& previous=observation->configuration();
++    if (!initial && !previous) return; // Unpublished constructor bootstrap.
++    std::uint64_t generation=initial?0:previous->generation();
++#ifdef CROWN_RUNTIME_TESTING
++    if (initial) generation=detail::observation_initial_generation_for_testing();
++#endif
++    bool saturated=initial?false:previous->generation_saturated();
++    if (!initial) {
++      if (generation==std::numeric_limits<std::uint64_t>::max()) saturated=true;
++      else ++generation;
++    }
++    observation->configure(ObservationConfiguration::capture(options,mode,
++        selected_completion,physical.owner().value,generation,saturated,factors.size()));
++  }
+   void readable() const { require(!processing,"runtime_busy","delta epoch preparation is active"); }
+   void writable() const {
+     readable(); require(!output_active && physical.ready(),"runtime_busy","query readers or committed delta output are active");
+@@ -1217,6 +1236,7 @@
+ 
+ DeltaRuntime::DeltaRuntime(PhysicalPlan plan,DeltaOptions options):impl_(std::make_shared<Impl>(std::move(plan),options)) {
+   if (options.mode==DeltaMode::delta) static_cast<void>(set_mode(DeltaMode::delta));
++  impl_->observe_configuration(true);
+ }
+ DeltaRuntime::DeltaRuntime(PhysicalRuntime physical,DeltaOptions options,BuildOptions build)
+     :impl_(std::make_shared<Impl>(std::move(physical),options)) {
+@@ -1236,6 +1256,7 @@
+     d.initialization.live_parent_rows=d.live->parent_rows;
+     d.initialization.live_child_rows=d.live->child_rows;
+   }
++  d.observe_configuration(true);
+ }
+ DeltaRuntime DeltaRuntime::initialize(PhysicalPlan plan,const Database& database,DeltaOptions options,BuildOptions build) {
+   return DeltaRuntime(PhysicalRuntime::initialize(std::move(plan),database,options.physical,build),options,build);
+@@ -1245,6 +1266,7 @@
+   auto options=d.options; options.mode=d.mode;
+   auto result=DeltaRuntime(d.physical.rebuilt(build),options,build);
+   result.impl().options=d.options;
++  result.impl().observe_configuration(true); // New owner; restore requested initial options.
+   return result;
+ }
+ const BuildMetrics& DeltaRuntime::initialization_metrics() const { return impl().initialization; }
+@@ -1309,10 +1331,13 @@
+   require(mode==DeltaMode::maintenance || mode==DeltaMode::delta,"invalid_mode","unknown delta maintenance mode");
+   DeltaMetrics metrics;
+   if (mode==d.mode) return metrics;
+-  if (mode==DeltaMode::maintenance) { d.live.reset(); d.mode=mode; return metrics; }
++  if (mode==DeltaMode::maintenance) {
++    d.live.reset(); d.mode=mode; d.observe_configuration(); return metrics;
++  }
+   auto view=d.physical.current_view(d.options.epoch_view); d.metric(metrics,metrics.view_work,view.metrics().work);
+   auto live=d.build_live(view,metrics,0); view.close();
+   d.live=std::move(live); d.live_sequence=d.physical.sequence(); d.mode=mode; d.bootstrap=metrics;
++  d.observe_configuration();
+   return metrics;
+ }
+ DeltaRuntime::PendingEpoch DeltaRuntime::begin(const PhysicalSetUpdate& update) {
+--- a/src/runtime/observation.cpp
++++ b/src/runtime/observation.cpp
+@@ -1,10 +1,55 @@
+ #include "crown/runtime/observation.hpp"
++#include "crown/runtime/delta.hpp"
++#include <type_traits>
+ #include "crown/api/error.hpp"
+ #include <algorithm>
+ #include <chrono>
+ #include <limits>
+ 
+ namespace crown::runtime {
++// These inline diagnostic values remain nonallocating through copy, unwind,
++// output release and session drop. Native options currently contain only fixed
++// scalar/optional members; keep this contract explicit when extending them.
++static_assert(std::is_trivially_copyable_v<DeltaOptions>);
++static_assert(std::is_trivially_copyable_v<ObservationConfiguration>);
++static_assert(std::is_trivially_copyable_v<ObservationSnapshot>);
++ObservationConfiguration ObservationConfiguration::capture(const DeltaOptions& options,
++    DeltaMode resolved,DeltaCompletion completion,std::uint64_t owner,
++    std::uint64_t generation,bool saturated,std::size_t factors) noexcept {
++  ObservationConfiguration result;
++  result.owner_=owner; result.generation_=generation;
++  result.generation_saturated_=saturated; result.factors_=factors;
++  result.requested_mode_=options.mode; result.resolved_mode_=resolved;
++  result.live_=options.live_maintenance; result.requested_completion_=options.completion;
++  result.resolved_completion_=completion; result.view_=options.view;
++  result.support_work_=options.physical.support.work_limit;
++  result.support_limit_=options.physical.support.support_limit;
++  result.order_=options.physical.support.order;
++  result.capture_transitions_=options.physical.support.capture_transitions;
++  result.observation_=options.physical.support.observation;
++  result.physical_work_=options.physical.work_limit;
++  result.derivation_limit_=options.physical.derivation_limit;
++  result.delta_work_=options.work_limit; result.cursor_work_=options.cursor.work_limit;
++  result.view_work_=options.epoch_view.work_limit;
++  result.spool_rows_=options.spool_row_limit; result.spool_bytes_=options.spool_byte_limit;
++  return result;
++}
++DeltaOptions ObservationConfiguration::requested_options() const noexcept {
++  DeltaOptions result;
++  result.mode=requested_mode_; result.live_maintenance=live_;
++  result.completion=requested_completion_; result.view=view_;
++  result.physical.support.work_limit=support_work_;
++  result.physical.support.support_limit=support_limit_;
++  result.physical.support.order=order_;
++  result.physical.support.capture_transitions=capture_transitions_;
++  result.physical.support.observation=observation_;
++  result.physical.work_limit=physical_work_;
++  result.physical.derivation_limit=derivation_limit_;
++  result.work_limit=delta_work_; result.cursor.work_limit=cursor_work_;
++  result.epoch_view.work_limit=view_work_;
++  result.spool_row_limit=spool_rows_; result.spool_byte_limit=spool_bytes_;
++  return result;
++}
+ namespace {
+ constexpr std::array<MetricDescriptor,observation_metric_count> registry{{
+   {MetricId::support_work, "support.work", "abstract_actions", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::counter, ""},
+@@ -72,6 +117,7 @@
+ }
+ #ifdef CROWN_RUNTIME_TESTING
+ detail::ObservationClock test_clock=nullptr;
++std::uint64_t test_initial_generation=0;
+ #endif
+ }
+ std::span<const MetricDescriptor> observation_registry() noexcept { return registry; }
+@@ -100,6 +146,7 @@
+     snapshot_.current.emplace(); occurrence_=observation_no_id; prefix_=0;
+     auto& summary=*snapshot_.current;
+     summary.attempt=snapshot_.attempts; summary.sequence=sequence; summary.owner=layer;
++    if (layer==ObservationLayer::delta) summary.configuration=snapshot_.current_configuration;
+     selected_=options_.mode==ObservationMode::trace && !snapshot_.lifetime_counts_saturated &&
+         sequence%options_.sample_period==options_.sample_offset;
+     snapshot_.trace=options_.mode!=ObservationMode::trace?TraceDisposition::disabled:
+@@ -181,6 +228,8 @@
+ }
+ #ifdef CROWN_RUNTIME_TESTING
+ void set_observation_clock_for_testing(ObservationClock clock) noexcept { test_clock=clock; }
++void set_observation_initial_generation_for_testing(std::uint64_t value) noexcept { test_initial_generation=value; }
++std::uint64_t observation_initial_generation_for_testing() noexcept { return test_initial_generation; }
+ #endif
+ } // namespace detail
+ } // namespace crown::runtime

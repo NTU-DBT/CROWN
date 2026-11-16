@@ -1,0 +1,1 @@
+SELECT DISTINCT a.id AS item FROM A AS a WHERE a.note IS NULL;

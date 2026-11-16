@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "catalog": {
+    "version": 1,
+    "tables": [
+      {
+        "name": "edge",
+        "source_schema_version": 1,
+        "columns": [
+          {
+            "name": "src",
+            "nullable": false,
+            "type": "int64"
+          },
+          {
+            "name": "dst",
+            "nullable": false,
+            "type": "int64"
+          }
+        ],
+        "constraints": [],
+        "statistics": {
+          "distinct_counts": []
+        },
+        "key_hints": []
+      }
+    ]
+  }
+}

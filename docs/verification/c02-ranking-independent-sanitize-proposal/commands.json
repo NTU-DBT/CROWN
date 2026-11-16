@@ -1,0 +1,27 @@
+{
+  "working_directory": "/home/userroot/Codex/CROWN",
+  "author_action": "compile_and_link_only",
+  "final_build_argv": [
+    "bash",
+    "docs/verification/c02-ranking-independent-tests-proposal/reproduce-build.sh",
+    "sanitize",
+    "/tmp/crown-c02-independent-sanitize-current-2",
+    "/tmp/crown-c02-baseline-coherent-sanitize-1"
+  ],
+  "root_execution_environment_overrides": {
+    "ASAN_OPTIONS": "detect_leaks=1:halt_on_error=1",
+    "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"
+  },
+  "root_executions": [
+    {
+      "name": "independent_integer",
+      "argv": ["/tmp/crown-c02-independent-sanitize-current-2/ranking_integer_independent_test"]
+    },
+    {
+      "name": "independent_public",
+      "argv": ["/tmp/crown-c02-independent-sanitize-current-2/ranking_public_independent_test", "/home/userroot/Codex/CROWN"]
+    }
+  ],
+  "author_execution_performed": false,
+  "native_acceptance": false
+}

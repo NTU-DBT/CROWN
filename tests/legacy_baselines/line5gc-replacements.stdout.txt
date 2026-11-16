@@ -1,0 +1,71 @@
+Query: line5gc
+Algorithm: Crown
+Running Time: 0 ms
+Memory Usage: 13300 kB
+Running Time: 0 ms
+Memory Usage: 13300 kB
+Running Time: 0 ms
+Memory Usage: 13300 kB
+Running Time: 0 ms
+Memory Usage: 13300 kB
+Running Time: 0 ms
+Memory Usage: 13300 kB
+(3,4) -> 1.0000
+Running Time: 0 ms
+Memory Usage: 13300 kB
+(3,4) -> 2.0000
+Running Time: 0 ms
+Memory Usage: 13300 kB
+(3,4) -> 4.0000
+Running Time: 0 ms
+Memory Usage: 13300 kB
+Running Time: 0 ms
+Memory Usage: 13300 kB
+(3,9) -> 4.0000
+Running Time: 0 ms
+Memory Usage: 13300 kB
+(3,4) -> 2.0000
+(3,9) -> 2.0000
+Running Time: 0 ms
+Memory Usage: 13300 kB
+(3,4) -> 1.0000
+(3,9) -> 1.0000
+Running Time: 0 ms
+Memory Usage: 13300 kB
+(3,4) -> 0.0000
+(3,9) -> 0.0000
+Running Time: 0 ms
+Memory Usage: 13300 kB
+(3,4) -> 1.0000
+(3,9) -> 1.0000
+Running Time: 0 ms
+Memory Usage: 13300 kB
+(3,4) -> 0.0000
+Running Time: 0 ms
+Memory Usage: 13300 kB
+(3,4) -> 1.0000
+Running Time: 0 ms
+Memory Usage: 13300 kB
+(3,9) -> 0.0000
+Running Time: 0 ms
+Memory Usage: 13300 kB
+(3,9) -> 1.0000
+Running Time: 0 ms
+Memory Usage: 13300 kB
+(3,4) -> 0.0000
+(3,9) -> 0.0000
+Running Time: 0 ms
+Memory Usage: 13300 kB
+(3,4) -> 1.0000
+(3,9) -> 1.0000
+Running Time: 0 ms
+Memory Usage: 13300 kB
+(3,9) -> 0.0000
+(3,4) -> 0.0000
+Running Time: 0 ms
+Memory Usage: 13300 kB
+(3,9) -> 1.0000
+(3,4) -> 1.0000
+Running Time: 0 ms
+Memory Usage: 13300 kB
+

@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "catalog": {
+    "version": 1,
+    "tables": [
+      {
+        "name": "edge",
+        "source_schema_version": 1,
+        "columns": [
+          {
+            "name": "src",
+            "type": "int64",
+            "nullable": false
+          },
+          {
+            "name": "dst",
+            "type": "int64",
+            "nullable": false
+          },
+          {
+            "name": "kind",
+            "type": "string",
+            "nullable": false
+          }
+        ],
+        "constraints": [],
+        "statistics": {
+          "distinct_counts": []
+        },
+        "key_hints": []
+      },
+      {
+        "name": "labels",
+        "source_schema_version": 1,
+        "columns": [
+          {
+            "name": "id",
+            "type": "int64",
+            "nullable": false
+          },
+          {
+            "name": "label",
+            "type": "string",
+            "nullable": false
+          }
+        ],
+        "constraints": [],
+        "statistics": {
+          "distinct_counts": []
+        },
+        "key_hints": []
+      }
+    ]
+  }
+}

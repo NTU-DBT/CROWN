@@ -1,0 +1,5 @@
+{"schema_version":1,"sequence":1,"catalog_version":1,"source_schema_version":1,"table":"flags","operation":"insert","source_position":{"source":"scalar-exists-input","offset":100},"values":[false]}
+{"schema_version":1,"sequence":2,"catalog_version":1,"source_schema_version":1,"table":"flags","operation":"insert","source_position":{"source":"scalar-exists-input","offset":200},"values":[true]}
+{"schema_version":1,"sequence":3,"catalog_version":1,"source_schema_version":1,"table":"flags","operation":"insert","source_position":{"source":"scalar-exists-input","offset":300},"values":[true]}
+{"schema_version":1,"sequence":4,"catalog_version":1,"source_schema_version":1,"table":"flags","operation":"delete","source_position":{"source":"scalar-exists-input","offset":400},"values":[true]}
+{"schema_version":1,"sequence":5,"catalog_version":1,"source_schema_version":1,"table":"flags","operation":"delete","source_position":{"source":"scalar-exists-input","offset":500},"values":[false]}

@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "catalog_version": 1,
+  "semantics": "set",
+  "root": "g_root",
+  "nodes": [
+    {
+      "id": "g_root",
+      "kind": "generalized",
+      "scope": ["x", "y"],
+      "children": ["right_leaf", "g_pair"]
+    },
+    {
+      "id": "right_leaf",
+      "kind": "native",
+      "scope": ["x", "y"],
+      "children": [],
+      "occurrence": "right"
+    },
+    {
+      "id": "g_pair",
+      "kind": "generalized",
+      "scope": ["x", "y"],
+      "children": ["left_leaf", "third_leaf"]
+    },
+    {
+      "id": "left_leaf",
+      "kind": "native",
+      "scope": ["x", "y"],
+      "children": [],
+      "occurrence": "left"
+    },
+    {
+      "id": "third_leaf",
+      "kind": "native",
+      "scope": ["x", "y"],
+      "children": [],
+      "occurrence": "third"
+    }
+  ]
+}
+

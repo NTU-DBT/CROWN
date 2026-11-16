@@ -1,0 +1,292 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN logical native support trace report v2",
+  "description": "Strict journal-backed diagnostic report for v1 logical native support trace input. This is not a resumable runtime checkpoint or state importer.",
+  "$ref": "#/$defs/report",
+  "$defs": {
+    "uint64": {"$ref": "support-trace-v1.schema.json#/$defs/uint64"},
+    "positive_uint64": {"$ref": "support-trace-v1.schema.json#/$defs/positive_uint64"},
+    "row": {"$ref": "support-trace-v1.schema.json#/$defs/row"},
+    "support_handle": {"$ref": "support-trace-v1.schema.json#/$defs/support_handle"},
+    "snapshot": {"$ref": "support-trace-v1.schema.json#/$defs/snapshot"},
+    "initial_snapshot": {"$ref": "support-trace-v1.schema.json#/$defs/initial_snapshot"},
+    "diagnostic": {"$ref": "support-trace-v1.schema.json#/$defs/diagnostic"},
+    "report_options": {"$ref": "support-trace-v1.schema.json#/$defs/report_options"},
+    "nullable_uint64": {
+      "oneOf": [
+        {"$ref": "#/$defs/uint64"},
+        {"type": "null"}
+      ]
+    },
+    "support_value_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["member", "satisfied_children", "child_present", "support"],
+      "properties": {
+        "member": {"type": "boolean"},
+        "satisfied_children": {"$ref": "#/$defs/nullable_uint64"},
+        "child_present": {"type": "array", "items": {"type": "boolean"}},
+        "support": {"$ref": "#/$defs/nullable_uint64"}
+      }
+    },
+    "transition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cause", "handle", "operation", "values"],
+      "properties": {
+        "cause": {"$ref": "#/$defs/uint64"},
+        "handle": {"$ref": "#/$defs/support_handle"},
+        "operation": {"type": "string", "enum": ["insert", "erase"]},
+        "values": {"$ref": "#/$defs/row"}
+      }
+    },
+    "journal_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ordinal", "cause", "handle", "values", "before", "after"],
+      "properties": {
+        "ordinal": {"$ref": "#/$defs/positive_uint64"},
+        "cause": {"$ref": "#/$defs/uint64"},
+        "handle": {"$ref": "#/$defs/support_handle"},
+        "values": {"$ref": "#/$defs/row"},
+        "before": {"$ref": "#/$defs/support_value_state"},
+        "after": {"$ref": "#/$defs/support_value_state"}
+      }
+    },
+    "propagation_event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "cause", "sequence", "applied_ordinal", "kind", "target", "child_slot",
+        "source", "operation", "values", "before", "after"
+      ],
+      "properties": {
+        "id": {"$ref": "#/$defs/positive_uint64"},
+        "cause": {"$ref": "#/$defs/uint64"},
+        "sequence": {"$ref": "#/$defs/positive_uint64"},
+        "applied_ordinal": {"$ref": "#/$defs/positive_uint64"},
+        "kind": {"type": "string", "enum": ["native_update", "child_key"]},
+        "target": {"$ref": "#/$defs/uint64"},
+        "child_slot": {"$ref": "#/$defs/nullable_uint64"},
+        "source": {"$ref": "#/$defs/support_handle"},
+        "operation": {"type": "string", "enum": ["insert", "erase"]},
+        "values": {"$ref": "#/$defs/row"},
+        "before": {"type": "boolean"},
+        "after": {"type": "boolean"}
+      }
+    },
+    "journal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "records", "events"],
+      "properties": {
+        "sequence": {"$ref": "#/$defs/positive_uint64"},
+        "records": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/journal_record"}
+        },
+        "events": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/propagation_event"}
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "work", "copied_rows", "copied_index_memberships", "copied_metadata_entries",
+        "copied_child_flags", "native_record_visits", "child_key_probes", "child_key_events",
+        "survivor_transitions", "parent_key_transitions", "visible_key_transitions",
+        "candidates_created", "candidates_reclaimed", "storage_changes", "metadata_changes",
+        "saved_child_flags", "journal_records", "events_enqueued", "events_applied", "queue_peak"
+      ],
+      "properties": {
+        "work": {"$ref": "#/$defs/uint64"},
+        "copied_rows": {"const": 0},
+        "copied_index_memberships": {"const": 0},
+        "copied_metadata_entries": {"const": 0},
+        "copied_child_flags": {"const": 0},
+        "native_record_visits": {"$ref": "#/$defs/uint64"},
+        "child_key_probes": {"$ref": "#/$defs/uint64"},
+        "child_key_events": {"$ref": "#/$defs/uint64"},
+        "survivor_transitions": {"$ref": "#/$defs/uint64"},
+        "parent_key_transitions": {"$ref": "#/$defs/uint64"},
+        "visible_key_transitions": {"$ref": "#/$defs/uint64"},
+        "candidates_created": {"$ref": "#/$defs/uint64"},
+        "candidates_reclaimed": {"$ref": "#/$defs/uint64"},
+        "storage_changes": {"$ref": "#/$defs/uint64"},
+        "metadata_changes": {"$ref": "#/$defs/uint64"},
+        "saved_child_flags": {"$ref": "#/$defs/uint64"},
+        "journal_records": {"$ref": "#/$defs/uint64"},
+        "events_enqueued": {"$ref": "#/$defs/uint64"},
+        "events_applied": {"$ref": "#/$defs/uint64"},
+        "queue_peak": {"$ref": "#/$defs/uint64"}
+      }
+    },
+    "effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "native_changed", "has_answer", "transitions", "metrics", "journal"],
+      "properties": {
+        "sequence": {"$ref": "#/$defs/positive_uint64"},
+        "native_changed": {"type": "boolean"},
+        "has_answer": {"type": "boolean"},
+        "transitions": {"type": "array", "items": {"$ref": "#/$defs/transition"}},
+        "metrics": {"$ref": "#/$defs/metrics"},
+        "journal": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/$defs/journal"}
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"native_changed": {"const": false}}, "required": ["native_changed"]},
+          "then": {
+            "properties": {
+              "transitions": {"maxItems": 0},
+              "metrics": {
+                "properties": {
+                  "work": {"const": 0},
+                  "native_record_visits": {"const": 0},
+                  "child_key_probes": {"const": 0},
+                  "child_key_events": {"const": 0},
+                  "survivor_transitions": {"const": 0},
+                  "parent_key_transitions": {"const": 0},
+                  "visible_key_transitions": {"const": 0},
+                  "candidates_created": {"const": 0},
+                  "candidates_reclaimed": {"const": 0},
+                  "storage_changes": {"const": 0},
+                  "metadata_changes": {"const": 0},
+                  "saved_child_flags": {"const": 0},
+                  "journal_records": {"const": 0},
+                  "events_enqueued": {"const": 0},
+                  "events_applied": {"const": 0},
+                  "queue_peak": {"const": 0}
+                }
+              },
+              "journal": {"type": "null"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"native_changed": {"const": true}}, "required": ["native_changed"]},
+          "then": {
+            "properties": {
+              "metrics": {
+                "properties": {
+                  "storage_changes": {"minimum": 1},
+                  "journal_records": {"minimum": 1},
+                  "events_enqueued": {"minimum": 1},
+                  "events_applied": {"minimum": 1}
+                }
+              },
+              "journal": {"$ref": "#/$defs/journal"}
+            }
+          }
+        }
+      ]
+    },
+    "epoch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["effect", "state"],
+      "properties": {
+        "effect": {"$ref": "#/$defs/effect"},
+        "state": {"$ref": "#/$defs/snapshot"}
+      }
+    },
+    "report": {
+      "title": "CROWN logical native support trace report v2",
+      "description": "Journal-backed diagnostic effects and owning snapshots; input remains logical native support trace v1. This is not a resumable runtime checkpoint or state importer.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version", "backend", "update_contract", "physical_sha256", "options",
+        "status", "diagnostic", "rejected_sequence", "initial", "epochs", "final"
+      ],
+      "properties": {
+        "schema_version": {"type": "integer", "const": 2},
+        "backend": {"type": "string", "const": "reference_incremental_journal"},
+        "update_contract": {"type": "string", "const": "logical_native_set"},
+        "physical_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "options": {"$ref": "#/$defs/report_options"},
+        "status": {"type": "string", "enum": ["complete", "update_rejected"]},
+        "diagnostic": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/$defs/diagnostic"}
+          ]
+        },
+        "rejected_sequence": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/$defs/positive_uint64"}
+          ]
+        },
+        "initial": {"$ref": "#/$defs/initial_snapshot"},
+        "epochs": {"type": "array", "items": {"$ref": "#/$defs/epoch"}},
+        "final": {"$ref": "#/$defs/snapshot"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "complete"}}, "required": ["status"]},
+          "then": {"properties": {"diagnostic": {"type": "null"}, "rejected_sequence": {"type": "null"}}}
+        },
+        {
+          "if": {"properties": {"status": {"const": "update_rejected"}}, "required": ["status"]},
+          "then": {
+            "properties": {
+              "diagnostic": {"$ref": "#/$defs/diagnostic"},
+              "rejected_sequence": {"$ref": "#/$defs/positive_uint64"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"options": {"properties": {"capture_transitions": {"const": false}}, "required": ["capture_transitions"]}}, "required": ["options"]},
+          "then": {
+            "properties": {
+              "epochs": {
+                "items": {
+                  "properties": {
+                    "effect": {
+                      "properties": {
+                        "journal": {
+                          "properties": {"events": {"maxItems": 0}}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {"properties": {"options": {"properties": {"capture_transitions": {"const": true}}, "required": ["capture_transitions"]}}, "required": ["options"]},
+          "then": {
+            "properties": {
+              "epochs": {
+                "items": {
+                  "properties": {
+                    "effect": {
+                      "allOf": [
+                        {
+                          "if": {"properties": {"native_changed": {"const": true}}, "required": ["native_changed"]},
+                          "then": {"properties": {"journal": {"properties": {"events": {"minItems": 1}}}}}
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

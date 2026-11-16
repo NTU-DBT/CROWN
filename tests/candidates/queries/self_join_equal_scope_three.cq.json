@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "semantics": "set",
+  "catalog": {
+    "version": 1,
+    "tables": [
+      {
+        "name": "Edge",
+        "columns": [
+          {"name": "c0", "type": "string"},
+          {"name": "c1", "type": "string"}
+        ]
+      }
+    ]
+  },
+  "query": {
+    "variables": [
+      {"name": "x", "type": "string"},
+      {"name": "y", "type": "string"}
+    ],
+    "atoms": [
+      {"id": "left", "table": "Edge", "terms": [{"var": "x"}, {"var": "y"}]},
+      {"id": "right", "table": "Edge", "terms": [{"var": "x"}, {"var": "y"}]},
+      {"id": "third", "table": "Edge", "terms": [{"var": "x"}, {"var": "y"}]}
+    ],
+    "head": [
+      {"var": "x"},
+      {"var": "y"}
+    ]
+  }
+}
+

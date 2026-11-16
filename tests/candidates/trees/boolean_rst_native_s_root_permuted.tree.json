@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "catalog_version": 1,
+  "semantics": "set",
+  "root": "display_s_root",
+  "nodes": [
+    {
+      "id": "display_t_leaf",
+      "kind": "native",
+      "scope": ["y"],
+      "children": [],
+      "occurrence": "T"
+    },
+    {
+      "id": "display_r_leaf",
+      "kind": "native",
+      "scope": ["x"],
+      "children": [],
+      "occurrence": "R"
+    },
+    {
+      "id": "display_s_root",
+      "kind": "native",
+      "scope": ["y", "x"],
+      "children": ["display_t_leaf", "display_r_leaf"],
+      "occurrence": "S"
+    }
+  ]
+}
+

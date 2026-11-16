@@ -1,0 +1,27 @@
+{
+  "scope": "source-level causal probe preparation; root execution pending",
+  "compiler_commands_started_by_author": 1,
+  "compiler_commands_rejected_before_launch": 1,
+  "completed_compile": {
+    "name": "gcc-default-compile",
+    "session_id": 61484,
+    "exit_code": 0,
+    "log_bytes": 0,
+    "object": "/tmp/crown-c02-allocation-variance-1/gcc-default.o",
+    "object_sha256": "d5f45dfd2fae337ba0d177fde11fd5c647631306af4929cb4fa93d0bc27059ed",
+    "dependency_file": "/tmp/crown-c02-allocation-variance-1/gcc-default.o.d",
+    "dependency_file_sha256": "bccd113e32a3f85190c08064b62ec6abaa37d58b2cf6a8e1c03511dcd24c4dbb",
+    "actual_dependency_files": 365
+  },
+  "known_precompile_input_pins": 94,
+  "known_precompile_pins_stable_after_compile": true,
+  "remaining_compile_commands": ["clang-default-compile", "gcc-lower-compile", "clang-lower-compile"],
+  "remaining_link_commands": ["gcc-default-link", "clang-default-link", "gcc-lower-link", "clang-lower-link"],
+  "root_run_commands": 4,
+  "binaries_executed_by_author": 0,
+  "persistent_fault_sweeps_executed_by_author": 0,
+  "allocation_difference_approved": false,
+  "compiler_bug_claimed": false,
+  "semantic_equivalence_inferred_from_counts": false,
+  "native_files_changed": false
+}

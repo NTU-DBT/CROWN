@@ -1,0 +1,9 @@
+{"schema_version":1,"sequence":1,"catalog_version":1,"source_schema_version":1,"table":"left_rel","operation":"insert","source_position":{"source":"disconnected-product-input","offset":100},"values":["alpha"]}
+{"schema_version":1,"sequence":2,"catalog_version":1,"source_schema_version":1,"table":"right_rel","operation":"insert","source_position":{"source":"disconnected-product-input","offset":200},"values":["x"]}
+{"schema_version":1,"sequence":3,"catalog_version":1,"source_schema_version":1,"table":"left_rel","operation":"insert","source_position":{"source":"disconnected-product-input","offset":300},"values":["beta"]}
+{"schema_version":1,"sequence":4,"catalog_version":1,"source_schema_version":1,"table":"right_rel","operation":"insert","source_position":{"source":"disconnected-product-input","offset":400},"values":["y"]}
+{"schema_version":1,"sequence":5,"catalog_version":1,"source_schema_version":1,"table":"right_rel","operation":"delete","source_position":{"source":"disconnected-product-input","offset":500},"values":["x"]}
+{"schema_version":1,"sequence":6,"catalog_version":1,"source_schema_version":1,"table":"left_rel","operation":"delete","source_position":{"source":"disconnected-product-input","offset":600},"values":["alpha"]}
+{"schema_version":1,"sequence":7,"catalog_version":1,"source_schema_version":1,"table":"left_rel","operation":"delete","source_position":{"source":"disconnected-product-input","offset":700},"values":["alpha"]}
+{"schema_version":1,"sequence":8,"catalog_version":1,"source_schema_version":1,"table":"left_rel","operation":"insert","source_position":{"source":"disconnected-product-input","offset":800},"values":["gamma"]}
+{"schema_version":1,"sequence":9,"catalog_version":1,"source_schema_version":1,"table":"right_rel","operation":"delete","source_position":{"source":"disconnected-product-input","offset":900},"values":["y"]}

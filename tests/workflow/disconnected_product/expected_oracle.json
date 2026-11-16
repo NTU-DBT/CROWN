@@ -1,0 +1,353 @@
+{
+  "schema_version": 1,
+  "query": "disconnected_product",
+  "oracle_definition": "Disconnected two-relation product with ordered events, growth, shrinkage, and empty no-op epochs.",
+  "initial_current_rows": [],
+  "events": [
+    {
+      "sequence": 1,
+      "source_position": {
+        "source": "disconnected-product-input",
+        "offset": 100
+      },
+      "input": {
+        "table": "left_rel",
+        "operation": "insert",
+        "values": [
+          "alpha"
+        ]
+      },
+      "current_rows": [],
+      "added": [],
+      "removed": [],
+      "signed_delta": []
+    },
+    {
+      "sequence": 2,
+      "source_position": {
+        "source": "disconnected-product-input",
+        "offset": 200
+      },
+      "input": {
+        "table": "right_rel",
+        "operation": "insert",
+        "values": [
+          "x"
+        ]
+      },
+      "current_rows": [
+        [
+          "alpha",
+          "x"
+        ]
+      ],
+      "added": [
+        [
+          "alpha",
+          "x"
+        ]
+      ],
+      "removed": [],
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            "alpha",
+            "x"
+          ]
+        }
+      ]
+    },
+    {
+      "sequence": 3,
+      "source_position": {
+        "source": "disconnected-product-input",
+        "offset": 300
+      },
+      "input": {
+        "table": "left_rel",
+        "operation": "insert",
+        "values": [
+          "beta"
+        ]
+      },
+      "current_rows": [
+        [
+          "alpha",
+          "x"
+        ],
+        [
+          "beta",
+          "x"
+        ]
+      ],
+      "added": [
+        [
+          "beta",
+          "x"
+        ]
+      ],
+      "removed": [],
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            "beta",
+            "x"
+          ]
+        }
+      ]
+    },
+    {
+      "sequence": 4,
+      "source_position": {
+        "source": "disconnected-product-input",
+        "offset": 400
+      },
+      "input": {
+        "table": "right_rel",
+        "operation": "insert",
+        "values": [
+          "y"
+        ]
+      },
+      "current_rows": [
+        [
+          "alpha",
+          "x"
+        ],
+        [
+          "alpha",
+          "y"
+        ],
+        [
+          "beta",
+          "x"
+        ],
+        [
+          "beta",
+          "y"
+        ]
+      ],
+      "added": [
+        [
+          "alpha",
+          "y"
+        ],
+        [
+          "beta",
+          "y"
+        ]
+      ],
+      "removed": [],
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            "alpha",
+            "y"
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            "beta",
+            "y"
+          ]
+        }
+      ]
+    },
+    {
+      "sequence": 5,
+      "source_position": {
+        "source": "disconnected-product-input",
+        "offset": 500
+      },
+      "input": {
+        "table": "right_rel",
+        "operation": "delete",
+        "values": [
+          "x"
+        ]
+      },
+      "current_rows": [
+        [
+          "alpha",
+          "y"
+        ],
+        [
+          "beta",
+          "y"
+        ]
+      ],
+      "added": [],
+      "removed": [
+        [
+          "alpha",
+          "x"
+        ],
+        [
+          "beta",
+          "x"
+        ]
+      ],
+      "signed_delta": [
+        {
+          "operation": "delete",
+          "values": [
+            "alpha",
+            "x"
+          ]
+        },
+        {
+          "operation": "delete",
+          "values": [
+            "beta",
+            "x"
+          ]
+        }
+      ]
+    },
+    {
+      "sequence": 6,
+      "source_position": {
+        "source": "disconnected-product-input",
+        "offset": 600
+      },
+      "input": {
+        "table": "left_rel",
+        "operation": "delete",
+        "values": [
+          "alpha"
+        ]
+      },
+      "current_rows": [
+        [
+          "beta",
+          "y"
+        ]
+      ],
+      "added": [],
+      "removed": [
+        [
+          "alpha",
+          "y"
+        ]
+      ],
+      "signed_delta": [
+        {
+          "operation": "delete",
+          "values": [
+            "alpha",
+            "y"
+          ]
+        }
+      ]
+    },
+    {
+      "sequence": 7,
+      "source_position": {
+        "source": "disconnected-product-input",
+        "offset": 700
+      },
+      "input": {
+        "table": "left_rel",
+        "operation": "delete",
+        "values": [
+          "alpha"
+        ]
+      },
+      "current_rows": [
+        [
+          "beta",
+          "y"
+        ]
+      ],
+      "added": [],
+      "removed": [],
+      "signed_delta": []
+    },
+    {
+      "sequence": 8,
+      "source_position": {
+        "source": "disconnected-product-input",
+        "offset": 800
+      },
+      "input": {
+        "table": "left_rel",
+        "operation": "insert",
+        "values": [
+          "gamma"
+        ]
+      },
+      "current_rows": [
+        [
+          "beta",
+          "y"
+        ],
+        [
+          "gamma",
+          "y"
+        ]
+      ],
+      "added": [
+        [
+          "gamma",
+          "y"
+        ]
+      ],
+      "removed": [],
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            "gamma",
+            "y"
+          ]
+        }
+      ]
+    },
+    {
+      "sequence": 9,
+      "source_position": {
+        "source": "disconnected-product-input",
+        "offset": 900
+      },
+      "input": {
+        "table": "right_rel",
+        "operation": "delete",
+        "values": [
+          "y"
+        ]
+      },
+      "current_rows": [],
+      "added": [],
+      "removed": [
+        [
+          "beta",
+          "y"
+        ],
+        [
+          "gamma",
+          "y"
+        ]
+      ],
+      "signed_delta": [
+        {
+          "operation": "delete",
+          "values": [
+            "beta",
+            "y"
+          ]
+        },
+        {
+          "operation": "delete",
+          "values": [
+            "gamma",
+            "y"
+          ]
+        }
+      ]
+    }
+  ]
+}

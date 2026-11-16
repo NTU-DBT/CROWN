@@ -1,0 +1,1 @@
+SELECT DISTINCT NULL AS null_value;

@@ -1,0 +1,66 @@
+{
+  "kind": "corrected literal fixture revision; preparatory evidence, not O07 acceptance",
+  "status": "ready_for_root_execution",
+  "revision_reason": "Root cursor attempt 1 showed that prior insert (3,30) joined existing (20,3). This revision uses disjoint (99,100) for rollback, insert, no-op and delete gauge operations.",
+  "cursor_proposal_package_sha256": "5dcd916bda78bbe1bef6047a65b4a1fa7ef6ad405ee54877c8033b818d3b8259",
+  "previous_packet_preserved": {
+    "directory": "docs/verification/o07-cursor-observation-test-proposal",
+    "README.md": "174a6594afc46bc6f57f1834d97fe19a4496d27091934a0cae1d443030db3cc4",
+    "cursor_observation_test.cpp": "ff8a0aefa3e6759535e95b70b5d29ce70a994bda13a656feaeabc4df0e290387",
+    "verify_cursor_observation_output.py": "b25ee859ffba420a7164f3a4061007d8e1a077ea7b903b295e9415fe44ad2cb47",
+    "readiness.json": "3516dca2bca29a46d8e8c0bf15774a7cb50ab695f601b5d59c7ac7d899e7a2d6"
+  },
+  "execution_by_author": false,
+  "native_source_or_build_changes": false,
+  "files": {
+    "README.md": "ccbfb59ec3acccad12d8e2fee6fbf1074a28170a93a2f5d3ae46b1f318a078a8",
+    "cursor_observation_test.cpp": "e3a83de87c2cca64b0de5590984523dd36f48d4e8a0c27c6bd8a58208d659a2b",
+    "verify_cursor_observation_output.py": "61920761b7159e4bfdcbe22372aa1c69b783adf78ba79dc8ae1c8bfe2003491e"
+  },
+  "compiler_evidence": {
+    "kind": "strict C++23 compile and static link only; no executable or Python execution",
+    "testing_macro": "CROWN_RUNTIME_TESTING",
+    "optimization": "-O0",
+    "warnings": [
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-Wconversion",
+      "-Wsign-conversion",
+      "-Werror"
+    ],
+    "include_precedence": [
+      "docs/verification/o07-cursor-observation-proposal/overlay/include",
+      "docs/verification/o07-run-context-proposal/overlay/include",
+      "docs/verification/o07-mode-binding-proposal/overlay/include",
+      "docs/verification/o07-runtime-proposal/overlay/include",
+      "docs/verification/o07-explain-proposal/overlay/include",
+      "include",
+      "tests/reference",
+      "third_party (system include)"
+    ],
+    "test_object": "/tmp/crown-o07-cursor-observation-test-fixture-link-20261107-a1/cursor_observation_test.o",
+    "test_object_sha256": "d8bde902559a2044e06870e7372b3d4ebec174680b08613d28228b6fce4fc372",
+    "dependency_file": "/tmp/crown-o07-cursor-observation-test-fixture-link-20261107-a1/cursor_observation_test.d",
+    "dependency_file_sha256": "da436f6f15895687ed5bddb5f3f40054d00d5e1857de249ea247acd1cebd5f66",
+    "linked_binary": "/tmp/crown-o07-cursor-observation-test-fixture-link-20261107-a1/cursor_observation_test",
+    "linked_binary_sha256": "ebe32f2f4dbb4ae5abb3b235a600466922cbc85820ae19c437e723d203bdc9bb"
+  },
+  "link_inputs": {
+    "/tmp/crown-o07-cursor-observation-report-testing/0.o": "22f3e58da968005327e5e74caee0c3f1785d1f662a0be06fb887160220a7ee33",
+    "/tmp/crown-o07-cursor-observation-testing/libcrown_runtime_o07_cursor_observation.a": "4b4cb914e289172266ac25aeaafae0657872d02c07a92dafec6c8d682291159c",
+    "/home/userroot/Codex/CROWN/build/release/libcrown_reference.a": "035a204d7e00355b7f14e94255f8d77688f43a5688aabba898f6cedfd43f39f5",
+    "/home/userroot/Codex/CROWN/build/release/libcrown_plan.a": "92a96fd0f01ade3862fb4fbbabe316337719f71eb43361f5eb6b250cdfe04d6a",
+    "/home/userroot/Codex/CROWN/build/release/libcrown_sql.a": "6ba92b30615a1b35c7b499d1067647be49be47757b8ee58cb1098c65d275d26e",
+    "/home/userroot/Codex/CROWN/build/release/_deps/libpg_query/libpg_query-18.1.0/libpg_query.a": "c254ea2e05708d5cf5e8526bad19d69d314d05a9af4f7a8b0be4b08e069e2174",
+    "/home/userroot/Codex/CROWN/build/release/libcrown_core.a": "784b820ff9284ad75033552056fd2a81113f7eb54be5db56959f31ce778bcf9d"
+  },
+  "planned_root_run_output": "/tmp/crown-o07-cursor-observation-test-fixture-run/runtime-output.json",
+  "external_python_dependencies": [],
+  "scope_notes": [
+    "All reported cursor observations and committed-state gauges are copied from actual runtime API results.",
+    "The Python companion checks JSON shape and literal registry/availability rules using only the standard library.",
+    "The C++ source emits per-group stderr completion markers after clearing test-only allocator, clock and generation overrides.",
+    "The executable and Python checker were not run by the author. Persistent allocation failure is injected at the first allocation for startup and next, not swept over every allocation index."
+  ]
+}

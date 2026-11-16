@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN physical lowering options v1",
+  "description": "Serialized lowering policy and producer work limits. A reader's host limits independently cap replay and cannot be raised by these stored values.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "policy", "limits"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "policy": {"$ref": "#/$defs/policy"},
+    "limits": {"$ref": "#/$defs/limits"}
+  },
+  "$defs": {
+    "uint64": {"$ref": "sql-normalization-v2.schema.json#/$defs/uint64"},
+    "nullable_uint64": {
+      "oneOf": [
+        {"$ref": "#/$defs/uint64"},
+        {"type": "null"}
+      ]
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["arithmetic", "planner", "optimization", "cost_model"],
+      "properties": {
+        "arithmetic": {"type": "string", "const": "exact-nonnull-v1"},
+        "planner": {"type": "string", "minLength": 1, "default": "crown-tree-v1"},
+        "optimization": {"type": "string", "minLength": 1, "default": "structural-height-v1"},
+        "cost_model": {"type": "string", "minLength": 1, "default": "no-cost-v1"}
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["work", "identity_work"],
+      "properties": {
+        "work": {"$ref": "#/$defs/nullable_uint64", "default": 1000000},
+        "identity_work": {"$ref": "#/$defs/nullable_uint64", "default": 1000000}
+      }
+    }
+  }
+}

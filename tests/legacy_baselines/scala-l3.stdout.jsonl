@@ -1,0 +1,23 @@
+{"event":1,"delta_base64":"","rows":[]}
+{"event":2,"delta_base64":"","rows":[]}
+{"event":3,"delta_base64":"KyAoRCw0KSAsIChBLDEpICwgKEIsMikgLCAoQywzKQo=","rows":[[1,2,3,4]]}
+{"event":4,"delta_base64":"KyAoQSwwKSAsIChELDQpICwgKEIsMikgLCAoQywzKQo=","rows":[[0,2,3,4],[1,2,3,4]]}
+{"event":5,"delta_base64":"","rows":[[0,2,3,4],[1,2,3,4]]}
+{"event":6,"delta_base64":"","rows":[[0,2,3,4],[1,2,3,4]]}
+{"event":7,"delta_base64":"KyAoRCw2KSAsIChBLDEpICwgKEIsMikgLCAoQyw1KQorIChELDcpICwgKEEsMSkgLCAoQiwyKSAsIChDLDUpCisgKEQsNikgLCAoQSwwKSAsIChCLDIpICwgKEMsNSkKKyAoRCw3KSAsIChBLDApICwgKEIsMikgLCAoQyw1KQo=","rows":[[0,2,3,4],[0,2,5,6],[0,2,5,7],[1,2,3,4],[1,2,5,6],[1,2,5,7]]}
+{"event":8,"delta_base64":"LSAoQSwwKSAsIChELDYpICwgKEIsMikgLCAoQyw1KQotIChBLDApICwgKEQsNykgLCAoQiwyKSAsIChDLDUpCi0gKEEsMCkgLCAoRCw0KSAsIChCLDIpICwgKEMsMykK","rows":[[1,2,3,4],[1,2,5,6],[1,2,5,7]]}
+{"event":9,"delta_base64":"LSAoRCw0KSAsIChBLDEpICwgKEIsMikgLCAoQywzKQo=","rows":[[1,2,5,6],[1,2,5,7]]}
+{"event":10,"delta_base64":"LSAoRCw2KSAsIChBLDEpICwgKEIsMikgLCAoQyw1KQo=","rows":[[1,2,5,7]]}
+{"event":11,"delta_base64":"LSAoRCw3KSAsIChBLDEpICwgKEIsMikgLCAoQyw1KQo=","rows":[]}
+{"event":12,"delta_base64":"","rows":[]}
+{"event":13,"delta_base64":"","rows":[]}
+{"event":14,"delta_base64":"","rows":[]}
+{"event":15,"delta_base64":"","rows":[]}
+{"event":16,"delta_base64":"","rows":[]}
+{"event":17,"delta_base64":"KyAoRCwtNCkgLCAoQSwtMSkgLCAoQiwtMikgLCAoQywtMykK","rows":[[-1,-2,-3,-4]]}
+{"event":18,"delta_base64":"KyAoRCwtNSkgLCAoQSwtMSkgLCAoQiwtMikgLCAoQywtMykK","rows":[[-1,-2,-3,-4],[-1,-2,-3,-5]]}
+{"event":19,"delta_base64":"LSAoRCwtNCkgLCAoQSwtMSkgLCAoQiwtMikgLCAoQywtMykK","rows":[[-1,-2,-3,-5]]}
+{"event":20,"delta_base64":"LSAoRCwtNSkgLCAoQSwtMSkgLCAoQiwtMikgLCAoQywtMykK","rows":[]}
+{"event":21,"delta_base64":"KyAoRCwtNSkgLCAoQSwtMSkgLCAoQiwtMikgLCAoQywtMykK","rows":[[-1,-2,-3,-5]]}
+{"event":22,"delta_base64":"LSAoRCwtNSkgLCAoQSwtMSkgLCAoQiwtMikgLCAoQywtMykK","rows":[]}
+Process Function L3ProcessFunction Parallelism 0 StartTime 857153972496735 EndTime 857154138452743 Difference 165956008 AccumulateTime 59786476 EnumerationTime 0, StorageTime 0

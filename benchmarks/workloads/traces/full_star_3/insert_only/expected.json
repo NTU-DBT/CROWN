@@ -1,0 +1,760 @@
+{
+  "epochs": [
+    {
+      "current_rows": [],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 1,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 2,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 3,
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            7,
+            14,
+            21
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21
+        ],
+        [
+          0,
+          8,
+          14,
+          21
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 4,
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            8,
+            14,
+            21
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21
+        ],
+        [
+          0,
+          7,
+          15,
+          21
+        ],
+        [
+          0,
+          8,
+          14,
+          21
+        ],
+        [
+          0,
+          8,
+          15,
+          21
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 5,
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            7,
+            15,
+            21
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            8,
+            15,
+            21
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21
+        ],
+        [
+          0,
+          7,
+          14,
+          22
+        ],
+        [
+          0,
+          7,
+          15,
+          21
+        ],
+        [
+          0,
+          7,
+          15,
+          22
+        ],
+        [
+          0,
+          8,
+          14,
+          21
+        ],
+        [
+          0,
+          8,
+          14,
+          22
+        ],
+        [
+          0,
+          8,
+          15,
+          21
+        ],
+        [
+          0,
+          8,
+          15,
+          22
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 6,
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            7,
+            14,
+            22
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            7,
+            15,
+            22
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            8,
+            14,
+            22
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            8,
+            15,
+            22
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21
+        ],
+        [
+          0,
+          7,
+          14,
+          22
+        ],
+        [
+          0,
+          7,
+          15,
+          21
+        ],
+        [
+          0,
+          7,
+          15,
+          22
+        ],
+        [
+          0,
+          8,
+          14,
+          21
+        ],
+        [
+          0,
+          8,
+          14,
+          22
+        ],
+        [
+          0,
+          8,
+          15,
+          21
+        ],
+        [
+          0,
+          8,
+          15,
+          22
+        ],
+        [
+          0,
+          9,
+          14,
+          21
+        ],
+        [
+          0,
+          9,
+          14,
+          22
+        ],
+        [
+          0,
+          9,
+          15,
+          21
+        ],
+        [
+          0,
+          9,
+          15,
+          22
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 7,
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            9,
+            14,
+            21
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            9,
+            14,
+            22
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            9,
+            15,
+            21
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            9,
+            15,
+            22
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21
+        ],
+        [
+          0,
+          7,
+          14,
+          22
+        ],
+        [
+          0,
+          7,
+          15,
+          21
+        ],
+        [
+          0,
+          7,
+          15,
+          22
+        ],
+        [
+          0,
+          7,
+          16,
+          21
+        ],
+        [
+          0,
+          7,
+          16,
+          22
+        ],
+        [
+          0,
+          8,
+          14,
+          21
+        ],
+        [
+          0,
+          8,
+          14,
+          22
+        ],
+        [
+          0,
+          8,
+          15,
+          21
+        ],
+        [
+          0,
+          8,
+          15,
+          22
+        ],
+        [
+          0,
+          8,
+          16,
+          21
+        ],
+        [
+          0,
+          8,
+          16,
+          22
+        ],
+        [
+          0,
+          9,
+          14,
+          21
+        ],
+        [
+          0,
+          9,
+          14,
+          22
+        ],
+        [
+          0,
+          9,
+          15,
+          21
+        ],
+        [
+          0,
+          9,
+          15,
+          22
+        ],
+        [
+          0,
+          9,
+          16,
+          21
+        ],
+        [
+          0,
+          9,
+          16,
+          22
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 8,
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            7,
+            16,
+            21
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            7,
+            16,
+            22
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            8,
+            16,
+            21
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            8,
+            16,
+            22
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            9,
+            16,
+            21
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            9,
+            16,
+            22
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21
+        ],
+        [
+          0,
+          7,
+          14,
+          22
+        ],
+        [
+          0,
+          7,
+          14,
+          23
+        ],
+        [
+          0,
+          7,
+          15,
+          21
+        ],
+        [
+          0,
+          7,
+          15,
+          22
+        ],
+        [
+          0,
+          7,
+          15,
+          23
+        ],
+        [
+          0,
+          7,
+          16,
+          21
+        ],
+        [
+          0,
+          7,
+          16,
+          22
+        ],
+        [
+          0,
+          7,
+          16,
+          23
+        ],
+        [
+          0,
+          8,
+          14,
+          21
+        ],
+        [
+          0,
+          8,
+          14,
+          22
+        ],
+        [
+          0,
+          8,
+          14,
+          23
+        ],
+        [
+          0,
+          8,
+          15,
+          21
+        ],
+        [
+          0,
+          8,
+          15,
+          22
+        ],
+        [
+          0,
+          8,
+          15,
+          23
+        ],
+        [
+          0,
+          8,
+          16,
+          21
+        ],
+        [
+          0,
+          8,
+          16,
+          22
+        ],
+        [
+          0,
+          8,
+          16,
+          23
+        ],
+        [
+          0,
+          9,
+          14,
+          21
+        ],
+        [
+          0,
+          9,
+          14,
+          22
+        ],
+        [
+          0,
+          9,
+          14,
+          23
+        ],
+        [
+          0,
+          9,
+          15,
+          21
+        ],
+        [
+          0,
+          9,
+          15,
+          22
+        ],
+        [
+          0,
+          9,
+          15,
+          23
+        ],
+        [
+          0,
+          9,
+          16,
+          21
+        ],
+        [
+          0,
+          9,
+          16,
+          22
+        ],
+        [
+          0,
+          9,
+          16,
+          23
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 9,
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            7,
+            14,
+            23
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            7,
+            15,
+            23
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            7,
+            16,
+            23
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            8,
+            14,
+            23
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            8,
+            15,
+            23
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            8,
+            16,
+            23
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            9,
+            14,
+            23
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            9,
+            15,
+            23
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            9,
+            16,
+            23
+          ]
+        }
+      ]
+    }
+  ],
+  "initial_rows": [],
+  "oracle": "independent_relational_and_sqlite",
+  "query": "full_star_3",
+  "schema_version": 1
+}

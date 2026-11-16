@@ -1,0 +1,132 @@
+ctest	status	variant	library_or_existing_command	source	selection
+planner_candidates	retained	unchanged	crown_planner_candidates_test "${CMAKE_CURRENT_SOURCE_DIR}/tests/candidates"	unchanged	unchanged
+planner_candidate_exceptions	retained	unchanged	crown_planner_candidates_exception_test	unchanged	unchanged
+planner_residual	retained	unchanged	crown_planner_residual_test	unchanged	unchanged
+planner_residual_exceptions	retained	unchanged	crown_planner_residual_exception_test	unchanged	unchanged
+planner_continuations	retained	unchanged	crown_planner_continuation_test	unchanged	unchanged
+planner_continuation_exceptions	retained	unchanged	crown_planner_continuation_exception_test	unchanged	unchanged
+planner_continuation_edges	retained	unchanged	crown_planner_continuation_edge_test	unchanged	unchanged
+planner_certificate_codec	retained	unchanged	crown_planner_certificate_codec_test	unchanged	unchanged
+planner_fast_paths	retained	unchanged	crown_planner_fast_paths_test	unchanged	unchanged
+planner_search_exceptions	retained	unchanged	crown_planner_search_exception_test	unchanged	unchanged
+window	retained	unchanged	crown_window_test	unchanged	unchanged
+batch_window_exceptions	retained	unchanged	crown_batch_window_exception_test	unchanged	unchanged
+transport_batch	retained	unchanged	crown_transport_batch_test	unchanged	unchanged
+runtime_observation	retained	unchanged	crown_runtime_observation_test	unchanged	unchanged
+observation_mode_binding	retained	unchanged	crown_observation_mode_binding_test	unchanged	unchanged
+observation_run_context	retained	unchanged	crown_observation_run_context_test	unchanged	unchanged
+window_sequence	retained	unchanged	crown_window_sequence_test	unchanged	unchanged
+initialization	retained	unchanged	crown_initialization_test	unchanged	unchanged
+runtime_inspection	retained	unchanged	crown_runtime_inspection_test	unchanged	unchanged
+initialization_scale	retained	unchanged	crown_initialization_scale_test	unchanged	unchanged
+initialization_exceptions	retained	unchanged	crown_initialization_exception_test	unchanged	unchanged
+session	retained	unchanged	crown_session_test	unchanged	unchanged
+session_exceptions	retained	unchanged	crown_session_exception_test	unchanged	unchanged
+ingest	retained	unchanged	crown_ingest_test	unchanged	unchanged
+ingest_exceptions	retained	unchanged	crown_ingest_exception_test	unchanged	unchanged
+delta_lifecycle	retained	unchanged	crown_delta_lifecycle_test	unchanged	unchanged
+delta_lifecycle_exceptions	retained	unchanged	crown_delta_lifecycle_exception_test	unchanged	unchanged
+delta_replay_scale	retained	unchanged	crown_delta_replay_scale_test	unchanged	unchanged
+delta_replay	retained	unchanged	crown_delta_replay_test	unchanged	unchanged
+delta_anchor	retained	unchanged	crown_delta_anchor_test	unchanged	unchanged
+epoch_index	retained	unchanged	crown_epoch_index_test	unchanged	unchanged
+delta_live	retained	unchanged	crown_delta_live_test	unchanged	unchanged
+delta_runtime	retained	unchanged	crown_delta_runtime_test	unchanged	unchanged
+delta_runtime_eager	retained	unchanged	crown_delta_runtime_test eager	unchanged	unchanged
+delta_runtime_incremental	retained	unchanged	crown_delta_runtime_test incremental	unchanged	unchanged
+delta_runtime_root_first	retained	unchanged	crown_delta_runtime_test root_first	unchanged	unchanged
+delta_runtime_anchored	retained	unchanged	crown_delta_runtime_test anchored	unchanged	unchanged
+delta_runtime_exceptions	retained	unchanged	crown_delta_runtime_exception_test	unchanged	unchanged
+delta_runtime_eager_exceptions	retained	unchanged	crown_delta_runtime_exception_test eager	unchanged	unchanged
+delta_runtime_incremental_exceptions	retained	unchanged	crown_delta_runtime_exception_test incremental	unchanged	unchanged
+delta_factor	retained	unchanged	crown_delta_factor_test	unchanged	unchanged
+delta_spec	retained	unchanged	crown_delta_spec_test	unchanged	unchanged
+fragment_cursor	retained	unchanged	crown_fragment_cursor_test	unchanged	unchanged
+fragment_cursor_exceptions	retained	unchanged	crown_fragment_cursor_exception_test	unchanged	unchanged
+epoch_view	retained	unchanged	crown_epoch_view_test	unchanged	unchanged
+epoch_view_exceptions	retained	unchanged	crown_epoch_view_exception_test	unchanged	unchanged
+result_cursor	retained	unchanged	crown_result_cursor_test	unchanged	unchanged
+result_cursor_exceptions	retained	unchanged	crown_result_cursor_exception_test	unchanged	unchanged
+physical_runtime	retained	unchanged	crown_physical_runtime_test	unchanged	unchanged
+physical_runtime_exceptions	retained	unchanged	crown_physical_runtime_exception_test	unchanged	unchanged
+prepared_epoch	retained	unchanged	crown_prepared_epoch_test	unchanged	unchanged
+prepared_epoch_exceptions	retained	unchanged	crown_prepared_epoch_exception_test	unchanged	unchanged
+support_journal	retained	unchanged	crown_support_journal_test	unchanged	unchanged
+storage_journal	retained	unchanged	crown_storage_journal_test	unchanged	unchanged
+storage_journal_exceptions	retained	unchanged	crown_storage_journal_exception_test	unchanged	unchanged
+arena_model	retained	unchanged	crown_arena_model_test	unchanged	unchanged
+arena_exceptions	retained	unchanged	crown_arena_exception_test	unchanged	unchanged
+arena_storage	retained	unchanged	crown_arena_storage_test	unchanged	unchanged
+support_model	retained	unchanged	crown_support_model_test "${CMAKE_CURRENT_SOURCE_DIR}"	unchanged	unchanged
+support_api	retained	unchanged	crown_support_api_test	unchanged	unchanged
+support_exceptions	retained	unchanged	crown_support_exception_test	unchanged	unchanged
+physical_lowering	retained	unchanged	crown_physical_lowering_test "${CMAKE_CURRENT_SOURCE_DIR}"	unchanged	unchanged
+physical_api	retained	unchanged	crown_physical_api_test "${CMAKE_CURRENT_SOURCE_DIR}"	unchanged	unchanged
+layouts	retained	unchanged	crown_layout_test	unchanged	unchanged
+storage_model	retained	unchanged	crown_storage_model_test	unchanged	unchanged
+storage_exceptions	retained	unchanged	crown_storage_exception_test	unchanged	unchanged
+admission	retained	unchanged	crown_admission_test	unchanged	unchanged
+schemas	retained	unchanged	crown_schema_test	unchanged	unchanged
+normalization	retained	unchanged	crown_normalization_test	unchanged	unchanged
+binding	retained	unchanged	crown_binding_test	unchanged	unchanged
+catalog	retained	unchanged	crown_catalog_test	unchanged	unchanged
+scalars	retained	unchanged	crown_scalar_test	unchanged	unchanged
+parser	retained	unchanged	crown_parser_test	unchanged	unchanged
+semantics	retained	unchanged	crown_semantics_test	unchanged	unchanged
+recognition	retained	unchanged	crown_recognition_test	unchanged	unchanged
+tree_verifier	retained	unchanged	crown_tree_verifier_test	unchanged	unchanged
+exact_oracle	retained	unchanged	crown_exact_oracle_test	unchanged	unchanged
+cli_smoke	retained	unchanged	crown --version	unchanged	unchanged
+cursor_observation	retained	unchanged	${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/verify_observability_reports.py --kind cursor --executable $<TARGET_FILE:crown_cursor_observation_test> --repo-root ${CMAKE_CURRENT_SOURCE_DIR}	unchanged	unchanged
+query_explain	retained	unchanged	${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/verify_observability_reports.py --kind query --executable $<TARGET_FILE:crown_query_explain_test> --repo-root ${CMAKE_CURRENT_SOURCE_DIR}	unchanged	unchanged
+composed_explain	retained	unchanged	${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/verify_observability_reports.py --kind composed --executable $<TARGET_FILE:crown_composed_explain_test> --repo-root ${CMAKE_CURRENT_SOURCE_DIR}	unchanged	unchanged
+explain_cli	retained	unchanged	${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/observability/cli/native_cli_acceptance.py --crown $<TARGET_FILE:crown> --repo-root ${CMAKE_CURRENT_SOURCE_DIR} --schema-dir ${CMAKE_CURRENT_SOURCE_DIR}/schemas --fixture-dir ${CMAKE_CURRENT_SOURCE_DIR}/tests/observability/cli/fixtures/p08	unchanged	unchanged
+planner_candidate_reports	retained	unchanged	${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/verify_candidate_reports.py $<TARGET_FILE:crown_planner_candidates_io_test> ${CMAKE_CURRENT_SOURCE_DIR}	unchanged	unchanged
+planner_progress_schemas	retained	unchanged	${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/verify_search_progress.py $<TARGET_FILE:crown_planner_progress_test> ${CMAKE_CURRENT_SOURCE_DIR}	unchanged	unchanged
+planner_residual_reports	retained	unchanged	${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/verify_residual_reports.py $<TARGET_FILE:crown_planner_residual_io_test> ${CMAKE_CURRENT_SOURCE_DIR}	unchanged	unchanged
+ingest_fixtures	retained	unchanged	${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/integration/ingest.py $<TARGET_FILE:crown> ${CMAKE_CURRENT_SOURCE_DIR}	unchanged	unchanged
+fixtures	retained	unchanged	"${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/integration/fixtures.py" "$<TARGET_FILE:crown>" "${CMAKE_CURRENT_SOURCE_DIR}/tests/regression"	unchanged	unchanged
+reference_fuzz	retained	unchanged	"${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/property/reference_fuzz_test.py" "$<TARGET_FILE:crown>" --seeds 18 --updates 12	unchanged	unchanged
+plan_fixtures	retained	unchanged	"${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/integration/validate_plans.py" "$<TARGET_FILE:crown>" "${CMAKE_CURRENT_SOURCE_DIR}/tests/structural/plans"	unchanged	unchanged
+tree_oracle_fixtures	retained	unchanged	"${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/integration/tree_oracle.py" "$<TARGET_FILE:crown>"	unchanged	unchanged
+sql_parser_fixtures	retained	unchanged	"${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/integration/parse_sql.py" "$<TARGET_FILE:crown>" "${CMAKE_CURRENT_SOURCE_DIR}/tests/frontend/parser"	unchanged	unchanged
+scalar_fixtures	retained	unchanged	"${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/integration/scalars.py" "$<TARGET_FILE:crown>"	unchanged	unchanged
+catalog_fixtures	retained	unchanged	"${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/integration/catalog.py" "$<TARGET_FILE:crown>"	unchanged	unchanged
+binding_fixtures	retained	unchanged	"${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/integration/binding.py" "$<TARGET_FILE:crown>" "${CMAKE_CURRENT_SOURCE_DIR}/tests/frontend/binding"	unchanged	unchanged
+normalization_fixtures	retained	unchanged	"${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/integration/normalization.py" "$<TARGET_FILE:crown>" "${CMAKE_CURRENT_SOURCE_DIR}/tests/frontend/normalization"	unchanged	unchanged
+schema_fixtures	retained	unchanged	"${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/integration/schema.py" "$<TARGET_FILE:crown>" "${CMAKE_CURRENT_SOURCE_DIR}"	unchanged	unchanged
+admission_fixtures	retained	unchanged	"${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/integration/admission.py" "$<TARGET_FILE:crown>" "${CMAKE_CURRENT_SOURCE_DIR}"	unchanged	unchanged
+physical_fixtures	retained	unchanged	"${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/integration/physical.py" "$<TARGET_FILE:crown>" "${CMAKE_CURRENT_SOURCE_DIR}"	unchanged	unchanged
+support_fixtures	retained	unchanged	"${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/tests/integration/support.py" "$<TARGET_FILE:crown>" "${CMAKE_CURRENT_SOURCE_DIR}"	unchanged	unchanged
+statistics_capture	new	production	crown_runtime	statistics_capture_test	
+statistics_capture_exceptions	new	production	crown_runtime	statistics_capture_exception_test	
+statistics_owner	new	production	crown_runtime+crown_reference	owner_statistics_test	
+statistics_owner_exceptions	new	production	crown_runtime	owner_statistics_exception_test	
+statistics_collection	new	testing	crown_runtime_testing	statistics_collection_test	
+statistics_workload	new	testing	crown_runtime_testing	workload_statistics_test	
+statistics_workload_exceptions	new	testing	crown_runtime_testing	workload_statistics_exception_test	
+statistics_scalars	new	production	crown_runtime	scalar_statistics_test	
+statistics_combined_production	new	production	crown_runtime	combined_statistics_test	
+statistics_combined_exceptions_production	new	production	crown_runtime	combined_statistics_exception_test	
+statistics_report_exceptions_production	new	production	crown_explain	statistics_explain_exception_test	
+statistics_runtime_only_production	new	production	crown_runtime	statistics_runtime_only_test	
+statistics_reports_production	new	production	crown_explain	statistics_explain_test	wrapper --variant production
+statistics_combined_testing	new	testing	crown_runtime_testing	combined_statistics_test	
+statistics_combined_exceptions_testing	new	testing	crown_runtime_testing	combined_statistics_exception_test	
+statistics_report_exceptions_testing	new	testing	crown_explain_testing	statistics_explain_exception_test	
+statistics_runtime_only_testing	new	testing	crown_runtime_testing	statistics_runtime_only_test	
+statistics_reports_testing	new	testing	crown_explain_testing	statistics_explain_test	wrapper --variant testing
+statistics_delta_fifo	new	production	crown_runtime+crown_reference	delta_runtime_test	fifo default
+statistics_delta_fifo_eager	new	production	crown_runtime+crown_reference	delta_runtime_test	fifo eager
+statistics_delta_fifo_incremental	new	production	crown_runtime+crown_reference	delta_runtime_test	fifo incremental
+statistics_delta_fifo_root_first	new	production	crown_runtime+crown_reference	delta_runtime_test	fifo root_first
+statistics_delta_fifo_anchored	new	production	crown_runtime+crown_reference	delta_runtime_test	fifo anchored
+statistics_replay_fifo	new	production	crown_runtime+crown_reference	delta_replay_test	fifo
+statistics_window_fifo	new	production	crown_runtime+crown_reference	window_test	fifo
+statistics_delta_lifo	new	production	crown_runtime+crown_reference	delta_runtime_test	lifo default
+statistics_delta_lifo_eager	new	production	crown_runtime+crown_reference	delta_runtime_test	lifo eager
+statistics_delta_lifo_incremental	new	production	crown_runtime+crown_reference	delta_runtime_test	lifo incremental
+statistics_delta_lifo_root_first	new	production	crown_runtime+crown_reference	delta_runtime_test	lifo root_first
+statistics_delta_lifo_anchored	new	production	crown_runtime+crown_reference	delta_runtime_test	lifo anchored
+statistics_replay_lifo	new	production	crown_runtime+crown_reference	delta_replay_test	lifo
+statistics_window_lifo	new	production	crown_runtime+crown_reference	window_test	lifo

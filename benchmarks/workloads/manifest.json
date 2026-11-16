@@ -1,0 +1,5545 @@
+{
+  "coverage_limits": [
+    "finite_mechanism_corpus_not_all_free_connex_coverage",
+    "negative_controls_are_not_native_workloads",
+    "trace_regime_is_not_an_engine_complexity_guarantee",
+    "loading_is_input_work_not_free_preload",
+    "no_timing_or_baseline_reproduction_claim",
+    "external_dataset_imports_require_separate_provenance_and_license_records"
+  ],
+  "external_imports": {
+    "path": "benchmarks/external_imports.json",
+    "sha256": "41ed1d8dbae8fd9b6b9ece5872686a583d8135b959313659f7ee2ebee97d8f06"
+  },
+  "generator": {
+    "ordering": "UTF8_JSON_SHA256_no_runtime_random_hash",
+    "path": "tools/generate_workloads.py",
+    "query_ids": [
+      "singleton",
+      "hidden_witnesses",
+      "full_path_2",
+      "full_path_4",
+      "projected_prefix_path",
+      "boolean_path",
+      "full_star_3",
+      "full_star_6",
+      "projected_star",
+      "composite_separator",
+      "nested_scopes",
+      "equal_scopes",
+      "wide_arity_8",
+      "wide_strings",
+      "disconnected_full",
+      "disconnected_projected",
+      "boolean_disconnected",
+      "self_join_2",
+      "self_join_3",
+      "repeated_variable",
+      "cyclic_triangle_control",
+      "nonfree_endpoint_control",
+      "bag_projection_control",
+      "aggregate_count_control"
+    ],
+    "scale": 1,
+    "seed": 20261110,
+    "sha256": "b3a7dcc0df3a5ec44a6e88cacbfa41379e77e63315a64e969c48a8d17a5cc598"
+  },
+  "kind": "crown_workload_manifest",
+  "legacy_inventory": {
+    "path": "benchmarks/legacy/manifest.json",
+    "sha256": "41aab17541d0de43ea33fc33d0840423daeeba290869c97038a119af243d9990"
+  },
+  "licenses": [
+    {
+      "data_license": "no_separate_license_grant_recorded",
+      "id": "synthetic_local",
+      "origin": "new_deterministic_synthetic_records_no_external_dataset",
+      "project_license": "A02_undecided_local_development_only",
+      "redistribution": "not_authorized_by_this_manifest"
+    }
+  ],
+  "queries": [
+    {
+      "catalog": {
+        "path": "queries/singleton/catalog.json",
+        "sha256": "f37e13bb865ec6fcf9aa2e3a8bff87eda4cf7b3d92a0500ae582cbc4a6890abe"
+      },
+      "expected_admission": "admitted",
+      "expected_backends": [
+        "reference_ordered_v1",
+        "indexed_chained_v1"
+      ],
+      "head": [
+        "x"
+      ],
+      "id": "singleton",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "x"
+      ],
+      "output_modes": [
+        "maintenance",
+        "full_snapshot_each_epoch",
+        "delta_each_epoch"
+      ],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/singleton/query.sql",
+        "sha256": "32e83bec2167f0937316f35cd84990038c78ab19345a5d14332bc78bcbe79d87"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "x"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "coherent_distinct_keys",
+        "free_connex": true,
+        "tags": [
+          "singleton",
+          "output_small"
+        ],
+        "variables": [
+          "x"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/hidden_witnesses/catalog.json",
+        "sha256": "b14c37b604e794a4c345e3368138d06be435d088fbc8818e1ed200e73943c20f"
+      },
+      "expected_admission": "admitted",
+      "expected_backends": [
+        "reference_ordered_v1",
+        "indexed_chained_v1"
+      ],
+      "head": [
+        "key"
+      ],
+      "id": "hidden_witnesses",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "key"
+      ],
+      "output_modes": [
+        "maintenance",
+        "full_snapshot_each_epoch",
+        "delta_each_epoch"
+      ],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/hidden_witnesses/query.sql",
+        "sha256": "21e239ecb5b5054c10c85e7c4cfa354e5f57ea9b07da36b02d2b6823c19fe76b"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "key",
+              "witness"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "hot_key",
+        "free_connex": true,
+        "tags": [
+          "proper_projection",
+          "many_witnesses",
+          "output_small"
+        ],
+        "variables": [
+          "key",
+          "witness"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/full_path_2/catalog.json",
+        "sha256": "c2f597c6c420c7c7c835af7482df7e0b93cb091bfa22e2f789899480f3a09417"
+      },
+      "expected_admission": "admitted",
+      "expected_backends": [
+        "reference_ordered_v1",
+        "indexed_chained_v1"
+      ],
+      "head": [
+        "x0",
+        "x1",
+        "x2"
+      ],
+      "id": "full_path_2",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "x0",
+        "x1",
+        "x2"
+      ],
+      "output_modes": [
+        "maintenance",
+        "full_snapshot_each_epoch",
+        "delta_each_epoch"
+      ],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/full_path_2/query.sql",
+        "sha256": "8a01f80752aa3de480c18b5144fe9576f942ab4bb7fd6950f8d921894942f4cc"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "x0",
+              "x1"
+            ]
+          },
+          {
+            "alias": "a1",
+            "table": "r1",
+            "variables": [
+              "x1",
+              "x2"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "coherent_distinct_keys",
+        "free_connex": true,
+        "tags": [
+          "path",
+          "full_head",
+          "query_size_axis"
+        ],
+        "variables": [
+          "x0",
+          "x1",
+          "x2"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/full_path_4/catalog.json",
+        "sha256": "d3745d12ea562211f74e0b767fd5f456a3bac550646beef672dcbcdc2611e07c"
+      },
+      "expected_admission": "admitted",
+      "expected_backends": [
+        "reference_ordered_v1",
+        "indexed_chained_v1"
+      ],
+      "head": [
+        "x0",
+        "x1",
+        "x2",
+        "x3",
+        "x4"
+      ],
+      "id": "full_path_4",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "x0",
+        "x1",
+        "x2",
+        "x3",
+        "x4"
+      ],
+      "output_modes": [
+        "maintenance",
+        "full_snapshot_each_epoch",
+        "delta_each_epoch"
+      ],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/full_path_4/query.sql",
+        "sha256": "e054d7d2d434ad286c023fc839705000784663c0b54398983426c2a7b42e96a2"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "x0",
+              "x1"
+            ]
+          },
+          {
+            "alias": "a1",
+            "table": "r1",
+            "variables": [
+              "x1",
+              "x2"
+            ]
+          },
+          {
+            "alias": "a2",
+            "table": "r2",
+            "variables": [
+              "x2",
+              "x3"
+            ]
+          },
+          {
+            "alias": "a3",
+            "table": "r3",
+            "variables": [
+              "x3",
+              "x4"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "coherent_distinct_keys",
+        "free_connex": true,
+        "tags": [
+          "path",
+          "full_head",
+          "query_size_axis"
+        ],
+        "variables": [
+          "x0",
+          "x1",
+          "x2",
+          "x3",
+          "x4"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/projected_prefix_path/catalog.json",
+        "sha256": "d3745d12ea562211f74e0b767fd5f456a3bac550646beef672dcbcdc2611e07c"
+      },
+      "expected_admission": "admitted",
+      "expected_backends": [
+        "reference_ordered_v1",
+        "indexed_chained_v1"
+      ],
+      "head": [
+        "x0",
+        "x1"
+      ],
+      "id": "projected_prefix_path",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "x0",
+        "x1"
+      ],
+      "output_modes": [
+        "maintenance",
+        "full_snapshot_each_epoch",
+        "delta_each_epoch"
+      ],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/projected_prefix_path/query.sql",
+        "sha256": "6b441ef6f15152a96085fd386e8e8593ee1ea6d6d013545f580f4ee00183c8ca"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "x0",
+              "x1"
+            ]
+          },
+          {
+            "alias": "a1",
+            "table": "r1",
+            "variables": [
+              "x1",
+              "x2"
+            ]
+          },
+          {
+            "alias": "a2",
+            "table": "r2",
+            "variables": [
+              "x2",
+              "x3"
+            ]
+          },
+          {
+            "alias": "a3",
+            "table": "r3",
+            "variables": [
+              "x3",
+              "x4"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "coherent_distinct_keys",
+        "free_connex": true,
+        "tags": [
+          "path",
+          "proper_projection",
+          "hidden_branch"
+        ],
+        "variables": [
+          "x0",
+          "x1",
+          "x2",
+          "x3",
+          "x4"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/boolean_path/catalog.json",
+        "sha256": "fae443abd6c533c4a955c0ba888ebd1a6a9417623aa5660139e90bb3810e3ebd"
+      },
+      "expected_admission": "admitted",
+      "expected_backends": [
+        "reference_ordered_v1",
+        "indexed_chained_v1"
+      ],
+      "head": [],
+      "id": "boolean_path",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "EXISTS"
+      ],
+      "output_modes": [
+        "maintenance",
+        "full_snapshot_each_epoch",
+        "delta_each_epoch"
+      ],
+      "semantics": {
+        "boolean_exists": true,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/boolean_path/query.sql",
+        "sha256": "3dbb2c3402fbfeb6929f6fbe8cac9e8c29948424bb187eb14538dca3aa8d5222"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "x0",
+              "x1"
+            ]
+          },
+          {
+            "alias": "a1",
+            "table": "r1",
+            "variables": [
+              "x1",
+              "x2"
+            ]
+          },
+          {
+            "alias": "a2",
+            "table": "r2",
+            "variables": [
+              "x2",
+              "x3"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "coherent_distinct_keys",
+        "free_connex": true,
+        "tags": [
+          "boolean",
+          "path"
+        ],
+        "variables": [
+          "x0",
+          "x1",
+          "x2",
+          "x3"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/full_star_3/catalog.json",
+        "sha256": "fae443abd6c533c4a955c0ba888ebd1a6a9417623aa5660139e90bb3810e3ebd"
+      },
+      "expected_admission": "admitted",
+      "expected_backends": [
+        "reference_ordered_v1",
+        "indexed_chained_v1"
+      ],
+      "head": [
+        "hub",
+        "leaf0",
+        "leaf1",
+        "leaf2"
+      ],
+      "id": "full_star_3",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "hub",
+        "leaf0",
+        "leaf1",
+        "leaf2"
+      ],
+      "output_modes": [
+        "maintenance",
+        "full_snapshot_each_epoch",
+        "delta_each_epoch"
+      ],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/full_star_3/query.sql",
+        "sha256": "c0d68ccbe2b4da18f4e74f4b571667ad393615f66cd52805f29907426bdb7f5e"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "hub",
+              "leaf0"
+            ]
+          },
+          {
+            "alias": "a1",
+            "table": "r1",
+            "variables": [
+              "hub",
+              "leaf1"
+            ]
+          },
+          {
+            "alias": "a2",
+            "table": "r2",
+            "variables": [
+              "hub",
+              "leaf2"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "hot_key",
+        "free_connex": true,
+        "tags": [
+          "star",
+          "high_fanout",
+          "output_large",
+          "query_size_axis"
+        ],
+        "variables": [
+          "hub",
+          "leaf0",
+          "leaf1",
+          "leaf2"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/full_star_6/catalog.json",
+        "sha256": "3f1af2cb29c85414c40303c5a62ed2318b90058e07308f741f2ab94bcd3b8eff"
+      },
+      "expected_admission": "admitted",
+      "expected_backends": [
+        "reference_ordered_v1",
+        "indexed_chained_v1"
+      ],
+      "head": [
+        "hub",
+        "leaf0",
+        "leaf1",
+        "leaf2",
+        "leaf3",
+        "leaf4",
+        "leaf5"
+      ],
+      "id": "full_star_6",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "hub",
+        "leaf0",
+        "leaf1",
+        "leaf2",
+        "leaf3",
+        "leaf4",
+        "leaf5"
+      ],
+      "output_modes": [
+        "maintenance",
+        "full_snapshot_each_epoch",
+        "delta_each_epoch"
+      ],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/full_star_6/query.sql",
+        "sha256": "d320734bf06c2491344b6a9a8fd76e8648d26a614365ff673d42cd47b22148f7"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "hub",
+              "leaf0"
+            ]
+          },
+          {
+            "alias": "a1",
+            "table": "r1",
+            "variables": [
+              "hub",
+              "leaf1"
+            ]
+          },
+          {
+            "alias": "a2",
+            "table": "r2",
+            "variables": [
+              "hub",
+              "leaf2"
+            ]
+          },
+          {
+            "alias": "a3",
+            "table": "r3",
+            "variables": [
+              "hub",
+              "leaf3"
+            ]
+          },
+          {
+            "alias": "a4",
+            "table": "r4",
+            "variables": [
+              "hub",
+              "leaf4"
+            ]
+          },
+          {
+            "alias": "a5",
+            "table": "r5",
+            "variables": [
+              "hub",
+              "leaf5"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "hot_key",
+        "free_connex": true,
+        "tags": [
+          "star",
+          "high_fanout",
+          "output_large",
+          "query_size_axis"
+        ],
+        "variables": [
+          "hub",
+          "leaf0",
+          "leaf1",
+          "leaf2",
+          "leaf3",
+          "leaf4",
+          "leaf5"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/projected_star/catalog.json",
+        "sha256": "fae443abd6c533c4a955c0ba888ebd1a6a9417623aa5660139e90bb3810e3ebd"
+      },
+      "expected_admission": "admitted",
+      "expected_backends": [
+        "reference_ordered_v1",
+        "indexed_chained_v1"
+      ],
+      "head": [
+        "hub"
+      ],
+      "id": "projected_star",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "hub"
+      ],
+      "output_modes": [
+        "maintenance",
+        "full_snapshot_each_epoch",
+        "delta_each_epoch"
+      ],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/projected_star/query.sql",
+        "sha256": "1381b9f663f8cd271db4878374f35438e561409cea1d7df9a19eedea68a9fd8b"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "hub",
+              "leaf0"
+            ]
+          },
+          {
+            "alias": "a1",
+            "table": "r1",
+            "variables": [
+              "hub",
+              "leaf1"
+            ]
+          },
+          {
+            "alias": "a2",
+            "table": "r2",
+            "variables": [
+              "hub",
+              "leaf2"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "hot_key",
+        "free_connex": true,
+        "tags": [
+          "star",
+          "proper_projection",
+          "many_witnesses",
+          "output_small"
+        ],
+        "variables": [
+          "hub",
+          "leaf0",
+          "leaf1",
+          "leaf2"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/composite_separator/catalog.json",
+        "sha256": "fdb5b8e709bcfb5538f43fe90df5705cda8bf6e4144a73593437bae07dfecdfb"
+      },
+      "expected_admission": "admitted",
+      "expected_backends": [
+        "reference_ordered_v1",
+        "indexed_chained_v1"
+      ],
+      "head": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "id": "composite_separator",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "output_modes": [
+        "maintenance",
+        "full_snapshot_each_epoch",
+        "delta_each_epoch"
+      ],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/composite_separator/query.sql",
+        "sha256": "30fde68feee134592a6a7342dbf401a203a57b518857d2c2701e75b88635f549"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "a",
+              "b",
+              "c"
+            ]
+          },
+          {
+            "alias": "a1",
+            "table": "r1",
+            "variables": [
+              "a",
+              "b",
+              "d"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "coherent_distinct_keys",
+        "free_connex": true,
+        "tags": [
+          "composite_key",
+          "arity_above_two"
+        ],
+        "variables": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/nested_scopes/catalog.json",
+        "sha256": "cd1ae9cfbdf9e9a7fe110fca843bffb0acb508e3873a702f035e1f225f1912bd"
+      },
+      "expected_admission": "admitted",
+      "expected_backends": [
+        "reference_ordered_v1",
+        "indexed_chained_v1"
+      ],
+      "head": [
+        "a",
+        "b",
+        "c"
+      ],
+      "id": "nested_scopes",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "a",
+        "b",
+        "c"
+      ],
+      "output_modes": [
+        "maintenance",
+        "full_snapshot_each_epoch",
+        "delta_each_epoch"
+      ],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/nested_scopes/query.sql",
+        "sha256": "608e57ccd1eaec0ccf4d12591934cd0dfad9a17fb4771fc375caae42bf682d48"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "a",
+              "b",
+              "c"
+            ]
+          },
+          {
+            "alias": "a1",
+            "table": "r1",
+            "variables": [
+              "a",
+              "b"
+            ]
+          },
+          {
+            "alias": "a2",
+            "table": "r2",
+            "variables": [
+              "a"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "coherent_distinct_keys",
+        "free_connex": true,
+        "tags": [
+          "nested_scopes",
+          "contained_scope",
+          "arity_above_two"
+        ],
+        "variables": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/equal_scopes/catalog.json",
+        "sha256": "c2f597c6c420c7c7c835af7482df7e0b93cb091bfa22e2f789899480f3a09417"
+      },
+      "expected_admission": "admitted",
+      "expected_backends": [
+        "reference_ordered_v1",
+        "indexed_chained_v1"
+      ],
+      "head": [
+        "a",
+        "b"
+      ],
+      "id": "equal_scopes",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "a",
+        "b"
+      ],
+      "output_modes": [
+        "maintenance",
+        "full_snapshot_each_epoch",
+        "delta_each_epoch"
+      ],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/equal_scopes/query.sql",
+        "sha256": "ee1ec00c6b1bb920506bf2df94ebb0a0db8296853b3bd2f45aaab3b4d828415f"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "a",
+              "b"
+            ]
+          },
+          {
+            "alias": "a1",
+            "table": "r1",
+            "variables": [
+              "a",
+              "b"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "coherent_distinct_keys",
+        "free_connex": true,
+        "tags": [
+          "repeated_scope"
+        ],
+        "variables": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/wide_arity_8/catalog.json",
+        "sha256": "65514d365cc392feb63c4b2071e37c023ded4069e7be832821190bbd58705681"
+      },
+      "expected_admission": "admitted",
+      "expected_backends": [
+        "reference_ordered_v1",
+        "indexed_chained_v1"
+      ],
+      "head": [
+        "v0",
+        "v1",
+        "v2",
+        "v3",
+        "v4",
+        "v5",
+        "v6",
+        "v7"
+      ],
+      "id": "wide_arity_8",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "v0",
+        "v1",
+        "v2",
+        "v3",
+        "v4",
+        "v5",
+        "v6",
+        "v7"
+      ],
+      "output_modes": [
+        "maintenance",
+        "full_snapshot_each_epoch",
+        "delta_each_epoch"
+      ],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/wide_arity_8/query.sql",
+        "sha256": "f88be880e30b9d102af69e8c283ffe36078cec596eeeb4950a67edf139836211"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "v0",
+              "v1",
+              "v2",
+              "v3",
+              "v4",
+              "v5",
+              "v6",
+              "v7"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "coherent_distinct_keys",
+        "free_connex": true,
+        "tags": [
+          "high_arity",
+          "query_size_axis"
+        ],
+        "variables": [
+          "v0",
+          "v1",
+          "v2",
+          "v3",
+          "v4",
+          "v5",
+          "v6",
+          "v7"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/wide_strings/catalog.json",
+        "sha256": "5dd8d44fd11ba5a02d1daf186884b88c61337f352472871bff24e21d0e31ad02"
+      },
+      "expected_admission": "admitted",
+      "expected_backends": [
+        "reference_ordered_v1",
+        "indexed_chained_v1"
+      ],
+      "head": [
+        "key",
+        "name",
+        "payload"
+      ],
+      "id": "wide_strings",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "key",
+        "name",
+        "payload"
+      ],
+      "output_modes": [
+        "maintenance",
+        "full_snapshot_each_epoch",
+        "delta_each_epoch"
+      ],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/wide_strings/query.sql",
+        "sha256": "1a9ac8a5ad79c9709406ac3a01d8b27472064bef8ddb15d12a54edaaafb6d7c9"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "key",
+              "name",
+              "payload"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "coherent_distinct_keys",
+        "free_connex": true,
+        "tags": [
+          "wide_tuple",
+          "utf8",
+          "embedded_nul",
+          "arity_above_two"
+        ],
+        "variables": [
+          "key",
+          "name",
+          "payload"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/disconnected_full/catalog.json",
+        "sha256": "c2f597c6c420c7c7c835af7482df7e0b93cb091bfa22e2f789899480f3a09417"
+      },
+      "expected_admission": "admitted",
+      "expected_backends": [
+        "reference_ordered_v1",
+        "indexed_chained_v1"
+      ],
+      "head": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "id": "disconnected_full",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "output_modes": [
+        "maintenance",
+        "full_snapshot_each_epoch",
+        "delta_each_epoch"
+      ],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/disconnected_full/query.sql",
+        "sha256": "b20d7d02be2371235c07248caaf93c742969dda39f78b6356606b1745cb4b0e0"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "a",
+              "b"
+            ]
+          },
+          {
+            "alias": "a1",
+            "table": "r1",
+            "variables": [
+              "c",
+              "d"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "coherent_distinct_keys",
+        "free_connex": true,
+        "tags": [
+          "disconnected",
+          "empty_separator",
+          "full_head"
+        ],
+        "variables": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/disconnected_projected/catalog.json",
+        "sha256": "c2f597c6c420c7c7c835af7482df7e0b93cb091bfa22e2f789899480f3a09417"
+      },
+      "expected_admission": "admitted",
+      "expected_backends": [
+        "reference_ordered_v1",
+        "indexed_chained_v1"
+      ],
+      "head": [
+        "a",
+        "c"
+      ],
+      "id": "disconnected_projected",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "a",
+        "c"
+      ],
+      "output_modes": [
+        "maintenance",
+        "full_snapshot_each_epoch",
+        "delta_each_epoch"
+      ],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/disconnected_projected/query.sql",
+        "sha256": "ee7c775dd63b9627711b15ce89a868cd6520b1128c2fcbf1333f9c0795a598b2"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "a",
+              "b"
+            ]
+          },
+          {
+            "alias": "a1",
+            "table": "r1",
+            "variables": [
+              "c",
+              "d"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "coherent_distinct_keys",
+        "free_connex": true,
+        "tags": [
+          "disconnected",
+          "proper_projection"
+        ],
+        "variables": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/boolean_disconnected/catalog.json",
+        "sha256": "755881cf77184f1b8008d60d06a65b944d688399e03ecd89aa3740e238e3403b"
+      },
+      "expected_admission": "admitted",
+      "expected_backends": [
+        "reference_ordered_v1",
+        "indexed_chained_v1"
+      ],
+      "head": [],
+      "id": "boolean_disconnected",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "EXISTS"
+      ],
+      "output_modes": [
+        "maintenance",
+        "full_snapshot_each_epoch",
+        "delta_each_epoch"
+      ],
+      "semantics": {
+        "boolean_exists": true,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/boolean_disconnected/query.sql",
+        "sha256": "b29a60a241739f0e4902702aac31bb3d5070395e62cf8bd677d940dad1767030"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "a"
+            ]
+          },
+          {
+            "alias": "a1",
+            "table": "r1",
+            "variables": [
+              "b"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "coherent_distinct_keys",
+        "free_connex": true,
+        "tags": [
+          "boolean",
+          "disconnected"
+        ],
+        "variables": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/self_join_2/catalog.json",
+        "sha256": "d7d98194aac703b2551cd92c6b39405bf6a5061d37dab933104fec30a68169ac"
+      },
+      "expected_admission": "admitted",
+      "expected_backends": [
+        "reference_ordered_v1",
+        "indexed_chained_v1"
+      ],
+      "head": [
+        "x0",
+        "x1",
+        "x2"
+      ],
+      "id": "self_join_2",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "x0",
+        "x1",
+        "x2"
+      ],
+      "output_modes": [
+        "maintenance",
+        "full_snapshot_each_epoch",
+        "delta_each_epoch"
+      ],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/self_join_2/query.sql",
+        "sha256": "9beed006ab2fe2e767782c2636957f4277327b988dc0edff11139f620eed66f3"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "edge",
+            "variables": [
+              "x0",
+              "x1"
+            ]
+          },
+          {
+            "alias": "a1",
+            "table": "edge",
+            "variables": [
+              "x1",
+              "x2"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "loop_and_chain_keys",
+        "free_connex": true,
+        "tags": [
+          "self_join",
+          "loop",
+          "new_new_cross_term"
+        ],
+        "variables": [
+          "x0",
+          "x1",
+          "x2"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/self_join_3/catalog.json",
+        "sha256": "d7d98194aac703b2551cd92c6b39405bf6a5061d37dab933104fec30a68169ac"
+      },
+      "expected_admission": "admitted",
+      "expected_backends": [
+        "reference_ordered_v1",
+        "indexed_chained_v1"
+      ],
+      "head": [
+        "x0",
+        "x1",
+        "x2",
+        "x3"
+      ],
+      "id": "self_join_3",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "x0",
+        "x1",
+        "x2",
+        "x3"
+      ],
+      "output_modes": [
+        "maintenance",
+        "full_snapshot_each_epoch",
+        "delta_each_epoch"
+      ],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/self_join_3/query.sql",
+        "sha256": "adff97e6ecb52c813261be8bd3eee8c81d02c3a47a70f2c438818712c2713971"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "edge",
+            "variables": [
+              "x0",
+              "x1"
+            ]
+          },
+          {
+            "alias": "a1",
+            "table": "edge",
+            "variables": [
+              "x1",
+              "x2"
+            ]
+          },
+          {
+            "alias": "a2",
+            "table": "edge",
+            "variables": [
+              "x2",
+              "x3"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "loop_and_chain_keys",
+        "free_connex": true,
+        "tags": [
+          "self_join",
+          "multiple_aliases"
+        ],
+        "variables": [
+          "x0",
+          "x1",
+          "x2",
+          "x3"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/repeated_variable/catalog.json",
+        "sha256": "c2f597c6c420c7c7c835af7482df7e0b93cb091bfa22e2f789899480f3a09417"
+      },
+      "expected_admission": "admitted",
+      "expected_backends": [
+        "reference_ordered_v1",
+        "indexed_chained_v1"
+      ],
+      "head": [
+        "x",
+        "y"
+      ],
+      "id": "repeated_variable",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "x",
+        "y"
+      ],
+      "output_modes": [
+        "maintenance",
+        "full_snapshot_each_epoch",
+        "delta_each_epoch"
+      ],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/repeated_variable/query.sql",
+        "sha256": "71cab80cd347dee766bdf40bc4d294becab94c77dfd77b0231cf9e5d136c6a08"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "x",
+              "x"
+            ]
+          },
+          {
+            "alias": "a1",
+            "table": "r1",
+            "variables": [
+              "x",
+              "y"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "coherent_distinct_keys",
+        "free_connex": true,
+        "tags": [
+          "local_equality",
+          "dangling_branch"
+        ],
+        "variables": [
+          "x",
+          "y"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/cyclic_triangle_control/catalog.json",
+        "sha256": "fae443abd6c533c4a955c0ba888ebd1a6a9417623aa5660139e90bb3810e3ebd"
+      },
+      "expected_admission": "cyclic_body",
+      "expected_backends": [],
+      "head": [
+        "a",
+        "b",
+        "c"
+      ],
+      "id": "cyclic_triangle_control",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "a",
+        "b",
+        "c"
+      ],
+      "output_modes": [],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/cyclic_triangle_control/query.sql",
+        "sha256": "390bd1d3e7928f08516353d50dac4799f276ee5013495c1f954164a881d06ccc"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "a",
+              "b"
+            ]
+          },
+          {
+            "alias": "a1",
+            "table": "r1",
+            "variables": [
+              "b",
+              "c"
+            ]
+          },
+          {
+            "alias": "a2",
+            "table": "r2",
+            "variables": [
+              "a",
+              "c"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": false,
+        "distribution": "coherent_distinct_keys",
+        "free_connex": false,
+        "tags": [
+          "negative_control",
+          "cyclic"
+        ],
+        "variables": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/nonfree_endpoint_control/catalog.json",
+        "sha256": "c2f597c6c420c7c7c835af7482df7e0b93cb091bfa22e2f789899480f3a09417"
+      },
+      "expected_admission": "non_free_connex",
+      "expected_backends": [],
+      "head": [
+        "x0",
+        "x2"
+      ],
+      "id": "nonfree_endpoint_control",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "x0",
+        "x2"
+      ],
+      "output_modes": [],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "set"
+      },
+      "sql": {
+        "path": "queries/nonfree_endpoint_control/query.sql",
+        "sha256": "d605f3ef8fc35576ffd8526ead727fa1a3d196b9f498abb884d36299f95cbaf5"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "x0",
+              "x1"
+            ]
+          },
+          {
+            "alias": "a1",
+            "table": "r1",
+            "variables": [
+              "x1",
+              "x2"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "coherent_distinct_keys",
+        "free_connex": false,
+        "tags": [
+          "negative_control",
+          "non_free_connex"
+        ],
+        "variables": [
+          "x0",
+          "x1",
+          "x2"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/bag_projection_control/catalog.json",
+        "sha256": "b14c37b604e794a4c345e3368138d06be435d088fbc8818e1ed200e73943c20f"
+      },
+      "expected_admission": "unsupported_semantics",
+      "expected_backends": [],
+      "head": [
+        "key"
+      ],
+      "id": "bag_projection_control",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "key"
+      ],
+      "output_modes": [],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "bag"
+      },
+      "sql": {
+        "path": "queries/bag_projection_control/query.sql",
+        "sha256": "c3e3f51b579b042aaf0bdf2fcb816a78f42b4ec1cc3c39199397be129184bdc0"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "key",
+              "witness"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "hot_key",
+        "free_connex": true,
+        "tags": [
+          "negative_control",
+          "bag"
+        ],
+        "variables": [
+          "key",
+          "witness"
+        ]
+      }
+    },
+    {
+      "catalog": {
+        "path": "queries/aggregate_count_control/catalog.json",
+        "sha256": "b14c37b604e794a4c345e3368138d06be435d088fbc8818e1ed200e73943c20f"
+      },
+      "expected_admission": "unsupported_semantics",
+      "expected_backends": [],
+      "head": [],
+      "id": "aggregate_count_control",
+      "origin": "new_synthetic_not_a_legacy_benchmark",
+      "output_expressions": [
+        "COUNT(*)"
+      ],
+      "output_modes": [],
+      "semantics": {
+        "boolean_exists": false,
+        "input": "physical_set",
+        "output": "aggregate_count"
+      },
+      "sql": {
+        "path": "queries/aggregate_count_control/query.sql",
+        "sha256": "c4a0482b909e95b093c08e939a16cc4b61b253e7367a11349c5e47f74942bf89"
+      },
+      "structure": {
+        "atoms": [
+          {
+            "alias": "a0",
+            "table": "r0",
+            "variables": [
+              "key",
+              "witness"
+            ]
+          }
+        ],
+        "body_alpha_acyclic": true,
+        "distribution": "coherent_distinct_keys",
+        "free_connex": true,
+        "tags": [
+          "negative_control",
+          "aggregate"
+        ],
+        "variables": [
+          "key",
+          "witness"
+        ]
+      }
+    }
+  ],
+  "regimes": [
+    "insert_only",
+    "delete_after_charged_load",
+    "global_fifo",
+    "per_relation_fifo",
+    "mixed",
+    "adversarial_churn",
+    "rate_shift"
+  ],
+  "schema_version": 1,
+  "workloads": [
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/singleton/insert_only/events.template.jsonl",
+        "sha256": "737322de5d22e5dddbfd4cde17d277f6157f2002472a054a6877d6747c068b58"
+      },
+      "events_count": 3,
+      "id": "singleton/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/singleton/insert_only/expected.json",
+        "sha256": "a45995b4cf9641871863adfdf28dd0ecd04de7dd73c7bceb24390f56a365b70c"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "singleton",
+      "regime": "insert_only",
+      "source_id": "b02-singleton-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 3,
+      "events": {
+        "path": "traces/singleton/delete_after_charged_load/events.template.jsonl",
+        "sha256": "f1b6bcff7730af681780a194aebfd2e408a45803f430fe2cc32d333ead4488ed"
+      },
+      "events_count": 6,
+      "id": "singleton/delete_after_charged_load",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/singleton/delete_after_charged_load/expected.json",
+        "sha256": "4cc38d80d6b70ec7d38b7e0e20313273458e101386214aee68ad276a60357c4d"
+      },
+      "phase_labels": [
+        "charged_load",
+        "delete_phase"
+      ],
+      "query": "singleton",
+      "regime": "delete_after_charged_load",
+      "source_id": "b02-singleton-delete_after_charged_load",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/singleton/global_fifo/events.template.jsonl",
+        "sha256": "7c38e74ff2fc06f96f38a7a97b98b645dd574f321af8ceb4a81f8dfe906e3164"
+      },
+      "events_count": 6,
+      "id": "singleton/global_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/singleton/global_fifo/expected.json",
+        "sha256": "d7c288e7b5809c1a728ebf7a0698784f20a06b53f69eaf44d9c52a237261032c"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "singleton",
+      "regime": "global_fifo",
+      "source_id": "b02-singleton-global_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/singleton/per_relation_fifo/events.template.jsonl",
+        "sha256": "2f3ae3b96fdaf2d30f4aa6c60db0d78b335fab5caa46fd420f6cdad0417de921"
+      },
+      "events_count": 6,
+      "id": "singleton/per_relation_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/singleton/per_relation_fifo/expected.json",
+        "sha256": "d7c288e7b5809c1a728ebf7a0698784f20a06b53f69eaf44d9c52a237261032c"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "singleton",
+      "regime": "per_relation_fifo",
+      "source_id": "b02-singleton-per_relation_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 3,
+      "events": {
+        "path": "traces/singleton/mixed/events.template.jsonl",
+        "sha256": "457ef85c1d2bb125c3fd5dace67d62b21ba36f7f6530c7431ab10e9f3ee5f6a0"
+      },
+      "events_count": 17,
+      "id": "singleton/mixed",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/singleton/mixed/expected.json",
+        "sha256": "7507c9bec67ff5a3798d5295c9b83f231ed2e5241ed8c988ba77ce529f31cfe0"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "singleton",
+      "regime": "mixed",
+      "source_id": "b02-singleton-mixed",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 3,
+      "events": {
+        "path": "traces/singleton/adversarial_churn/events.template.jsonl",
+        "sha256": "65a9cab49a959fc9d525422355cf6becde27257409aa71f2dcefbfcb2d0cdd8f"
+      },
+      "events_count": 27,
+      "id": "singleton/adversarial_churn",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/singleton/adversarial_churn/expected.json",
+        "sha256": "e72187fbaaa70ef5eeaa1dbc54d2f602d7a33817dc74e9f8564c6d8d2d418ba5"
+      },
+      "phase_labels": [
+        "charged_load",
+        "workload"
+      ],
+      "query": "singleton",
+      "regime": "adversarial_churn",
+      "source_id": "b02-singleton-adversarial_churn",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 3,
+      "events": {
+        "path": "traces/singleton/rate_shift/events.template.jsonl",
+        "sha256": "86332b224dac6ea45159236c611ffb1c8a58a4b965a29c014042365c9edd5951"
+      },
+      "events_count": 9,
+      "id": "singleton/rate_shift",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/singleton/rate_shift/expected.json",
+        "sha256": "0042a05a6e0c4a2b1250c2698f6f3e36e0ac4694f9eeb37198dfc70f931af815"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "singleton",
+      "regime": "rate_shift",
+      "source_id": "b02-singleton-rate_shift",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/hidden_witnesses/insert_only/events.template.jsonl",
+        "sha256": "c5641c081eb2047e0f8d42c2357f8fc24971159df558512810f39d1cb7e6cdff"
+      },
+      "events_count": 3,
+      "id": "hidden_witnesses/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/hidden_witnesses/insert_only/expected.json",
+        "sha256": "ff957a175382032be7174d91c0f1a8f3397cd756fe94a91b52c4ad2634537a23"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "hidden_witnesses",
+      "regime": "insert_only",
+      "source_id": "b02-hidden_witnesses-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 3,
+      "events": {
+        "path": "traces/hidden_witnesses/delete_after_charged_load/events.template.jsonl",
+        "sha256": "36142782c710743b7f9d64bddbbbfe489bc332fdbd545c4933c55bd06f0ee93f"
+      },
+      "events_count": 6,
+      "id": "hidden_witnesses/delete_after_charged_load",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/hidden_witnesses/delete_after_charged_load/expected.json",
+        "sha256": "8d47935e2c76cd83d7556cfd5dfbfbcf95725518935c3d819d1377e9569653d5"
+      },
+      "phase_labels": [
+        "charged_load",
+        "delete_phase"
+      ],
+      "query": "hidden_witnesses",
+      "regime": "delete_after_charged_load",
+      "source_id": "b02-hidden_witnesses-delete_after_charged_load",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/hidden_witnesses/global_fifo/events.template.jsonl",
+        "sha256": "b3fa1c148d80186816d42319ad70eb1ab721f1732e48cb9a445aa6f27ea42309"
+      },
+      "events_count": 6,
+      "id": "hidden_witnesses/global_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/hidden_witnesses/global_fifo/expected.json",
+        "sha256": "b865910ad2f936b8154a7c4edf1d850d90c6af835f8f65babff9e144a3410336"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "hidden_witnesses",
+      "regime": "global_fifo",
+      "source_id": "b02-hidden_witnesses-global_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/hidden_witnesses/per_relation_fifo/events.template.jsonl",
+        "sha256": "d3b2e4dc0b603cf136a753a87df726e5b1fba3fc2fbb1c5ad807fc7a249e5089"
+      },
+      "events_count": 6,
+      "id": "hidden_witnesses/per_relation_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/hidden_witnesses/per_relation_fifo/expected.json",
+        "sha256": "b865910ad2f936b8154a7c4edf1d850d90c6af835f8f65babff9e144a3410336"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "hidden_witnesses",
+      "regime": "per_relation_fifo",
+      "source_id": "b02-hidden_witnesses-per_relation_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 3,
+      "events": {
+        "path": "traces/hidden_witnesses/mixed/events.template.jsonl",
+        "sha256": "6b35179a301628a1a0a051a105d6da597a81082d3965bf5da1b0fa1f293ca033"
+      },
+      "events_count": 17,
+      "id": "hidden_witnesses/mixed",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/hidden_witnesses/mixed/expected.json",
+        "sha256": "df319325669640fb3f3249882ac797bd507be07875e92b9432b9ecf757be82d5"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "hidden_witnesses",
+      "regime": "mixed",
+      "source_id": "b02-hidden_witnesses-mixed",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 3,
+      "events": {
+        "path": "traces/hidden_witnesses/adversarial_churn/events.template.jsonl",
+        "sha256": "0e9f76d439323799e90ab660b3e01cd7746ba52f57ecafe4421127c62a195587"
+      },
+      "events_count": 27,
+      "id": "hidden_witnesses/adversarial_churn",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/hidden_witnesses/adversarial_churn/expected.json",
+        "sha256": "78b116352631de5845aafba363a98991eb587ea4316c2d28c2684ba2eb0aa353"
+      },
+      "phase_labels": [
+        "charged_load",
+        "workload"
+      ],
+      "query": "hidden_witnesses",
+      "regime": "adversarial_churn",
+      "source_id": "b02-hidden_witnesses-adversarial_churn",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 3,
+      "events": {
+        "path": "traces/hidden_witnesses/rate_shift/events.template.jsonl",
+        "sha256": "ad27d43e60be4d7bb9b3bbdcbabc42bb2f8e0cae433099fbd13a3d3e428c75da"
+      },
+      "events_count": 9,
+      "id": "hidden_witnesses/rate_shift",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/hidden_witnesses/rate_shift/expected.json",
+        "sha256": "37fb751f24f946d8396879e3d28db6aa9866091ebaaab89ae0e87a3e956a28af"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "hidden_witnesses",
+      "regime": "rate_shift",
+      "source_id": "b02-hidden_witnesses-rate_shift",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/full_path_2/insert_only/events.template.jsonl",
+        "sha256": "b880120db526e5bc502f047c69d8ff167846cae515f1371c07b26e76d517ae9b"
+      },
+      "events_count": 6,
+      "id": "full_path_2/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_path_2/insert_only/expected.json",
+        "sha256": "1c3ce98a069a836b84484f256d549f35316e258859501d8b39dc073506122f83"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "full_path_2",
+      "regime": "insert_only",
+      "source_id": "b02-full_path_2-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/full_path_2/delete_after_charged_load/events.template.jsonl",
+        "sha256": "2f28e37ee5ca64d786edaa7e27d988d4868be3dfd5b529b93d531c1ef20d8295"
+      },
+      "events_count": 12,
+      "id": "full_path_2/delete_after_charged_load",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_path_2/delete_after_charged_load/expected.json",
+        "sha256": "15a410dc520dbedff5e1364d37ab95a827757bf4ceff8665af279f58726e168d"
+      },
+      "phase_labels": [
+        "charged_load",
+        "delete_phase"
+      ],
+      "query": "full_path_2",
+      "regime": "delete_after_charged_load",
+      "source_id": "b02-full_path_2-delete_after_charged_load",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/full_path_2/global_fifo/events.template.jsonl",
+        "sha256": "6426c78d3158254312aff84ed2dea7d5511ef8cf286f5321a478f0cb7579338c"
+      },
+      "events_count": 12,
+      "id": "full_path_2/global_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 2,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_path_2/global_fifo/expected.json",
+        "sha256": "33050fd7f43d562db96b261597a4f93785afa367426fa96a73a9fdb72ccee0d6"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "full_path_2",
+      "regime": "global_fifo",
+      "source_id": "b02-full_path_2-global_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/full_path_2/per_relation_fifo/events.template.jsonl",
+        "sha256": "2946e748aaeb3535115d22569a72fdeb5e6730b1d80d03a3b8ebcf4db88ccfdf"
+      },
+      "events_count": 12,
+      "id": "full_path_2/per_relation_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_path_2/per_relation_fifo/expected.json",
+        "sha256": "a5320f20dc399e43779686161d9f5373a8c8d7a9ec2459b70fa378ee1666710a"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "full_path_2",
+      "regime": "per_relation_fifo",
+      "source_id": "b02-full_path_2-per_relation_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/full_path_2/mixed/events.template.jsonl",
+        "sha256": "1ed918c0ba0c73d4c6569daa0e4ca9f89373f43ccf6f66226f442e8c18ec1d82"
+      },
+      "events_count": 20,
+      "id": "full_path_2/mixed",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_path_2/mixed/expected.json",
+        "sha256": "c20708950b8daf3abbdf3b6ba2fbdbc106a14dc3ed2fec289c6ce69e8f60a697"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "full_path_2",
+      "regime": "mixed",
+      "source_id": "b02-full_path_2-mixed",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/full_path_2/adversarial_churn/events.template.jsonl",
+        "sha256": "cd4847daf7151f930f0e53b6c70604c92bfc3906bf16d6f79d133eea0f60794e"
+      },
+      "events_count": 30,
+      "id": "full_path_2/adversarial_churn",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_path_2/adversarial_churn/expected.json",
+        "sha256": "5816196ead80054d68474ea6e76891d027ea42b0a654405d6341eadae91eae8e"
+      },
+      "phase_labels": [
+        "charged_load",
+        "workload"
+      ],
+      "query": "full_path_2",
+      "regime": "adversarial_churn",
+      "source_id": "b02-full_path_2-adversarial_churn",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/full_path_2/rate_shift/events.template.jsonl",
+        "sha256": "a55f4b9d2fea300a40d48beb34e304624a93e7fe5ee0627c043202543f5bbefe"
+      },
+      "events_count": 20,
+      "id": "full_path_2/rate_shift",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_path_2/rate_shift/expected.json",
+        "sha256": "2c3cb4c66b9a8cc265874c9237f79b347850737bdd8109064bd4977a4808d538"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "full_path_2",
+      "regime": "rate_shift",
+      "source_id": "b02-full_path_2-rate_shift",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/full_path_4/insert_only/events.template.jsonl",
+        "sha256": "1fcd36bd59afd48cc015ac4c443c7bbda646fe057a18839a0a3d5fd49dc6edc4"
+      },
+      "events_count": 12,
+      "id": "full_path_4/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_path_4/insert_only/expected.json",
+        "sha256": "3456aa7385dae75121dd4a2e610e3c36a23a7883840f323a880417c67e5eefb3"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "full_path_4",
+      "regime": "insert_only",
+      "source_id": "b02-full_path_4-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 12,
+      "events": {
+        "path": "traces/full_path_4/delete_after_charged_load/events.template.jsonl",
+        "sha256": "690b03c31da33e6ca08df96bede2fa401a1931c848289d2875cfa962851721cf"
+      },
+      "events_count": 24,
+      "id": "full_path_4/delete_after_charged_load",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_path_4/delete_after_charged_load/expected.json",
+        "sha256": "1299fda9296fd4429f9a8968a026ad17129adaae3842376a8cc4b7b088eca174"
+      },
+      "phase_labels": [
+        "charged_load",
+        "delete_phase"
+      ],
+      "query": "full_path_4",
+      "regime": "delete_after_charged_load",
+      "source_id": "b02-full_path_4-delete_after_charged_load",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/full_path_4/global_fifo/events.template.jsonl",
+        "sha256": "37e4be0284298524d4f767f9d898793e085fd4e45e64076eda5edf737ae15716"
+      },
+      "events_count": 24,
+      "id": "full_path_4/global_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_path_4/global_fifo/expected.json",
+        "sha256": "a6f6a30a3358e660604785dcefbe2769503599562220e5af3d4d56e93eff00c6"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "full_path_4",
+      "regime": "global_fifo",
+      "source_id": "b02-full_path_4-global_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/full_path_4/per_relation_fifo/events.template.jsonl",
+        "sha256": "92bf454fb8b707526c7b0b24abaa59f55d90a0ba1788d2f8fa20905286ee5ea0"
+      },
+      "events_count": 24,
+      "id": "full_path_4/per_relation_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_path_4/per_relation_fifo/expected.json",
+        "sha256": "9c30766986a609937ac0276af28cf02505f7c25138e7525f3d662d8be01f5d32"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "full_path_4",
+      "regime": "per_relation_fifo",
+      "source_id": "b02-full_path_4-per_relation_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 12,
+      "events": {
+        "path": "traces/full_path_4/mixed/events.template.jsonl",
+        "sha256": "231d1e48af0a75a29c69f462962df518cfbd897f0153142b09ff49e243d3018d"
+      },
+      "events_count": 38,
+      "id": "full_path_4/mixed",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_path_4/mixed/expected.json",
+        "sha256": "db14cf56c127e8496288a30e9a5af710fc168fcf3286123b74d5e323ef607bd9"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "full_path_4",
+      "regime": "mixed",
+      "source_id": "b02-full_path_4-mixed",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 12,
+      "events": {
+        "path": "traces/full_path_4/adversarial_churn/events.template.jsonl",
+        "sha256": "e53c4f23365fe5404ae88b4567685f8867e0c6a3b51cef4fefd7b3d727dc356c"
+      },
+      "events_count": 36,
+      "id": "full_path_4/adversarial_churn",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_path_4/adversarial_churn/expected.json",
+        "sha256": "cac35fd42c76bd57e18cbd0135cb1b371a4c6688adfbc7c72a1532a2aac032b8"
+      },
+      "phase_labels": [
+        "charged_load",
+        "workload"
+      ],
+      "query": "full_path_4",
+      "regime": "adversarial_churn",
+      "source_id": "b02-full_path_4-adversarial_churn",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 12,
+      "events": {
+        "path": "traces/full_path_4/rate_shift/events.template.jsonl",
+        "sha256": "4595275e279dcaaa7b65153d55aa753d8bf8f58eecba2f4867314f98897876f3"
+      },
+      "events_count": 26,
+      "id": "full_path_4/rate_shift",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_path_4/rate_shift/expected.json",
+        "sha256": "30b790644d13ad5d3d58155e4a6d3996620af53fd27b37371c4396b7169c4c01"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "full_path_4",
+      "regime": "rate_shift",
+      "source_id": "b02-full_path_4-rate_shift",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/projected_prefix_path/insert_only/events.template.jsonl",
+        "sha256": "c7937eeb22328beedb11ce94bb6c3a35e4092a88f7c966e88eed7f1b05caf6d5"
+      },
+      "events_count": 12,
+      "id": "projected_prefix_path/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/projected_prefix_path/insert_only/expected.json",
+        "sha256": "88f781ffc4976a096e076d430c52fe6f572fe20a0a501d33e8ca06ee8cf4e07f"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "projected_prefix_path",
+      "regime": "insert_only",
+      "source_id": "b02-projected_prefix_path-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 12,
+      "events": {
+        "path": "traces/projected_prefix_path/delete_after_charged_load/events.template.jsonl",
+        "sha256": "6e2262c2c1ab68f936bb2e7e38d65c802bfe003c1c986044cee67d928dc3d451"
+      },
+      "events_count": 24,
+      "id": "projected_prefix_path/delete_after_charged_load",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/projected_prefix_path/delete_after_charged_load/expected.json",
+        "sha256": "cdd209d257d1f7907f11a0b66650c06e8574a284a261e30dd9a6f4ec40729263"
+      },
+      "phase_labels": [
+        "charged_load",
+        "delete_phase"
+      ],
+      "query": "projected_prefix_path",
+      "regime": "delete_after_charged_load",
+      "source_id": "b02-projected_prefix_path-delete_after_charged_load",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/projected_prefix_path/global_fifo/events.template.jsonl",
+        "sha256": "8d6eabf6de5c51c51d3135b9030f89e97f9cb82ebe8e149a746e5fcd65f08cc9"
+      },
+      "events_count": 24,
+      "id": "projected_prefix_path/global_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/projected_prefix_path/global_fifo/expected.json",
+        "sha256": "fa6318bf7109a09e3dfac21cf5ca8b990d5c816625bb135818593106fde30830"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "projected_prefix_path",
+      "regime": "global_fifo",
+      "source_id": "b02-projected_prefix_path-global_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/projected_prefix_path/per_relation_fifo/events.template.jsonl",
+        "sha256": "97932fbdcb5855772bdc1a7d5fe652c792cae850443fada730460d6f1f535f56"
+      },
+      "events_count": 24,
+      "id": "projected_prefix_path/per_relation_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/projected_prefix_path/per_relation_fifo/expected.json",
+        "sha256": "e7e654d47b365996533288fb36228d2ef14cfc7d00ca6e8bad323648e2209ccd"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "projected_prefix_path",
+      "regime": "per_relation_fifo",
+      "source_id": "b02-projected_prefix_path-per_relation_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 12,
+      "events": {
+        "path": "traces/projected_prefix_path/mixed/events.template.jsonl",
+        "sha256": "dd73e8262dcd3c842ae05e40f1f8604643c24319a447567b733e274990c84854"
+      },
+      "events_count": 38,
+      "id": "projected_prefix_path/mixed",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/projected_prefix_path/mixed/expected.json",
+        "sha256": "a18e5f177f346e72b1c2eefb3ce325925461640f819ebf1fe005e3c0f0189904"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "projected_prefix_path",
+      "regime": "mixed",
+      "source_id": "b02-projected_prefix_path-mixed",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 12,
+      "events": {
+        "path": "traces/projected_prefix_path/adversarial_churn/events.template.jsonl",
+        "sha256": "5a4fe47bbac6fbc532464c7546d2e42e0ae2362fe2b941797c15b5bbe7318560"
+      },
+      "events_count": 36,
+      "id": "projected_prefix_path/adversarial_churn",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/projected_prefix_path/adversarial_churn/expected.json",
+        "sha256": "ef5ece9fe0b1a1293f5b36aa06e216028a3fc412d5d961623beee1fd29eb1da9"
+      },
+      "phase_labels": [
+        "charged_load",
+        "workload"
+      ],
+      "query": "projected_prefix_path",
+      "regime": "adversarial_churn",
+      "source_id": "b02-projected_prefix_path-adversarial_churn",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 12,
+      "events": {
+        "path": "traces/projected_prefix_path/rate_shift/events.template.jsonl",
+        "sha256": "f4c5957c63fe17ff5c0f42833df99adbfd6d403ab539463484c1108b3ab04886"
+      },
+      "events_count": 26,
+      "id": "projected_prefix_path/rate_shift",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/projected_prefix_path/rate_shift/expected.json",
+        "sha256": "f665097743fde1d46dd6015cdcf38c66f8984cf00cbbae96ef91b8fe264813b6"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "projected_prefix_path",
+      "regime": "rate_shift",
+      "source_id": "b02-projected_prefix_path-rate_shift",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/boolean_path/insert_only/events.template.jsonl",
+        "sha256": "e790d60169bbccdd0268c15795b1110e70a303d80e983fdc23ac81f267b519f6"
+      },
+      "events_count": 9,
+      "id": "boolean_path/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/boolean_path/insert_only/expected.json",
+        "sha256": "c73045afb6c1a323bc7908a7285ce3451055e8f63d93ffe3a9fe7d823a25e2a6"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "boolean_path",
+      "regime": "insert_only",
+      "source_id": "b02-boolean_path-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 9,
+      "events": {
+        "path": "traces/boolean_path/delete_after_charged_load/events.template.jsonl",
+        "sha256": "13a63783cfd27ea06bfb645a910b77492bb1e6cc515fd2a71ad3bd2e9ab27157"
+      },
+      "events_count": 18,
+      "id": "boolean_path/delete_after_charged_load",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/boolean_path/delete_after_charged_load/expected.json",
+        "sha256": "c1ec5fb93779c6e132ea911263e782c67b5d592ba1b8e336eddeb1903b6f25b8"
+      },
+      "phase_labels": [
+        "charged_load",
+        "delete_phase"
+      ],
+      "query": "boolean_path",
+      "regime": "delete_after_charged_load",
+      "source_id": "b02-boolean_path-delete_after_charged_load",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/boolean_path/global_fifo/events.template.jsonl",
+        "sha256": "eaf323bff68ed65f66fd777f251e383995f40506196900cc6ceca56986ac0db5"
+      },
+      "events_count": 18,
+      "id": "boolean_path/global_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/boolean_path/global_fifo/expected.json",
+        "sha256": "2f5cad374a2cfbf9ae907fa08b646bf92df0b7b74001a4b3d38e86df440dee28"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "boolean_path",
+      "regime": "global_fifo",
+      "source_id": "b02-boolean_path-global_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/boolean_path/per_relation_fifo/events.template.jsonl",
+        "sha256": "cb84c4ac124e1d575a8c19d8fadd9da46b69fb88a3053bc32582715c874e623a"
+      },
+      "events_count": 18,
+      "id": "boolean_path/per_relation_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/boolean_path/per_relation_fifo/expected.json",
+        "sha256": "16cc559a8d680257ce8a77025decc184357345aec6aacc5b2e0aed1bb2ae3244"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "boolean_path",
+      "regime": "per_relation_fifo",
+      "source_id": "b02-boolean_path-per_relation_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 9,
+      "events": {
+        "path": "traces/boolean_path/mixed/events.template.jsonl",
+        "sha256": "c40e9a855a7bb6a3fad2cefefa114c68953150d86fab3296b860ec1223837375"
+      },
+      "events_count": 27,
+      "id": "boolean_path/mixed",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/boolean_path/mixed/expected.json",
+        "sha256": "4d3771dc43b30d6e89e27ced812bc6441121540f12f011ef36c106953dde1cf4"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "boolean_path",
+      "regime": "mixed",
+      "source_id": "b02-boolean_path-mixed",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 9,
+      "events": {
+        "path": "traces/boolean_path/adversarial_churn/events.template.jsonl",
+        "sha256": "47a5e7d6218eaa403e6c0521d9b3f27d431542a6ef4912e2dd7d97a7ee509e4b"
+      },
+      "events_count": 33,
+      "id": "boolean_path/adversarial_churn",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/boolean_path/adversarial_churn/expected.json",
+        "sha256": "120ee7e4c453c6540a8f0edd29d9e19f232c4123efe53e34d74bc62eb2aa36f4"
+      },
+      "phase_labels": [
+        "charged_load",
+        "workload"
+      ],
+      "query": "boolean_path",
+      "regime": "adversarial_churn",
+      "source_id": "b02-boolean_path-adversarial_churn",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 9,
+      "events": {
+        "path": "traces/boolean_path/rate_shift/events.template.jsonl",
+        "sha256": "d5032bc01e2d0961c9280997b4fe4f1369b538598ef0bff67da8115540b858e5"
+      },
+      "events_count": 23,
+      "id": "boolean_path/rate_shift",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/boolean_path/rate_shift/expected.json",
+        "sha256": "fec3cdf32db878090d0af505e0fd46def74442a12d197ff814e98831638a17f5"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "boolean_path",
+      "regime": "rate_shift",
+      "source_id": "b02-boolean_path-rate_shift",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/full_star_3/insert_only/events.template.jsonl",
+        "sha256": "5ce27562f1a1715227684555049c8f64ab3fb0d3470c8664a31bc2cae6986c4d"
+      },
+      "events_count": 9,
+      "id": "full_star_3/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 27,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_star_3/insert_only/expected.json",
+        "sha256": "0b40240798ca7dd6858436b33b757d684589dcce36b480e026686109ccec84e7"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "full_star_3",
+      "regime": "insert_only",
+      "source_id": "b02-full_star_3-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 9,
+      "events": {
+        "path": "traces/full_star_3/delete_after_charged_load/events.template.jsonl",
+        "sha256": "e0738deada75fab77b8b552ac0b94c0be5fe729a088585e8e9b63c0c79a68fe6"
+      },
+      "events_count": 18,
+      "id": "full_star_3/delete_after_charged_load",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 27,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_star_3/delete_after_charged_load/expected.json",
+        "sha256": "7b6c63d57d4613cfa880d5e77a8cc0987bf999f6fa5cfab8d5eccdc5db19cf2b"
+      },
+      "phase_labels": [
+        "charged_load",
+        "delete_phase"
+      ],
+      "query": "full_star_3",
+      "regime": "delete_after_charged_load",
+      "source_id": "b02-full_star_3-delete_after_charged_load",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/full_star_3/global_fifo/events.template.jsonl",
+        "sha256": "55add3686ce32d23c896dd9e595bfb32659637dcc446d1932e16add8666af41b"
+      },
+      "events_count": 18,
+      "id": "full_star_3/global_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 2,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_star_3/global_fifo/expected.json",
+        "sha256": "53fd7719d6d62ddaf6e7c63a3f7ab53486c8b381c14b363bfe8da192e787ab8f"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "full_star_3",
+      "regime": "global_fifo",
+      "source_id": "b02-full_star_3-global_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/full_star_3/per_relation_fifo/events.template.jsonl",
+        "sha256": "a8a6b6da434b109fa6846343ba46387646314374a5a56d30809632fcfe4dda72"
+      },
+      "events_count": 18,
+      "id": "full_star_3/per_relation_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 27,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_star_3/per_relation_fifo/expected.json",
+        "sha256": "c9c72527884ebb5367a406f63da256a429d94dc705dc2672f2be579477f9549a"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "full_star_3",
+      "regime": "per_relation_fifo",
+      "source_id": "b02-full_star_3-per_relation_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 9,
+      "events": {
+        "path": "traces/full_star_3/mixed/events.template.jsonl",
+        "sha256": "3d9cae7e77c5062724a9ef460f1e657149c0f91266599a4d7cbb3d396152dd3a"
+      },
+      "events_count": 27,
+      "id": "full_star_3/mixed",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 27,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_star_3/mixed/expected.json",
+        "sha256": "7980b8b701515ed77ec320c3e74c15f29628244ab8e79fa5d86b06c70d851718"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "full_star_3",
+      "regime": "mixed",
+      "source_id": "b02-full_star_3-mixed",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 9,
+      "events": {
+        "path": "traces/full_star_3/adversarial_churn/events.template.jsonl",
+        "sha256": "a4f190e289df312fabb09d7270f956b10aaef25b4ed70c91fab50733981ef723"
+      },
+      "events_count": 33,
+      "id": "full_star_3/adversarial_churn",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 27,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_star_3/adversarial_churn/expected.json",
+        "sha256": "a98ffdb3b0919223574cec9b15af2408d3c3e7a3c0d748dc2d08c7aac3420369"
+      },
+      "phase_labels": [
+        "charged_load",
+        "workload"
+      ],
+      "query": "full_star_3",
+      "regime": "adversarial_churn",
+      "source_id": "b02-full_star_3-adversarial_churn",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 9,
+      "events": {
+        "path": "traces/full_star_3/rate_shift/events.template.jsonl",
+        "sha256": "044b5d4e38b2cce4ccc1d2aafd71cc98ecec0a5a17d3432649e67fee4342b5af"
+      },
+      "events_count": 23,
+      "id": "full_star_3/rate_shift",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 27,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_star_3/rate_shift/expected.json",
+        "sha256": "1c18f2f9278ab2700c7b0243b199f695588ce1bc2104c4db07715c20fa6e66a0"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "full_star_3",
+      "regime": "rate_shift",
+      "source_id": "b02-full_star_3-rate_shift",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/full_star_6/insert_only/events.template.jsonl",
+        "sha256": "5d1012c1404f0257143f60669c8af80433196b5c32a23da22ca7bbd2dfa8acc7"
+      },
+      "events_count": 18,
+      "id": "full_star_6/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 729,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_star_6/insert_only/expected.json",
+        "sha256": "76dd065ec187b7eeaba006864f91622cfe744e534abb71eb3a29df61c5eab40f"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "full_star_6",
+      "regime": "insert_only",
+      "source_id": "b02-full_star_6-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 18,
+      "events": {
+        "path": "traces/full_star_6/delete_after_charged_load/events.template.jsonl",
+        "sha256": "3cbc352f2907e3df7aa9d6bb4467481646dbed60414f1177519e57a2194fd760"
+      },
+      "events_count": 36,
+      "id": "full_star_6/delete_after_charged_load",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 729,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_star_6/delete_after_charged_load/expected.json",
+        "sha256": "e07e5bfd4eaedc0823caf95d19a191911966dcab47d4c04ef71033fe1d214897"
+      },
+      "phase_labels": [
+        "charged_load",
+        "delete_phase"
+      ],
+      "query": "full_star_6",
+      "regime": "delete_after_charged_load",
+      "source_id": "b02-full_star_6-delete_after_charged_load",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/full_star_6/global_fifo/events.template.jsonl",
+        "sha256": "3811b1e90453e687897efa2e415153752951c2cc2cf6317dbe2bf9c30090a600"
+      },
+      "events_count": 36,
+      "id": "full_star_6/global_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 0,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_star_6/global_fifo/expected.json",
+        "sha256": "a27c60a535a3e34a2853e98370e7120cbb249e7e02502c2e996e7b9e92016429"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "full_star_6",
+      "regime": "global_fifo",
+      "source_id": "b02-full_star_6-global_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/full_star_6/per_relation_fifo/events.template.jsonl",
+        "sha256": "ae8f8afdbeffaa2cf5fdc34ebe33329bcc6ef34d4009640d5ab7402f56f0606b"
+      },
+      "events_count": 36,
+      "id": "full_star_6/per_relation_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 729,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_star_6/per_relation_fifo/expected.json",
+        "sha256": "6696813ae4611e3f073bcc6589cccf1f7027b313996d2124096e068c9b8ef942"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "full_star_6",
+      "regime": "per_relation_fifo",
+      "source_id": "b02-full_star_6-per_relation_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 18,
+      "events": {
+        "path": "traces/full_star_6/mixed/events.template.jsonl",
+        "sha256": "a9f92a546a7405348dde19c071a43aee3fc06275817e4de8d8c37f3e01444895"
+      },
+      "events_count": 56,
+      "id": "full_star_6/mixed",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 729,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_star_6/mixed/expected.json",
+        "sha256": "49fa67adf23abec14652f0305ea5eda03d744f79a5f4923d8c986ffa47476db5"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "full_star_6",
+      "regime": "mixed",
+      "source_id": "b02-full_star_6-mixed",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 18,
+      "events": {
+        "path": "traces/full_star_6/adversarial_churn/events.template.jsonl",
+        "sha256": "ee730fb202e8aaaae9343ed95400639aeaceace9131c6087617cb648f09a1ad2"
+      },
+      "events_count": 42,
+      "id": "full_star_6/adversarial_churn",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 729,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_star_6/adversarial_churn/expected.json",
+        "sha256": "8b28ba3a94889c5e467cbf93a05d5c5f15d1c48217bf0327962aeb89098bb800"
+      },
+      "phase_labels": [
+        "charged_load",
+        "workload"
+      ],
+      "query": "full_star_6",
+      "regime": "adversarial_churn",
+      "source_id": "b02-full_star_6-adversarial_churn",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 18,
+      "events": {
+        "path": "traces/full_star_6/rate_shift/events.template.jsonl",
+        "sha256": "1eaffaff132467eddd50beb45ed6a1fe6ebd42afab9280d4a9876d0ab55f822a"
+      },
+      "events_count": 32,
+      "id": "full_star_6/rate_shift",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 729,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/full_star_6/rate_shift/expected.json",
+        "sha256": "82745f63b2075b0d357bfe14309f50456c803c9229869aad8054f3d4d6ab0239"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "full_star_6",
+      "regime": "rate_shift",
+      "source_id": "b02-full_star_6-rate_shift",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/projected_star/insert_only/events.template.jsonl",
+        "sha256": "218570278e568936565cbe9bef779c6c390e960bd86ebee99b27c950b45c04bb"
+      },
+      "events_count": 9,
+      "id": "projected_star/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/projected_star/insert_only/expected.json",
+        "sha256": "c553e518e360e7f04ee54ca56254197a279b3fba98f14a101ce4558082657a91"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "projected_star",
+      "regime": "insert_only",
+      "source_id": "b02-projected_star-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 9,
+      "events": {
+        "path": "traces/projected_star/delete_after_charged_load/events.template.jsonl",
+        "sha256": "91d86a916d6e7da6da955157a0b4926506f4e2692d098123efadbf764974971c"
+      },
+      "events_count": 18,
+      "id": "projected_star/delete_after_charged_load",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/projected_star/delete_after_charged_load/expected.json",
+        "sha256": "635dca79e6c5f44bfdae2aad7fd1d011d8e114b46fb2933f4272e4295022a916"
+      },
+      "phase_labels": [
+        "charged_load",
+        "delete_phase"
+      ],
+      "query": "projected_star",
+      "regime": "delete_after_charged_load",
+      "source_id": "b02-projected_star-delete_after_charged_load",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/projected_star/global_fifo/events.template.jsonl",
+        "sha256": "1bda280fb5e105bd29001c3f6e508999ce12ba66a7e99adc5cc3de1b0425d704"
+      },
+      "events_count": 18,
+      "id": "projected_star/global_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/projected_star/global_fifo/expected.json",
+        "sha256": "3e9c00a9b3a05d008f1af1eb4b5a898f592ba40ce8714c92051c5d7d7f6f4a9f"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "projected_star",
+      "regime": "global_fifo",
+      "source_id": "b02-projected_star-global_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/projected_star/per_relation_fifo/events.template.jsonl",
+        "sha256": "4b3c88cb081ad2ab052b0a3765a00b0670c254b2e96609b4bd53986edbea9607"
+      },
+      "events_count": 18,
+      "id": "projected_star/per_relation_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/projected_star/per_relation_fifo/expected.json",
+        "sha256": "593df7032ce4d4b46d03100e43bf9942ca8c931a8685a64436329db99fc3fd94"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "projected_star",
+      "regime": "per_relation_fifo",
+      "source_id": "b02-projected_star-per_relation_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 9,
+      "events": {
+        "path": "traces/projected_star/mixed/events.template.jsonl",
+        "sha256": "78089fadcef966fdbaa4e25beb118a42dbc4482926005ae7ba2f7731898be14e"
+      },
+      "events_count": 27,
+      "id": "projected_star/mixed",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/projected_star/mixed/expected.json",
+        "sha256": "30922c66e9a4764ff0432d21f3d112a2042a6dcbc0b3e1019e7514737df6b4ef"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "projected_star",
+      "regime": "mixed",
+      "source_id": "b02-projected_star-mixed",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 9,
+      "events": {
+        "path": "traces/projected_star/adversarial_churn/events.template.jsonl",
+        "sha256": "475387ba080ff3cec8c85fbd52043d169689967453a3513d73774976e9e3a9f2"
+      },
+      "events_count": 33,
+      "id": "projected_star/adversarial_churn",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/projected_star/adversarial_churn/expected.json",
+        "sha256": "791d84772e075dd7bb5f935291cdf2f6a52a29481a420c544d645f29c94f49a4"
+      },
+      "phase_labels": [
+        "charged_load",
+        "workload"
+      ],
+      "query": "projected_star",
+      "regime": "adversarial_churn",
+      "source_id": "b02-projected_star-adversarial_churn",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 9,
+      "events": {
+        "path": "traces/projected_star/rate_shift/events.template.jsonl",
+        "sha256": "f4b80aec63a27a190e15d46c95f4e6b07f8ec8c8c9b8e73133ca4fcf8466a7f5"
+      },
+      "events_count": 23,
+      "id": "projected_star/rate_shift",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/projected_star/rate_shift/expected.json",
+        "sha256": "511f55a31d177402b9865529aa81428057b4ace5a883a191d1683bdcd8ce56e2"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "projected_star",
+      "regime": "rate_shift",
+      "source_id": "b02-projected_star-rate_shift",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/composite_separator/insert_only/events.template.jsonl",
+        "sha256": "f187b4e7119b133ed808de116bb8d139096f872df2046f80b32567e34da007f9"
+      },
+      "events_count": 6,
+      "id": "composite_separator/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/composite_separator/insert_only/expected.json",
+        "sha256": "b5fc91e627d63491a8a004535d1287ac245cbfeedd705cfb786bb4ba27605830"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "composite_separator",
+      "regime": "insert_only",
+      "source_id": "b02-composite_separator-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/composite_separator/delete_after_charged_load/events.template.jsonl",
+        "sha256": "936c2cf4b11011a05d4f2b0cc8da652058db3dd8e041bf1113953d465688868a"
+      },
+      "events_count": 12,
+      "id": "composite_separator/delete_after_charged_load",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/composite_separator/delete_after_charged_load/expected.json",
+        "sha256": "a45ccf559323cf6564c5f8bea3b6b7c415825a20d2716ca8751b12580666b731"
+      },
+      "phase_labels": [
+        "charged_load",
+        "delete_phase"
+      ],
+      "query": "composite_separator",
+      "regime": "delete_after_charged_load",
+      "source_id": "b02-composite_separator-delete_after_charged_load",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/composite_separator/global_fifo/events.template.jsonl",
+        "sha256": "962eb808553f8f92dd468fc88b69c70def3e318f52157f637ff522fe7e59fdcd"
+      },
+      "events_count": 12,
+      "id": "composite_separator/global_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 2,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/composite_separator/global_fifo/expected.json",
+        "sha256": "7247277617f1df8e9da3d40ecf766169b2297f71b11bbb4747c097d1b3b73f03"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "composite_separator",
+      "regime": "global_fifo",
+      "source_id": "b02-composite_separator-global_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/composite_separator/per_relation_fifo/events.template.jsonl",
+        "sha256": "83b53aeb023b5694ce51016bee7e1590244418ef23c7f225a96106057d13112a"
+      },
+      "events_count": 12,
+      "id": "composite_separator/per_relation_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/composite_separator/per_relation_fifo/expected.json",
+        "sha256": "bcee3236b7084c6f4196da426d0e091a7ae5eef739403324d50f826c9697a897"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "composite_separator",
+      "regime": "per_relation_fifo",
+      "source_id": "b02-composite_separator-per_relation_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/composite_separator/mixed/events.template.jsonl",
+        "sha256": "7c680a7c35671ef08688bb9a9dad560606ee0bce5778ec87d56d3593401f9c37"
+      },
+      "events_count": 20,
+      "id": "composite_separator/mixed",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/composite_separator/mixed/expected.json",
+        "sha256": "c8d4fcc6f0dddd4446dea199e06ff6f9b32d68cbb9e22eb023bd1f922970cbb3"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "composite_separator",
+      "regime": "mixed",
+      "source_id": "b02-composite_separator-mixed",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/composite_separator/adversarial_churn/events.template.jsonl",
+        "sha256": "5ec464c84a3f38d711ed4a876c47de72945946c332cc37c00a1d40ebe793b84c"
+      },
+      "events_count": 30,
+      "id": "composite_separator/adversarial_churn",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/composite_separator/adversarial_churn/expected.json",
+        "sha256": "29c6b327c660d3b7574b4966ec658d1de54e59eba7e1664b083fd2afb63080d7"
+      },
+      "phase_labels": [
+        "charged_load",
+        "workload"
+      ],
+      "query": "composite_separator",
+      "regime": "adversarial_churn",
+      "source_id": "b02-composite_separator-adversarial_churn",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/composite_separator/rate_shift/events.template.jsonl",
+        "sha256": "1b901a8dca54900d1f35df3450201fbccecd3a3538c160030111cb7a81ee7e98"
+      },
+      "events_count": 20,
+      "id": "composite_separator/rate_shift",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/composite_separator/rate_shift/expected.json",
+        "sha256": "e1242293c6eeacd50ddea84d6b9006cf411148acf79f2b738013d213030f57e0"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "composite_separator",
+      "regime": "rate_shift",
+      "source_id": "b02-composite_separator-rate_shift",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/nested_scopes/insert_only/events.template.jsonl",
+        "sha256": "8c85fabf7629bd0fc1ced6ca7826218763e43ad50f8f9ed34bf70c9194d62d95"
+      },
+      "events_count": 9,
+      "id": "nested_scopes/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/nested_scopes/insert_only/expected.json",
+        "sha256": "1738d8c285797a959f9c21196e428469801650be4b4f10e80524c759fd054c0c"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "nested_scopes",
+      "regime": "insert_only",
+      "source_id": "b02-nested_scopes-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 9,
+      "events": {
+        "path": "traces/nested_scopes/delete_after_charged_load/events.template.jsonl",
+        "sha256": "e6228b4f63f54e307eb35a7e020f0ab1c664711aa62b952564721f9c983ef8e4"
+      },
+      "events_count": 18,
+      "id": "nested_scopes/delete_after_charged_load",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/nested_scopes/delete_after_charged_load/expected.json",
+        "sha256": "919da0dfdc970448ad642c498c18063a64ce761cabb70f346c5e059f3e7d5404"
+      },
+      "phase_labels": [
+        "charged_load",
+        "delete_phase"
+      ],
+      "query": "nested_scopes",
+      "regime": "delete_after_charged_load",
+      "source_id": "b02-nested_scopes-delete_after_charged_load",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/nested_scopes/global_fifo/events.template.jsonl",
+        "sha256": "b812ff06cb3132812927e08625dd17506a3a961569094671f08ccdbd7eeeb6c6"
+      },
+      "events_count": 18,
+      "id": "nested_scopes/global_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/nested_scopes/global_fifo/expected.json",
+        "sha256": "fd781070dee71166df1a432af0785a1f8f5822abbf074b812971efba1633b3ee"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "nested_scopes",
+      "regime": "global_fifo",
+      "source_id": "b02-nested_scopes-global_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/nested_scopes/per_relation_fifo/events.template.jsonl",
+        "sha256": "6f0ef599821b4a0ee06f5bd0f0aebe4d828e1f222124323b1f47f9b0714c450d"
+      },
+      "events_count": 18,
+      "id": "nested_scopes/per_relation_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/nested_scopes/per_relation_fifo/expected.json",
+        "sha256": "dd953ab939e1b24f8fd0dd6babf86b44248818975f63f137cfe63c4f3d09e759"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "nested_scopes",
+      "regime": "per_relation_fifo",
+      "source_id": "b02-nested_scopes-per_relation_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 9,
+      "events": {
+        "path": "traces/nested_scopes/mixed/events.template.jsonl",
+        "sha256": "d2a698bbb523c57f88f5c54f7495ec904772d9eb9a38a4af13e304a3abe7ce88"
+      },
+      "events_count": 27,
+      "id": "nested_scopes/mixed",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/nested_scopes/mixed/expected.json",
+        "sha256": "768eb2230377619fa533ffa431807ff31e5a0f49c06b192572c08f87df774ca6"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "nested_scopes",
+      "regime": "mixed",
+      "source_id": "b02-nested_scopes-mixed",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 9,
+      "events": {
+        "path": "traces/nested_scopes/adversarial_churn/events.template.jsonl",
+        "sha256": "4fcd257d6aec31f4c377cc74d1842ea23e6e57c921b2e8532c309c514eeec966"
+      },
+      "events_count": 33,
+      "id": "nested_scopes/adversarial_churn",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/nested_scopes/adversarial_churn/expected.json",
+        "sha256": "586c7bb197ad76b9dc07631b4d03e5d751f9e16ef82c6153b86ed231e27d44c9"
+      },
+      "phase_labels": [
+        "charged_load",
+        "workload"
+      ],
+      "query": "nested_scopes",
+      "regime": "adversarial_churn",
+      "source_id": "b02-nested_scopes-adversarial_churn",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 9,
+      "events": {
+        "path": "traces/nested_scopes/rate_shift/events.template.jsonl",
+        "sha256": "4bae7a42d02b5a62ae257837807b9cf446adc4f2819cb32b2979af426f78a54d"
+      },
+      "events_count": 23,
+      "id": "nested_scopes/rate_shift",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/nested_scopes/rate_shift/expected.json",
+        "sha256": "d2e450d9c6c4372b6c8f494575f92e7e5a50ed98683049bc50bc1b71767f0e82"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "nested_scopes",
+      "regime": "rate_shift",
+      "source_id": "b02-nested_scopes-rate_shift",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/equal_scopes/insert_only/events.template.jsonl",
+        "sha256": "de9859540242cc9195e6a0e4efb2a952d76cefd00dcf52493d06aa716d4cdac2"
+      },
+      "events_count": 6,
+      "id": "equal_scopes/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/equal_scopes/insert_only/expected.json",
+        "sha256": "ebf70f7d0916259ff57d472cc8314de4a92a7d0b354f6469aeb8409e777189aa"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "equal_scopes",
+      "regime": "insert_only",
+      "source_id": "b02-equal_scopes-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/equal_scopes/delete_after_charged_load/events.template.jsonl",
+        "sha256": "2addcb22444e4990dd08d733dbe89b9eadce625767fec3034f8e2dc8c152f7c1"
+      },
+      "events_count": 12,
+      "id": "equal_scopes/delete_after_charged_load",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/equal_scopes/delete_after_charged_load/expected.json",
+        "sha256": "1eb66b6b98e11760f48e71bc11af9245aa84a35fffa6d83a0adae26eb9f05542"
+      },
+      "phase_labels": [
+        "charged_load",
+        "delete_phase"
+      ],
+      "query": "equal_scopes",
+      "regime": "delete_after_charged_load",
+      "source_id": "b02-equal_scopes-delete_after_charged_load",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/equal_scopes/global_fifo/events.template.jsonl",
+        "sha256": "0bc52d17ec4c556b04f7fd5a306d14326e035404ff907052b21e97af51e8f18d"
+      },
+      "events_count": 12,
+      "id": "equal_scopes/global_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 2,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/equal_scopes/global_fifo/expected.json",
+        "sha256": "cba7e690cc96a60ca5a47a7843ac8403813905f8aadb8e95b9f7f032529105b7"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "equal_scopes",
+      "regime": "global_fifo",
+      "source_id": "b02-equal_scopes-global_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/equal_scopes/per_relation_fifo/events.template.jsonl",
+        "sha256": "add1fdd50a801753db39bc80ebe90fe810698fbc83f7fd56ea9c529193e19be8"
+      },
+      "events_count": 12,
+      "id": "equal_scopes/per_relation_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/equal_scopes/per_relation_fifo/expected.json",
+        "sha256": "42a84491ccb31d45aa885d1aae1e8bf1d30e56b298f0f3ebb4db20e79494f98e"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "equal_scopes",
+      "regime": "per_relation_fifo",
+      "source_id": "b02-equal_scopes-per_relation_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/equal_scopes/mixed/events.template.jsonl",
+        "sha256": "bd772557e571c2f4307a94983f205b2e069d6b1705f3fba3d09284bafe85e8ee"
+      },
+      "events_count": 20,
+      "id": "equal_scopes/mixed",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/equal_scopes/mixed/expected.json",
+        "sha256": "98e556dbc474855b40569f5f697f62b512da5044c5ebf3af6aa138a28b70ee69"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "equal_scopes",
+      "regime": "mixed",
+      "source_id": "b02-equal_scopes-mixed",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/equal_scopes/adversarial_churn/events.template.jsonl",
+        "sha256": "c8baf8afccb44e6259b6797c86acd46407672d56b3354f0b944525bf75a64cd8"
+      },
+      "events_count": 30,
+      "id": "equal_scopes/adversarial_churn",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/equal_scopes/adversarial_churn/expected.json",
+        "sha256": "c6709a9f095dc9b7b7527941cefca6c8251d4da2e199e2bd13398c363b4068b9"
+      },
+      "phase_labels": [
+        "charged_load",
+        "workload"
+      ],
+      "query": "equal_scopes",
+      "regime": "adversarial_churn",
+      "source_id": "b02-equal_scopes-adversarial_churn",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/equal_scopes/rate_shift/events.template.jsonl",
+        "sha256": "e2e190127807c87596dd060860bbb15d652d57c171a6cdc7979fe0c13e31c815"
+      },
+      "events_count": 20,
+      "id": "equal_scopes/rate_shift",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/equal_scopes/rate_shift/expected.json",
+        "sha256": "c2849457b8bb7688f015ba190f6ce2e4fa9e53915ed08a6f22fc347dea93931a"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "equal_scopes",
+      "regime": "rate_shift",
+      "source_id": "b02-equal_scopes-rate_shift",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/wide_arity_8/insert_only/events.template.jsonl",
+        "sha256": "9eac08dda1b22eccae24a01e48c7f8cd4d0566d4a818eaaf2bfadfe787cbf8d1"
+      },
+      "events_count": 3,
+      "id": "wide_arity_8/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/wide_arity_8/insert_only/expected.json",
+        "sha256": "402fd6fc70fa592ef541fc8045d323f97b2881d261429a010a84b892087abb72"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "wide_arity_8",
+      "regime": "insert_only",
+      "source_id": "b02-wide_arity_8-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 3,
+      "events": {
+        "path": "traces/wide_arity_8/delete_after_charged_load/events.template.jsonl",
+        "sha256": "ff52a1e68a46a5a6082429a9b8cf3f7befcf5a0cd6a2307eadf025bff97d51bd"
+      },
+      "events_count": 6,
+      "id": "wide_arity_8/delete_after_charged_load",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/wide_arity_8/delete_after_charged_load/expected.json",
+        "sha256": "2e7f8229947cee7764eef70e15bd4dc3adbc2d8fb063f911e24aa9d58ca8df98"
+      },
+      "phase_labels": [
+        "charged_load",
+        "delete_phase"
+      ],
+      "query": "wide_arity_8",
+      "regime": "delete_after_charged_load",
+      "source_id": "b02-wide_arity_8-delete_after_charged_load",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/wide_arity_8/global_fifo/events.template.jsonl",
+        "sha256": "2d8de9d01ebab6691074032386b89ca8c95495d8a723ed94c566780700b4a7e2"
+      },
+      "events_count": 6,
+      "id": "wide_arity_8/global_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/wide_arity_8/global_fifo/expected.json",
+        "sha256": "9431a43e75149a87a5b718467087d0ea2877fb851f78ba2f32caa639afdb61a2"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "wide_arity_8",
+      "regime": "global_fifo",
+      "source_id": "b02-wide_arity_8-global_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/wide_arity_8/per_relation_fifo/events.template.jsonl",
+        "sha256": "1a0e1cb463af8d74bb211714c962e5cd8b4d5f729e346c5201642746e336a90a"
+      },
+      "events_count": 6,
+      "id": "wide_arity_8/per_relation_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/wide_arity_8/per_relation_fifo/expected.json",
+        "sha256": "9431a43e75149a87a5b718467087d0ea2877fb851f78ba2f32caa639afdb61a2"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "wide_arity_8",
+      "regime": "per_relation_fifo",
+      "source_id": "b02-wide_arity_8-per_relation_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 3,
+      "events": {
+        "path": "traces/wide_arity_8/mixed/events.template.jsonl",
+        "sha256": "2db05c9d1530c3c94576e88e3566f9063f76f0efd02bb14d09c102a2e593429b"
+      },
+      "events_count": 17,
+      "id": "wide_arity_8/mixed",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/wide_arity_8/mixed/expected.json",
+        "sha256": "223355ff59a757f0cc20c19d68c4efb9532be69cb676d7e16ad6b531ee45488a"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "wide_arity_8",
+      "regime": "mixed",
+      "source_id": "b02-wide_arity_8-mixed",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 3,
+      "events": {
+        "path": "traces/wide_arity_8/adversarial_churn/events.template.jsonl",
+        "sha256": "2a3c5c62e8d9463bf4f8d7a1b9296672c9a3786900ace20705db49911ed07813"
+      },
+      "events_count": 27,
+      "id": "wide_arity_8/adversarial_churn",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/wide_arity_8/adversarial_churn/expected.json",
+        "sha256": "6ef6905bde3f56a706dac24f544345d4bed8d5bff86cb8f04ab9d9bc42abbf7c"
+      },
+      "phase_labels": [
+        "charged_load",
+        "workload"
+      ],
+      "query": "wide_arity_8",
+      "regime": "adversarial_churn",
+      "source_id": "b02-wide_arity_8-adversarial_churn",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 3,
+      "events": {
+        "path": "traces/wide_arity_8/rate_shift/events.template.jsonl",
+        "sha256": "0283b0767a8482daf303e87b4678b6e097b5ff6dab741708b3c0f2dbe98477b7"
+      },
+      "events_count": 9,
+      "id": "wide_arity_8/rate_shift",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/wide_arity_8/rate_shift/expected.json",
+        "sha256": "ba7f4975774940e8c1302839eca34474153440368f1715a4c33b4021a7c286e4"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "wide_arity_8",
+      "regime": "rate_shift",
+      "source_id": "b02-wide_arity_8-rate_shift",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/wide_strings/insert_only/events.template.jsonl",
+        "sha256": "f127296945904ee4a86867ce51e722a35568387d58cba54df382676140f52035"
+      },
+      "events_count": 3,
+      "id": "wide_strings/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/wide_strings/insert_only/expected.json",
+        "sha256": "baf4720c35c960753f81433105c992f8051bf8c3990610a561dc3fefa8a63725"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "wide_strings",
+      "regime": "insert_only",
+      "source_id": "b02-wide_strings-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 3,
+      "events": {
+        "path": "traces/wide_strings/delete_after_charged_load/events.template.jsonl",
+        "sha256": "c1ca4388bc8fdd3d00eee76a68070cc57c18175138a15ffc43e6aee1a24ed9d3"
+      },
+      "events_count": 6,
+      "id": "wide_strings/delete_after_charged_load",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/wide_strings/delete_after_charged_load/expected.json",
+        "sha256": "3626b9d4a68761e320ee7d66db2dcc3fe268340af754bfc3c16712546b0507f4"
+      },
+      "phase_labels": [
+        "charged_load",
+        "delete_phase"
+      ],
+      "query": "wide_strings",
+      "regime": "delete_after_charged_load",
+      "source_id": "b02-wide_strings-delete_after_charged_load",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/wide_strings/global_fifo/events.template.jsonl",
+        "sha256": "25ffcf8817b27603bd39a9d1531a07f13a49e717bb65a4557e3764a235a921e7"
+      },
+      "events_count": 6,
+      "id": "wide_strings/global_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/wide_strings/global_fifo/expected.json",
+        "sha256": "13ce9a209a485ebaee80167788f59a0bd607d5501ce2bb9596efca9a3750fe4b"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "wide_strings",
+      "regime": "global_fifo",
+      "source_id": "b02-wide_strings-global_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/wide_strings/per_relation_fifo/events.template.jsonl",
+        "sha256": "650bc35f8403c30aa0847ec40ee7ad1a4e15811127ca78bf5836a172018fe8f9"
+      },
+      "events_count": 6,
+      "id": "wide_strings/per_relation_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/wide_strings/per_relation_fifo/expected.json",
+        "sha256": "13ce9a209a485ebaee80167788f59a0bd607d5501ce2bb9596efca9a3750fe4b"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "wide_strings",
+      "regime": "per_relation_fifo",
+      "source_id": "b02-wide_strings-per_relation_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 3,
+      "events": {
+        "path": "traces/wide_strings/mixed/events.template.jsonl",
+        "sha256": "d4c647bf3d489a159d44c853cc4e3b09675e555c5135c2dd62a03594db750ea8"
+      },
+      "events_count": 17,
+      "id": "wide_strings/mixed",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/wide_strings/mixed/expected.json",
+        "sha256": "3964f7717a1abb0d11b282edc735b712be70697b6e0429958e8635328f53889d"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "wide_strings",
+      "regime": "mixed",
+      "source_id": "b02-wide_strings-mixed",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 3,
+      "events": {
+        "path": "traces/wide_strings/adversarial_churn/events.template.jsonl",
+        "sha256": "24838278b4a65f81f51e6f294b2ebc67a0325010de33aa6ad52be4892f855b6d"
+      },
+      "events_count": 27,
+      "id": "wide_strings/adversarial_churn",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/wide_strings/adversarial_churn/expected.json",
+        "sha256": "f3ab911a8e7bf909f1b1e527619d54a4072b13c586824111ba4d9438b5590b40"
+      },
+      "phase_labels": [
+        "charged_load",
+        "workload"
+      ],
+      "query": "wide_strings",
+      "regime": "adversarial_churn",
+      "source_id": "b02-wide_strings-adversarial_churn",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 3,
+      "events": {
+        "path": "traces/wide_strings/rate_shift/events.template.jsonl",
+        "sha256": "d3682402f56151c56489b036185a0f0ed031c278df858551f1e2331a7b7a8cbf"
+      },
+      "events_count": 9,
+      "id": "wide_strings/rate_shift",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/wide_strings/rate_shift/expected.json",
+        "sha256": "502ee945d301659cf3f597f8b4d7e310eaae7945c20aaae04adce751b4650db8"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "wide_strings",
+      "regime": "rate_shift",
+      "source_id": "b02-wide_strings-rate_shift",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/disconnected_full/insert_only/events.template.jsonl",
+        "sha256": "8ce88c284cd544bb7c06ffd3687e9fb080d9e9fa6fff3608dfaadd80752ca362"
+      },
+      "events_count": 6,
+      "id": "disconnected_full/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 9,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/disconnected_full/insert_only/expected.json",
+        "sha256": "cf7510691b04e35664f35c23f974dc4f328e6f65b76d14ee6d00c480371544d3"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "disconnected_full",
+      "regime": "insert_only",
+      "source_id": "b02-disconnected_full-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/disconnected_full/delete_after_charged_load/events.template.jsonl",
+        "sha256": "1240c1d9dc127184388e940122e9cede075312f973a3755032e2786a3d09cacf"
+      },
+      "events_count": 12,
+      "id": "disconnected_full/delete_after_charged_load",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 9,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/disconnected_full/delete_after_charged_load/expected.json",
+        "sha256": "d536b429330329a73be8622f2f5e5aaddaee5edcdf2fd9cf0cbf864ecc50215a"
+      },
+      "phase_labels": [
+        "charged_load",
+        "delete_phase"
+      ],
+      "query": "disconnected_full",
+      "regime": "delete_after_charged_load",
+      "source_id": "b02-disconnected_full-delete_after_charged_load",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/disconnected_full/global_fifo/events.template.jsonl",
+        "sha256": "857c07b1500dc8100632361b31689eaab6be340191968fa87fda10a8edccdf19"
+      },
+      "events_count": 12,
+      "id": "disconnected_full/global_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 4,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/disconnected_full/global_fifo/expected.json",
+        "sha256": "acc0fd1508de478dba06416ec97cc4c2574c56fd1ecb5eccfc53032e2ff65d8b"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "disconnected_full",
+      "regime": "global_fifo",
+      "source_id": "b02-disconnected_full-global_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/disconnected_full/per_relation_fifo/events.template.jsonl",
+        "sha256": "2871ec86783fa50422d8bc3a43b555ac1c76f67a22a6b399f61342184df48815"
+      },
+      "events_count": 12,
+      "id": "disconnected_full/per_relation_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 9,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/disconnected_full/per_relation_fifo/expected.json",
+        "sha256": "064ea9ec54b49a1e6c039df02a63c8edb9af363896d41e189e994b26c702dc7d"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "disconnected_full",
+      "regime": "per_relation_fifo",
+      "source_id": "b02-disconnected_full-per_relation_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/disconnected_full/mixed/events.template.jsonl",
+        "sha256": "580662761bdc54182594b4bf1b174552261acb8144e1c067e22ffd5cb0a92fe1"
+      },
+      "events_count": 20,
+      "id": "disconnected_full/mixed",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 9,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/disconnected_full/mixed/expected.json",
+        "sha256": "bf29c753d7c0bbee78d7c4731f6d6fe80c8bf7dae0d96b6d9c2b2cbc5fbb4dff"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "disconnected_full",
+      "regime": "mixed",
+      "source_id": "b02-disconnected_full-mixed",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/disconnected_full/adversarial_churn/events.template.jsonl",
+        "sha256": "07bd811891751815adde3f8647e65281474d7a6a9d34a40c89ac9db904bb4931"
+      },
+      "events_count": 30,
+      "id": "disconnected_full/adversarial_churn",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 9,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/disconnected_full/adversarial_churn/expected.json",
+        "sha256": "848640784872eff21c3fe3affb232833ecffea003c4e9fa3754485948af73c46"
+      },
+      "phase_labels": [
+        "charged_load",
+        "workload"
+      ],
+      "query": "disconnected_full",
+      "regime": "adversarial_churn",
+      "source_id": "b02-disconnected_full-adversarial_churn",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/disconnected_full/rate_shift/events.template.jsonl",
+        "sha256": "adc58c5b440d8a9458a68cfd0ae3ffa1348d2aa119fbf96587cbf7ed9c3ec916"
+      },
+      "events_count": 20,
+      "id": "disconnected_full/rate_shift",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 9,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/disconnected_full/rate_shift/expected.json",
+        "sha256": "16fabd701b414824e3efa9a16b6da228c9ddc2acc9d58c22317b6e61af9ac150"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "disconnected_full",
+      "regime": "rate_shift",
+      "source_id": "b02-disconnected_full-rate_shift",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/disconnected_projected/insert_only/events.template.jsonl",
+        "sha256": "7d0cabc4d3e7966f80555178ccf86762a55d059954bc42d087aa0d56fb5bc690"
+      },
+      "events_count": 6,
+      "id": "disconnected_projected/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 9,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/disconnected_projected/insert_only/expected.json",
+        "sha256": "b04271528d2b39a79dc5564021711c95f637b65dc3b360cebee77c1f49c26953"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "disconnected_projected",
+      "regime": "insert_only",
+      "source_id": "b02-disconnected_projected-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/disconnected_projected/delete_after_charged_load/events.template.jsonl",
+        "sha256": "4388bab7397809101c4e8a8727754740a1d9f7fde200c6abcff8a572bf8029cb"
+      },
+      "events_count": 12,
+      "id": "disconnected_projected/delete_after_charged_load",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 9,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/disconnected_projected/delete_after_charged_load/expected.json",
+        "sha256": "9919c3c8738182ddccd39692d590fa1fd8469a9d0b1ed57814cd0fbc5e883570"
+      },
+      "phase_labels": [
+        "charged_load",
+        "delete_phase"
+      ],
+      "query": "disconnected_projected",
+      "regime": "delete_after_charged_load",
+      "source_id": "b02-disconnected_projected-delete_after_charged_load",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/disconnected_projected/global_fifo/events.template.jsonl",
+        "sha256": "bbaf944aa30f7fe9e95afbb5709e7a0b762ad82f6d02285b893a0147f1b95b9e"
+      },
+      "events_count": 12,
+      "id": "disconnected_projected/global_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 4,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/disconnected_projected/global_fifo/expected.json",
+        "sha256": "8aa4fa76302f32d2bb3a112708f4a8d78c6dc35199cf5c5789389051226f71b3"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "disconnected_projected",
+      "regime": "global_fifo",
+      "source_id": "b02-disconnected_projected-global_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/disconnected_projected/per_relation_fifo/events.template.jsonl",
+        "sha256": "d3c7895a1aa44d4a3932b62ed87e78072dafa7397b48631e1070bfe106e6564b"
+      },
+      "events_count": 12,
+      "id": "disconnected_projected/per_relation_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 9,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/disconnected_projected/per_relation_fifo/expected.json",
+        "sha256": "26eca6b35af40eae560b9cdde7b2a1e2d1e565ce42e48506c678e063321ae5ed"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "disconnected_projected",
+      "regime": "per_relation_fifo",
+      "source_id": "b02-disconnected_projected-per_relation_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/disconnected_projected/mixed/events.template.jsonl",
+        "sha256": "a8722575c89157ec1fcfc8ada52a78cec998ee674cb31087277136455c3164e9"
+      },
+      "events_count": 20,
+      "id": "disconnected_projected/mixed",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 9,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/disconnected_projected/mixed/expected.json",
+        "sha256": "31ce247cbe723e0d8b965c8bbcccaeaf179b2e1e423188486f2f6545739ae353"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "disconnected_projected",
+      "regime": "mixed",
+      "source_id": "b02-disconnected_projected-mixed",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/disconnected_projected/adversarial_churn/events.template.jsonl",
+        "sha256": "986b5b0bc74481e40976051135ef196838b89b6baea02a71ddffb413c188567b"
+      },
+      "events_count": 30,
+      "id": "disconnected_projected/adversarial_churn",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 9,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/disconnected_projected/adversarial_churn/expected.json",
+        "sha256": "12465a668bc9a6b89682f0e109993b20a2da3cd15909d5c088e939f1ef2b979b"
+      },
+      "phase_labels": [
+        "charged_load",
+        "workload"
+      ],
+      "query": "disconnected_projected",
+      "regime": "adversarial_churn",
+      "source_id": "b02-disconnected_projected-adversarial_churn",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/disconnected_projected/rate_shift/events.template.jsonl",
+        "sha256": "5b75e6b39abfab138ded38b159d84c0a9587f4fd22d35983196ee41bdba586dd"
+      },
+      "events_count": 20,
+      "id": "disconnected_projected/rate_shift",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 9,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/disconnected_projected/rate_shift/expected.json",
+        "sha256": "97b8cc718dd1d4f3611e446eff4e8a7dc314c822dff04f0b72c4b4d495477b76"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "disconnected_projected",
+      "regime": "rate_shift",
+      "source_id": "b02-disconnected_projected-rate_shift",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/boolean_disconnected/insert_only/events.template.jsonl",
+        "sha256": "a7fb2a18a39180e4d5e4b8d2d5f8b9231a45028ec0ae2fa8e097564c59c4933f"
+      },
+      "events_count": 6,
+      "id": "boolean_disconnected/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/boolean_disconnected/insert_only/expected.json",
+        "sha256": "51a21dd5416b46d578de43b9055baca01093a68636509ac26b4cef21d3e919be"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "boolean_disconnected",
+      "regime": "insert_only",
+      "source_id": "b02-boolean_disconnected-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/boolean_disconnected/delete_after_charged_load/events.template.jsonl",
+        "sha256": "7f8bbd90aea073dfa8548dc319febc828bc3916779c403e3da498a161493c21c"
+      },
+      "events_count": 12,
+      "id": "boolean_disconnected/delete_after_charged_load",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/boolean_disconnected/delete_after_charged_load/expected.json",
+        "sha256": "0b5813af25171d3188aacae46405d7135bb24fd8858ea45b1c335276fe0e0e30"
+      },
+      "phase_labels": [
+        "charged_load",
+        "delete_phase"
+      ],
+      "query": "boolean_disconnected",
+      "regime": "delete_after_charged_load",
+      "source_id": "b02-boolean_disconnected-delete_after_charged_load",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/boolean_disconnected/global_fifo/events.template.jsonl",
+        "sha256": "a27d218676fa3af53b3eef292fd8ab2a2df70c38136392d06e7845a15978e6fa"
+      },
+      "events_count": 12,
+      "id": "boolean_disconnected/global_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/boolean_disconnected/global_fifo/expected.json",
+        "sha256": "b454023ff5677c5099ae1de711c19d7d5331d92896c46c3dba517002bb41bfc2"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "boolean_disconnected",
+      "regime": "global_fifo",
+      "source_id": "b02-boolean_disconnected-global_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/boolean_disconnected/per_relation_fifo/events.template.jsonl",
+        "sha256": "e765f043410969ac5b62e5899ed941a60e295f3ca5d6bf4ab75075c55178c85f"
+      },
+      "events_count": 12,
+      "id": "boolean_disconnected/per_relation_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/boolean_disconnected/per_relation_fifo/expected.json",
+        "sha256": "76e3becc342f61a3f868b83c2e88a13a5b70073dd88056105d01753a3effce7d"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "boolean_disconnected",
+      "regime": "per_relation_fifo",
+      "source_id": "b02-boolean_disconnected-per_relation_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/boolean_disconnected/mixed/events.template.jsonl",
+        "sha256": "98e31365382217b9edf18142eabf2888bada10baeec623ead32b5d973644f004"
+      },
+      "events_count": 20,
+      "id": "boolean_disconnected/mixed",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/boolean_disconnected/mixed/expected.json",
+        "sha256": "46d92883cfd5dfa97d5e9399ddec8c078cd7c529836c0ff84c27101e7516264f"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "boolean_disconnected",
+      "regime": "mixed",
+      "source_id": "b02-boolean_disconnected-mixed",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/boolean_disconnected/adversarial_churn/events.template.jsonl",
+        "sha256": "d1c2f63b9a11fc9ed551908572f1f7504c152e2e9ae7c81e946d8412dc488cec"
+      },
+      "events_count": 30,
+      "id": "boolean_disconnected/adversarial_churn",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/boolean_disconnected/adversarial_churn/expected.json",
+        "sha256": "3c94405c29129babd79cee628892b1fa6b8cbe437790c34107391a672213806e"
+      },
+      "phase_labels": [
+        "charged_load",
+        "workload"
+      ],
+      "query": "boolean_disconnected",
+      "regime": "adversarial_churn",
+      "source_id": "b02-boolean_disconnected-adversarial_churn",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 6,
+      "events": {
+        "path": "traces/boolean_disconnected/rate_shift/events.template.jsonl",
+        "sha256": "8b76a610970f3385e979c3d206b89052407713e91abb8e5426e9e3a010947daf"
+      },
+      "events_count": 20,
+      "id": "boolean_disconnected/rate_shift",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/boolean_disconnected/rate_shift/expected.json",
+        "sha256": "46d92883cfd5dfa97d5e9399ddec8c078cd7c529836c0ff84c27101e7516264f"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "boolean_disconnected",
+      "regime": "rate_shift",
+      "source_id": "b02-boolean_disconnected-rate_shift",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/self_join_2/insert_only/events.template.jsonl",
+        "sha256": "302e8ad56caebe82c9abf40b6cfc1b80554cbc47d15710ecd08b256a76410aa8"
+      },
+      "events_count": 5,
+      "id": "self_join_2/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 9,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/self_join_2/insert_only/expected.json",
+        "sha256": "90e9dbe807e3553f64c6fd90492f849ac60ed35286466856d34d8d97f714d6f6"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "self_join_2",
+      "regime": "insert_only",
+      "source_id": "b02-self_join_2-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 5,
+      "events": {
+        "path": "traces/self_join_2/delete_after_charged_load/events.template.jsonl",
+        "sha256": "469424ef3dfbac0884b30882f01da1013d76638862c7d1181baa68abbfc44eb0"
+      },
+      "events_count": 10,
+      "id": "self_join_2/delete_after_charged_load",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 9,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/self_join_2/delete_after_charged_load/expected.json",
+        "sha256": "d915aa2bfc33534200859ce6b6b5b4b46c4c16a211d7460be275012cf091bb59"
+      },
+      "phase_labels": [
+        "charged_load",
+        "delete_phase"
+      ],
+      "query": "self_join_2",
+      "regime": "delete_after_charged_load",
+      "source_id": "b02-self_join_2-delete_after_charged_load",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/self_join_2/global_fifo/events.template.jsonl",
+        "sha256": "139e53a9292b5436a2ae6f017b2e5472840ef25c3de40104289c6a373a354528"
+      },
+      "events_count": 10,
+      "id": "self_join_2/global_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 6,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/self_join_2/global_fifo/expected.json",
+        "sha256": "50cb82cf42d1829e4e2c0d220eb09762b6587a996ce22624a611cee05c5b18dc"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "self_join_2",
+      "regime": "global_fifo",
+      "source_id": "b02-self_join_2-global_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/self_join_2/per_relation_fifo/events.template.jsonl",
+        "sha256": "9f23cadd9c01b6ad83b144660cb028a9e1c460dec907c977dea9dacb30fca2ec"
+      },
+      "events_count": 10,
+      "id": "self_join_2/per_relation_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 9,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/self_join_2/per_relation_fifo/expected.json",
+        "sha256": "d6ad090366ff334fbe6cd0003010e9fe66e7deb60d0171c11e07a3310e0f684d"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "self_join_2",
+      "regime": "per_relation_fifo",
+      "source_id": "b02-self_join_2-per_relation_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 5,
+      "events": {
+        "path": "traces/self_join_2/mixed/events.template.jsonl",
+        "sha256": "a55037b7d93b8595729308e1e5abcc8783aa8a11d2553de5ad389749168942f6"
+      },
+      "events_count": 19,
+      "id": "self_join_2/mixed",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 9,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/self_join_2/mixed/expected.json",
+        "sha256": "26a028e4073b9cb01d651133f5af7a5f213bb4985eda803a4e2af49de6cfc8ad"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "self_join_2",
+      "regime": "mixed",
+      "source_id": "b02-self_join_2-mixed",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 5,
+      "events": {
+        "path": "traces/self_join_2/adversarial_churn/events.template.jsonl",
+        "sha256": "592598cd7757b2ed129354f4e255fdb2a2f70d87e85595d1d9ee283722a77b7e"
+      },
+      "events_count": 29,
+      "id": "self_join_2/adversarial_churn",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 9,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/self_join_2/adversarial_churn/expected.json",
+        "sha256": "e54d67be1c7d1557c3f81ca4b0134605e343bb83cfc546be03a8ee9281857d96"
+      },
+      "phase_labels": [
+        "charged_load",
+        "workload"
+      ],
+      "query": "self_join_2",
+      "regime": "adversarial_churn",
+      "source_id": "b02-self_join_2-adversarial_churn",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 5,
+      "events": {
+        "path": "traces/self_join_2/rate_shift/events.template.jsonl",
+        "sha256": "aecdaecb2fdca2822140ddc659722d8252ee26f00b055e333ef2bad763d82820"
+      },
+      "events_count": 11,
+      "id": "self_join_2/rate_shift",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 9,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/self_join_2/rate_shift/expected.json",
+        "sha256": "c29c656f3698a3ea4bac11e79ba034c324c5b455bb69cc3da93f8899b5b30c97"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "self_join_2",
+      "regime": "rate_shift",
+      "source_id": "b02-self_join_2-rate_shift",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/self_join_3/insert_only/events.template.jsonl",
+        "sha256": "4f9e56f075ff1a4f1b17d798269f750cab1f281e8a5eb8b54cbd88d681c85121"
+      },
+      "events_count": 5,
+      "id": "self_join_3/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 16,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/self_join_3/insert_only/expected.json",
+        "sha256": "142bf899aaf2a3ca0acc3813049546bc05e5ca6aaa1a5b1c9870b3de9e616223"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "self_join_3",
+      "regime": "insert_only",
+      "source_id": "b02-self_join_3-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 5,
+      "events": {
+        "path": "traces/self_join_3/delete_after_charged_load/events.template.jsonl",
+        "sha256": "2754d68c806f86067101050b64aeef7eebc9a53fb3055b4c020ed90ec5dec328"
+      },
+      "events_count": 10,
+      "id": "self_join_3/delete_after_charged_load",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 16,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/self_join_3/delete_after_charged_load/expected.json",
+        "sha256": "0f530eab48ec916ffb1be879794fa6091d9bed653eb4cd37324722219e0d11d2"
+      },
+      "phase_labels": [
+        "charged_load",
+        "delete_phase"
+      ],
+      "query": "self_join_3",
+      "regime": "delete_after_charged_load",
+      "source_id": "b02-self_join_3-delete_after_charged_load",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/self_join_3/global_fifo/events.template.jsonl",
+        "sha256": "dcdaf3f5fe6ba9ddd79cd99cb6bba512571b4c78613139512733862165b5e4e1"
+      },
+      "events_count": 10,
+      "id": "self_join_3/global_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 9,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/self_join_3/global_fifo/expected.json",
+        "sha256": "07071ed059b8e5d6871192997d21944bde29d5d8105401b215820cfd56c0f835"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "self_join_3",
+      "regime": "global_fifo",
+      "source_id": "b02-self_join_3-global_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/self_join_3/per_relation_fifo/events.template.jsonl",
+        "sha256": "c8a3e55dc8517588c841caf268ddbbbb3f895b4330777ba92c3c1c917b8772b5"
+      },
+      "events_count": 10,
+      "id": "self_join_3/per_relation_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 16,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/self_join_3/per_relation_fifo/expected.json",
+        "sha256": "806af20c8234edac9e9eb6ae48b48c9a98e23d3b1194e720b041f5cf74f6a9e9"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "self_join_3",
+      "regime": "per_relation_fifo",
+      "source_id": "b02-self_join_3-per_relation_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 5,
+      "events": {
+        "path": "traces/self_join_3/mixed/events.template.jsonl",
+        "sha256": "b9c8d17359fb490c5a15df45196746593de1be34640738e391b34073a8cb2cfb"
+      },
+      "events_count": 19,
+      "id": "self_join_3/mixed",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 16,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/self_join_3/mixed/expected.json",
+        "sha256": "584ba750de13f60fc8c206418924963ca342e63e0e7079ad9dd778f40e622cfc"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "self_join_3",
+      "regime": "mixed",
+      "source_id": "b02-self_join_3-mixed",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 5,
+      "events": {
+        "path": "traces/self_join_3/adversarial_churn/events.template.jsonl",
+        "sha256": "095239c72bea0a8bacc27b17a0ba335606940cf6379804b5209e22d8fc27937a"
+      },
+      "events_count": 29,
+      "id": "self_join_3/adversarial_churn",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 16,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/self_join_3/adversarial_churn/expected.json",
+        "sha256": "328bf77c4ea548e9c1bb1dac02f3b9d36fd6acd2a48d2cd916cd92073500b776"
+      },
+      "phase_labels": [
+        "charged_load",
+        "workload"
+      ],
+      "query": "self_join_3",
+      "regime": "adversarial_churn",
+      "source_id": "b02-self_join_3-adversarial_churn",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 5,
+      "events": {
+        "path": "traces/self_join_3/rate_shift/events.template.jsonl",
+        "sha256": "e21f718e2af320d417ed78d4ef722165201b04f1bba035f9d7fa5cc1366e5f60"
+      },
+      "events_count": 11,
+      "id": "self_join_3/rate_shift",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 16,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/self_join_3/rate_shift/expected.json",
+        "sha256": "59320b176da4e09ab90bd2b7b3cbd3cde16058569b156955a7e1289540010172"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "self_join_3",
+      "regime": "rate_shift",
+      "source_id": "b02-self_join_3-rate_shift",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/repeated_variable/insert_only/events.template.jsonl",
+        "sha256": "5367b3d07703ca6e9aabc03bf68f8062d8ec4b0b3faca10135e44d62588a5cbd"
+      },
+      "events_count": 7,
+      "id": "repeated_variable/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/repeated_variable/insert_only/expected.json",
+        "sha256": "7f561bd3972e14c8040a8f69f9b4b5d5af625af2df94fb239ed22294c8a7ed53"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "repeated_variable",
+      "regime": "insert_only",
+      "source_id": "b02-repeated_variable-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 7,
+      "events": {
+        "path": "traces/repeated_variable/delete_after_charged_load/events.template.jsonl",
+        "sha256": "df1acd644f049a04a207cdcef5082de65e72b259514558dd8ece0ddb5c65fedb"
+      },
+      "events_count": 14,
+      "id": "repeated_variable/delete_after_charged_load",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/repeated_variable/delete_after_charged_load/expected.json",
+        "sha256": "c216d3cd485cfc14acce990dd0e77841b6d482c3b413c5e132076cab0a325e2c"
+      },
+      "phase_labels": [
+        "charged_load",
+        "delete_phase"
+      ],
+      "query": "repeated_variable",
+      "regime": "delete_after_charged_load",
+      "source_id": "b02-repeated_variable-delete_after_charged_load",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/repeated_variable/global_fifo/events.template.jsonl",
+        "sha256": "b9adc60bf5803db39967f518e2e4678f526b68f39c025ec50391525ea1852ea4"
+      },
+      "events_count": 14,
+      "id": "repeated_variable/global_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 2,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/repeated_variable/global_fifo/expected.json",
+        "sha256": "b08d01e03daed2ef0e94bef846a2585a1ce729a4bda8eec3838d9f985899c0d7"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "repeated_variable",
+      "regime": "global_fifo",
+      "source_id": "b02-repeated_variable-global_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/repeated_variable/per_relation_fifo/events.template.jsonl",
+        "sha256": "e09c5c3256bf6615127a2cd7ffb54da3c54d04fde32a636c9261f88907e06af3"
+      },
+      "events_count": 14,
+      "id": "repeated_variable/per_relation_fifo",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/repeated_variable/per_relation_fifo/expected.json",
+        "sha256": "6e59de326650b5aabfa3d9fb05d5020150f56bddfb9e9bec64b83bdd829d5e5c"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "repeated_variable",
+      "regime": "per_relation_fifo",
+      "source_id": "b02-repeated_variable-per_relation_fifo",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 7,
+      "events": {
+        "path": "traces/repeated_variable/mixed/events.template.jsonl",
+        "sha256": "b2b7584e06fc76ca18b95932e2950134bfd6b36c839d800732372b75177416f0"
+      },
+      "events_count": 21,
+      "id": "repeated_variable/mixed",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/repeated_variable/mixed/expected.json",
+        "sha256": "d9a2abdf368a858739e1de1395700582411c6cbdda5e3d9b6cb0e7823875e255"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "repeated_variable",
+      "regime": "mixed",
+      "source_id": "b02-repeated_variable-mixed",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 7,
+      "events": {
+        "path": "traces/repeated_variable/adversarial_churn/events.template.jsonl",
+        "sha256": "18be45d32289980c6d7d00780c0756963cf3c842bd911e289fed338185a0f22d"
+      },
+      "events_count": 31,
+      "id": "repeated_variable/adversarial_churn",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/repeated_variable/adversarial_churn/expected.json",
+        "sha256": "31cd44ce3d4b72d4cc7c010826209f56dba72ef746e9a08a69b0073f961b7395"
+      },
+      "phase_labels": [
+        "charged_load",
+        "workload"
+      ],
+      "query": "repeated_variable",
+      "regime": "adversarial_churn",
+      "source_id": "b02-repeated_variable-adversarial_churn",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 7,
+      "events": {
+        "path": "traces/repeated_variable/rate_shift/events.template.jsonl",
+        "sha256": "86087805bd7971d97489501088f47e360cab4c7f547f2a4c61ea04775c29bfc1"
+      },
+      "events_count": 21,
+      "id": "repeated_variable/rate_shift",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/repeated_variable/rate_shift/expected.json",
+        "sha256": "d657f6fa93aaf2a7be08aa4b3e472faf3570a35f148a9fb44ccffb65be2548f6"
+      },
+      "phase_labels": [
+        "charged_load",
+        "phase_0",
+        "phase_1",
+        "workload"
+      ],
+      "query": "repeated_variable",
+      "regime": "rate_shift",
+      "source_id": "b02-repeated_variable-rate_shift",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/cyclic_triangle_control/insert_only/events.template.jsonl",
+        "sha256": "84523fa64d2e87b400cd8a8b5ab29a694fa2c796b4d70f3549b1e0c390c206fd"
+      },
+      "events_count": 9,
+      "id": "cyclic_triangle_control/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/cyclic_triangle_control/insert_only/expected.json",
+        "sha256": "9306a9e25d7e445ab1c24227f087690e027741eea4bfb4d1c8b0fb351554bacf"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "cyclic_triangle_control",
+      "regime": "insert_only",
+      "source_id": "b02-cyclic_triangle_control-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/nonfree_endpoint_control/insert_only/events.template.jsonl",
+        "sha256": "e78bdb575e3d6004b6a5f1e3b0e3faad103672e1636b34b29b7485e372f012b4"
+      },
+      "events_count": 6,
+      "id": "nonfree_endpoint_control/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/nonfree_endpoint_control/insert_only/expected.json",
+        "sha256": "bdfc2c6dcb2f9cdb6a18f25c56c3dfd13839956baf6f1e817575dcdbf2c2b064"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "nonfree_endpoint_control",
+      "regime": "insert_only",
+      "source_id": "b02-nonfree_endpoint_control-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/bag_projection_control/insert_only/events.template.jsonl",
+        "sha256": "761d46515b6b15f4f2b7e08e8375658d5ecf060781d3a60f15947170a8ee74e0"
+      },
+      "events_count": 3,
+      "id": "bag_projection_control/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 3,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/bag_projection_control/insert_only/expected.json",
+        "sha256": "c3731abdcfa7725ba9d75679edd492623e0111ae11fc8b3e5bcb6c13bf79fee8"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "bag_projection_control",
+      "regime": "insert_only",
+      "source_id": "b02-bag_projection_control-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    },
+    {
+      "catalog_binding": "prepare_workflow_input.py_with_native_canonical_catalog",
+      "charged_load_events": 0,
+      "events": {
+        "path": "traces/aggregate_count_control/insert_only/events.template.jsonl",
+        "sha256": "cc3bbf6c28c78ce435aed8f000c4eea2346e2507aa2cb4edb52412a0aa0586e0"
+      },
+      "events_count": 3,
+      "id": "aggregate_count_control/insert_only",
+      "initial_state": "empty_all_tables",
+      "license_record": "synthetic_local",
+      "max_result_rows": 1,
+      "noop_policy": "duplicate_insert_and_absent_delete_commit_empty_epochs",
+      "oracle": {
+        "path": "traces/aggregate_count_control/insert_only/expected.json",
+        "sha256": "b15064ebe97beca5ae1165f90778189de27d3046ecd057c1d2f0d89993e8de4a"
+      },
+      "phase_labels": [
+        "workload"
+      ],
+      "query": "aggregate_count_control",
+      "regime": "insert_only",
+      "source_id": "b02-aggregate_count_control-insert_only",
+      "update_contract": "one_ordered_atomic_physical_set_update_per_record"
+    }
+  ]
+}

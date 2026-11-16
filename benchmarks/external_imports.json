@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "kind": "external_workload_import_registry",
+  "suites": [
+    {
+      "name": "DynaGox_CROWN",
+      "import_status": "classified_source_only",
+      "pinned_sql": {
+        "packet": {
+          "path": "benchmarks/legacy/dynagox/manifest.json",
+          "sha256": "db2dbca967008396f05e53bd9954820681c5923211f58a52a08efab2a253cd46"
+        },
+        "labels": [
+          "L5-CNT",
+          "L5-SUM",
+          "L5-MAX-PROD",
+          "L5-CNTD",
+          "L5-CNT-GB",
+          "DUMBBELL",
+          "LSQB-Q6",
+          "JOB-Q8",
+          "JOB-Q8-SUM",
+          "JOB-Q8-MAX-PROD",
+          "JOB-Q8-MAX-PLUS",
+          "JOB-Q16",
+          "JOB-Q19",
+          "CEB-Q1",
+          "CEB-Q2",
+          "CEB-Q3",
+          "CEB-Q4",
+          "TPCH-Q3",
+          "TPCH-Q5",
+          "TPCH-Q8",
+          "TPCH-Q9",
+          "TPCH-Q10",
+          "TPCDS-Q15",
+          "TPCDS-Q19"
+        ]
+      },
+      "catalog": null,
+      "data_checksum": null,
+      "data_license": null,
+      "native_timing_eligible": false,
+      "reason": "Pinned DynaGox experiment SQL is imported/classified with original aggregate outputs; these variants do not qualify the complete official suite. Catalog/data/license/runtime contracts remain unavailable for R1 timing."
+    },
+    {
+      "name": "SNB",
+      "import_status": "classified_windowed_sources_only",
+      "pinned_sql": {
+        "packet": {
+          "path": "benchmarks/legacy/manifest.json",
+          "sha256": "41aab17541d0de43ea33fc33d0840423daeeba290869c97038a119af243d9990"
+        },
+        "labels": [
+          "snb1_window",
+          "snb2_window",
+          "snb3_window",
+          "snb4_window"
+        ]
+      },
+      "catalog": null,
+      "data_checksum": null,
+      "data_license": null,
+      "native_timing_eligible": false,
+      "reason": "Pinned local CROWN windowed SQL and backend variants are classified; no real source dataset or canonical expiry trace is imported."
+    },
+    {
+      "name": "LSQB",
+      "import_status": "classified_variant_sources_only",
+      "pinned_sql": {
+        "packet": {
+          "path": "benchmarks/legacy/dynagox/manifest.json",
+          "sha256": "db2dbca967008396f05e53bd9954820681c5923211f58a52a08efab2a253cd46"
+        },
+        "labels": [
+          "LSQB-Q6"
+        ]
+      },
+      "catalog": null,
+      "data_checksum": null,
+      "data_license": null,
+      "native_timing_eligible": false,
+      "reason": "Pinned DynaGox experiment SQL is imported/classified with original aggregate outputs; these variants do not qualify the complete official suite. Catalog/data/license/runtime contracts remain unavailable for R1 timing."
+    },
+    {
+      "name": "JOB",
+      "import_status": "classified_variant_sources_only",
+      "pinned_sql": {
+        "packet": {
+          "path": "benchmarks/legacy/dynagox/manifest.json",
+          "sha256": "db2dbca967008396f05e53bd9954820681c5923211f58a52a08efab2a253cd46"
+        },
+        "labels": [
+          "JOB-Q8",
+          "JOB-Q8-SUM",
+          "JOB-Q8-MAX-PROD",
+          "JOB-Q8-MAX-PLUS",
+          "JOB-Q16",
+          "JOB-Q19"
+        ]
+      },
+      "catalog": null,
+      "data_checksum": null,
+      "data_license": null,
+      "native_timing_eligible": false,
+      "reason": "Pinned DynaGox experiment SQL is imported/classified with original aggregate outputs; these variants do not qualify the complete official suite. Catalog/data/license/runtime contracts remain unavailable for R1 timing."
+    },
+    {
+      "name": "CEB",
+      "import_status": "classified_variant_sources_only",
+      "pinned_sql": {
+        "packet": {
+          "path": "benchmarks/legacy/dynagox/manifest.json",
+          "sha256": "db2dbca967008396f05e53bd9954820681c5923211f58a52a08efab2a253cd46"
+        },
+        "labels": [
+          "CEB-Q1",
+          "CEB-Q2",
+          "CEB-Q3",
+          "CEB-Q4"
+        ]
+      },
+      "catalog": null,
+      "data_checksum": null,
+      "data_license": null,
+      "native_timing_eligible": false,
+      "reason": "Pinned DynaGox experiment SQL is imported/classified with original aggregate outputs; these variants do not qualify the complete official suite. Catalog/data/license/runtime contracts remain unavailable for R1 timing."
+    },
+    {
+      "name": "TPC-H",
+      "import_status": "classified_variant_sources_only",
+      "pinned_sql": {
+        "packet": {
+          "path": "benchmarks/legacy/dynagox/manifest.json",
+          "sha256": "db2dbca967008396f05e53bd9954820681c5923211f58a52a08efab2a253cd46"
+        },
+        "labels": [
+          "TPCH-Q3",
+          "TPCH-Q5",
+          "TPCH-Q8",
+          "TPCH-Q9",
+          "TPCH-Q10"
+        ]
+      },
+      "catalog": null,
+      "data_checksum": null,
+      "data_license": null,
+      "native_timing_eligible": false,
+      "reason": "Pinned DynaGox experiment SQL is imported/classified with original aggregate outputs; these variants do not qualify the complete official suite. Catalog/data/license/runtime contracts remain unavailable for R1 timing."
+    },
+    {
+      "name": "TPC-DS",
+      "import_status": "classified_variant_sources_only",
+      "pinned_sql": {
+        "packet": {
+          "path": "benchmarks/legacy/dynagox/manifest.json",
+          "sha256": "db2dbca967008396f05e53bd9954820681c5923211f58a52a08efab2a253cd46"
+        },
+        "labels": [
+          "TPCDS-Q15",
+          "TPCDS-Q19"
+        ]
+      },
+      "catalog": null,
+      "data_checksum": null,
+      "data_license": null,
+      "native_timing_eligible": false,
+      "reason": "Pinned DynaGox experiment SQL is imported/classified with original aggregate outputs; these variants do not qualify the complete official suite. Catalog/data/license/runtime contracts remain unavailable for R1 timing."
+    }
+  ],
+  "limits": [
+    "Source classification/import is recorded separately from runnable dataset and baseline reproduction.",
+    "No imported original aggregate or windowed query is silently replaced with a set query or enabled for native R1 timing.",
+    "Complete official suite imports, real data licenses/checksums and controlled comparison evidence remain separate."
+  ]
+}

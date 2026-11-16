@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "catalog_version": 1,
+  "semantics": "set",
+  "root": "n",
+  "nodes": [
+    {
+      "id": "n",
+      "kind": "native",
+      "scope": [
+        "x"
+      ],
+      "children": [],
+      "occurrence": "r"
+    }
+  ]
+}

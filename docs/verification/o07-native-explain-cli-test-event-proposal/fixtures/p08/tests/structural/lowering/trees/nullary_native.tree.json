@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "catalog_version": 1,
+  "semantics": "set",
+  "root": "unit_node",
+  "nodes": [
+    {"id": "unit_node", "kind": "native", "scope": [], "children": [], "occurrence": "unit"}
+  ]
+}

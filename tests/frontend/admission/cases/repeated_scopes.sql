@@ -1,0 +1,1 @@
+SELECT DISTINCT r.y FROM r JOIN s USING(y) JOIN r q ON q.y=r.y

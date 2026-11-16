@@ -1,0 +1,1 @@
+SELECT DISTINCT * FROM A AS a JOIN B AS b USING (id, group_id);

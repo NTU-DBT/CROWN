@@ -1,0 +1,5 @@
+5464063f4aa664db12b3843f50a50eab7f310c9f6795ffa0ef442aa0961fe90a  docs/verification/c02-clang-allocation-diagnostic-usage-revision-proposal/README.md
+996956da8081880298a44b774c01bb4b9a95dc3fef960252050d757e5e05ac8e  docs/verification/c02-clang-allocation-diagnostic-usage-revision-proposal/direct.diff
+e883e74f6073962d96c410cc9e0235061479ab62762b3c7e61186ea1c032d549  docs/verification/c02-clang-allocation-diagnostic-usage-revision-proposal/direct_success_profile.cpp
+a0621d7ee13f8a1a3f00212719bd6c8c14ff9cf676f64ff89e13e60db8823438  docs/verification/c02-clang-allocation-diagnostic-usage-revision-proposal/normalized.diff
+59a7daa5c60ae547395d97421193e7f7a6c87e3820509271fd73ad411b4e0b61  docs/verification/c02-clang-allocation-diagnostic-usage-revision-proposal/normalized_success_profile.cpp

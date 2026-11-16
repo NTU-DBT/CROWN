@@ -1,0 +1,84 @@
+{
+  "adapters": [],
+  "admission_status": "not_checked",
+  "base_routes": [],
+  "binding": {
+    "admission_status": "not_checked",
+    "binding_valid": true,
+    "catalog_binding": {
+      "catalog": {
+        "tables": [],
+        "version": 1
+      },
+      "schema_version": 1
+    },
+    "catalog_inheritance": "none",
+    "expressions": [
+      {
+        "id": 0,
+        "kind": "literal",
+        "location": 16,
+        "type": {
+          "kind": "int32",
+          "nullable": false
+        },
+        "value": 1
+      }
+    ],
+    "inner_semantics": null,
+    "limits": {
+      "expression_limit": 100000,
+      "recursion_limit": 128,
+      "work_limit": 1000000
+    },
+    "occurrences": [],
+    "outputs": [
+      {
+        "expression": 0,
+        "name": "one"
+      }
+    ],
+    "parameters": [],
+    "predicates": [],
+    "requested_semantics": "set",
+    "result_wrapper": "rows",
+    "schema_version": 1,
+    "source": "SELECT DISTINCT 1 AS one\n",
+    "work": 5,
+    "wrapper_alias": "exists"
+  },
+  "core": {
+    "catalog": {
+      "tables": [],
+      "version": 1
+    },
+    "initial": [],
+    "query": {
+      "atoms": [],
+      "contradiction": false,
+      "head": [],
+      "variables": []
+    },
+    "schema_version": 3,
+    "semantics": "set",
+    "updates": []
+  },
+  "limits": {
+    "work_limit": 1000000
+  },
+  "normalization_valid": true,
+  "outputs": [
+    {
+      "kind": "constant",
+      "name": "one",
+      "type": {
+        "kind": "int32",
+        "nullable": false
+      },
+      "value": 1
+    }
+  ],
+  "parameter_values": [],
+  "schema_version": 1,
+  "work": 4
+}

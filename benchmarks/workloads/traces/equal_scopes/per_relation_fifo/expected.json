@@ -1,0 +1,195 @@
+{
+  "epochs": [
+    {
+      "current_rows": [],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 1,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 2,
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            7
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 3,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7
+        ],
+        [
+          1,
+          8
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 4,
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            1,
+            8
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7
+        ],
+        [
+          1,
+          8
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 5,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7
+        ],
+        [
+          1,
+          8
+        ],
+        [
+          2,
+          9
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 6,
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            2,
+            9
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          1,
+          8
+        ],
+        [
+          2,
+          9
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 7,
+      "signed_delta": [
+        {
+          "operation": "delete",
+          "values": [
+            0,
+            7
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          2,
+          9
+        ]
+      ],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 8,
+      "signed_delta": [
+        {
+          "operation": "delete",
+          "values": [
+            1,
+            8
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 9,
+      "signed_delta": [
+        {
+          "operation": "delete",
+          "values": [
+            2,
+            9
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 10,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 11,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [],
+      "phase": "workload",
+      "physical_changed": true,
+      "sequence": 12,
+      "signed_delta": []
+    }
+  ],
+  "initial_rows": [],
+  "oracle": "independent_relational_and_sqlite",
+  "query": "equal_scopes",
+  "schema_version": 1
+}

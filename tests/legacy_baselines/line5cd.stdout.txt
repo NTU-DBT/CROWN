@@ -1,0 +1,33 @@
+Query: line5cd
+Algorithm: Crown
+0.0000
+Running Time: 0 ms
+Memory Usage: 13172 kB
+0.0000
+Running Time: 0 ms
+Memory Usage: 13172 kB
+0.0000
+Running Time: 0 ms
+Memory Usage: 13172 kB
+0.0000
+Running Time: 0 ms
+Memory Usage: 13172 kB
+0.0000
+Running Time: 0 ms
+Memory Usage: 13172 kB
+1.0000
+Running Time: 0 ms
+Memory Usage: 13172 kB
+1.0000
+Running Time: 0 ms
+Memory Usage: 13172 kB
+1.0000
+Running Time: 0 ms
+Memory Usage: 13172 kB
+1.0000
+Running Time: 0 ms
+Memory Usage: 13172 kB
+2.0000
+Running Time: 0 ms
+Memory Usage: 13172 kB
+

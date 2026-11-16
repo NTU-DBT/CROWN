@@ -1,0 +1,236 @@
+{
+  "schema_version": 1,
+  "semantics": "set",
+  "catalog": {
+    "version": 1,
+    "tables": [
+      {
+        "name": "T_r",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          },
+          {
+            "name": "c2",
+            "type": "string"
+          },
+          {
+            "name": "c3",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "T_s",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          },
+          {
+            "name": "c2",
+            "type": "string"
+          },
+          {
+            "name": "c3",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "T_l",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "T_v",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "T_t",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "T_b",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "T_e",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          }
+        ]
+      }
+    ]
+  },
+  "query": {
+    "variables": [
+      {
+        "name": "b",
+        "type": "string"
+      },
+      {
+        "name": "r_private",
+        "type": "string"
+      },
+      {
+        "name": "s_private",
+        "type": "string"
+      },
+      {
+        "name": "w",
+        "type": "string"
+      },
+      {
+        "name": "x",
+        "type": "string"
+      },
+      {
+        "name": "y",
+        "type": "string"
+      },
+      {
+        "name": "z",
+        "type": "string"
+      }
+    ],
+    "atoms": [
+      {
+        "id": "r",
+        "table": "T_r",
+        "terms": [
+          {
+            "var": "x"
+          },
+          {
+            "var": "y"
+          },
+          {
+            "var": "z"
+          },
+          {
+            "var": "r_private"
+          }
+        ]
+      },
+      {
+        "id": "s",
+        "table": "T_s",
+        "terms": [
+          {
+            "var": "x"
+          },
+          {
+            "var": "y"
+          },
+          {
+            "var": "z"
+          },
+          {
+            "var": "s_private"
+          }
+        ]
+      },
+      {
+        "id": "l",
+        "table": "T_l",
+        "terms": [
+          {
+            "var": "r_private"
+          }
+        ]
+      },
+      {
+        "id": "v",
+        "table": "T_v",
+        "terms": [
+          {
+            "var": "s_private"
+          }
+        ]
+      },
+      {
+        "id": "t",
+        "table": "T_t",
+        "terms": [
+          {
+            "var": "y"
+          },
+          {
+            "var": "b"
+          }
+        ]
+      },
+      {
+        "id": "b",
+        "table": "T_b",
+        "terms": [
+          {
+            "var": "b"
+          }
+        ]
+      },
+      {
+        "id": "e",
+        "table": "T_e",
+        "terms": [
+          {
+            "var": "x"
+          },
+          {
+            "var": "w"
+          }
+        ]
+      }
+    ],
+    "head": [
+      {
+        "var": "x"
+      },
+      {
+        "var": "y"
+      },
+      {
+        "var": "w"
+      }
+    ]
+  }
+}

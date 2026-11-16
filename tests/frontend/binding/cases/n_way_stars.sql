@@ -1,0 +1,1 @@
+SELECT a.*, c.*, u.* FROM A AS a CROSS JOIN C AS c CROSS JOIN Unit AS u;

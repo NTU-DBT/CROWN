@@ -1,0 +1,336 @@
+{
+  "schema_version": 1,
+  "query": "full_head_self_join_loop_new_new",
+  "oracle_definition": "Full-head Edge(x,y), Edge(y,z); inserting one loop into empty Edge yields the same new tuple in both aliases and output (x,x,x).",
+  "initial_current_rows": [],
+  "events": [
+    {
+      "sequence": 1,
+      "source_position": {
+        "source": "full-head-self-join-loop-new-new-input",
+        "offset": 100
+      },
+      "input": {
+        "table": "edge",
+        "operation": "insert",
+        "values": [
+          7,
+          7
+        ]
+      },
+      "current_rows": [
+        [
+          7,
+          7,
+          7
+        ]
+      ],
+      "added": [
+        [
+          7,
+          7,
+          7
+        ]
+      ],
+      "removed": [],
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            7,
+            7,
+            7
+          ]
+        }
+      ]
+    },
+    {
+      "sequence": 2,
+      "source_position": {
+        "source": "full-head-self-join-loop-new-new-input",
+        "offset": 200
+      },
+      "input": {
+        "table": "edge",
+        "operation": "insert",
+        "values": [
+          9,
+          9
+        ]
+      },
+      "current_rows": [
+        [
+          7,
+          7,
+          7
+        ],
+        [
+          9,
+          9,
+          9
+        ]
+      ],
+      "added": [
+        [
+          9,
+          9,
+          9
+        ]
+      ],
+      "removed": [],
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            9,
+            9,
+            9
+          ]
+        }
+      ]
+    },
+    {
+      "sequence": 3,
+      "source_position": {
+        "source": "full-head-self-join-loop-new-new-input",
+        "offset": 300
+      },
+      "input": {
+        "table": "edge",
+        "operation": "insert",
+        "values": [
+          7,
+          9
+        ]
+      },
+      "current_rows": [
+        [
+          7,
+          7,
+          7
+        ],
+        [
+          7,
+          7,
+          9
+        ],
+        [
+          7,
+          9,
+          9
+        ],
+        [
+          9,
+          9,
+          9
+        ]
+      ],
+      "added": [
+        [
+          7,
+          7,
+          9
+        ],
+        [
+          7,
+          9,
+          9
+        ]
+      ],
+      "removed": [],
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            7,
+            7,
+            9
+          ]
+        },
+        {
+          "operation": "insert",
+          "values": [
+            7,
+            9,
+            9
+          ]
+        }
+      ]
+    },
+    {
+      "sequence": 4,
+      "source_position": {
+        "source": "full-head-self-join-loop-new-new-input",
+        "offset": 400
+      },
+      "input": {
+        "table": "edge",
+        "operation": "insert",
+        "values": [
+          7,
+          7
+        ]
+      },
+      "current_rows": [
+        [
+          7,
+          7,
+          7
+        ],
+        [
+          7,
+          7,
+          9
+        ],
+        [
+          7,
+          9,
+          9
+        ],
+        [
+          9,
+          9,
+          9
+        ]
+      ],
+      "added": [],
+      "removed": [],
+      "signed_delta": []
+    },
+    {
+      "sequence": 5,
+      "source_position": {
+        "source": "full-head-self-join-loop-new-new-input",
+        "offset": 500
+      },
+      "input": {
+        "table": "edge",
+        "operation": "delete",
+        "values": [
+          9,
+          9
+        ]
+      },
+      "current_rows": [
+        [
+          7,
+          7,
+          7
+        ],
+        [
+          7,
+          7,
+          9
+        ]
+      ],
+      "added": [],
+      "removed": [
+        [
+          7,
+          9,
+          9
+        ],
+        [
+          9,
+          9,
+          9
+        ]
+      ],
+      "signed_delta": [
+        {
+          "operation": "delete",
+          "values": [
+            7,
+            9,
+            9
+          ]
+        },
+        {
+          "operation": "delete",
+          "values": [
+            9,
+            9,
+            9
+          ]
+        }
+      ]
+    },
+    {
+      "sequence": 6,
+      "source_position": {
+        "source": "full-head-self-join-loop-new-new-input",
+        "offset": 600
+      },
+      "input": {
+        "table": "edge",
+        "operation": "delete",
+        "values": [
+          13,
+          13
+        ]
+      },
+      "current_rows": [
+        [
+          7,
+          7,
+          7
+        ],
+        [
+          7,
+          7,
+          9
+        ]
+      ],
+      "added": [],
+      "removed": [],
+      "signed_delta": []
+    },
+    {
+      "sequence": 7,
+      "source_position": {
+        "source": "full-head-self-join-loop-new-new-input",
+        "offset": 700
+      },
+      "input": {
+        "table": "edge",
+        "operation": "delete",
+        "values": [
+          7,
+          7
+        ]
+      },
+      "current_rows": [],
+      "added": [],
+      "removed": [
+        [
+          7,
+          7,
+          7
+        ],
+        [
+          7,
+          7,
+          9
+        ]
+      ],
+      "signed_delta": [
+        {
+          "operation": "delete",
+          "values": [
+            7,
+            7,
+            7
+          ]
+        },
+        {
+          "operation": "delete",
+          "values": [
+            7,
+            7,
+            9
+          ]
+        }
+      ]
+    }
+  ]
+}

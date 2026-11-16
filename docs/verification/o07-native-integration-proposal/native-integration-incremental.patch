@@ -1,0 +1,3516 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -39,6 +39,11 @@
+ target_include_directories(crown_core PUBLIC include)
+ target_link_libraries(crown_core PUBLIC crown_json PRIVATE crown_options)
+ 
++# Query/search explanation owns only typed planner/core handles.
++add_library(crown_query_explain src/observability/query_explain.cpp src/io/query_explain.cpp)
++target_include_directories(crown_query_explain PUBLIC include)
++target_link_libraries(crown_query_explain PUBLIC crown_core PRIVATE crown_options)
++
+ add_library(crown_sql src/frontend/parser.cpp src/frontend/bind.cpp src/frontend/normalize.cpp src/frontend/adapter.cpp src/frontend/admission.cpp src/io/sql.cpp src/io/binding.cpp src/io/normalization.cpp src/io/identity.cpp src/io/admission.cpp)
+ target_include_directories(crown_sql PUBLIC include)
+ target_link_libraries(crown_sql PUBLIC crown_core PRIVATE crown_pg_query crown_options)
+@@ -48,11 +53,18 @@
+ target_link_libraries(crown_plan PUBLIC crown_sql crown_core PRIVATE crown_options)
+ 
+ set(CROWN_RUNTIME_SOURCES src/runtime/support.cpp src/runtime/physical.cpp src/runtime/delta.cpp
+-  src/io/support.cpp src/io/inspection.cpp src/runtime/replay.cpp src/runtime/session.cpp src/runtime/window.cpp)
++  src/io/support.cpp src/io/inspection.cpp src/runtime/replay.cpp src/runtime/session.cpp src/runtime/window.cpp src/runtime/observation.cpp)
+ add_library(crown_runtime ${CROWN_RUNTIME_SOURCES})
+ target_include_directories(crown_runtime PUBLIC include)
+ find_package(Threads REQUIRED)
+ target_link_libraries(crown_runtime PUBLIC crown_plan PRIVATE crown_options Threads::Threads)
++
++# Final report layer: runtime never depends on observability or report IO.
++set(CROWN_EXPLAIN_SOURCES src/observability/explain.cpp src/io/explain.cpp
++  src/io/run_context.cpp src/io/cursor_observation.cpp)
++add_library(crown_explain ${CROWN_EXPLAIN_SOURCES})
++target_include_directories(crown_explain PUBLIC include)
++target_link_libraries(crown_explain PUBLIC crown_runtime crown_query_explain PRIVATE crown_options)
+ 
+ # Deliberately separate from the future maintained runtime and tree constructor.
+ add_library(crown_reference tests/reference/evaluator.cpp tests/reference/tree_oracle.cpp tests/reference/delta_model.cpp)
+@@ -61,8 +73,8 @@
+ target_include_directories(crown_reference PUBLIC tests/reference)
+ target_link_libraries(crown_reference PUBLIC crown_core PRIVATE crown_options)
+ 
+-add_executable(crown apps/crown/main.cpp)
+-target_link_libraries(crown PRIVATE crown_runtime crown_reference crown_options)
++add_executable(crown apps/crown/main.cpp apps/crown/explain.cpp)
++target_link_libraries(crown PRIVATE crown_explain crown_reference crown_options)
+ 
+ include(CTest)
+ if(BUILD_TESTING)
+@@ -142,6 +154,13 @@
+   target_include_directories(crown_runtime_testing PUBLIC include PRIVATE tests/support)
+   target_compile_definitions(crown_runtime_testing PUBLIC CROWN_RUNTIME_TESTING)
+   target_link_libraries(crown_runtime_testing PUBLIC crown_plan PRIVATE crown_options Threads::Threads)
++  # Future observation tests link this variant only; never also crown_explain
++  # or crown_runtime. The testing definition propagates through runtime_testing.
++  add_library(crown_explain_testing STATIC ${CROWN_EXPLAIN_SOURCES})
++  target_include_directories(crown_explain_testing PUBLIC include)
++  target_link_libraries(crown_explain_testing PUBLIC crown_runtime_testing crown_query_explain PRIVATE crown_options)
++  # O07 test registration awaits the independently accepted source list.
++
+   add_executable(crown_window_sequence_test tests/unit/window_sequence_test.cpp)
+   target_include_directories(crown_window_sequence_test PRIVATE tests/support)
+   target_link_libraries(crown_window_sequence_test PRIVATE crown_runtime_testing crown_options)
+--- a/apps/crown-explain/main.cpp
++++ /dev/null
+@@ -1,116 +0,0 @@
+-#include "crown/io/explain.hpp"
+-#include "crown/io/physical.hpp"
+-#include "crown/io/document.hpp"
+-#include "crown/io/oracle.hpp"
+-#include "crown/api/error.hpp"
+-#include <charconv>
+-#include <fstream>
+-#include <iostream>
+-#include <sstream>
+-#include <map>
+-namespace {
+-using namespace crown;
+-std::string read(const std::string& path){
+-  std::ifstream input(path,std::ios::binary);if(!input)throw Error("io_error","cannot open artifact");
+-  constexpr std::size_t limit=16*1024*1024;std::string result;char buffer[4096];
+-  while(input){input.read(buffer,sizeof(buffer));const auto count=static_cast<std::size_t>(input.gcount());if(count>limit-result.size())throw Error("resource_limit","artifact exceeds 16 MiB");result.append(buffer,count);}
+-  if(!input.eof())throw Error("io_error","cannot read artifact");
+-  return result;
+-}
+-std::uint64_t integer(std::string_view text){std::uint64_t value=0;const auto p=std::from_chars(text.data(),text.data()+text.size(),value);if(p.ec!=std::errc{} || p.ptr!=text.data()+text.size())throw Error("usage","expected unsigned integer");return value;}
+-struct Arguments {
+-  std::string command,path,format="text";
+-  io::ExplainTextLimits text;
+-  std::map<std::string,std::string> values;
+-  Arguments(int argc,char** argv){
+-    if(argc<3)throw Error("usage","expected command and input path");
+-    command=argv[1];path=argv[2];
+-    for(int i=3;i<argc;i+=2){if(i+1>=argc)throw Error("usage","options require values");if(!values.emplace(argv[i],argv[i+1]).second)throw Error("usage","duplicate option");}
+-    if(auto v=take("--format"))format=*v;
+-    if(format!="json" && format!="text" && format!="dot" && format!="tree-json")throw Error("usage","unknown format");
+-    if(auto v=take("--max-bytes"))text.bytes=static_cast<std::size_t>(integer(*v));
+-  }
+-  std::optional<std::string> take(const std::string& key){const auto it=values.find(key);if(it==values.end())return {};auto value=it->second;values.erase(it);return value;}
+-  std::uint64_t number(const std::string& key,std::uint64_t fallback){auto v=take(key);return v?integer(*v):fallback;}
+-  void finished() const {if(!values.empty())throw Error("usage","unknown or inapplicable option");}
+-};
+-template<class Report>std::string encode(const Report& report,const Arguments& a){
+- if(a.format=="json")return io::write_explain_json(report,a.text);
+- if(a.format=="dot")return io::write_explain_dot(report,a.text);
+- if(a.format=="tree-json")return io::write_explain_tree_json(report,a.text);
+- return io::write_explain_text(report,a.text);
+-}
+-runtime::DeltaOptions delta_options(Arguments& a){
+- runtime::DeltaOptions o;
+- if(auto v=a.take("--mode")){if(*v=="maintenance")o.mode=runtime::DeltaMode::maintenance;else if(*v!="delta")throw Error("usage","unknown delta mode");}
+- if(auto v=a.take("--observe")){auto& m=o.physical.support.observation.mode;if(*v=="off")m=runtime::ObservationMode::off;else if(*v=="counters")m=runtime::ObservationMode::counters;else if(*v=="timed")m=runtime::ObservationMode::timed;else if(*v=="trace")m=runtime::ObservationMode::trace;else throw Error("usage","unknown observation mode");}
+- if(auto v=a.take("--live")){if(*v=="on_output")o.live_maintenance=runtime::LiveMaintenance::on_output;else if(*v=="incremental")o.live_maintenance=runtime::LiveMaintenance::incremental;else if(*v=="eager")o.live_maintenance=runtime::LiveMaintenance::eager;else throw Error("usage","unknown live mode");}
+- if(auto v=a.take("--completion")){if(*v=="automatic")o.completion=runtime::DeltaCompletion::automatic;else if(*v=="ordered_replay")o.completion=runtime::DeltaCompletion::ordered_replay;else if(*v=="anchored")o.completion=runtime::DeltaCompletion::anchored;else if(*v=="root_first")o.completion=runtime::DeltaCompletion::root_first;else throw Error("usage","unknown completion mode");}
+- if(auto v=a.take("--view")){if(*v=="core")o.view=runtime::ResultView::core;else if(*v=="sql")o.view=runtime::ResultView::sql;else throw Error("usage","unknown result view");}
+- if(auto v=a.take("--work-limit"))o.work_limit=integer(*v);
+- if(auto v=a.take("--spool-rows"))o.spool_row_limit=static_cast<std::size_t>(integer(*v));
+- return o;
+-}
+-std::shared_ptr<const runtime::DeclaredBenchmarkContext> labels(Arguments& a){
+- runtime::BenchmarkLabels v;v.run=a.take("--run-label");v.input_adapter=a.take("--adapter-label");v.output_codec=a.take("--codec-label");v.sink=a.take("--sink-label");
+- if(!v.run && !v.input_adapter && !v.output_codec && !v.sink)return {};
+- return std::make_shared<const runtime::DeclaredBenchmarkContext>(std::move(v));
+-}
+-observability::HeightEvidence evidence(Arguments& a,const PhysicalPlan& plan){
+- auto file=a.take("--certificate");const auto budget=a.number("--proof-work",10000000);
+- if(!file)return {};
+- auto claim=io::read_height_certificate(read(*file),plan.catalog(),plan.query());
+- auto replay=planner::CertificateReplay::create(plan.catalog(),plan.query(),std::move(claim));
+- // Explicit CLI proof operation, never hidden inside capture/export.
+- static_cast<void>(replay.advance({budget,{}}));
+- const auto checked=replay.checked();if(!checked || !checked->optimum())throw Error("certificate_replay","checked optimum was not established within the explicit proof quantum");
+- return *checked->optimum();
+-}
+-std::string run(Arguments& a){
+- if(a.command=="query" || a.command=="progress" || a.command=="replay"){
+-  auto doc=io::read_document(read(a.path));const auto quantum=a.number("--work",0);
+-  if(a.command=="replay"){
+-   const auto file=a.take("--certificate");if(!file)throw Error("usage","replay needs a certificate");a.finished();
+-   auto claim=io::read_height_certificate(read(*file),doc.catalog,doc.query);
+-   auto owner=planner::CertificateReplay::create(std::move(doc.catalog),std::move(doc.query),std::move(claim));
+-   if(quantum)static_cast<void>(owner.advance({quantum,{}}));
+-   return encode(observability::QueryExplanation::capture(owner),a);
+-  }
+-  planner::SearchOptions options;if(auto v=a.take("--height-policy")){if(*v=="best-found")options.policy=planner::SearchPolicy::best_found;else if(*v!="strict")throw Error("usage","unknown height policy");}a.finished();
+-  auto owner=planner::ExactSearch::create(std::move(doc.catalog),std::move(doc.query),options);
+-  if(quantum)static_cast<void>(owner.advance({quantum,{}}));
+-  return encode(observability::QueryExplanation::capture(owner),a);
+- }
+- if(a.command!="physical" && a.command!="runtime" && a.command!="session")throw Error("usage","unknown command");
+- auto plan=io::read_physical(read(a.path));auto proof=evidence(a,plan);
+- if(a.command=="physical"){a.finished();return encode(observability::PlanExplanation::create(std::move(plan),std::move(proof)),a);}
+- auto options=delta_options(a);auto declared=labels(a);
+- if(a.command=="runtime"){a.finished();runtime::DeltaRuntime owner(std::move(plan),options);owner.declare_benchmark_context(std::move(declared));return encode(observability::PlanExplanation::capture(owner,std::move(proof)),a);}
+- runtime::SessionOptions session_options;session_options.delta=options;session_options.declared_benchmark=std::move(declared);
+- if(auto v=a.take("--input-format")){if(*v=="jsonl")session_options.input.format=io::InputFormat::jsonl;else if(*v=="binary")session_options.input.format=io::InputFormat::binary;else throw Error("usage","CLI stream supports jsonl or binary");}
+- const auto file=a.take("--input");const auto events=a.number("--events",0);const auto steps_text=a.take("--steps");const auto steps=steps_text?std::optional<std::uint64_t>{integer(*steps_text)}:std::nullopt;
+- const auto consume=a.take("--consume").value_or("discard");if(consume!="discard" && consume!="transfer" && consume!="retain")throw Error("usage","unknown output disposition");
+- const auto lifecycle=a.take("--lifecycle").value_or("preserve");if(lifecycle!="preserve" && lifecycle!="stop" && lifecycle!="drop")throw Error("usage","unknown session lifecycle");a.finished();
+- std::unique_ptr<std::istream> input;
+- if(file){auto stream=std::make_unique<std::ifstream>(*file,std::ios::binary);if(!*stream)throw Error("io_error","cannot open input stream");input=std::move(stream);}else input=std::make_unique<std::istringstream>();
+- auto owner=runtime::QuerySession::create(std::move(plan),std::move(input),session_options);
+- if(events){owner->start();std::uint64_t completed_steps=0;
+-  for(std::uint64_t event=0;event<events;++event){if(owner->begin_next_result()!=runtime::SessionBegin::pending)break;
+-   if(consume=="discard")owner->start_drain();
+-   bool prepared=false;
+-   while(!steps || completed_steps<*steps){const auto step=owner->step();++completed_steps;if(step==runtime::DeltaStep::prepared){prepared=true;break;}}
+-   if(!prepared)break;
+-   owner->commit();
+-   if(consume=="transfer")while(owner->next_output()){}
+-   if(consume=="retain" && owner->status().output_remaining)break;
+-  }
+- }
+- if(lifecycle=="stop")owner->stop();else if(lifecycle=="drop")owner->drop();
+- return encode(observability::PlanExplanation::capture(*owner,std::move(proof)),a);
+-}
+-} // namespace
+-int main(int argc,char** argv){
+- try{Arguments args(argc,argv);const auto result=run(args);std::cout.write(result.data(),static_cast<std::streamsize>(result.size()));if(!std::cout)throw crown::Error("io_error","output failed");return 0;}
+- catch(const crown::Error& e){std::cerr<<"error: ";for(char ch:e.code())std::cerr.put((ch>='a'&&ch<='z')||(ch>='0'&&ch<='9')||ch=='_'?ch:'?');std::cerr.put('\n');return e.code()=="usage"?2:e.code()=="text_encoding"?3:e.code()=="resource_limit"?4:1;}
+- catch(const std::bad_alloc&){std::cerr<<"error: resource_limit\n";return 4;}catch(const std::exception&){std::cerr<<"error: invalid_document\n";return 1;}
+-}
+--- /dev/null
++++ b/apps/crown/explain.cpp
+@@ -0,0 +1,136 @@
++#include "explain.hpp"
++#include "crown/io/explain.hpp"
++#include "crown/io/physical.hpp"
++#include "crown/io/document.hpp"
++#include "crown/io/oracle.hpp"
++#include "crown/api/error.hpp"
++#include <charconv>
++#include <fstream>
++#include <iostream>
++#include <sstream>
++#include <map>
++namespace {
++using namespace crown;
++std::string read(const std::string& path){
++  std::ifstream input(path,std::ios::binary);if(!input)throw Error("io_error","cannot open artifact");
++  constexpr std::size_t limit=16*1024*1024;std::string result;char buffer[4096];
++  while(input){input.read(buffer,sizeof(buffer));const auto count=static_cast<std::size_t>(input.gcount());if(count>limit-result.size())throw Error("resource_limit","artifact exceeds 16 MiB");result.append(buffer,count);}
++  if(!input.eof())throw Error("io_error","cannot read artifact");
++  return result;
++}
++std::uint64_t integer(std::string_view text){std::uint64_t value=0;const auto p=std::from_chars(text.data(),text.data()+text.size(),value);if(p.ec!=std::errc{} || p.ptr!=text.data()+text.size())throw Error("usage","expected unsigned integer");return value;}
++struct Arguments {
++  std::string command,path,format="text";
++  io::ExplainTextLimits text;
++  std::map<std::string,std::string> values;
++  Arguments(int argc,char** argv){
++    if(argc<3)throw Error("usage","expected command and input path");
++    command=argv[1];path=argv[2];
++    for(int i=3;i<argc;i+=2){if(i+1>=argc)throw Error("usage","options require values");if(!values.emplace(argv[i],argv[i+1]).second)throw Error("usage","duplicate option");}
++    if(auto v=take("--format"))format=*v;
++    if(format!="json" && format!="text" && format!="dot" && format!="tree-json")throw Error("usage","unknown format");
++    if(auto v=take("--max-bytes"))text.bytes=static_cast<std::size_t>(integer(*v));
++  }
++  std::optional<std::string> take(const std::string& key){const auto it=values.find(key);if(it==values.end())return {};auto value=it->second;values.erase(it);return value;}
++  std::uint64_t number(const std::string& key,std::uint64_t fallback){auto v=take(key);return v?integer(*v):fallback;}
++  void finished() const {if(!values.empty())throw Error("usage","unknown or inapplicable option");}
++};
++template<class Report>std::string encode(const Report& report,const Arguments& a){
++ if(a.format=="json")return io::write_explain_json(report,a.text);
++ if(a.format=="dot")return io::write_explain_dot(report,a.text);
++ if(a.format=="tree-json")return io::write_explain_tree_json(report,a.text);
++ return io::write_explain_text(report,a.text);
++}
++runtime::DeltaOptions delta_options(Arguments& a){
++ runtime::DeltaOptions o;
++ if(auto v=a.take("--mode")){if(*v=="maintenance")o.mode=runtime::DeltaMode::maintenance;else if(*v!="delta")throw Error("usage","unknown delta mode");}
++ if(auto v=a.take("--observe")){auto& m=o.physical.support.observation.mode;if(*v=="off")m=runtime::ObservationMode::off;else if(*v=="counters")m=runtime::ObservationMode::counters;else if(*v=="timed")m=runtime::ObservationMode::timed;else if(*v=="trace")m=runtime::ObservationMode::trace;else throw Error("usage","unknown observation mode");}
++ if(auto v=a.take("--live")){if(*v=="on_output")o.live_maintenance=runtime::LiveMaintenance::on_output;else if(*v=="incremental")o.live_maintenance=runtime::LiveMaintenance::incremental;else if(*v=="eager")o.live_maintenance=runtime::LiveMaintenance::eager;else throw Error("usage","unknown live mode");}
++ if(auto v=a.take("--completion")){if(*v=="automatic")o.completion=runtime::DeltaCompletion::automatic;else if(*v=="ordered_replay")o.completion=runtime::DeltaCompletion::ordered_replay;else if(*v=="anchored")o.completion=runtime::DeltaCompletion::anchored;else if(*v=="root_first")o.completion=runtime::DeltaCompletion::root_first;else throw Error("usage","unknown completion mode");}
++ if(auto v=a.take("--view")){if(*v=="core")o.view=runtime::ResultView::core;else if(*v=="sql")o.view=runtime::ResultView::sql;else throw Error("usage","unknown result view");}
++ if(auto v=a.take("--work-limit"))o.work_limit=integer(*v);
++ if(auto v=a.take("--spool-rows"))o.spool_row_limit=static_cast<std::size_t>(integer(*v));
++ return o;
++}
++std::shared_ptr<const runtime::DeclaredBenchmarkContext> labels(Arguments& a){
++ runtime::BenchmarkLabels v;v.run=a.take("--run-label");v.input_adapter=a.take("--adapter-label");v.output_codec=a.take("--codec-label");v.sink=a.take("--sink-label");
++ if(!v.run && !v.input_adapter && !v.output_codec && !v.sink)return {};
++ return std::make_shared<const runtime::DeclaredBenchmarkContext>(std::move(v));
++}
++observability::HeightEvidence evidence(Arguments& a,const PhysicalPlan& plan){
++ auto file=a.take("--certificate");const auto proof_work=a.take("--proof-work");
++ if(!file){if(proof_work)throw Error("usage","--proof-work requires --certificate");return {};}
++ const auto budget=proof_work?integer(*proof_work):10000000;
++ auto claim=io::read_height_certificate(read(*file),plan.catalog(),plan.query());
++ auto replay=planner::CertificateReplay::create(plan.catalog(),plan.query(),std::move(claim));
++ // Explicit CLI proof operation, never hidden inside capture/export.
++ static_cast<void>(replay.advance({budget,{}}));
++ const auto checked=replay.checked();if(!checked || !checked->optimum())throw Error("certificate_replay","checked optimum was not established within the explicit proof quantum");
++ return *checked->optimum();
++}
++std::string run(Arguments& a){
++ if(a.command=="query" || a.command=="progress" || a.command=="replay"){
++  auto doc=io::read_document(read(a.path));const auto quantum=a.number("--work",0);
++  if(a.command=="replay"){
++   const auto file=a.take("--certificate");if(!file)throw Error("usage","replay needs a certificate");a.finished();
++   auto claim=io::read_height_certificate(read(*file),doc.catalog,doc.query);
++   auto owner=planner::CertificateReplay::create(std::move(doc.catalog),std::move(doc.query),std::move(claim));
++   if(quantum)static_cast<void>(owner.advance({quantum,{}}));
++   return encode(observability::QueryExplanation::capture(owner),a);
++  }
++  planner::SearchOptions options;if(auto v=a.take("--height-policy")){if(*v=="best-found")options.policy=planner::SearchPolicy::best_found;else if(*v!="strict")throw Error("usage","unknown height policy");}a.finished();
++  auto owner=planner::ExactSearch::create(std::move(doc.catalog),std::move(doc.query),options);
++  if(quantum)static_cast<void>(owner.advance({quantum,{}}));
++  return encode(observability::QueryExplanation::capture(owner),a);
++ }
++ if(a.command!="physical" && a.command!="runtime" && a.command!="session")throw Error("usage","unknown command");
++ auto plan=io::read_physical(read(a.path));auto proof=evidence(a,plan);
++ if(a.command=="physical"){a.finished();return encode(observability::PlanExplanation::create(std::move(plan),std::move(proof)),a);}
++ auto options=delta_options(a);auto declared=labels(a);
++ if(a.command=="runtime"){a.finished();runtime::DeltaRuntime owner(std::move(plan),options);owner.declare_benchmark_context(std::move(declared));return encode(observability::PlanExplanation::capture(owner,std::move(proof)),a);}
++ runtime::SessionOptions session_options;session_options.delta=options;session_options.declared_benchmark=std::move(declared);
++ if(auto v=a.take("--input-format")){if(*v=="jsonl")session_options.input.format=io::InputFormat::jsonl;else if(*v=="binary")session_options.input.format=io::InputFormat::binary;else throw Error("usage","CLI stream supports jsonl or binary");}
++ const auto file=a.take("--input");const auto events=a.number("--events",0);const auto steps_text=a.take("--steps");const auto steps=steps_text?std::optional<std::uint64_t>{integer(*steps_text)}:std::nullopt;
++ const auto consume=a.take("--consume").value_or("discard");if(consume!="discard" && consume!="transfer" && consume!="retain")throw Error("usage","unknown output disposition");
++ const auto lifecycle=a.take("--lifecycle").value_or("preserve");if(lifecycle!="preserve" && lifecycle!="stop" && lifecycle!="drop")throw Error("usage","unknown session lifecycle");a.finished();
++ std::unique_ptr<std::istream> input;
++ if(file){auto stream=std::make_unique<std::ifstream>(*file,std::ios::binary);if(!*stream)throw Error("io_error","cannot open input stream");input=std::move(stream);}else input=std::make_unique<std::istringstream>();
++ auto owner=runtime::QuerySession::create(std::move(plan),std::move(input),session_options);
++ if(events){owner->start();std::uint64_t completed_steps=0;
++  for(std::uint64_t event=0;event<events;++event){if(owner->begin_next_result()!=runtime::SessionBegin::pending)break;
++   if(consume=="discard")owner->start_drain();
++   bool prepared=false;
++   while(!steps || completed_steps<*steps){const auto step=owner->step();++completed_steps;if(step==runtime::DeltaStep::prepared){prepared=true;break;}}
++   if(!prepared)break;
++   owner->commit();
++   if(consume=="transfer")while(owner->next_output()){}
++   if(consume=="retain" && owner->status().output_remaining)break;
++  }
++ }
++ if(lifecycle=="stop")owner->stop();else if(lifecycle=="drop")owner->drop();
++ return encode(observability::PlanExplanation::capture(*owner,std::move(proof)),a);
++}
++} // namespace
++int crown::cli::explain_main(int argc,char** argv){
++ try{
++  if(argc==2 && std::string_view(argv[1])=="--help"){
++   std::cout << "usage: crown explain {physical|runtime|session} PLAN [OPTIONS]\n"
++       "       crown explain {query|progress} DOCUMENT [--work N] [--height-policy strict|best-found]\n"
++       "       crown explain replay DOCUMENT --certificate FILE [--work N]\n"
++       "formats: --format text|json|dot|tree-json --max-bytes N\n"
++       "physical proof: --certificate FILE [--proof-work N]\n"
++       "runtime/session: --mode maintenance|delta --observe off|counters|timed|trace\n"
++       "  --live on_output|incremental|eager --completion automatic|ordered_replay|anchored|root_first\n"
++       "  --view core|sql --work-limit N --spool-rows N\n"
++       "  --run-label TEXT --adapter-label TEXT --codec-label TEXT --sink-label TEXT\n"
++       "session: --input FILE --input-format jsonl|binary --events N --steps N\n"
++       "  --consume discard|transfer|retain --lifecycle preserve|stop|drop\n"
++       "Work quanta are explicit producer operations; capture/export never advance a producer.\n"
++       "Labels are caller declarations, unmeasured and without proof/durability authority.\n";
++   if(!std::cout)throw crown::Error("io_error","output failed");
++   return 0;
++  }
++  Arguments args(argc,argv);const auto result=run(args);std::cout.write(result.data(),static_cast<std::streamsize>(result.size()));if(!std::cout)throw crown::Error("io_error","output failed");return 0;}
++ catch(const crown::Error& e){std::cerr<<"error: ";for(char ch:e.code())std::cerr.put((ch>='a'&&ch<='z')||(ch>='0'&&ch<='9')||ch=='_'?ch:'?');std::cerr.put('\n');return e.code()=="usage"?2:e.code()=="text_encoding"?3:e.code()=="resource_limit"?4:1;}
++ catch(const std::bad_alloc&){std::cerr<<"error: resource_limit\n";return 4;}catch(const std::exception&){std::cerr<<"error: invalid_document\n";return 1;}
++}
+--- /dev/null
++++ b/apps/crown/explain.hpp
+@@ -0,0 +1,6 @@
++#pragma once
++namespace crown::cli {
++// Private application dispatcher. argv[0] is "explain", argv[1] its subcommand.
++// Owns EXPLAIN-only diagnostics; the outer CLI keeps all existing handlers.
++int explain_main(int argc,char** argv);
++} // namespace crown::cli
+--- a/apps/crown/main.cpp
++++ b/apps/crown/main.cpp
+@@ -15,6 +15,7 @@
+ #include "crown/catalog/catalog.hpp"
+ #include "crown/planner/recognize.hpp"
+ #include "evaluator.hpp"
++#include "explain.hpp"
+ 
+ #include <exception>
+ #include <charconv>
+@@ -62,6 +63,21 @@
+       std::cout << "CROWN Next 0.1.0 (reference specification; set semantics)\n";
+       return 0;
+     }
++    if (argc == 2 && std::string(argv[1]) == "--help") {
++      std::cout << "usage: crown COMMAND ...\n"
++          "  --version; --help\n"
++          "  parse-sql; bind-sql; normalize-sql; admit-sql; admit-normalized\n"
++          "  validate-normalized; canonicalize-normalized; upgrade-cq; upgrade-normalized\n"
++          "  fingerprint-cq; fingerprint-normalized; lower-plan; lower-normalized\n"
++          "  support-trace; validate-input; validate-physical; canonicalize-physical\n"
++          "  validate-catalog; canonicalize-catalog; oracle; validate-cq; canonicalize\n"
++          "  classify; tree-oracle; validate-plan; verify-height\n"
++          "  explain {physical|runtime|session|query|progress|replay} INPUT [OPTIONS]\n"
++          "  crown explain --help lists EXPLAIN options.\n";
++      return 0;
++    }
++    if (argc >= 2 && std::string(argv[1]) == "explain")
++      return crown::cli::explain_main(argc-1,argv+1);
+     if (argc >= 2 && std::string(argv[1]) == "validate-input") {
+       if (argc < 5 || argc > 6) {
+         throw crown::Error("usage", "usage: crown validate-input CATALOG.json FORMAT INPUT [TABLE]");
+--- a/schemas/explain-report-v2.schema.json
++++ b/schemas/explain-report-v2.schema.json
+@@ -5508,8 +5508,7 @@
+               "C01_statistics",
+               "C02_ranking",
+               "B03_benchmark_validation",
+-              "O08_release_workflow",
+-              "native_integration_and_acceptance"
++              "O08_release_workflow"
+             ]
+           }
+         },
+--- /dev/null
++++ b/schemas/query-explain-v1.schema.json
+@@ -0,0 +1,1832 @@
++{
++  "$schema": "https://json-schema.org/draft/2020-12/schema",
++  "$comment": "Shape contract only. JSON/flags never mint typed planner authority; source accessors and independent semantic checks remain necessary.",
++  "additionalProperties": false,
++  "title": "Owned query/search EXPLAIN v1",
++  "type": "object",
++  "properties": {
++    "format": {
++      "const": "crown_query_explain"
++    },
++    "version": {
++      "const": 1
++    },
++    "source": {
++      "enum": [
++        "exact_search",
++        "certificate_replay",
++        "checked_upper",
++        "verified_optimum",
++        "verified_infeasible",
++        "checked_certificate"
++      ]
++    },
++    "accounting": {
++      "const": "continuation_v1"
++    },
++    "binding": {
++      "$ref": "#/$defs/binding"
++    },
++    "height": {
++      "$ref": "#/$defs/height"
++    },
++    "search": {
++      "anyOf": [
++        {
++          "$ref": "#/$defs/search"
++        },
++        {
++          "type": "null"
++        }
++      ]
++    },
++    "replay": {
++      "anyOf": [
++        {
++          "$ref": "#/$defs/replay"
++        },
++        {
++          "type": "null"
++        }
++      ]
++    },
++    "witness": {
++      "anyOf": [
++        {
++          "$ref": "#/$defs/witness"
++        },
++        {
++          "type": "null"
++        }
++      ]
++    },
++    "certificate": {
++      "anyOf": [
++        {
++          "$ref": "#/$defs/certificate"
++        },
++        {
++          "type": "null"
++        }
++      ]
++    },
++    "recognized_class": {
++      "type": "object",
++      "properties": {
++        "status": {
++          "const": "not_collected"
++        },
++        "diagnostic_work": {
++          "const": 0
++        },
++        "reason": {
++          "const": "capture_does_not_run_recognizer_or_reclassify_producer_statistics"
++        }
++      },
++      "required": [
++        "status",
++        "diagnostic_work",
++        "reason"
++      ],
++      "additionalProperties": false
++    },
++    "cost": {
++      "type": "object",
++      "properties": {
++        "status": {
++          "const": "not_run"
++        },
++        "estimates": {
++          "type": "null"
++        },
++        "statistics": {
++          "const": "not_collected"
++        },
++        "catalog_estimates": {
++          "const": "original_input_metadata_only"
++        },
++        "candidate_family_exhaustion": {
++          "type": "null"
++        }
++      },
++      "required": [
++        "status",
++        "estimates",
++        "statistics",
++        "catalog_estimates",
++        "candidate_family_exhaustion"
++      ],
++      "additionalProperties": false
++    },
++    "active_time_semantics": {
++      "const": "producer_recorded_active_time_excludes_pause; UINT64_MAX_may_be_capped_not_exact"
++    },
++    "proof_scope": {
++      "const": "original_structural_height_only; no_cost_optimum_runtime_or_durable_guarantee"
++    },
++    "structural_domain": {
++      "const": "original_CQ_atom_head_tree_family; contradiction_metadata_preserved; excludes_P08_constant_false_operator_shortcut"
++    },
++    "counter_scopes": {
++      "const": "producer_and_replay_attempted_are_separate_phases; structural.work_aliases_producer.attempted; structural.certificate_work_aliases_replay.attempted; transitions_not_additive_work"
++    }
++  },
++  "required": [
++    "format",
++    "version",
++    "source",
++    "accounting",
++    "binding",
++    "height",
++    "search",
++    "replay",
++    "witness",
++    "certificate",
++    "recognized_class",
++    "cost",
++    "active_time_semantics",
++    "proof_scope",
++    "structural_domain",
++    "counter_scopes"
++  ],
++  "allOf": [
++    {
++      "if": {
++        "properties": {
++          "height": {
++            "properties": {
++              "status": {
++                "const": "unknown"
++              }
++            }
++          }
++        }
++      },
++      "then": {
++        "properties": {
++          "witness": {
++            "type": "null"
++          },
++          "certificate": {
++            "type": "null"
++          },
++          "height": {
++            "properties": {
++              "lower": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "upper": {
++                "type": "null"
++              },
++              "minimum_proven": {
++                "const": false
++              },
++              "infeasible_proven": {
++                "const": false
++              },
++              "witness_exportable": {
++                "const": false
++              }
++            }
++          }
++        }
++      }
++    },
++    {
++      "if": {
++        "properties": {
++          "height": {
++            "properties": {
++              "status": {
++                "const": "owner_checked_upper_unpublished"
++              }
++            }
++          }
++        }
++      },
++      "then": {
++        "properties": {
++          "witness": {
++            "type": "null"
++          },
++          "certificate": {
++            "type": "null"
++          },
++          "height": {
++            "properties": {
++              "lower": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "upper": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "minimum_proven": {
++                "const": false
++              },
++              "infeasible_proven": {
++                "const": false
++              },
++              "witness_exportable": {
++                "const": false
++              }
++            }
++          }
++        }
++      }
++    },
++    {
++      "if": {
++        "properties": {
++          "height": {
++            "properties": {
++              "status": {
++                "const": "checked_upper"
++              }
++            }
++          }
++        }
++      },
++      "then": {
++        "properties": {
++          "witness": {
++            "$ref": "#/$defs/witness"
++          },
++          "certificate": {
++            "type": "null"
++          },
++          "height": {
++            "properties": {
++              "lower": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "upper": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "minimum_proven": {
++                "const": false
++              },
++              "infeasible_proven": {
++                "const": false
++              },
++              "witness_exportable": {
++                "const": true
++              }
++            }
++          }
++        }
++      }
++    },
++    {
++      "if": {
++        "properties": {
++          "height": {
++            "properties": {
++              "status": {
++                "const": "verified_optimum"
++              }
++            }
++          }
++        }
++      },
++      "then": {
++        "properties": {
++          "witness": {
++            "$ref": "#/$defs/witness"
++          },
++          "certificate": {
++            "$ref": "#/$defs/certificate"
++          },
++          "height": {
++            "properties": {
++              "lower": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "upper": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "minimum_proven": {
++                "const": true
++              },
++              "infeasible_proven": {
++                "const": false
++              },
++              "witness_exportable": {
++                "const": true
++              }
++            }
++          }
++        }
++      }
++    },
++    {
++      "if": {
++        "properties": {
++          "height": {
++            "properties": {
++              "status": {
++                "const": "verified_infeasible"
++              }
++            }
++          }
++        }
++      },
++      "then": {
++        "properties": {
++          "witness": {
++            "type": "null"
++          },
++          "certificate": {
++            "$ref": "#/$defs/certificate"
++          },
++          "height": {
++            "properties": {
++              "lower": {
++                "type": "null"
++              },
++              "upper": {
++                "type": "null"
++              },
++              "minimum_proven": {
++                "const": false
++              },
++              "infeasible_proven": {
++                "const": true
++              },
++              "witness_exportable": {
++                "const": false
++              }
++            }
++          }
++        }
++      }
++    },
++    {
++      "if": {
++        "properties": {
++          "source": {
++            "const": "exact_search"
++          }
++        }
++      },
++      "then": {
++        "properties": {
++          "search": {
++            "$ref": "#/$defs/search"
++          },
++          "replay": {
++            "type": "null"
++          }
++        }
++      }
++    },
++    {
++      "if": {
++        "properties": {
++          "source": {
++            "const": "certificate_replay"
++          }
++        }
++      },
++      "then": {
++        "properties": {
++          "search": {
++            "type": "null"
++          },
++          "replay": {
++            "$ref": "#/$defs/replay"
++          }
++        }
++      }
++    },
++    {
++      "if": {
++        "properties": {
++          "source": {
++            "const": "checked_upper"
++          }
++        }
++      },
++      "then": {
++        "properties": {
++          "search": {
++            "type": "null"
++          },
++          "replay": {
++            "type": "null"
++          }
++        }
++      }
++    },
++    {
++      "if": {
++        "properties": {
++          "source": {
++            "const": "verified_optimum"
++          }
++        }
++      },
++      "then": {
++        "properties": {
++          "search": {
++            "type": "null"
++          },
++          "replay": {
++            "type": "null"
++          }
++        }
++      }
++    },
++    {
++      "if": {
++        "properties": {
++          "source": {
++            "const": "verified_infeasible"
++          }
++        }
++      },
++      "then": {
++        "properties": {
++          "search": {
++            "type": "null"
++          },
++          "replay": {
++            "type": "null"
++          }
++        }
++      }
++    },
++    {
++      "if": {
++        "properties": {
++          "source": {
++            "const": "checked_certificate"
++          }
++        }
++      },
++      "then": {
++        "properties": {
++          "search": {
++            "type": "null"
++          },
++          "replay": {
++            "type": "null"
++          }
++        }
++      }
++    },
++    {
++      "if": {
++        "properties": {
++          "source": {
++            "const": "checked_upper"
++          }
++        }
++      },
++      "then": {
++        "properties": {
++          "height": {
++            "properties": {
++              "status": {
++                "enum": [
++                  "checked_upper"
++                ]
++              }
++            }
++          }
++        }
++      }
++    },
++    {
++      "if": {
++        "properties": {
++          "source": {
++            "const": "verified_optimum"
++          }
++        }
++      },
++      "then": {
++        "properties": {
++          "height": {
++            "properties": {
++              "status": {
++                "enum": [
++                  "verified_optimum"
++                ]
++              }
++            }
++          }
++        }
++      }
++    },
++    {
++      "if": {
++        "properties": {
++          "source": {
++            "const": "verified_infeasible"
++          }
++        }
++      },
++      "then": {
++        "properties": {
++          "height": {
++            "properties": {
++              "status": {
++                "enum": [
++                  "verified_infeasible"
++                ]
++              }
++            }
++          }
++        }
++      }
++    },
++    {
++      "if": {
++        "properties": {
++          "source": {
++            "const": "checked_certificate"
++          }
++        }
++      },
++      "then": {
++        "properties": {
++          "height": {
++            "properties": {
++              "status": {
++                "enum": [
++                  "verified_optimum",
++                  "verified_infeasible"
++                ]
++              }
++            }
++          }
++        }
++      }
++    }
++  ],
++  "$defs": {
++    "scalar": {
++      "oneOf": [
++        {
++          "type": "object",
++          "properties": {
++            "type": {
++              "const": "int64"
++            },
++            "value": {
++              "type": "integer",
++              "minimum": -9223372036854775808,
++              "maximum": 9223372036854775807
++            }
++          },
++          "required": [
++            "type",
++            "value"
++          ],
++          "additionalProperties": false
++        },
++        {
++          "type": "object",
++          "properties": {
++            "type": {
++              "const": "string"
++            },
++            "value": {
++              "type": "string"
++            }
++          },
++          "required": [
++            "type",
++            "value"
++          ],
++          "additionalProperties": false
++        },
++        {
++          "type": "object",
++          "properties": {
++            "type": {
++              "const": "bool"
++            },
++            "value": {
++              "type": "boolean"
++            }
++          },
++          "required": [
++            "type",
++            "value"
++          ],
++          "additionalProperties": false
++        },
++        {
++          "type": "object",
++          "properties": {
++            "type": {
++              "const": "date"
++            },
++            "value": {
++              "type": "string"
++            }
++          },
++          "required": [
++            "type",
++            "value"
++          ],
++          "additionalProperties": false
++        },
++        {
++          "type": "object",
++          "properties": {
++            "type": {
++              "const": "decimal"
++            },
++            "value": {
++              "type": "string"
++            }
++          },
++          "required": [
++            "type",
++            "value"
++          ],
++          "additionalProperties": false
++        }
++      ]
++    },
++    "term": {
++      "oneOf": [
++        {
++          "type": "object",
++          "properties": {
++            "kind": {
++              "const": "variable"
++            },
++            "variable": {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            }
++          },
++          "required": [
++            "kind",
++            "variable"
++          ],
++          "additionalProperties": false
++        },
++        {
++          "type": "object",
++          "properties": {
++            "kind": {
++              "const": "constant"
++            },
++            "constant": {
++              "$ref": "#/$defs/scalar"
++            }
++          },
++          "required": [
++            "kind",
++            "constant"
++          ],
++          "additionalProperties": false
++        },
++        {
++          "type": "object",
++          "properties": {
++            "kind": {
++              "const": "ignored_column"
++            }
++          },
++          "required": [
++            "kind"
++          ],
++          "additionalProperties": false
++        }
++      ]
++    },
++    "decimal": {
++      "type": "object",
++      "properties": {
++        "precision": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "scale": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        }
++      },
++      "required": [
++        "precision",
++        "scale"
++      ],
++      "additionalProperties": false
++    },
++    "column": {
++      "type": "object",
++      "properties": {
++        "name": {
++          "type": "string"
++        },
++        "type": {
++          "enum": [
++            "int64",
++            "string",
++            "bool",
++            "date",
++            "decimal"
++          ]
++        },
++        "nullable": {
++          "type": "boolean"
++        },
++        "collation": {
++          "const": "binary"
++        },
++        "decimal": {
++          "anyOf": [
++            {
++              "$ref": "#/$defs/decimal"
++            },
++            {
++              "type": "null"
++            }
++          ]
++        }
++      },
++      "required": [
++        "name",
++        "type",
++        "nullable",
++        "collation",
++        "decimal"
++      ],
++      "additionalProperties": false
++    },
++    "constraint": {
++      "oneOf": [
++        {
++          "type": "object",
++          "properties": {
++            "kind": {
++              "const": "unique"
++            },
++            "name": {
++              "type": "string"
++            },
++            "status": {
++              "enum": [
++                "enforced",
++                "untrusted"
++              ]
++            },
++            "columns": {
++              "type": "array",
++              "items": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              }
++            }
++          },
++          "required": [
++            "kind",
++            "name",
++            "status",
++            "columns"
++          ],
++          "additionalProperties": false
++        },
++        {
++          "type": "object",
++          "properties": {
++            "kind": {
++              "const": "foreign_key"
++            },
++            "name": {
++              "type": "string"
++            },
++            "status": {
++              "enum": [
++                "enforced",
++                "untrusted"
++              ]
++            },
++            "columns": {
++              "type": "array",
++              "items": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              }
++            },
++            "referenced_table": {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            "referenced_columns": {
++              "type": "array",
++              "items": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              }
++            }
++          },
++          "required": [
++            "kind",
++            "name",
++            "status",
++            "columns",
++            "referenced_table",
++            "referenced_columns"
++          ],
++          "additionalProperties": false
++        }
++      ]
++    },
++    "table": {
++      "type": "object",
++      "properties": {
++        "name": {
++          "type": "string"
++        },
++        "source_schema_version": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "columns": {
++          "type": "array",
++          "items": {
++            "$ref": "#/$defs/column"
++          }
++        },
++        "constraints": {
++          "type": "array",
++          "items": {
++            "$ref": "#/$defs/constraint"
++          }
++        },
++        "statistics": {
++          "type": "object",
++          "properties": {
++            "row_count": {
++              "anyOf": [
++                {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                },
++                {
++                  "type": "null"
++                }
++              ]
++            },
++            "distinct_counts": {
++              "type": "array",
++              "items": {
++                "type": "object",
++                "properties": {
++                  "columns": {
++                    "type": "array",
++                    "items": {
++                      "type": "integer",
++                      "minimum": 0,
++                      "maximum": 18446744073709551615
++                    }
++                  },
++                  "estimate": {
++                    "type": "integer",
++                    "minimum": 0,
++                    "maximum": 18446744073709551615
++                  }
++                },
++                "required": [
++                  "columns",
++                  "estimate"
++                ],
++                "additionalProperties": false
++              }
++            }
++          },
++          "required": [
++            "row_count",
++            "distinct_counts"
++          ],
++          "additionalProperties": false
++        },
++        "key_hints": {
++          "type": "array",
++          "items": {
++            "type": "object",
++            "properties": {
++              "columns": {
++                "type": "array",
++                "items": {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                }
++              },
++              "reason": {
++                "type": "string"
++              }
++            },
++            "required": [
++              "columns",
++              "reason"
++            ],
++            "additionalProperties": false
++          }
++        }
++      },
++      "required": [
++        "name",
++        "source_schema_version",
++        "columns",
++        "constraints",
++        "statistics",
++        "key_hints"
++      ],
++      "additionalProperties": false
++    },
++    "catalog": {
++      "type": "object",
++      "properties": {
++        "version": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "tables": {
++          "type": "array",
++          "items": {
++            "$ref": "#/$defs/table"
++          }
++        }
++      },
++      "required": [
++        "version",
++        "tables"
++      ],
++      "additionalProperties": false
++    },
++    "query": {
++      "type": "object",
++      "properties": {
++        "contradiction": {
++          "type": "boolean"
++        },
++        "variables": {
++          "type": "array",
++          "items": {
++            "type": "object",
++            "properties": {
++              "name": {
++                "type": "string"
++              },
++              "type": {
++                "enum": [
++                  "int64",
++                  "string",
++                  "bool",
++                  "date",
++                  "decimal"
++                ]
++              }
++            },
++            "required": [
++              "name",
++              "type"
++            ],
++            "additionalProperties": false
++          }
++        },
++        "atoms": {
++          "type": "array",
++          "items": {
++            "type": "object",
++            "properties": {
++              "occurrence": {
++                "type": "string"
++              },
++              "table": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "terms": {
++                "type": "array",
++                "items": {
++                  "$ref": "#/$defs/term"
++                }
++              }
++            },
++            "required": [
++              "occurrence",
++              "table",
++              "terms"
++            ],
++            "additionalProperties": false
++          }
++        },
++        "head": {
++          "type": "array",
++          "items": {
++            "type": "object",
++            "properties": {
++              "variable": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "alias": {
++                "type": "string"
++              }
++            },
++            "required": [
++              "variable",
++              "alias"
++            ],
++            "additionalProperties": false
++          }
++        }
++      },
++      "required": [
++        "contradiction",
++        "variables",
++        "atoms",
++        "head"
++      ],
++      "additionalProperties": false
++    },
++    "binding": {
++      "type": "object",
++      "properties": {
++        "catalog": {
++          "$ref": "#/$defs/catalog"
++        },
++        "query": {
++          "$ref": "#/$defs/query"
++        }
++      },
++      "required": [
++        "catalog",
++        "query"
++      ],
++      "additionalProperties": false
++    },
++    "tree": {
++      "type": "object",
++      "properties": {
++        "root": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "claimed_connex": {
++          "anyOf": [
++            {
++              "type": "array",
++              "items": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              }
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "claimed_native_height": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "nodes": {
++          "type": "array",
++          "items": {
++            "type": "object",
++            "properties": {
++              "id": {
++                "type": "string"
++              },
++              "kind": {
++                "enum": [
++                  "native",
++                  "generalized"
++                ]
++              },
++              "scope": {
++                "type": "array",
++                "items": {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                }
++              },
++              "children": {
++                "type": "array",
++                "items": {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                }
++              },
++              "occurrence": {
++                "anyOf": [
++                  {
++                    "type": "integer",
++                    "minimum": 0,
++                    "maximum": 18446744073709551615
++                  },
++                  {
++                    "type": "null"
++                  }
++                ]
++              },
++              "claimed_separator": {
++                "anyOf": [
++                  {
++                    "type": "array",
++                    "items": {
++                      "type": "integer",
++                      "minimum": 0,
++                      "maximum": 18446744073709551615
++                    }
++                  },
++                  {
++                    "type": "null"
++                  }
++                ]
++              }
++            },
++            "required": [
++              "id",
++              "kind",
++              "scope",
++              "children",
++              "occurrence",
++              "claimed_separator"
++            ],
++            "additionalProperties": false
++          }
++        }
++      },
++      "required": [
++        "root",
++        "claimed_connex",
++        "claimed_native_height",
++        "nodes"
++      ],
++      "additionalProperties": false
++    },
++    "counters": {
++      "type": "object",
++      "properties": {
++        "attempted": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "committed_transitions": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "allocation_failures": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "active_nanoseconds": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "current_depth": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "peak_depth": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "active_nanoseconds_at_cap": {
++          "type": "boolean"
++        }
++      },
++      "required": [
++        "attempted",
++        "committed_transitions",
++        "allocation_failures",
++        "active_nanoseconds",
++        "current_depth",
++        "peak_depth",
++        "active_nanoseconds_at_cap"
++      ],
++      "additionalProperties": false
++    },
++    "phase_limit": {
++      "type": "object",
++      "properties": {
++        "work": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "active_nanoseconds": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        }
++      },
++      "required": [
++        "work",
++        "active_nanoseconds"
++      ],
++      "additionalProperties": false
++    },
++    "search_limits": {
++      "type": "object",
++      "properties": {
++        "producer": {
++          "$ref": "#/$defs/phase_limit"
++        },
++        "replay": {
++          "$ref": "#/$defs/phase_limit"
++        },
++        "logical_depth": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        }
++      },
++      "required": [
++        "producer",
++        "replay",
++        "logical_depth"
++      ],
++      "additionalProperties": false
++    },
++    "replay_limits": {
++      "type": "object",
++      "properties": {
++        "phase": {
++          "$ref": "#/$defs/phase_limit"
++        },
++        "logical_depth": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        }
++      },
++      "required": [
++        "phase",
++        "logical_depth"
++      ],
++      "additionalProperties": false
++    },
++    "statistics": {
++      "type": "object",
++      "properties": {
++        "work": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "states": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "partitions": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "candidates": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "cache_hits": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "certificate_work": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "hierarchy_tests": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "hierarchy_hits": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "singleton_hits": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "empty_body_hits": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "component_splits": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "symmetry_skips": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "bound_prunes": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        }
++      },
++      "required": [
++        "work",
++        "states",
++        "partitions",
++        "candidates",
++        "cache_hits",
++        "certificate_work",
++        "hierarchy_tests",
++        "hierarchy_hits",
++        "singleton_hits",
++        "empty_body_hits",
++        "component_splits",
++        "symmetry_skips",
++        "bound_prunes"
++      ],
++      "additionalProperties": false
++    },
++    "search": {
++      "type": "object",
++      "properties": {
++        "policy": {
++          "enum": [
++            "strict",
++            "best_found"
++          ]
++        },
++        "phase": {
++          "enum": [
++            "admitted",
++            "preprocess",
++            "search",
++            "build_incumbent",
++            "validate_incumbent",
++            "export_proof",
++            "replay",
++            "complete",
++            "failed",
++            "cancelled",
++            "moved_from"
++          ]
++        },
++        "recorded_last_stop": {
++          "enum": [
++            "none",
++            "quantum_work",
++            "quantum_time",
++            "total_work",
++            "total_time",
++            "depth_limit",
++            "allocation_failure",
++            "counter_overflow",
++            "invalid_quantum",
++            "invalid_certificate",
++            "internal_failure",
++            "complete",
++            "cancelled",
++            "moved_from"
++          ]
++        },
++        "result_kind": {
++          "enum": [
++            "unfinished",
++            "verified_optimum",
++            "verified_infeasible",
++            "failed"
++          ]
++        },
++        "stop_scope": {
++          "const": "owner_last_stop; nonmutating_zero_quantum_return_is_not_retained"
++        },
++        "observed_height_interval": {
++          "type": "object",
++          "properties": {
++            "lower": {
++              "anyOf": [
++                {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                },
++                {
++                  "type": "null"
++                }
++              ]
++            },
++            "upper": {
++              "anyOf": [
++                {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                },
++                {
++                  "type": "null"
++                }
++              ]
++            },
++            "lower_evidence": {
++              "enum": [
++                "universal",
++                "independently_checked"
++              ]
++            },
++            "infeasible": {
++              "type": "boolean"
++            }
++          },
++          "required": [
++            "lower",
++            "upper",
++            "lower_evidence",
++            "infeasible"
++          ],
++          "additionalProperties": false
++        },
++        "producer_complete": {
++          "type": "boolean"
++        },
++        "proof_complete": {
++          "type": "boolean"
++        },
++        "limit_revision": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "producer": {
++          "$ref": "#/$defs/counters"
++        },
++        "replay": {
++          "$ref": "#/$defs/counters"
++        },
++        "structural_counters": {
++          "$ref": "#/$defs/statistics"
++        },
++        "limits": {
++          "$ref": "#/$defs/search_limits"
++        }
++      },
++      "required": [
++        "policy",
++        "phase",
++        "recorded_last_stop",
++        "result_kind",
++        "stop_scope",
++        "observed_height_interval",
++        "producer_complete",
++        "proof_complete",
++        "limit_revision",
++        "producer",
++        "replay",
++        "structural_counters",
++        "limits"
++      ],
++      "additionalProperties": false
++    },
++    "replay": {
++      "type": "object",
++      "properties": {
++        "phase": {
++          "enum": [
++            "admitted",
++            "dispatch",
++            "validate_upper",
++            "build_scopes",
++            "classify_scope_orbits",
++            "index_claims",
++            "order_claims",
++            "prove_claim",
++            "match_root",
++            "complete",
++            "failed",
++            "cancelled",
++            "moved_from"
++          ]
++        },
++        "recorded_last_stop": {
++          "enum": [
++            "none",
++            "quantum_work",
++            "quantum_time",
++            "total_work",
++            "total_time",
++            "depth_limit",
++            "allocation_failure",
++            "counter_overflow",
++            "invalid_quantum",
++            "invalid_certificate",
++            "internal_failure",
++            "complete",
++            "cancelled",
++            "moved_from"
++          ]
++        },
++        "complete": {
++          "type": "boolean"
++        },
++        "valid": {
++          "type": "boolean"
++        },
++        "checked_claims": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "limit_revision": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "work": {
++          "$ref": "#/$defs/counters"
++        },
++        "claim_scope": {
++          "const": "unchecked_input_claim_details_not_exposed_until_checked_handle"
++        },
++        "stop_scope": {
++          "const": "owner_last_stop; nonmutating_zero_quantum_return_is_not_retained"
++        },
++        "limits": {
++          "$ref": "#/$defs/replay_limits"
++        }
++      },
++      "required": [
++        "phase",
++        "recorded_last_stop",
++        "complete",
++        "valid",
++        "checked_claims",
++        "limit_revision",
++        "work",
++        "claim_scope",
++        "stop_scope",
++        "limits"
++      ],
++      "additionalProperties": false
++    },
++    "height": {
++      "type": "object",
++      "properties": {
++        "status": {
++          "enum": [
++            "unknown",
++            "owner_checked_upper_unpublished",
++            "checked_upper",
++            "verified_optimum",
++            "verified_infeasible"
++          ]
++        },
++        "lower": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "upper": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "lower_evidence": {
++          "enum": [
++            "typed_independent_proof",
++            "p06_universal_nonempty_or_empty_body_bound"
++          ]
++        },
++        "upper_evidence": {
++          "enum": [
++            "typed_checked_original_witness",
++            "owner_observed_checked_upper_witness_unpublished",
++            "none"
++          ]
++        },
++        "minimum_proven": {
++          "type": "boolean"
++        },
++        "infeasible_proven": {
++          "type": "boolean"
++        },
++        "witness_exportable": {
++          "type": "boolean"
++        }
++      },
++      "required": [
++        "status",
++        "lower",
++        "upper",
++        "lower_evidence",
++        "upper_evidence",
++        "minimum_proven",
++        "infeasible_proven",
++        "witness_exportable"
++      ],
++      "additionalProperties": false
++    },
++    "witness": {
++      "type": "object",
++      "properties": {
++        "authority": {
++          "const": "typed_validated_incumbent_exact_original_binding"
++        },
++        "height": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "tree": {
++          "$ref": "#/$defs/tree"
++        }
++      },
++      "required": [
++        "authority",
++        "height",
++        "tree"
++      ],
++      "additionalProperties": false
++    },
++    "certificate": {
++      "type": "object",
++      "properties": {
++        "authority": {
++          "const": "typed_independently_checked_original_binding"
++        },
++        "algorithm": {
++          "type": "string"
++        },
++        "minimum_height": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "tree": {
++          "anyOf": [
++            {
++              "$ref": "#/$defs/tree"
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "lower_bounds": {
++          "type": "array",
++          "items": {
++            "type": "object",
++            "properties": {
++              "occurrences": {
++                "type": "array",
++                "items": {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                }
++              },
++              "generalized_allowed": {
++                "type": "boolean"
++              },
++              "connex_reachable": {
++                "type": "boolean"
++              },
++              "bound": {
++                "anyOf": [
++                  {
++                    "type": "integer",
++                    "minimum": 0,
++                    "maximum": 18446744073709551615
++                  },
++                  {
++                    "type": "null"
++                  }
++                ]
++              }
++            },
++            "required": [
++              "occurrences",
++              "generalized_allowed",
++              "connex_reachable",
++              "bound"
++            ],
++            "additionalProperties": false
++          }
++        }
++      },
++      "required": [
++        "authority",
++        "algorithm",
++        "minimum_height",
++        "tree",
++        "lower_bounds"
++      ],
++      "additionalProperties": false
++    }
++  }
++}
+--- /dev/null
++++ b/schemas/query-witness-v1.schema.json
+@@ -0,0 +1,1288 @@
++{
++  "$schema": "https://json-schema.org/draft/2020-12/schema",
++  "$comment": "Shape contract only. JSON/flags never mint typed planner authority; source accessors and independent semantic checks remain necessary.",
++  "additionalProperties": false,
++  "title": "Original typed checked witness export v1",
++  "type": "object",
++  "properties": {
++    "format": {
++      "const": "crown_query_witness"
++    },
++    "version": {
++      "const": 1
++    },
++    "authority": {
++      "const": "typed_checked_original_witness"
++    },
++    "height": {
++      "type": "integer",
++      "minimum": 0,
++      "maximum": 18446744073709551615
++    },
++    "binding": {
++      "$ref": "#/$defs/binding"
++    },
++    "tree": {
++      "$ref": "#/$defs/tree"
++    }
++  },
++  "required": [
++    "format",
++    "version",
++    "authority",
++    "height",
++    "binding",
++    "tree"
++  ],
++  "$defs": {
++    "scalar": {
++      "oneOf": [
++        {
++          "type": "object",
++          "properties": {
++            "type": {
++              "const": "int64"
++            },
++            "value": {
++              "type": "integer",
++              "minimum": -9223372036854775808,
++              "maximum": 9223372036854775807
++            }
++          },
++          "required": [
++            "type",
++            "value"
++          ],
++          "additionalProperties": false
++        },
++        {
++          "type": "object",
++          "properties": {
++            "type": {
++              "const": "string"
++            },
++            "value": {
++              "type": "string"
++            }
++          },
++          "required": [
++            "type",
++            "value"
++          ],
++          "additionalProperties": false
++        },
++        {
++          "type": "object",
++          "properties": {
++            "type": {
++              "const": "bool"
++            },
++            "value": {
++              "type": "boolean"
++            }
++          },
++          "required": [
++            "type",
++            "value"
++          ],
++          "additionalProperties": false
++        },
++        {
++          "type": "object",
++          "properties": {
++            "type": {
++              "const": "date"
++            },
++            "value": {
++              "type": "string"
++            }
++          },
++          "required": [
++            "type",
++            "value"
++          ],
++          "additionalProperties": false
++        },
++        {
++          "type": "object",
++          "properties": {
++            "type": {
++              "const": "decimal"
++            },
++            "value": {
++              "type": "string"
++            }
++          },
++          "required": [
++            "type",
++            "value"
++          ],
++          "additionalProperties": false
++        }
++      ]
++    },
++    "term": {
++      "oneOf": [
++        {
++          "type": "object",
++          "properties": {
++            "kind": {
++              "const": "variable"
++            },
++            "variable": {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            }
++          },
++          "required": [
++            "kind",
++            "variable"
++          ],
++          "additionalProperties": false
++        },
++        {
++          "type": "object",
++          "properties": {
++            "kind": {
++              "const": "constant"
++            },
++            "constant": {
++              "$ref": "#/$defs/scalar"
++            }
++          },
++          "required": [
++            "kind",
++            "constant"
++          ],
++          "additionalProperties": false
++        },
++        {
++          "type": "object",
++          "properties": {
++            "kind": {
++              "const": "ignored_column"
++            }
++          },
++          "required": [
++            "kind"
++          ],
++          "additionalProperties": false
++        }
++      ]
++    },
++    "decimal": {
++      "type": "object",
++      "properties": {
++        "precision": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "scale": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        }
++      },
++      "required": [
++        "precision",
++        "scale"
++      ],
++      "additionalProperties": false
++    },
++    "column": {
++      "type": "object",
++      "properties": {
++        "name": {
++          "type": "string"
++        },
++        "type": {
++          "enum": [
++            "int64",
++            "string",
++            "bool",
++            "date",
++            "decimal"
++          ]
++        },
++        "nullable": {
++          "type": "boolean"
++        },
++        "collation": {
++          "const": "binary"
++        },
++        "decimal": {
++          "anyOf": [
++            {
++              "$ref": "#/$defs/decimal"
++            },
++            {
++              "type": "null"
++            }
++          ]
++        }
++      },
++      "required": [
++        "name",
++        "type",
++        "nullable",
++        "collation",
++        "decimal"
++      ],
++      "additionalProperties": false
++    },
++    "constraint": {
++      "oneOf": [
++        {
++          "type": "object",
++          "properties": {
++            "kind": {
++              "const": "unique"
++            },
++            "name": {
++              "type": "string"
++            },
++            "status": {
++              "enum": [
++                "enforced",
++                "untrusted"
++              ]
++            },
++            "columns": {
++              "type": "array",
++              "items": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              }
++            }
++          },
++          "required": [
++            "kind",
++            "name",
++            "status",
++            "columns"
++          ],
++          "additionalProperties": false
++        },
++        {
++          "type": "object",
++          "properties": {
++            "kind": {
++              "const": "foreign_key"
++            },
++            "name": {
++              "type": "string"
++            },
++            "status": {
++              "enum": [
++                "enforced",
++                "untrusted"
++              ]
++            },
++            "columns": {
++              "type": "array",
++              "items": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              }
++            },
++            "referenced_table": {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            "referenced_columns": {
++              "type": "array",
++              "items": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              }
++            }
++          },
++          "required": [
++            "kind",
++            "name",
++            "status",
++            "columns",
++            "referenced_table",
++            "referenced_columns"
++          ],
++          "additionalProperties": false
++        }
++      ]
++    },
++    "table": {
++      "type": "object",
++      "properties": {
++        "name": {
++          "type": "string"
++        },
++        "source_schema_version": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "columns": {
++          "type": "array",
++          "items": {
++            "$ref": "#/$defs/column"
++          }
++        },
++        "constraints": {
++          "type": "array",
++          "items": {
++            "$ref": "#/$defs/constraint"
++          }
++        },
++        "statistics": {
++          "type": "object",
++          "properties": {
++            "row_count": {
++              "anyOf": [
++                {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                },
++                {
++                  "type": "null"
++                }
++              ]
++            },
++            "distinct_counts": {
++              "type": "array",
++              "items": {
++                "type": "object",
++                "properties": {
++                  "columns": {
++                    "type": "array",
++                    "items": {
++                      "type": "integer",
++                      "minimum": 0,
++                      "maximum": 18446744073709551615
++                    }
++                  },
++                  "estimate": {
++                    "type": "integer",
++                    "minimum": 0,
++                    "maximum": 18446744073709551615
++                  }
++                },
++                "required": [
++                  "columns",
++                  "estimate"
++                ],
++                "additionalProperties": false
++              }
++            }
++          },
++          "required": [
++            "row_count",
++            "distinct_counts"
++          ],
++          "additionalProperties": false
++        },
++        "key_hints": {
++          "type": "array",
++          "items": {
++            "type": "object",
++            "properties": {
++              "columns": {
++                "type": "array",
++                "items": {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                }
++              },
++              "reason": {
++                "type": "string"
++              }
++            },
++            "required": [
++              "columns",
++              "reason"
++            ],
++            "additionalProperties": false
++          }
++        }
++      },
++      "required": [
++        "name",
++        "source_schema_version",
++        "columns",
++        "constraints",
++        "statistics",
++        "key_hints"
++      ],
++      "additionalProperties": false
++    },
++    "catalog": {
++      "type": "object",
++      "properties": {
++        "version": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "tables": {
++          "type": "array",
++          "items": {
++            "$ref": "#/$defs/table"
++          }
++        }
++      },
++      "required": [
++        "version",
++        "tables"
++      ],
++      "additionalProperties": false
++    },
++    "query": {
++      "type": "object",
++      "properties": {
++        "contradiction": {
++          "type": "boolean"
++        },
++        "variables": {
++          "type": "array",
++          "items": {
++            "type": "object",
++            "properties": {
++              "name": {
++                "type": "string"
++              },
++              "type": {
++                "enum": [
++                  "int64",
++                  "string",
++                  "bool",
++                  "date",
++                  "decimal"
++                ]
++              }
++            },
++            "required": [
++              "name",
++              "type"
++            ],
++            "additionalProperties": false
++          }
++        },
++        "atoms": {
++          "type": "array",
++          "items": {
++            "type": "object",
++            "properties": {
++              "occurrence": {
++                "type": "string"
++              },
++              "table": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "terms": {
++                "type": "array",
++                "items": {
++                  "$ref": "#/$defs/term"
++                }
++              }
++            },
++            "required": [
++              "occurrence",
++              "table",
++              "terms"
++            ],
++            "additionalProperties": false
++          }
++        },
++        "head": {
++          "type": "array",
++          "items": {
++            "type": "object",
++            "properties": {
++              "variable": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              },
++              "alias": {
++                "type": "string"
++              }
++            },
++            "required": [
++              "variable",
++              "alias"
++            ],
++            "additionalProperties": false
++          }
++        }
++      },
++      "required": [
++        "contradiction",
++        "variables",
++        "atoms",
++        "head"
++      ],
++      "additionalProperties": false
++    },
++    "binding": {
++      "type": "object",
++      "properties": {
++        "catalog": {
++          "$ref": "#/$defs/catalog"
++        },
++        "query": {
++          "$ref": "#/$defs/query"
++        }
++      },
++      "required": [
++        "catalog",
++        "query"
++      ],
++      "additionalProperties": false
++    },
++    "tree": {
++      "type": "object",
++      "properties": {
++        "root": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "claimed_connex": {
++          "anyOf": [
++            {
++              "type": "array",
++              "items": {
++                "type": "integer",
++                "minimum": 0,
++                "maximum": 18446744073709551615
++              }
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "claimed_native_height": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "nodes": {
++          "type": "array",
++          "items": {
++            "type": "object",
++            "properties": {
++              "id": {
++                "type": "string"
++              },
++              "kind": {
++                "enum": [
++                  "native",
++                  "generalized"
++                ]
++              },
++              "scope": {
++                "type": "array",
++                "items": {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                }
++              },
++              "children": {
++                "type": "array",
++                "items": {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                }
++              },
++              "occurrence": {
++                "anyOf": [
++                  {
++                    "type": "integer",
++                    "minimum": 0,
++                    "maximum": 18446744073709551615
++                  },
++                  {
++                    "type": "null"
++                  }
++                ]
++              },
++              "claimed_separator": {
++                "anyOf": [
++                  {
++                    "type": "array",
++                    "items": {
++                      "type": "integer",
++                      "minimum": 0,
++                      "maximum": 18446744073709551615
++                    }
++                  },
++                  {
++                    "type": "null"
++                  }
++                ]
++              }
++            },
++            "required": [
++              "id",
++              "kind",
++              "scope",
++              "children",
++              "occurrence",
++              "claimed_separator"
++            ],
++            "additionalProperties": false
++          }
++        }
++      },
++      "required": [
++        "root",
++        "claimed_connex",
++        "claimed_native_height",
++        "nodes"
++      ],
++      "additionalProperties": false
++    },
++    "counters": {
++      "type": "object",
++      "properties": {
++        "attempted": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "committed_transitions": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "allocation_failures": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "active_nanoseconds": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "current_depth": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "peak_depth": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "active_nanoseconds_at_cap": {
++          "type": "boolean"
++        }
++      },
++      "required": [
++        "attempted",
++        "committed_transitions",
++        "allocation_failures",
++        "active_nanoseconds",
++        "current_depth",
++        "peak_depth",
++        "active_nanoseconds_at_cap"
++      ],
++      "additionalProperties": false
++    },
++    "phase_limit": {
++      "type": "object",
++      "properties": {
++        "work": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "active_nanoseconds": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        }
++      },
++      "required": [
++        "work",
++        "active_nanoseconds"
++      ],
++      "additionalProperties": false
++    },
++    "search_limits": {
++      "type": "object",
++      "properties": {
++        "producer": {
++          "$ref": "#/$defs/phase_limit"
++        },
++        "replay": {
++          "$ref": "#/$defs/phase_limit"
++        },
++        "logical_depth": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        }
++      },
++      "required": [
++        "producer",
++        "replay",
++        "logical_depth"
++      ],
++      "additionalProperties": false
++    },
++    "replay_limits": {
++      "type": "object",
++      "properties": {
++        "phase": {
++          "$ref": "#/$defs/phase_limit"
++        },
++        "logical_depth": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        }
++      },
++      "required": [
++        "phase",
++        "logical_depth"
++      ],
++      "additionalProperties": false
++    },
++    "statistics": {
++      "type": "object",
++      "properties": {
++        "work": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "states": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "partitions": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "candidates": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "cache_hits": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "certificate_work": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "hierarchy_tests": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "hierarchy_hits": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "singleton_hits": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "empty_body_hits": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "component_splits": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "symmetry_skips": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "bound_prunes": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        }
++      },
++      "required": [
++        "work",
++        "states",
++        "partitions",
++        "candidates",
++        "cache_hits",
++        "certificate_work",
++        "hierarchy_tests",
++        "hierarchy_hits",
++        "singleton_hits",
++        "empty_body_hits",
++        "component_splits",
++        "symmetry_skips",
++        "bound_prunes"
++      ],
++      "additionalProperties": false
++    },
++    "search": {
++      "type": "object",
++      "properties": {
++        "policy": {
++          "enum": [
++            "strict",
++            "best_found"
++          ]
++        },
++        "phase": {
++          "enum": [
++            "admitted",
++            "preprocess",
++            "search",
++            "build_incumbent",
++            "validate_incumbent",
++            "export_proof",
++            "replay",
++            "complete",
++            "failed",
++            "cancelled",
++            "moved_from"
++          ]
++        },
++        "recorded_last_stop": {
++          "enum": [
++            "none",
++            "quantum_work",
++            "quantum_time",
++            "total_work",
++            "total_time",
++            "depth_limit",
++            "allocation_failure",
++            "counter_overflow",
++            "invalid_quantum",
++            "invalid_certificate",
++            "internal_failure",
++            "complete",
++            "cancelled",
++            "moved_from"
++          ]
++        },
++        "result_kind": {
++          "enum": [
++            "unfinished",
++            "verified_optimum",
++            "verified_infeasible",
++            "failed"
++          ]
++        },
++        "stop_scope": {
++          "const": "owner_last_stop; nonmutating_zero_quantum_return_is_not_retained"
++        },
++        "observed_height_interval": {
++          "type": "object",
++          "properties": {
++            "lower": {
++              "anyOf": [
++                {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                },
++                {
++                  "type": "null"
++                }
++              ]
++            },
++            "upper": {
++              "anyOf": [
++                {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                },
++                {
++                  "type": "null"
++                }
++              ]
++            },
++            "lower_evidence": {
++              "enum": [
++                "universal",
++                "independently_checked"
++              ]
++            },
++            "infeasible": {
++              "type": "boolean"
++            }
++          },
++          "required": [
++            "lower",
++            "upper",
++            "lower_evidence",
++            "infeasible"
++          ],
++          "additionalProperties": false
++        },
++        "producer_complete": {
++          "type": "boolean"
++        },
++        "proof_complete": {
++          "type": "boolean"
++        },
++        "limit_revision": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "producer": {
++          "$ref": "#/$defs/counters"
++        },
++        "replay": {
++          "$ref": "#/$defs/counters"
++        },
++        "structural_counters": {
++          "$ref": "#/$defs/statistics"
++        },
++        "limits": {
++          "$ref": "#/$defs/search_limits"
++        }
++      },
++      "required": [
++        "policy",
++        "phase",
++        "recorded_last_stop",
++        "result_kind",
++        "stop_scope",
++        "observed_height_interval",
++        "producer_complete",
++        "proof_complete",
++        "limit_revision",
++        "producer",
++        "replay",
++        "structural_counters",
++        "limits"
++      ],
++      "additionalProperties": false
++    },
++    "replay": {
++      "type": "object",
++      "properties": {
++        "phase": {
++          "enum": [
++            "admitted",
++            "dispatch",
++            "validate_upper",
++            "build_scopes",
++            "classify_scope_orbits",
++            "index_claims",
++            "order_claims",
++            "prove_claim",
++            "match_root",
++            "complete",
++            "failed",
++            "cancelled",
++            "moved_from"
++          ]
++        },
++        "recorded_last_stop": {
++          "enum": [
++            "none",
++            "quantum_work",
++            "quantum_time",
++            "total_work",
++            "total_time",
++            "depth_limit",
++            "allocation_failure",
++            "counter_overflow",
++            "invalid_quantum",
++            "invalid_certificate",
++            "internal_failure",
++            "complete",
++            "cancelled",
++            "moved_from"
++          ]
++        },
++        "complete": {
++          "type": "boolean"
++        },
++        "valid": {
++          "type": "boolean"
++        },
++        "checked_claims": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "limit_revision": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "work": {
++          "$ref": "#/$defs/counters"
++        },
++        "claim_scope": {
++          "const": "unchecked_input_claim_details_not_exposed_until_checked_handle"
++        },
++        "stop_scope": {
++          "const": "owner_last_stop; nonmutating_zero_quantum_return_is_not_retained"
++        },
++        "limits": {
++          "$ref": "#/$defs/replay_limits"
++        }
++      },
++      "required": [
++        "phase",
++        "recorded_last_stop",
++        "complete",
++        "valid",
++        "checked_claims",
++        "limit_revision",
++        "work",
++        "claim_scope",
++        "stop_scope",
++        "limits"
++      ],
++      "additionalProperties": false
++    },
++    "height": {
++      "type": "object",
++      "properties": {
++        "status": {
++          "enum": [
++            "unknown",
++            "owner_checked_upper_unpublished",
++            "checked_upper",
++            "verified_optimum",
++            "verified_infeasible"
++          ]
++        },
++        "lower": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "upper": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "lower_evidence": {
++          "enum": [
++            "typed_independent_proof",
++            "p06_universal_nonempty_or_empty_body_bound"
++          ]
++        },
++        "upper_evidence": {
++          "enum": [
++            "typed_checked_original_witness",
++            "owner_observed_checked_upper_witness_unpublished",
++            "none"
++          ]
++        },
++        "minimum_proven": {
++          "type": "boolean"
++        },
++        "infeasible_proven": {
++          "type": "boolean"
++        },
++        "witness_exportable": {
++          "type": "boolean"
++        }
++      },
++      "required": [
++        "status",
++        "lower",
++        "upper",
++        "lower_evidence",
++        "upper_evidence",
++        "minimum_proven",
++        "infeasible_proven",
++        "witness_exportable"
++      ],
++      "additionalProperties": false
++    },
++    "witness": {
++      "type": "object",
++      "properties": {
++        "authority": {
++          "const": "typed_validated_incumbent_exact_original_binding"
++        },
++        "height": {
++          "type": "integer",
++          "minimum": 0,
++          "maximum": 18446744073709551615
++        },
++        "tree": {
++          "$ref": "#/$defs/tree"
++        }
++      },
++      "required": [
++        "authority",
++        "height",
++        "tree"
++      ],
++      "additionalProperties": false
++    },
++    "certificate": {
++      "type": "object",
++      "properties": {
++        "authority": {
++          "const": "typed_independently_checked_original_binding"
++        },
++        "algorithm": {
++          "type": "string"
++        },
++        "minimum_height": {
++          "anyOf": [
++            {
++              "type": "integer",
++              "minimum": 0,
++              "maximum": 18446744073709551615
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "tree": {
++          "anyOf": [
++            {
++              "$ref": "#/$defs/tree"
++            },
++            {
++              "type": "null"
++            }
++          ]
++        },
++        "lower_bounds": {
++          "type": "array",
++          "items": {
++            "type": "object",
++            "properties": {
++              "occurrences": {
++                "type": "array",
++                "items": {
++                  "type": "integer",
++                  "minimum": 0,
++                  "maximum": 18446744073709551615
++                }
++              },
++              "generalized_allowed": {
++                "type": "boolean"
++              },
++              "connex_reachable": {
++                "type": "boolean"
++              },
++              "bound": {
++                "anyOf": [
++                  {
++                    "type": "integer",
++                    "minimum": 0,
++                    "maximum": 18446744073709551615
++                  },
++                  {
++                    "type": "null"
++                  }
++                ]
++              }
++            },
++            "required": [
++              "occurrences",
++              "generalized_allowed",
++              "connex_reachable",
++              "bound"
++            ],
++            "additionalProperties": false
++          }
++        }
++      },
++      "required": [
++        "authority",
++        "algorithm",
++        "minimum_height",
++        "tree",
++        "lower_bounds"
++      ],
++      "additionalProperties": false
++    }
++  }
++}
+--- a/src/io/explain.cpp
++++ b/src/io/explain.cpp
+@@ -423,7 +423,7 @@
+     o.field("committed_gauges",[&]{w.object([&](auto& g){g.text("availability",name(e.gauge_availability()));
+       g.field("value",[&]{if(e.gauges())w.raw(write_committed_state_gauges_json(*e.gauges(),w.remaining()));else w.null();});
+     });});
+-    o.field("open_gates",[&] { w.array(std::array{"S05_total_allocator_bytes","O04_checkpoint","O05_recovery","O06_durable_delivery","C01_statistics","C02_ranking","B03_benchmark_validation","O08_release_workflow","native_integration_and_acceptance"},[&](auto item) { w.quote(item); }); });
++    o.field("open_gates",[&] { w.array(std::array{"S05_total_allocator_bytes","O04_checkpoint","O05_recovery","O06_durable_delivery","C01_statistics","C02_ranking","B03_benchmark_validation","O08_release_workflow"},[&](auto item) { w.quote(item); }); });
+   });
+ }
+ void human_metrics(Writer& w,const char* label,const std::optional<ObservationSummary>& summary_value) {
+@@ -519,7 +519,7 @@
+     for(const auto& r:report.trace_records()){w.raw("  ");causal_record(w,r);w.raw("\n");}
+   }
+   human_integrated(w,report);
+-  w.raw("Open: allocator-total bytes, durable delivery/recovery, statistics/ranking, benchmark/release validation and native integration acceptance.\n");
++  w.raw("Open: allocator-total bytes, durable delivery/recovery, statistics/ranking, benchmark/release validation.\n");
+   return std::move(w.out);
+ }
+ std::string write_explain_dot(const PlanExplanation& report,ExplainTextLimits limits) {

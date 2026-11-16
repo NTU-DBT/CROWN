@@ -1,0 +1,58 @@
+{
+  "kind": "preparatory independent test proposal; not O07 acceptance evidence",
+  "status": "ready_for_root_execution",
+  "cursor_proposal_package_sha256": "5dcd916bda78bbe1bef6047a65b4a1fa7ef6ad405ee54877c8033b818d3b8259",
+  "execution_by_author": false,
+  "native_source_or_build_changes": false,
+  "files": {
+    "README.md": "174a6594afc46bc6f57f1834d97fe19a4496d27091934a0cae1d443030db3cc4",
+    "cursor_observation_test.cpp": "ff8a0aefa3e6759535e95b70b5d29ce70a994bda13a656feaeabc4df0e290387",
+    "verify_cursor_observation_output.py": "b25ee859ffba420a716f4a4061007d8e1a077ea7b903b295e9415fe44ad2cb47"
+  },
+  "compiler_evidence": {
+    "kind": "strict C++23 compile and static link only; no executable or Python checker run",
+    "testing_macro": "CROWN_RUNTIME_TESTING",
+    "optimization": "-O0",
+    "warnings": [
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-Wconversion",
+      "-Wsign-conversion",
+      "-Werror"
+    ],
+    "include_precedence": [
+      "docs/verification/o07-cursor-observation-proposal/overlay/include",
+      "docs/verification/o07-run-context-proposal/overlay/include",
+      "docs/verification/o07-mode-binding-proposal/overlay/include",
+      "docs/verification/o07-runtime-proposal/overlay/include",
+      "docs/verification/o07-explain-proposal/overlay/include",
+      "include",
+      "tests/reference",
+      "third_party (system include)"
+    ],
+    "test_object": "/tmp/crown-o07-cursor-independent-link-20261107-a1/cursor_observation_test.o",
+    "test_object_sha256": "c455f2149a9b07bbf3f5ce6abdd5eaa2fda3ea825a052cda1a39441f5520a64b",
+    "dependency_file": "/tmp/crown-o07-cursor-independent-link-20261107-a1/cursor_observation_test.d",
+    "dependency_file_sha256": "fe66f750a64d6018acef262eda45d3227dcb641aa3da81d979310d9c62910416",
+    "linked_binary": "/tmp/crown-o07-cursor-independent-link-20261107-a1/cursor_observation_test",
+    "linked_binary_sha256": "3467646edebb84b4faba6576f7ca56eb0f4c9afe2ae9569622cf1440496ded30"
+  },
+  "link_inputs": {
+    "/tmp/crown-o07-cursor-observation-report-testing/0.o": "22f3e58da968005327e5e74caee0c3f1785d1f662a0be06fb887160220a7ee33",
+    "/tmp/crown-o07-cursor-observation-testing/libcrown_runtime_o07_cursor_observation.a": "4b4cb914e289172266ac25aeaafae0657872d02c07a92dafec6c8d682291159c",
+    "/home/userroot/Codex/CROWN/build/release/libcrown_reference.a": "035a204d7e00355b7f14e94255f8d77688f43a5688aabba898f6cedfd43f39f5",
+    "/home/userroot/Codex/CROWN/build/release/libcrown_plan.a": "92a96fd0f01ade3862fb4fbbabe316337719f71eb43361f5eb6b250cdfe04d6a",
+    "/home/userroot/Codex/CROWN/build/release/libcrown_sql.a": "6ba92b30615a1b35c7b499d1067647be49be47757b8ee58cb1098c65d275d26e",
+    "/home/userroot/Codex/CROWN/build/release/_deps/libpg_query/libpg_query-18.1.0/libpg_query.a": "c254ea2e05708d5cf5e8526bad19d69d314d05a9af4f7a8b0be4b08e069e2174",
+    "/home/userroot/Codex/CROWN/build/release/libcrown_core.a": "784b820ff9284ad75033552056fd2a81113f7eb54be5db56959f31ce778bcf9d"
+  },
+  "planned_root_run_output": "/tmp/crown-o07-cursor-independent-run/runtime-output.json",
+  "external_python_dependencies": [],
+  "scope_notes": [
+    "All reported cursor observations and committed-state gauges are copied from actual runtime API results.",
+    "The Python companion checks JSON shape and literal registry/availability rules using only the standard library.",
+    "Graphviz, native builds, CMake, CTest, executable execution, and Python checker execution were not performed by the author.",
+    "Persistent allocation failure is tested at the first allocation for factory and next paths, not swept over every allocation index."
+  ]
+}

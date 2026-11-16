@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "title": "O08 independent native CLI workflow fixture packet",
+  "generation": "Python standard library only; independent set-comprehension oracles; no CROWN build/test/CLI invocation",
+  "event_template_binding": {
+    "catalog_sha256": "omitted intentionally; future runner computes it from native canonical catalog output and injects it per event",
+    "included_metadata": [
+      "schema_version",
+      "catalog_version",
+      "source_schema_version",
+      "sequence",
+      "source_position"
+    ]
+  },
+  "cases": {
+    "full_head_self_join_loop_new_new": {
+      "description": "Full-head Edge(x,y), Edge(y,z); inserting one loop into empty Edge yields the same new tuple in both aliases and output (x,x,x).",
+      "query": "full_head_self_join_loop_new_new/query.sql",
+      "catalog": "full_head_self_join_loop_new_new/catalog.json",
+      "events_template_jsonl": "full_head_self_join_loop_new_new/events.template.jsonl",
+      "expected_oracle": "full_head_self_join_loop_new_new/expected_oracle.json",
+      "event_count": 7,
+      "source_id": "full-head-self-join-loop-new-new-input",
+      "source_offsets": [
+        100,
+        200,
+        300,
+        400,
+        500,
+        600,
+        700
+      ],
+      "empty_delta_sequences": [
+        4,
+        6
+      ],
+      "initial_current_rows": []
+    },
+    "projected_collision": {
+      "description": "Two distinct physical records project to one logical key; deleting either witness alone must preserve the answer.",
+      "query": "projected_collision/query.sql",
+      "catalog": "projected_collision/catalog.json",
+      "events_template_jsonl": "projected_collision/events.template.jsonl",
+      "expected_oracle": "projected_collision/expected_oracle.json",
+      "event_count": 6,
+      "source_id": "projected-collision-input",
+      "source_offsets": [
+        100,
+        200,
+        300,
+        400,
+        500,
+        600
+      ],
+      "empty_delta_sequences": [
+        2,
+        3,
+        6
+      ],
+      "initial_current_rows": []
+    },
+    "scalar_exists": {
+      "description": "Top-level scalar EXISTS over a Boolean filter. Its initial/current result is one Boolean row, false or true.",
+      "query": "scalar_exists/query.sql",
+      "catalog": "scalar_exists/catalog.json",
+      "events_template_jsonl": "scalar_exists/events.template.jsonl",
+      "expected_oracle": "scalar_exists/expected_oracle.json",
+      "event_count": 5,
+      "source_id": "scalar-exists-input",
+      "source_offsets": [
+        100,
+        200,
+        300,
+        400,
+        500
+      ],
+      "empty_delta_sequences": [
+        1,
+        3,
+        5
+      ],
+      "initial_current_rows": [
+        [
+          false
+        ]
+      ]
+    },
+    "disconnected_product": {
+      "description": "Disconnected two-relation product with ordered events, growth, shrinkage, and empty no-op epochs.",
+      "query": "disconnected_product/query.sql",
+      "catalog": "disconnected_product/catalog.json",
+      "events_template_jsonl": "disconnected_product/events.template.jsonl",
+      "expected_oracle": "disconnected_product/expected_oracle.json",
+      "event_count": 9,
+      "source_id": "disconnected-product-input",
+      "source_offsets": [
+        100,
+        200,
+        300,
+        400,
+        500,
+        600,
+        700,
+        800,
+        900
+      ],
+      "empty_delta_sequences": [
+        1,
+        7
+      ],
+      "initial_current_rows": []
+    },
+    "all_native_scalar_types": {
+      "description": "Full-head set query covering int64 boundaries, a NUL string, UTF-8 strings, bool, tagged Gregorian dates, and exact tagged decimals; alternate decimal spelling is a typed duplicate.",
+      "query": "all_native_scalar_types/query.sql",
+      "catalog": "all_native_scalar_types/catalog.json",
+      "events_template_jsonl": "all_native_scalar_types/events.template.jsonl",
+      "expected_oracle": "all_native_scalar_types/expected_oracle.json",
+      "event_count": 7,
+      "source_id": "all-native-scalar-types-input",
+      "source_offsets": [
+        100,
+        200,
+        300,
+        400,
+        500,
+        600,
+        700
+      ],
+      "empty_delta_sequences": [
+        3,
+        5
+      ],
+      "initial_current_rows": []
+    }
+  },
+  "source_sha256": {
+    "README.md": "fbf72ecfdb424f401e663cb8b50ef861ece79f4c3759c1bc7aa1526477cb49fd",
+    "all_native_scalar_types/catalog.json": "7ddf5ea90e34f68ee58a0d812ee37aa7d1a98a5bb5b0ca490dfa819f379039b1",
+    "all_native_scalar_types/events.template.jsonl": "a885b5e1b4432b4c827ffd0fe1dabca3ce9edd83a0acf93b2af8e05a0a014a19",
+    "all_native_scalar_types/expected_oracle.json": "da4202d3c2450ce5fab86f4438b59bbbdbe5648474b04595aeb73431d010af3d",
+    "all_native_scalar_types/query.sql": "187e11fb48eb0a50aee2e7308ac92d8c0d78853da1b57055b92507f06838f613",
+    "disconnected_product/catalog.json": "b2d3726263c13b3f565e545cf1e27eede5e9137042a76d5c8e35783be42b210d",
+    "disconnected_product/events.template.jsonl": "bcd5c13a14623b6bc29e19b44b26a5b1c8dcb5fb9dcc15be2b02cd5ab57ee9bd",
+    "disconnected_product/expected_oracle.json": "3b6a6f642179efb97b077900f897e9fe6313c481e1f9efd970eb148703784538",
+    "disconnected_product/query.sql": "d6411c36b9c18a6ed508cc39a01925466e2b5094856ff5a3c540239ba7f2ca0e",
+    "full_head_self_join_loop_new_new/catalog.json": "2c65b0b46f2f5ea80124220f2adb47c5bba8cde6773ffd329231e9c0ec720ff1",
+    "full_head_self_join_loop_new_new/events.template.jsonl": "8c6715c7072dc8f0727ea8232317b550c9fe946337cd4a888554bcb9ccae7eb3",
+    "full_head_self_join_loop_new_new/expected_oracle.json": "2eb2965bfd35f62ec8167bb1f25bf438fec303775128d378c1f3e35695670853",
+    "full_head_self_join_loop_new_new/query.sql": "aa6fd28673602d2839c428b19f7ea26fa42205da7c98fc4368eb1cdd84a36436",
+    "generate_fixtures.py": "dfe86a0056d0ea680fb34a909e0261ea6f92db785750f0ef05aa6e8b9d27c7a1",
+    "projected_collision/catalog.json": "0878375b90e4a93651ef5c57c86ced38963e6e3a8bf9256ad7da6eaf54974682",
+    "projected_collision/events.template.jsonl": "18375b29766c1a354070200b7e42ffd43e3ce57ef5bbd3444510e34c46654e87",
+    "projected_collision/expected_oracle.json": "341dd8c586ec65a87123394df2dc60be1850ca86f76f420ab6416399f367f1c4",
+    "projected_collision/query.sql": "1575d13134d3077f0f7ee2879f4cfe0d6eb3a93b1dd9a6a9aac5b5cf655e028b",
+    "scalar_exists/catalog.json": "d751b0d32e0d9364a5543cb445a2d65fe8d85e98055f6a70cc34659055ebb7dd",
+    "scalar_exists/events.template.jsonl": "df6073c61b6a73bf21b2da708aea98387b0e89b7714d701b173535023850f368",
+    "scalar_exists/expected_oracle.json": "08d7dad8c45bacfae6dd6b9bd9cbfa1489accae2f34c3bceae28d9adcf09a977",
+    "scalar_exists/query.sql": "9ea5207c20fa7b5c5b4bbae2cbd2448e8a2c1e834092f0887d38332f279ac355"
+  },
+  "specification_sha256": {
+    "docs/sql_support.md": "6ffe3bb8d076475210cb3e3bff3c41db5251737aa18517ca4141c09cfcea51ed",
+    "docs/catalog.md": "1356b5b3fd03c557a846dad8d5f39dd813b07a5de316584c2f2b6fcf6f4549cd",
+    "docs/semantics.md": "52bf4dd3c38250410a6c2f420fdaa1dc50ceea25435c3a366e96ab8d733cd524",
+    "docs/scalars.md": "6db1dcf78091d8241365e6ea9492335bad56e84d743244901cbf6afbee061e5d",
+    "docs/sql_binding.md": "32d0a46a410a23726e8972b3069f9c4f7404a617a3af873cc634672975c8b1c7"
+  },
+  "limitations": [
+    "Fixtures/oracles are independent specifications, not executed CLI acceptance evidence.",
+    "Native event binding requires runner injection of catalog_sha256 before EventReader use.",
+    "Source positions are explicitly monotone logical offsets and do not encode template byte positions.",
+    "Oracles cover finite set results/deltas only, not performance, resource limits, or durability."
+  ]
+}

@@ -1,0 +1,18 @@
+# Source and assertion map
+
+| Probe element | Source | Scope and check |
+|---|---|---|
+| Replaced global `new`/`delete` counters and persistent failure gate | [`probe.cpp`](probe.cpp), global operators and `cleanup_probe::before_new` | Counts C++ global allocation calls and permits exactly N cleanup allocations before making all later attempts fail. Atomic counters keep the instrumentation well-defined, but the program intentionally runs one thread. |
+| JSON type coverage | [`probe.cpp`](probe.cpp), `DefaultJson`, `OrderedJson`, `CustomArrayJson` | Default `nlohmann::json`, public `nlohmann::ordered_json`, and a supported custom vector-derived array with a custom allocator. The custom allocator delegates to `std::allocator`. |
+| Values and deep construction | [`probe.cpp`](probe.cpp), `make_case` | Empty/scalar/string/binary, 512-wide array, 96 long-key object, 4096-element nested growth cases, mixed nested value, and a 4096-level chain assembled by moves rather than initializer-list copies. |
+| Pre-accounting output priming | [`probe.cpp`](probe.cpp), `prime_output` | Calls `dump()` before accounting for all cases except the intentionally deep chain. No output formatting occurs while allocation failure is active. |
+| Normal teardown census and fault-point loop | [`probe.cpp`](probe.cpp), `run_case` | Checks lifetime allocation/free balance and live-count restoration; tries every observed cleanup allocation point, checks the selected single injected failure, and detects retry allocation attempts before destruction returns. The two growth cases also require more than two cleanup allocation points. |
+| Output-only compatibility mode | [`probe.cpp`](probe.cpp), `serialize_all` | Reports `sizeof` and serialized bytes for nine serializable cases across all three types. Root can compare complete original and patched outputs. It does not prove cleanup correctness or general binary ABI compatibility. |
+| Original cleanup control | [`../c02-baseline-ranking-proposal/upstream/nlohmann-json-3.12.0.hpp`](../c02-baseline-ranking-proposal/upstream/nlohmann-json-3.12.0.hpp#L20571) | Original `destroy(value_t)` uses an allocating traversal stack. The preserved upstream bytes equal the frozen native [`third_party/nlohmann/json.hpp`](../../../third_party/nlohmann/json.hpp) pin. Runtime control outcome remains for root to establish. |
+| Patched fallback | [`../c02-baseline-ranking-proposal/overlay/third_party/nlohmann/json.hpp`](../c02-baseline-ranking-proposal/overlay/third_party/nlohmann/json.hpp#L20575) | The proposal adds `clear_without_allocation` and uses it in the `std::bad_alloc` catch inside `destroy` at lines 20593–20672. Root must verify the actual behavior with this probe and sanitizer run. |
+
+The first compile candidate used `std::deque` as the JSON array template. It was not supported by the pinned 3.12.0 implementation: `basic_json::push_back` accesses `array_t::capacity()`. The final custom array derives from `std::vector`, preserving that required operation. The failed candidate's compiler diagnostics are retained only in the author temporary directory; they do not describe the final source.
+
+## Limits
+
+The probe tests one header's destructor path; it does not cover every JSON type customization, arbitrary nesting depth, concurrent allocation, direct C allocation sites, or all allocators. The global-new census is a focused consistency check, while ASan/UBSan and leak detection provide independent runtime diagnostics. A successful compile does not establish any runtime result. Output equivalence in `--serialize` covers only the listed values on the root's build architecture and compiler. No CROWN runtime, report, or native engine integration is linked or tested here.

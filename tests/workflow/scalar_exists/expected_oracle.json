@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "query": "scalar_exists",
+  "oracle_definition": "Top-level scalar EXISTS over a Boolean filter. Its initial/current result is one Boolean row, false or true.",
+  "initial_current_rows": [
+    [
+      false
+    ]
+  ],
+  "events": [
+    {
+      "sequence": 1,
+      "source_position": {
+        "source": "scalar-exists-input",
+        "offset": 100
+      },
+      "input": {
+        "table": "flags",
+        "operation": "insert",
+        "values": [
+          false
+        ]
+      },
+      "current_rows": [
+        [
+          false
+        ]
+      ],
+      "added": [],
+      "removed": [],
+      "signed_delta": []
+    },
+    {
+      "sequence": 2,
+      "source_position": {
+        "source": "scalar-exists-input",
+        "offset": 200
+      },
+      "input": {
+        "table": "flags",
+        "operation": "insert",
+        "values": [
+          true
+        ]
+      },
+      "current_rows": [
+        [
+          true
+        ]
+      ],
+      "added": [
+        [
+          true
+        ]
+      ],
+      "removed": [
+        [
+          false
+        ]
+      ],
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            true
+          ]
+        },
+        {
+          "operation": "delete",
+          "values": [
+            false
+          ]
+        }
+      ]
+    },
+    {
+      "sequence": 3,
+      "source_position": {
+        "source": "scalar-exists-input",
+        "offset": 300
+      },
+      "input": {
+        "table": "flags",
+        "operation": "insert",
+        "values": [
+          true
+        ]
+      },
+      "current_rows": [
+        [
+          true
+        ]
+      ],
+      "added": [],
+      "removed": [],
+      "signed_delta": []
+    },
+    {
+      "sequence": 4,
+      "source_position": {
+        "source": "scalar-exists-input",
+        "offset": 400
+      },
+      "input": {
+        "table": "flags",
+        "operation": "delete",
+        "values": [
+          true
+        ]
+      },
+      "current_rows": [
+        [
+          false
+        ]
+      ],
+      "added": [
+        [
+          false
+        ]
+      ],
+      "removed": [
+        [
+          true
+        ]
+      ],
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            false
+          ]
+        },
+        {
+          "operation": "delete",
+          "values": [
+            true
+          ]
+        }
+      ]
+    },
+    {
+      "sequence": 5,
+      "source_position": {
+        "source": "scalar-exists-input",
+        "offset": 500
+      },
+      "input": {
+        "table": "flags",
+        "operation": "delete",
+        "values": [
+          false
+        ]
+      },
+      "current_rows": [
+        [
+          false
+        ]
+      ],
+      "added": [],
+      "removed": [],
+      "signed_delta": []
+    }
+  ]
+}

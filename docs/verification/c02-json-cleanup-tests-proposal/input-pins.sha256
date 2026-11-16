@@ -1,0 +1,4 @@
+532774214c13b5dfaac2cee798db37c7824e98db91a3eec91ab424eaa7797a79  docs/verification/c02-json-cleanup-tests-proposal/probe.cpp
+f763c58b102e65242d09275aec4b2f343268280ab4587b15587ad143b2e2a406  docs/verification/c02-baseline-ranking-proposal/overlay/third_party/nlohmann/json.hpp
+aaf127c04cb31c406e5b04a63f1ae89369fccde6d8fa7cdda1ed4f32dfc5de63  docs/verification/c02-baseline-ranking-proposal/upstream/nlohmann-json-3.12.0.hpp
+aaf127c04cb31c406e5b04a63f1ae89369fccde6d8fa7cdda1ed4f32dfc5de63  third_party/nlohmann/json.hpp

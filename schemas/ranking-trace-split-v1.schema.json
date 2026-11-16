@@ -1,0 +1,410 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "kind",
+    "generator",
+    "oracle_implementation",
+    "queries",
+    "traces",
+    "split_contract",
+    "license",
+    "limits"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "kind": {
+      "const": "c07_ranking_trace_split"
+    },
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "seed",
+        "query_ids"
+      ],
+      "properties": {
+        "path": {
+          "const": "tools/generate_ranking_evaluation.py"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "query_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "oracle_implementation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "algorithm"
+      ],
+      "properties": {
+        "path": {
+          "const": "tools/generate_workloads.py"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "algorithm": {
+          "const": "independent_assignment_and_SQLite_after_every_physical_event"
+        }
+      }
+    },
+    "queries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "sql",
+          "catalog",
+          "semantics",
+          "head",
+          "atoms",
+          "origin",
+          "structure_tags"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "sql": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "sha256",
+              "bytes"
+            ],
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "bytes": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "catalog": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "sha256",
+              "bytes"
+            ],
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "bytes": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "semantics": {
+            "const": "exact_physical_set_and_SQL_DISTINCT_or_EXISTS"
+          },
+          "head": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "atoms": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "alias",
+                "table",
+                "variables"
+              ],
+              "properties": {
+                "alias": {
+                  "type": "string"
+                },
+                "table": {
+                  "type": "string"
+                },
+                "variables": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "origin": {
+            "const": "B02_SQL_and_catalog_with_new_disjoint_C07_data"
+          },
+          "structure_tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "traces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "query",
+          "role",
+          "scenario",
+          "events",
+          "oracle",
+          "events_count",
+          "semantic_events_sha256",
+          "source_id",
+          "initial_state",
+          "phase_labels",
+          "charged_load_events",
+          "configured_fanout",
+          "physical_rows_by_table",
+          "hot_table",
+          "input_attempts_by_table",
+          "max_result_rows",
+          "update_contract",
+          "shift_scope"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "query": {
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "train",
+              "calibration",
+              "evaluation"
+            ]
+          },
+          "scenario": {
+            "enum": [
+              "train",
+              "calibration",
+              "evaluation_in_distribution",
+              "evaluation_rate_shift",
+              "evaluation_fanout_shift"
+            ]
+          },
+          "events": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "sha256",
+              "bytes"
+            ],
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "bytes": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "oracle": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "sha256",
+              "bytes"
+            ],
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "bytes": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          },
+          "events_count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4096
+          },
+          "semantic_events_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "source_id": {
+            "type": "string"
+          },
+          "initial_state": {
+            "const": "empty_all_tables"
+          },
+          "phase_labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "charged_load_events": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "configured_fanout": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "physical_rows_by_table": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "hot_table": {
+            "type": "string"
+          },
+          "input_attempts_by_table": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "max_result_rows": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "update_contract": {
+            "const": "ordered_atomic_physical_set_insert_delete_with_committed_noops"
+          },
+          "shift_scope": {
+            "const": "relation_update_mix_and_data_degree_not_wall_clock_arrival_Hz"
+          }
+        }
+      }
+    },
+    "split_contract": {
+      "$ref": "#/$defs/split_contract"
+    },
+    "license": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "origin",
+        "project_license",
+        "redistribution"
+      ],
+      "properties": {
+        "origin": {
+          "type": "string"
+        },
+        "project_license": {
+          "type": "string"
+        },
+        "redistribution": {
+          "type": "string"
+        }
+      }
+    },
+    "limits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "C07 disjoint training calibration evaluation trace manifest v1",
+  "$defs": {
+    "split_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "unit",
+        "training",
+        "calibration",
+        "evaluation",
+        "physical_tuple_overlap_allowed",
+        "semantic_trace_duplicates_allowed",
+        "query_family_holdout",
+        "shared_SQL"
+      ],
+      "properties": {
+        "unit": {
+          "const": "physical_trace"
+        },
+        "training": {
+          "type": "string"
+        },
+        "calibration": {
+          "type": "string"
+        },
+        "evaluation": {
+          "type": "string"
+        },
+        "physical_tuple_overlap_allowed": {
+          "const": false
+        },
+        "semantic_trace_duplicates_allowed": {
+          "const": false
+        },
+        "query_family_holdout": {
+          "const": false
+        },
+        "shared_SQL": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1 @@
+SELECT DISTINCT ON (id) id FROM A;

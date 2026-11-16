@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "semantics": "set",
+  "catalog": {
+    "version": 1,
+    "tables": [
+      {"name": "R", "columns": [{"name": "c0", "type": "string"}, {"name": "c1", "type": "string"}]},
+      {"name": "S", "columns": [{"name": "c0", "type": "string"}, {"name": "c1", "type": "string"}]},
+      {"name": "T", "columns": [{"name": "c0", "type": "string"}, {"name": "c1", "type": "string"}]}
+    ]
+  },
+  "query": {
+    "variables": [
+      {"name": "x", "type": "string"},
+      {"name": "y", "type": "string"},
+      {"name": "z", "type": "string"}
+    ],
+    "atoms": [
+      {"id": "r", "table": "R", "terms": [{"var": "x"}, {"var": "y"}]},
+      {"id": "s", "table": "S", "terms": [{"var": "y"}, {"var": "z"}]},
+      {"id": "t", "table": "T", "terms": [{"var": "z"}, {"var": "x"}]}
+    ],
+    "head": [{"var": "x"}, {"var": "y"}, {"var": "z"}],
+    "contradiction": true
+  }
+}

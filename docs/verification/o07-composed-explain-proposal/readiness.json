@@ -1,0 +1,67 @@
+{
+  "status": "excluded compiler/linker-only proposal; O07 not_started; no binary/test execution",
+  "package_sha256": "a4e759965fea2efcb3578080f0445d80579bb6f0daf1a5c36ea4149c6310f30a",
+  "files": {
+    "README.md": "ca6c18a74f6f16fde4a43a3030e33bfd46256c84d70bdd985ffdfbba5699444b",
+    "abi-source-audit.json": "ec7061c10cab0dbbe8b6c0fb973a44a640f1fe24aba087fd22d446cc96bf9f1b",
+    "audit_abi.py": "52d587812a78151b01643dce5cbb9c0e0a99e29d2d5c0f666a06143294284e53",
+    "baseline-sha256.json": "abbffe02a2334d9e541d954c7b2d9cb5922e26664879279679ec1718f28429b0",
+    "build_report.py": "ea11efb830cb1f83940a4cef84cc6ab34fd1957e7db5c218843921dea6402ea8",
+    "build_runtime.py": "25f8046f3b2f44cb34f9fd8d31839b9bd476b0d4e09654f3585efa4623f34f9c",
+    "compile-evidence-report-production.json": "927cc783c321d8489d1d8d3a532c1cbc8f186234a8c0528fb6f460258eb14d6e",
+    "compile-evidence-report-testing.json": "c2dd40c8698c3471a977e0e1c1000ad63afcfbd56eee4436dce09bb4a72e7b5f",
+    "compile-evidence-runtime-production.json": "78850382d2668a7e60c073d7bd6d9519c6c63d2a28d3a249e90bc0d2927a4924",
+    "compile-evidence-runtime-testing.json": "7045635a465b2545760a02ad0770835049b6b22c38c87f7e34c8344b6ef7d3a0",
+    "compose_io.py": "2efd5a65af301c7975edfcf81fa94f1d03dd38d390550da702630085c4174fb4",
+    "composed-incremental.patch": "231b43c74f6a2fefac6c3fd2939aae40567b4e6dc2966f3b0fc8f56c3f3f28d7",
+    "composed-native.patch": "b28f9acdbd8b8da57a8cc96a3e219ca8f793780473a9c5290ac5babb5486ac14",
+    "extend_trace.py": "83b9a14572120868ef10917346e0e3dd61fe73f716960ff2f78b416cf45f4649",
+    "finalize.py": "1824b6ec806f9f1865a4708f135e0d7c2f1733e2cccb314145bac9a7cce9ee34",
+    "make_patch.py": "e51ee3986e412e79799b4c87de03060cee1ca5f732cdb8fc87e9b89d46955a16",
+    "make_schema.py": "bda6f6171f0a2d32b6822e34a43bfdc43f6327f85cd0cb755613f19d7bebacf6",
+    "overlay/apps/crown-explain/main.cpp": "2fa97fb07f43a0792b12749475715cae920a51336390712c31257a0e2c7d34f7",
+    "overlay/include/crown/io/explain.hpp": "857cb0979b024e193b1081c573458e856d9e91bb1f886a4d42e203255eef92ef",
+    "overlay/include/crown/observability/explain.hpp": "70f89d1fd8adaead4ec08165a8b25887f60814c2ac5b77daa74147ebfdf490f8",
+    "overlay/include/crown/runtime/session.hpp": "590658d4ef804a916ba0f8004da2a5bf797a4c2e6a8a20d80e00993a081e9e67",
+    "overlay/src/io/explain.cpp": "e2ac36d5071c0744e8970d543d1b55e47d2a76eee1ead423000b7764776a7a38",
+    "overlay/src/observability/explain.cpp": "632e0248507f62d0d69585448f5457b53f14382cac3a8cb1b7c41426b76f2303",
+    "overlay/src/runtime/session.cpp": "21912440bd3827aa9b8b92f86ad141291290c01bce4739255054ad3804645e95",
+    "prepare_overlay.py": "82d8f4918a823aac6614ee09ee45fe1da664dc175ff05411ae91d1853b4769ec",
+    "preservation-checks.json": "82524416ca0c81c92c28d614bc4279603720039c76c4aa8632d46cb6ac353f28",
+    "proposal-sha256.json": "ec7e2d69a296ddc25825355952405761d6e7010dc941da3b01597b7804d7ce56",
+    "schemas/explain-report-v2.schema.json": "08f500ea76d5c85100abb770c72aff608f7c902c822684129de2a5eee0f71326",
+    "schemas/explain-tree-v2.schema.json": "608154cd56f807a283d4a86e58b20af1cce6605b8a77a2727ff084d7a7967335",
+    "source-map.json": "8576d2ca984e4e15588db33fdc7e70b858ceff316a7e6dbc6684e91260c0a390"
+  },
+  "baseline_pins": 172,
+  "runtime_translation_units_each": 9,
+  "report_cli_translation_units_each": 7,
+  "artifacts": {
+    "runtime_testing": {
+      "archive": "/tmp/crown-o07-composed-runtime-testing/libcrown_runtime_o07_composed_explain.a",
+      "archive_sha256": "6ffd1c032ba193de2ac6222a5ab55a64b88c3f04ed3e378ba03eb98628ebadd5"
+    },
+    "runtime_production": {
+      "archive": "/tmp/crown-o07-composed-runtime-production/libcrown_runtime_o07_composed_explain.a",
+      "archive_sha256": "ea10283a1d864b2f9167802f2c91ead01ae386220349a8fbdce7f9405d362e38"
+    },
+    "report_testing": {
+      "binary": "/tmp/crown-o07-composed-report-testing/crown-explain-composed-proposal",
+      "binary_sha256": "0018e1f2449719dbdf39002f2a6997545231babbc6eb5489da7fcc29669c0122"
+    },
+    "report_production": {
+      "binary": "/tmp/crown-o07-composed-report-production/crown-explain-composed-proposal",
+      "binary_sha256": "3062c8577e9c2370172ce02e097d1bcd508f30a500709c595dcf358f717de87f"
+    }
+  },
+  "layer_order": [
+    "composed",
+    "cursor",
+    "run_context",
+    "mode_binding",
+    "runtime",
+    "physical_explain",
+    "query_explain",
+    "native"
+  ]
+}

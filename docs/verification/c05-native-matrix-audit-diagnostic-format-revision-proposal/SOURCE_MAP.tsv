@@ -1,0 +1,2 @@
+source	base_source	base_sha256	change
+docs/verification/c05-native-matrix-audit-diagnostic-format-revision-proposal/audit.py	docs/verification/c05-native-matrix-independent-audit-proposal/audit.py	38440725af6a4739455dfd0b77eed97b2ea2c3c95f9d598c39ed649b519c92ca	Add only review-bound exact whole-line vendor diagnostic normalization and replace the clean-warning comparison call.

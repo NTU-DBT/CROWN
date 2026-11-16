@@ -1,0 +1,13 @@
+name	command	timeout_seconds	label
+ranking_binding	crown_ranking_binding_test	900	C02
+ranking_pure_link	crown_ranking_pure_link_test	900	C02
+ranking_contract	crown_ranking_contract_test	900	C02
+ranking_empty	crown_ranking_empty_test	900	C02
+ranking_payload_time	crown_ranking_payload_time_test	900	C02
+ranking_census	crown_ranking_census_test	900	C02
+ranking_exceptions	crown_ranking_exceptions_test	3600	C02
+ranking_normalized_exceptions	crown_ranking_normalized_exceptions_test	3600	C02
+ranking_public_independent	crown_ranking_public_independent_test ${SOURCE_DIR}	900	C02
+ranking_integer_independent	crown_ranking_integer_independent_test	900	C02
+json_cleanup	crown_json_cleanup_test --cleanup	300	C02
+json_patch_compatibility	${Python3_EXECUTABLE} ${SOURCE_DIR}/tools/verify_json_cleanup.py --original ${BINARY_DIR}/crown_json_upstream_control_test --patched ${BINARY_DIR}/crown_json_cleanup_test	300	C02

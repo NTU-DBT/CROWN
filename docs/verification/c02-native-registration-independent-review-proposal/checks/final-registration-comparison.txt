@@ -1,0 +1,1 @@
+Final frozen comparison: all 131 old commands, 131 old ordered names, and the complete 131+12 ordered inventory match.

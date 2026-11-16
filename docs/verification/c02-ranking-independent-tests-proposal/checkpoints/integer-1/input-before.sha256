@@ -1,0 +1,5 @@
+16acab19c9096db452abb5df8cabdafb7f5951b77e77fc19a75adc643263260f  docs/verification/c02-ranking-independent-tests-proposal/tests/ranking_integer_independent_test.cpp
+59334045442c0ce8b4b1700aaacee9ad4c08f4e58d495ad9149dc5b2a6cb7d09  docs/verification/c02-baseline-ranking-proposal/overlay/include/crown/planner/ranking.hpp
+ffd50ca8e41d7b83087c4b5aaa34037c0451a5e7a3eef638ba14b8f383f1d9e3  docs/verification/c02-baseline-ranking-proposal/overlay/src/planner/ranking_detail.hpp
+65ab5f5331d93550d6f279f7b2d95c7661fca097b8efdb6557df36e4b9d9fd29  docs/verification/c02-baseline-ranking-proposal/overlay/src/planner/ranking_integer.cpp
+c00d2188033aed5a9a12da1cff4d62c57a5888ce520f864a91141d8513d3e671  build/verification/statistics-execution-freeze.json

@@ -1,0 +1,957 @@
+{
+  "type": "object",
+  "properties": {
+    "format": {
+      "const": "crown-query-memory"
+    },
+    "version": {
+      "const": 1
+    },
+    "allocation_scope": {
+      "const": "whole_query_account_including_held_generations_and_report_storage"
+    },
+    "operator_scope": {
+      "const": "recorded_committed_runtime_only"
+    },
+    "byte_units": {
+      "const": "requested_upstream_bytes_with_component_headers_and_alignment; payload_bytes_are_requested_payload"
+    },
+    "snapshot": {
+      "type": "object",
+      "properties": {
+        "layer": {
+          "enum": [
+            "support",
+            "physical",
+            "delta",
+            "session"
+          ]
+        },
+        "availability": {
+          "enum": [
+            "committed",
+            "pending",
+            "released"
+          ]
+        },
+        "runtime_owner": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "physical_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "account": {
+          "$ref": "#/$defs/account"
+        }
+      },
+      "required": [
+        "layer",
+        "availability",
+        "runtime_owner",
+        "sequence",
+        "physical_sha256",
+        "account"
+      ],
+      "additionalProperties": false
+    },
+    "usage": {
+      "type": "object",
+      "properties": {
+        "work": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "owners": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "tables": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "operators": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        }
+      },
+      "required": [
+        "work",
+        "owners",
+        "tables",
+        "operators"
+      ],
+      "additionalProperties": false
+    },
+    "owners": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/owner"
+      }
+    },
+    "tables": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/table"
+      }
+    },
+    "operators": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/operator"
+      }
+    }
+  },
+  "required": [
+    "format",
+    "version",
+    "allocation_scope",
+    "operator_scope",
+    "byte_units",
+    "snapshot",
+    "usage",
+    "owners",
+    "tables",
+    "operators"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://crown.invalid/schemas/memory-report-v1.schema.json",
+  "$defs": {
+    "usage": {
+      "type": "object",
+      "properties": {
+        "allocations": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "requested_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "payload_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        }
+      },
+      "required": [
+        "allocations",
+        "requested_bytes",
+        "payload_bytes"
+      ],
+      "additionalProperties": false
+    },
+    "attribution": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "query",
+            "physical_source",
+            "support_node",
+            "delta_node",
+            "storage_table",
+            "session",
+            "cursor",
+            "immutable_metadata",
+            "observation",
+            "capture",
+            "output",
+            "recovery",
+            "tuple_arena"
+          ]
+        },
+        "id": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        }
+      },
+      "required": [
+        "kind",
+        "id"
+      ],
+      "additionalProperties": false
+    },
+    "purpose": {
+      "type": "object",
+      "properties": {
+        "control": {
+          "$ref": "#/$defs/usage"
+        },
+        "table_state": {
+          "$ref": "#/$defs/usage"
+        },
+        "arena_slot": {
+          "$ref": "#/$defs/usage"
+        },
+        "tuple_values": {
+          "$ref": "#/$defs/usage"
+        },
+        "scalar_payload": {
+          "$ref": "#/$defs/usage"
+        },
+        "primary_node": {
+          "$ref": "#/$defs/usage"
+        },
+        "secondary_node": {
+          "$ref": "#/$defs/usage"
+        },
+        "directory": {
+          "$ref": "#/$defs/usage"
+        },
+        "support_metadata": {
+          "$ref": "#/$defs/usage"
+        },
+        "source_counts": {
+          "$ref": "#/$defs/usage"
+        },
+        "delta_state": {
+          "$ref": "#/$defs/usage"
+        },
+        "journal_undo": {
+          "$ref": "#/$defs/usage"
+        },
+        "cursor": {
+          "$ref": "#/$defs/usage"
+        },
+        "observation": {
+          "$ref": "#/$defs/usage"
+        },
+        "capture": {
+          "$ref": "#/$defs/usage"
+        },
+        "immutable_metadata": {
+          "$ref": "#/$defs/usage"
+        },
+        "output_buffer": {
+          "$ref": "#/$defs/usage"
+        },
+        "recovery_log": {
+          "$ref": "#/$defs/usage"
+        },
+        "scratch": {
+          "$ref": "#/$defs/usage"
+        }
+      },
+      "required": [
+        "control",
+        "table_state",
+        "arena_slot",
+        "tuple_values",
+        "scalar_payload",
+        "primary_node",
+        "secondary_node",
+        "directory",
+        "support_metadata",
+        "source_counts",
+        "delta_state",
+        "journal_undo",
+        "cursor",
+        "observation",
+        "capture",
+        "immutable_metadata",
+        "output_buffer",
+        "recovery_log",
+        "scratch"
+      ],
+      "additionalProperties": false
+    },
+    "lifetime": {
+      "type": "object",
+      "properties": {
+        "active": {
+          "$ref": "#/$defs/usage"
+        },
+        "retained": {
+          "$ref": "#/$defs/usage"
+        },
+        "free_pool": {
+          "$ref": "#/$defs/usage"
+        }
+      },
+      "required": [
+        "active",
+        "retained",
+        "free_pool"
+      ],
+      "additionalProperties": false
+    },
+    "owner": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "attribution": {
+          "$ref": "#/$defs/attribution"
+        },
+        "current": {
+          "$ref": "#/$defs/usage"
+        },
+        "by_purpose": {
+          "$ref": "#/$defs/purpose"
+        },
+        "by_lifetime": {
+          "$ref": "#/$defs/lifetime"
+        }
+      },
+      "required": [
+        "account",
+        "attribution",
+        "current",
+        "by_purpose",
+        "by_lifetime"
+      ],
+      "additionalProperties": false
+    },
+    "account": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "limit_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "peak_requested_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "successful_allocations": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "freed_allocations": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "current": {
+          "$ref": "#/$defs/usage"
+        },
+        "by_purpose": {
+          "$ref": "#/$defs/purpose"
+        },
+        "by_lifetime": {
+          "$ref": "#/$defs/lifetime"
+        }
+      },
+      "required": [
+        "owner",
+        "limit_bytes",
+        "peak_requested_bytes",
+        "successful_allocations",
+        "freed_allocations",
+        "current",
+        "by_purpose",
+        "by_lifetime"
+      ],
+      "additionalProperties": false
+    },
+    "arena_records": {
+      "type": "object",
+      "properties": {
+        "slots": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "live_records": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "retained_records": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "pins": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "free_slots": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "exhausted_slots": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        }
+      },
+      "required": [
+        "slots",
+        "live_records",
+        "retained_records",
+        "pins",
+        "free_slots",
+        "exhausted_slots"
+      ],
+      "additionalProperties": false
+    },
+    "arena": {
+      "type": "object",
+      "properties": {
+        "records": {
+          "$ref": "#/$defs/arena_records"
+        },
+        "owner": {
+          "$ref": "#/$defs/owner"
+        },
+        "state_control": {
+          "$ref": "#/$defs/usage"
+        },
+        "directory": {
+          "$ref": "#/$defs/usage"
+        },
+        "live_slots": {
+          "$ref": "#/$defs/usage"
+        },
+        "retained_slots": {
+          "$ref": "#/$defs/usage"
+        },
+        "free_slots": {
+          "$ref": "#/$defs/usage"
+        },
+        "exhausted_slots": {
+          "$ref": "#/$defs/usage"
+        },
+        "live_values": {
+          "$ref": "#/$defs/usage"
+        },
+        "retained_values": {
+          "$ref": "#/$defs/usage"
+        },
+        "directory_capacity": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "directory_spare_payload_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        }
+      },
+      "required": [
+        "records",
+        "owner",
+        "state_control",
+        "directory",
+        "live_slots",
+        "retained_slots",
+        "free_slots",
+        "exhausted_slots",
+        "live_values",
+        "retained_values",
+        "directory_capacity",
+        "directory_spare_payload_bytes"
+      ],
+      "additionalProperties": false
+    },
+    "table": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "scope": {
+              "enum": [
+                "support",
+                "physical_source"
+              ]
+            },
+            "relation": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "role": {
+              "enum": [
+                "physical_base",
+                "native_records",
+                "generalized_candidates",
+                "survivors",
+                "parent_support",
+                "visible"
+              ]
+            },
+            "node": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "base": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "storage_owner": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "backend": {
+              "const": "reference_ordered_v1"
+            },
+            "live_records": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "table_owner": {
+              "$ref": "#/$defs/owner"
+            },
+            "arena": {
+              "$ref": "#/$defs/arena"
+            },
+            "owned": {
+              "$ref": "#/$defs/usage"
+            },
+            "index_records": {
+              "type": "object",
+              "properties": {
+                "indices": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                "keys": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                "live_keys": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                "memberships": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                "active_undo_entries": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                "retained_undo_entries": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                }
+              },
+              "required": [
+                "indices",
+                "keys",
+                "live_keys",
+                "memberships",
+                "active_undo_entries",
+                "retained_undo_entries"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "scope",
+            "relation",
+            "role",
+            "node",
+            "base",
+            "storage_owner",
+            "backend",
+            "live_records",
+            "table_owner",
+            "arena",
+            "owned",
+            "index_records"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "scope": {
+              "enum": [
+                "support",
+                "physical_source"
+              ]
+            },
+            "relation": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "role": {
+              "enum": [
+                "physical_base",
+                "native_records",
+                "generalized_candidates",
+                "survivors",
+                "parent_support",
+                "visible"
+              ]
+            },
+            "node": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "base": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "storage_owner": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "backend": {
+              "const": "indexed_chained_v1"
+            },
+            "live_records": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "table_owner": {
+              "$ref": "#/$defs/owner"
+            },
+            "arena": {
+              "$ref": "#/$defs/arena"
+            },
+            "owned": {
+              "$ref": "#/$defs/usage"
+            },
+            "index_records": {
+              "type": "object",
+              "properties": {
+                "indices": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                "keys": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                "live_keys": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                "memberships": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                "nodes": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                "directory_slots": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                "retained_rows": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                "retained_memberships": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                "journal_entries": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                "retained_history_entries": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                }
+              },
+              "required": [
+                "indices",
+                "keys",
+                "live_keys",
+                "memberships",
+                "nodes",
+                "directory_slots",
+                "retained_rows",
+                "retained_memberships",
+                "journal_entries",
+                "retained_history_entries"
+              ],
+              "additionalProperties": false
+            },
+            "directories": {
+              "$ref": "#/$defs/usage"
+            }
+          },
+          "required": [
+            "scope",
+            "relation",
+            "role",
+            "node",
+            "base",
+            "storage_owner",
+            "backend",
+            "live_records",
+            "table_owner",
+            "arena",
+            "owned",
+            "index_records",
+            "directories"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "operator": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "attribution": {
+              "$ref": "#/$defs/attribution"
+            },
+            "kind": {
+              "const": "support_node"
+            },
+            "node": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "records": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "parent_keys": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "visible_keys": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 18446744073709551615
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "child_flags": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "survivors": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            }
+          },
+          "required": [
+            "attribution",
+            "kind",
+            "node",
+            "records",
+            "parent_keys",
+            "visible_keys",
+            "child_flags",
+            "survivors"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "attribution": {
+              "$ref": "#/$defs/attribution"
+            },
+            "kind": {
+              "const": "derivations"
+            },
+            "occurrence": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "keys": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            }
+          },
+          "required": [
+            "attribution",
+            "kind",
+            "occurrence",
+            "keys"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "attribution": {
+              "$ref": "#/$defs/attribution"
+            },
+            "kind": {
+              "const": "delta_factor"
+            },
+            "node": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "materialized": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "rows": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 18446744073709551615
+                    },
+                    "parent_keys": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 18446744073709551615
+                    },
+                    "parent_rows": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 18446744073709551615
+                    },
+                    "child_keys": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 18446744073709551615
+                    },
+                    "child_rows": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 18446744073709551615
+                    }
+                  },
+                  "required": [
+                    "rows",
+                    "parent_keys",
+                    "parent_rows",
+                    "child_keys",
+                    "child_rows"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "required": [
+            "attribution",
+            "kind",
+            "node",
+            "materialized"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "attribution": {
+              "$ref": "#/$defs/attribution"
+            },
+            "kind": {
+              "const": "coordinator"
+            },
+            "layer": {
+              "enum": [
+                "support",
+                "physical",
+                "delta",
+                "session"
+              ]
+            }
+          },
+          "required": [
+            "attribution",
+            "kind",
+            "layer"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}

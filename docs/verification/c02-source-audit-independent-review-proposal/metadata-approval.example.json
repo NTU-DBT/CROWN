@@ -1,0 +1,28 @@
+{
+  "card": "C02",
+  "reviewer": "EXAMPLE_NOT_ROOT",
+  "decision": "EXAMPLE_NOT_AN_APPROVAL",
+  "native": {"count": 648, "sha256": "726b6ac99057cab64b3b2ee37e437641554bc9165bd832c0cb86ff16d27e705a"},
+  "execution": {"count": 705, "sha256": "87455c8e07579b7d3689e90c4a5989a63ec438ea21bedc72b63bb959a4c9a2e5"},
+  "integration_record_sha256": "652f6be933a30611ef99a90825d8472039c038400491904d45eb46bb0e10db52",
+  "status_document_changes": {
+    "README.md": {
+      "reviewer": "EXAMPLE_NOT_ROOT", "decision": "EXAMPLE_NOT_AN_APPROVAL",
+      "change_kind": "verification_status_only",
+      "before": "e3aa4a39e3640980e9c58366212dc0cf46aa1b6afdb236fde9daacd949884a69",
+      "after": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "docs/native_build.md": {
+      "reviewer": "EXAMPLE_NOT_ROOT", "decision": "EXAMPLE_NOT_AN_APPROVAL",
+      "change_kind": "verification_status_only",
+      "before": "6d76582ede1eb5283d181c48d1f336cf64c2bb0932e73a4e6befdaf6b507b296",
+      "after": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "docs/ranking.md": {
+      "reviewer": "EXAMPLE_NOT_ROOT", "decision": "EXAMPLE_NOT_AN_APPROVAL",
+      "change_kind": "verification_status_only",
+      "before": "de202a55c6351fe6759078b33a528c3bfbaa77dfc7a31646734032989eb1279e",
+      "after": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  }
+}

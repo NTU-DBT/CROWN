@@ -1,0 +1,8 @@
+9006acf18be9e945d4bfe8a54175f80786e8db985b9085d904521f68b3d09f80  docs/verification/c02-source-audit-compiler-scope-revision-proposal/INPUT_SHA256SUMS
+ebb08667e95fd3393bf6db3c625501737e2a955edaabcb02d42a8c406ab0959e  docs/verification/c02-source-audit-compiler-scope-revision-proposal/README.md
+fd9d7b695a2c99bcdb2050c8a514ba22f71cf8f26d711a36a71291366f0be403  docs/verification/c02-source-audit-compiler-scope-revision-proposal/REVIEW_CASES.md
+588ceee9d9bcdc2dbd4cfccd9d80933bea21862d611663b7101e2fe0aeac1d67  docs/verification/c02-source-audit-compiler-scope-revision-proposal/ROOT_REPRODUCTION.md
+c19b481fe27e708ec6c3f4935b3fb2fad1cd8173ca9decf415b73ab11273d09d  docs/verification/c02-source-audit-compiler-scope-revision-proposal/input-paths.txt
+16e1e7454f691bdfbb9675a0596a6ce1b1493a6051b97527c748aba2944b558b  docs/verification/c02-source-audit-compiler-scope-revision-proposal/revision.diff
+3d32f806ba94f79a53524445542eab05ed128844f3490516519a57164ba67e0c  docs/verification/c02-source-audit-compiler-scope-revision-proposal/source-map.md
+24ba9bd723ead31073eb7287b94a25990e7fcf271baff9a353171d9e0b9895b3  docs/verification/c02-source-audit-compiler-scope-revision-proposal/source_audit_revision.py

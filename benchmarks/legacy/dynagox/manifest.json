@@ -1,0 +1,1869 @@
+{
+  "proposal": "Pinned DynaGox workload definitions and reviewed classification",
+  "status": "Imported original SQL source definitions for classification/syntax checks only; no original is admitted for native R1 timing.",
+  "source_integrity": {
+    "repository": "hkustDB/DynaGox",
+    "commit": "c6811db68a34ab3b32722968c4e1e821f730c5ac",
+    "fetched_utc": "2026-11-10T22:01:43.554403+00:00",
+    "queries_source": {
+      "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+      "remote_path": "Queries.md",
+      "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+      "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+      "receipt_verified_locally": true
+    },
+    "readme_source": {
+      "local_path": "build/verification/b02-dynagox-source-v1/Readme.md",
+      "remote_path": "Readme.md",
+      "git_blob_sha1": "a4548066af0e711ee6700073eef8d9605eb06b9d",
+      "sha256": "9021b12aba40dd37356e5b6ff853862f568acc2c51c1c091f462de8499f47f93",
+      "receipt_verified_locally": true
+    },
+    "receipt_path": "build/verification/b02-dynagox-source-v1/receipt.json",
+    "integrity_method": "Local SHA-256 and Git blob SHA-1 were recomputed and matched receipt.json for every listed received source file."
+  },
+  "summary": {
+    "original_query_count": 24,
+    "aggregate_query_count": 24,
+    "structural_body_counts": {
+      "alpha_acyclic": 22,
+      "cyclic": 2
+    },
+    "cyclic_labels": [
+      "DUMBBELL",
+      "TPCH-Q5"
+    ],
+    "global_aggregate_count": 16,
+    "grouped_aggregate_count": 8,
+    "native_R1_as_written_count": 0,
+    "note": "Principal-operation counts classify each source query once. Output-expression counts count multiple SUM outputs in TPCH-Q8 and TPCH-Q9 separately. DUMBBELL and TPCH-Q5 are additionally cyclic. No query is rewritten into a set result.",
+    "counts_by_principal_aggregate": {
+      "COUNT": 11,
+      "SUM": 9,
+      "MAX": 3,
+      "COUNT(DISTINCT)": 1
+    },
+    "aggregate_output_expression_counts": {
+      "COUNT": 11,
+      "SUM": 11,
+      "MAX": 3,
+      "COUNT(DISTINCT)": 1
+    },
+    "aggregate_output_expression_total": 26
+  },
+  "requirements": {
+    "B02": "Every workload needs semantics, head, structure, update contract, expected backend and output mode; preserve exact SQL and transformations.",
+    "Refactor_14_2": "Classify/import graph, SNB/LSQB, JOB, CEB, TPC-H and TPC-DS workloads; some are cyclic or aggregate and belong to later stages; preserve transformations and do not replace with easier free-connex queries under the same name.",
+    "release_boundary": "R1 is a free-connex equality-CQ set engine. R2 plans bag semantics and COUNT/SUM/AVG/GROUP BY; MAX is not explicitly named in the initial R2 aggregate list and needs an explicit scope decision."
+  },
+  "queries": [
+    {
+      "label": "L5-CNT",
+      "select_clause_verbatim": "SELECT COUNT(*)",
+      "group_by_clause_verbatim": null,
+      "aggregate_semantics": "COUNT(*) global aggregate",
+      "result_shape_from_SQL": "global aggregate result",
+      "occurrences": [
+        {
+          "table": "GRAPH",
+          "alias": "g1"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g2"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g3"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g4"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g5"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "g1.dst = g2.src",
+        "g2.dst = g3.src",
+        "g3.dst = g4.src",
+        "g4.dst = g5.src"
+      ],
+      "selection_predicates_verbatim": [],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "five-edge path; the body equality hypergraph is acyclic. Aggregate output has no set-CQ head.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later."
+        ],
+        "preserve_without_silent_rewrite": [
+          "Preserve SQL COUNT multiplicities and empty-input behavior; requires R2 aggregate semantics."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 4
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/L5-CNT.sql",
+        "sha256": "3b9543a22c55c95efeaa86729d9083a3649f7796a4171d47140da9baf14039b6"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "L5-SUM",
+      "select_clause_verbatim": "SELECT SUM(g1.src * g5.dst)",
+      "group_by_clause_verbatim": null,
+      "aggregate_semantics": "SUM(expression) global aggregate",
+      "result_shape_from_SQL": "global aggregate result",
+      "occurrences": [
+        {
+          "table": "GRAPH",
+          "alias": "g1"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g2"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g3"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g4"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g5"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "g1.dst = g2.src",
+        "g2.dst = g3.src",
+        "g3.dst = g4.src",
+        "g4.dst = g5.src"
+      ],
+      "selection_predicates_verbatim": [],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "five-edge path; the body equality hypergraph is acyclic. Aggregate output has no set-CQ head.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later."
+        ],
+        "preserve_without_silent_rewrite": [
+          "Preserve the exact product expression, SQL bag multiplicity, numeric type, precision, and overflow policy; requires R2 SUM plus arithmetic support."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 9
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/L5-SUM.sql",
+        "sha256": "570e875100433b2e8ddf0ed6dfc8daa579ea6efa8ae053d976236eacfa24c804"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "L5-MAX-PROD",
+      "select_clause_verbatim": "SELECT MAX(g1.src * g5.dst)",
+      "group_by_clause_verbatim": null,
+      "aggregate_semantics": "MAX(expression) global aggregate",
+      "result_shape_from_SQL": "global aggregate result",
+      "occurrences": [
+        {
+          "table": "GRAPH",
+          "alias": "g1"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g2"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g3"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g4"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g5"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "g1.dst = g2.src",
+        "g2.dst = g3.src",
+        "g3.dst = g4.src",
+        "g4.dst = g5.src"
+      ],
+      "selection_predicates_verbatim": [],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "five-edge path; the body equality hypergraph is acyclic. Aggregate output has no set-CQ head.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later."
+        ],
+        "preserve_without_silent_rewrite": [
+          "Preserve product expression and SQL MAX/null behavior. MAX is not named in the initial R2 COUNT/SUM/AVG contract; define a separate aggregate capability before admission."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 14
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/L5-MAX-PROD.sql",
+        "sha256": "8211e185424b75ba1e3d68cf7dfa512f74aaf93382fa979e768fdfd13168d293"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "L5-CNTD",
+      "select_clause_verbatim": "SELECT COUNT(DISTINCT g2.src, g3.src, g4.src, g4.dst)",
+      "group_by_clause_verbatim": null,
+      "aggregate_semantics": "COUNT(DISTINCT four expressions) global aggregate",
+      "result_shape_from_SQL": "global aggregate result",
+      "occurrences": [
+        {
+          "table": "GRAPH",
+          "alias": "g1"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g2"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g3"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g4"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g5"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "g1.dst = g2.src",
+        "g2.dst = g3.src",
+        "g3.dst = g4.src",
+        "g4.dst = g5.src"
+      ],
+      "selection_predicates_verbatim": [],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "five-edge path; body is acyclic. The aggregate deduplicates a four-column expression tuple before counting.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later.",
+          "multi-expression COUNT(DISTINCT ...) is not the R1 set-result interface"
+        ],
+        "preserve_without_silent_rewrite": [
+          "Implement distinct aggregate tuple identity and exact count; do not replace it with tuple enumeration or a plain count."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 19
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/L5-CNTD.sql",
+        "sha256": "fe8c9b4859f9a729de6d7886cfcf229de62228e7fddaa804e94f8f3cdfdf0820"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "L5-CNT-GB",
+      "select_clause_verbatim": "SELECT g3.src, g3.dst, COUNT(*)",
+      "group_by_clause_verbatim": "GROUP BY g3.src, g3.dst;",
+      "aggregate_semantics": "COUNT(*) grouped by g3.src,g3.dst",
+      "result_shape_from_SQL": "grouped aggregate rows",
+      "occurrences": [
+        {
+          "table": "GRAPH",
+          "alias": "g1"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g2"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g3"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g4"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g5"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "g1.dst = g2.src",
+        "g2.dst = g3.src",
+        "g3.dst = g4.src",
+        "g4.dst = g5.src"
+      ],
+      "selection_predicates_verbatim": [],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "five-edge path; body is acyclic; grouped aggregate output is not classified as a set-CQ head.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later.",
+          "GROUP BY and aggregate output require R2"
+        ],
+        "preserve_without_silent_rewrite": [
+          "Preserve group existence, exact multiplicities, and COUNT behavior independently of set membership."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 24
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/L5-CNT-GB.sql",
+        "sha256": "28435517077d7397c5d8adec9cb9c03f503d8e383e2d1d8d165111547a59cb84"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "DUMBBELL",
+      "select_clause_verbatim": "SELECT COUNT(*)",
+      "group_by_clause_verbatim": null,
+      "aggregate_semantics": "COUNT(*) global aggregate",
+      "result_shape_from_SQL": "global aggregate result",
+      "occurrences": [
+        {
+          "table": "GRAPH",
+          "alias": "g1"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g2"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g3"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g4"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g5"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g6"
+        },
+        {
+          "table": "GRAPH",
+          "alias": "g7"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "g1.dst = g2.src",
+        "g2.dst = g3.src",
+        "g3.dst = g1.src",
+        "g3.src = g4.src",
+        "g4.dst = g5.src",
+        "g5.dst = g6.src",
+        "g6.dst = g7.src",
+        "g7.dst = g5.src"
+      ],
+      "selection_predicates_verbatim": [],
+      "structural_classification": {
+        "equality_join_body": "cyclic",
+        "family": "two directed 3-cycles connected by a bridge occurrence; raw equality body is cyclic.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later.",
+          "cyclic body is outside free-connex R1",
+          "COUNT aggregate is outside R1"
+        ],
+        "preserve_without_silent_rewrite": [
+          "Preserve both cycles and bridge; requires a separately declared cyclic-query backend plus exact aggregate semantics."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 30
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/DUMBBELL.sql",
+        "sha256": "a12c3fb8ff626020f274129f5b16c2ce049aec76cad8c70a8c3453a0962c83f4"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "LSQB-Q6",
+      "select_clause_verbatim": "SELECT COUNT(*)",
+      "group_by_clause_verbatim": null,
+      "aggregate_semantics": "COUNT(*) global aggregate",
+      "result_shape_from_SQL": "global aggregate result",
+      "occurrences": [
+        {
+          "table": "PERSON_KNOWS_PERSON",
+          "alias": "pkp1"
+        },
+        {
+          "table": "PERSON_KNOWS_PERSON",
+          "alias": "pkp2"
+        },
+        {
+          "table": "PERSON_HAS_INTEREST_TAG",
+          "alias": "phit"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "pkp1.person2_id = pkp2.person1_id",
+        "pkp2.person2_id = phit.person_id"
+      ],
+      "selection_predicates_verbatim": [],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "three-occurrence chain; pkp1/pkp2 are separate self-join occurrences. Unused projected-away columns may still affect SQL bag multiplicity.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later."
+        ],
+        "preserve_without_silent_rewrite": [
+          "Keep the two PERSON_KNOWS_PERSON occurrences distinct and retain physical duplicate multiplicities; requires R2 COUNT."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 36
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/LSQB-Q6.sql",
+        "sha256": "a8d895caac0bf3f82743170a33de57548a6340d7f735ddcdfd344f1f82de8357"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "JOB-Q8",
+      "select_clause_verbatim": "SELECT COUNT(*)",
+      "group_by_clause_verbatim": null,
+      "aggregate_semantics": "COUNT(*) global aggregate",
+      "result_shape_from_SQL": "global aggregate result",
+      "occurrences": [
+        {
+          "table": "AKA_NAME",
+          "alias": "an"
+        },
+        {
+          "table": "CAST_INFO",
+          "alias": "ci"
+        },
+        {
+          "table": "MOVIE_COMPANIES",
+          "alias": "mc"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "an.person_id = ci.person_id",
+        "ci.movie_id = mc.movie_id"
+      ],
+      "selection_predicates_verbatim": [],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "three-occurrence chain AKA_NAME—CAST_INFO—MOVIE_COMPANIES.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": {
+          "path": "build/verification/b02-dynagox-source-v1/dynagox_cpp/implement/experiments/src/crown/crown_job8.cpp",
+          "sha256": "0dc4903177049e12a4319c1c36339758c7ed436aa797f8d52a8d7a4f34d9ee10",
+          "git_blob_sha1": "6b04d002374c967866999b978a29fd17cf76152b",
+          "observation": "process() dispatches relation IDs to insert_into_an/ci/mc; the inspected methods call update_add(..., 1). milestone() calls print(); print() emits only when print_result is true, formatted to four decimal places. No delete call is present in this file.",
+          "scope_limit": "Evidence for this JOB-Q8 COUNT C++ CROWN example file only; not a claim about JOB-Q8 SUM/MAX variants, all backends, or the whole repository."
+        },
+        "runtime_contract_status": "partial source evidence: insertion paths and gated milestone printing in one matching C++ CROWN COUNT example; no general snapshot/delta contract established"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later."
+        ],
+        "preserve_without_silent_rewrite": [
+          "Preserve SQL bag multiplicity and exact global COUNT behavior; R2. The inspected C++ CROWN example is insert-only at process-call level and prints on gated milestones; see evidence field."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 41
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/JOB-Q8.sql",
+        "sha256": "d5b0ab0c029471e0d982c9853328a655acb59eefbd8988369a77e38daccf233d"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "JOB-Q8-SUM",
+      "select_clause_verbatim": "SELECT SUM(an.id * mc.id)",
+      "group_by_clause_verbatim": null,
+      "aggregate_semantics": "SUM(expression) global aggregate",
+      "result_shape_from_SQL": "global aggregate result",
+      "occurrences": [
+        {
+          "table": "AKA_NAME",
+          "alias": "an"
+        },
+        {
+          "table": "CAST_INFO",
+          "alias": "ci"
+        },
+        {
+          "table": "MOVIE_COMPANIES",
+          "alias": "mc"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "an.person_id = ci.person_id",
+        "ci.movie_id = mc.movie_id"
+      ],
+      "selection_predicates_verbatim": [],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "same acyclic three-occurrence chain as JOB-Q8.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later."
+        ],
+        "preserve_without_silent_rewrite": [
+          "Preserve product expression and multiplicity; R2 SUM plus arithmetic/type policy. No per-query update/output implementation was present in the receipt."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 46
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/JOB-Q8-SUM.sql",
+        "sha256": "4122e42fd1dbed1e831edf918f7e4b0c774fa5b9e75eb8e319524afeceb27c73"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "JOB-Q8-MAX-PROD",
+      "select_clause_verbatim": "SELECT MAX(an.id * mc.id)",
+      "group_by_clause_verbatim": null,
+      "aggregate_semantics": "MAX(expression) global aggregate",
+      "result_shape_from_SQL": "global aggregate result",
+      "occurrences": [
+        {
+          "table": "AKA_NAME",
+          "alias": "an"
+        },
+        {
+          "table": "CAST_INFO",
+          "alias": "ci"
+        },
+        {
+          "table": "MOVIE_COMPANIES",
+          "alias": "mc"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "an.person_id = ci.person_id",
+        "ci.movie_id = mc.movie_id"
+      ],
+      "selection_predicates_verbatim": [],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "same acyclic three-occurrence chain as JOB-Q8.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later."
+        ],
+        "preserve_without_silent_rewrite": [
+          "Preserve product expression and MAX behavior; MAX is not in the initial COUNT/SUM/AVG R2 list."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 51
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/JOB-Q8-MAX-PROD.sql",
+        "sha256": "e119de2d3d898ff1cd83922ebfc014e722cef71e35b58ee2ca103f358353db70"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "JOB-Q8-MAX-PLUS",
+      "select_clause_verbatim": "SELECT MAX(an.id + mc.id)",
+      "group_by_clause_verbatim": null,
+      "aggregate_semantics": "MAX(expression) global aggregate",
+      "result_shape_from_SQL": "global aggregate result",
+      "occurrences": [
+        {
+          "table": "AKA_NAME",
+          "alias": "an"
+        },
+        {
+          "table": "CAST_INFO",
+          "alias": "ci"
+        },
+        {
+          "table": "MOVIE_COMPANIES",
+          "alias": "mc"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "an.person_id = ci.person_id",
+        "ci.movie_id = mc.movie_id"
+      ],
+      "selection_predicates_verbatim": [],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "same acyclic three-occurrence chain as JOB-Q8.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later."
+        ],
+        "preserve_without_silent_rewrite": [
+          "Preserve sum expression and MAX behavior; MAX is not in the initial COUNT/SUM/AVG R2 list."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 56
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/JOB-Q8-MAX-PLUS.sql",
+        "sha256": "f832c41fe44413acc83c6bac88cd4082f01340f75efab9e08780ab45aa070546"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "JOB-Q16",
+      "select_clause_verbatim": "SELECT COUNT(*)",
+      "group_by_clause_verbatim": null,
+      "aggregate_semantics": "COUNT(*) global aggregate",
+      "result_shape_from_SQL": "global aggregate result",
+      "occurrences": [
+        {
+          "table": "AKA_NAME",
+          "alias": "an"
+        },
+        {
+          "table": "CAST_INFO",
+          "alias": "ci"
+        },
+        {
+          "table": "MOVIE_COMPANIES",
+          "alias": "mc"
+        },
+        {
+          "table": "MOVIE_KEYWORD",
+          "alias": "mk"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "an.person_id = ci.person_id",
+        "ci.movie_id = mc.movie_id",
+        "ci.movie_id = mk.movie_id"
+      ],
+      "selection_predicates_verbatim": [],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "star centered at CAST_INFO, with AKA_NAME, MOVIE_COMPANIES, and MOVIE_KEYWORD leaves.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later."
+        ],
+        "preserve_without_silent_rewrite": [
+          "Preserve input multiplicity and exact global COUNT behavior; R2."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 61
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/JOB-Q16.sql",
+        "sha256": "bf9ac5725a21a5639e5788e08c7618f03ae8f74059fea5915be164d1e1ae8958"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "JOB-Q19",
+      "select_clause_verbatim": "SELECT COUNT(*)",
+      "group_by_clause_verbatim": null,
+      "aggregate_semantics": "COUNT(*) global aggregate",
+      "result_shape_from_SQL": "global aggregate result",
+      "occurrences": [
+        {
+          "table": "AKA_NAME",
+          "alias": "an"
+        },
+        {
+          "table": "CAST_INFO",
+          "alias": "ci"
+        },
+        {
+          "table": "MOVIE_COMPANIES",
+          "alias": "mc"
+        },
+        {
+          "table": "MOVIE_INFO",
+          "alias": "mi"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "an.person_id = ci.person_id",
+        "ci.movie_id = mc.movie_id",
+        "ci.movie_id = mi.movie_id"
+      ],
+      "selection_predicates_verbatim": [],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "star centered at CAST_INFO, with three relation leaves.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later."
+        ],
+        "preserve_without_silent_rewrite": [
+          "Preserve input multiplicity and exact global COUNT behavior; R2."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 66
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/JOB-Q19.sql",
+        "sha256": "da55a50a03819cb68bf0c61af081427cac66770671f433c7c280f4b35b519ab5"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "CEB-Q1",
+      "select_clause_verbatim": "SELECT COUNT(*)",
+      "group_by_clause_verbatim": null,
+      "aggregate_semantics": "COUNT(*) global aggregate",
+      "result_shape_from_SQL": "global aggregate result",
+      "occurrences": [
+        {
+          "table": "CAST_INFO",
+          "alias": "ci"
+        },
+        {
+          "table": "MOVIE_INFO",
+          "alias": "mi"
+        },
+        {
+          "table": "PERSON_INFO",
+          "alias": "pi"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "pi.person_id = ci.person_id",
+        "ci.movie_id = mi.movie_id"
+      ],
+      "selection_predicates_verbatim": [],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "three-occurrence path PERSON_INFO—CAST_INFO—MOVIE_INFO.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": {
+          "path": "build/verification/b02-dynagox-source-v1/dynagox_cpp/implement/experiments/src/crown/crown_ceb1.cpp",
+          "sha256": "920380d3d05811a2490d1eaa63a812f1a1a1992dcca23c360db22aab3772f725",
+          "git_blob_sha1": "7792352b8d43b284c0d5a3a7f4e4acd81937c179",
+          "observation": "process() dispatches relation IDs to insert_into_ci/mi/pi; the inspected methods call update_add(..., 1). milestone() calls print(); print() emits only when print_result is true, formatted to four decimal places. No delete call is present in this file.",
+          "scope_limit": "Evidence for this CEB-Q1 C++ CROWN example file only; not a claim about all backends, all CEB queries, or the whole repository."
+        },
+        "runtime_contract_status": "partial source evidence: insertion paths and gated milestone printing in one matching C++ CROWN example; no general snapshot/delta contract established"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later."
+        ],
+        "preserve_without_silent_rewrite": [
+          "Preserve input multiplicity and exact global COUNT behavior; R2. Inspected C++ CROWN example calls insertion update_add(...,1) paths and gated milestone print; see evidence field."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 71
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/CEB-Q1.sql",
+        "sha256": "a234a28caa9e682e0d25dc62aeb762517483338fa8d58c81b0730bf79322ba29"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "CEB-Q2",
+      "select_clause_verbatim": "SELECT COUNT(*)",
+      "group_by_clause_verbatim": null,
+      "aggregate_semantics": "COUNT(*) global aggregate",
+      "result_shape_from_SQL": "global aggregate result",
+      "occurrences": [
+        {
+          "table": "CAST_INFO",
+          "alias": "ci"
+        },
+        {
+          "table": "MOVIE_COMPANIES",
+          "alias": "mc"
+        },
+        {
+          "table": "MOVIE_INFO",
+          "alias": "mi"
+        },
+        {
+          "table": "PERSON_INFO",
+          "alias": "pi"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "pi.person_id = ci.person_id",
+        "ci.movie_id = mc.movie_id",
+        "ci.movie_id = mi.movie_id"
+      ],
+      "selection_predicates_verbatim": [],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "star centered at CAST_INFO, with PERSON_INFO, MOVIE_COMPANIES, and MOVIE_INFO leaves.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later."
+        ],
+        "preserve_without_silent_rewrite": [
+          "Preserve input multiplicity and exact global COUNT behavior; R2."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 76
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/CEB-Q2.sql",
+        "sha256": "28a42405e4957642977ece2ca68423002eef75209f0365402ef1e1f5c29e1ae4"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "CEB-Q3",
+      "select_clause_verbatim": "SELECT COUNT(*)",
+      "group_by_clause_verbatim": null,
+      "aggregate_semantics": "COUNT(*) global aggregate",
+      "result_shape_from_SQL": "global aggregate result",
+      "occurrences": [
+        {
+          "table": "AKA_NAME",
+          "alias": "an"
+        },
+        {
+          "table": "CAST_INFO",
+          "alias": "ci"
+        },
+        {
+          "table": "MOVIE_INFO",
+          "alias": "mi"
+        },
+        {
+          "table": "MOVIE_INFO_IDX",
+          "alias": "mii1"
+        },
+        {
+          "table": "MOVIE_INFO_IDX",
+          "alias": "mii2"
+        },
+        {
+          "table": "PERSON_INFO",
+          "alias": "pi"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "an.person_id = ci.person_id",
+        "pi.person_id = ci.person_id",
+        "ci.movie_id = mi.movie_id",
+        "ci.movie_id = mii1.movie_id",
+        "ci.movie_id = mii2.movie_id"
+      ],
+      "selection_predicates_verbatim": [],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "star centered at CAST_INFO; mii1 and mii2 are distinct self-join occurrences on the same movie_id scope.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later.",
+          "repeated/contained occurrence scopes must not be removed; multiplicity matters"
+        ],
+        "preserve_without_silent_rewrite": [
+          "Keep both MOVIE_INFO_IDX occurrences, including duplicate multiplicity; R2 COUNT."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 81
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/CEB-Q3.sql",
+        "sha256": "e7dee2949ad15dec430875813e1c0baefdd60fea42e157e67df6f51868c7a1f4"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "CEB-Q4",
+      "select_clause_verbatim": "SELECT COUNT(*)",
+      "group_by_clause_verbatim": null,
+      "aggregate_semantics": "COUNT(*) global aggregate",
+      "result_shape_from_SQL": "global aggregate result",
+      "occurrences": [
+        {
+          "table": "AKA_NAME",
+          "alias": "an"
+        },
+        {
+          "table": "CAST_INFO",
+          "alias": "ci"
+        },
+        {
+          "table": "MOVIE_INFO",
+          "alias": "mi"
+        },
+        {
+          "table": "MOVIE_INFO_IDX",
+          "alias": "mii1"
+        },
+        {
+          "table": "MOVIE_INFO_IDX",
+          "alias": "mii2"
+        },
+        {
+          "table": "MOVIE_KEYWORD",
+          "alias": "mk"
+        },
+        {
+          "table": "PERSON_INFO",
+          "alias": "pi"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "an.person_id = ci.person_id",
+        "pi.person_id = ci.person_id",
+        "ci.movie_id = mi.movie_id",
+        "ci.movie_id = mk.movie_id",
+        "ci.movie_id = mii1.movie_id",
+        "ci.movie_id = mii2.movie_id"
+      ],
+      "selection_predicates_verbatim": [],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "star centered at CAST_INFO; two MOVIE_INFO_IDX aliases are separate repeated-scope occurrences.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later.",
+          "repeated/contained occurrence scopes must not be removed; multiplicity matters"
+        ],
+        "preserve_without_silent_rewrite": [
+          "Keep both MOVIE_INFO_IDX occurrences and exact COUNT multiplicity; R2."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 88
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/CEB-Q4.sql",
+        "sha256": "b320fa1c3487fc2f7bf5ab1ad40d50937e51b0a6ea723abf04aff46bad05db9e"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "TPCH-Q3",
+      "select_clause_verbatim": "SELECT\n    o_orderkey, o_orderdate, o_shippriority,\n    SUM(l_extendedprice * (1 - l_discount)) as revenue",
+      "group_by_clause_verbatim": "GROUP BY o_orderkey, o_orderdate, o_shippriority;",
+      "aggregate_semantics": "SUM(expression) grouped by order key,date,ship priority",
+      "result_shape_from_SQL": "grouped aggregate rows",
+      "occurrences": [
+        {
+          "table": "CUSTOMER"
+        },
+        {
+          "table": "ORDERS"
+        },
+        {
+          "table": "LINEITEM"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "c_custkey = o_custkey",
+        "l_orderkey = o_orderkey"
+      ],
+      "selection_predicates_verbatim": [
+        "c_mktsegment = 'BUILDING'",
+        "o_orderdate < DATE '1995-03-15'",
+        "l_shipdate > DATE '1995-03-15'"
+      ],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "three-occurrence path CUSTOMER—ORDERS—LINEITEM; selection predicates are local to their relations.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later."
+        ],
+        "preserve_without_silent_rewrite": [
+          "Preserve group keys, SUM bag semantics, multiplication/subtraction expression, date types, and filter boundaries; R2 plus expression binding."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 95
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/TPCH-Q3.sql",
+        "sha256": "c45c560bf0818afb73c940c637e82f5bd9f88a1d7f38bedcacf9ea797e5ca57d"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "TPCH-Q5",
+      "select_clause_verbatim": "SELECT\n    n_name,\n    SUM(l_extendedprice * (1 - l_discount)) AS revenue",
+      "group_by_clause_verbatim": "GROUP BY n_name;",
+      "aggregate_semantics": "SUM(expression) grouped by n_name",
+      "result_shape_from_SQL": "grouped aggregate rows",
+      "occurrences": [
+        {
+          "table": "CUSTOMER"
+        },
+        {
+          "table": "ORDERS"
+        },
+        {
+          "table": "LINEITEM"
+        },
+        {
+          "table": "SUPPLIER"
+        },
+        {
+          "table": "NATION"
+        },
+        {
+          "table": "REGION"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "c_custkey = o_custkey",
+        "l_orderkey = o_orderkey",
+        "l_suppkey = s_suppkey",
+        "c_nationkey = s_nationkey",
+        "s_nationkey = n_nationkey",
+        "n_regionkey = r_regionkey"
+      ],
+      "selection_predicates_verbatim": [
+        "r_name = 'ASIA'",
+        "o_orderdate >= DATE '1994-01-01'",
+        "o_orderdate < DATE '1994-01-01' + INTERVAL '1' YEAR"
+      ],
+      "structural_classification": {
+        "equality_join_body": "cyclic",
+        "family": "cyclic equality hypergraph: CUSTOMER—ORDERS—LINEITEM—SUPPLIER—CUSTOMER/NATION cycle, with NATION—REGION extension.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later.",
+          "cyclic body outside free-connex R1",
+          "aggregate outside R1",
+          "DATE + INTERVAL expression needs typed semantics"
+        ],
+        "preserve_without_silent_rewrite": [
+          "Retain the cycle and all date/filter semantics; requires cyclic-query handling and R2 aggregate support. Do not prune or rewrite the join cycle based on assumed keys."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 107
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/TPCH-Q5.sql",
+        "sha256": "852dcfe0887ca3671274fe02ac4af339e274323e47b5b50289848b4649978d79"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "TPCH-Q8",
+      "select_clause_verbatim": "SELECT\n    o_year,\n    SUM(CASE\n            WHEN nation = 'BRAZIL' THEN volume\n            ELSE 0\n        END) AS value1,\n    SUM(volume) AS value2",
+      "group_by_clause_verbatim": "GROUP BY o_year;",
+      "aggregate_semantics": "two SUM aggregates grouped by o_year",
+      "result_shape_from_SQL": "grouped aggregate rows",
+      "occurrences": [
+        {
+          "table": "PART"
+        },
+        {
+          "table": "SUPPLIER"
+        },
+        {
+          "table": "LINEITEM"
+        },
+        {
+          "table": "ORDERS"
+        },
+        {
+          "table": "CUSTOMER"
+        },
+        {
+          "table": "NATION",
+          "alias": "n1"
+        },
+        {
+          "table": "NATION",
+          "alias": "n2"
+        },
+        {
+          "table": "REGION"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "p_partkey = l_partkey",
+        "s_suppkey = l_suppkey",
+        "l_orderkey = o_orderkey",
+        "o_custkey = c_custkey",
+        "c_nationkey = n1.n_nationkey",
+        "n1.n_regionkey = r_regionkey",
+        "s_nationkey = n2.n_nationkey"
+      ],
+      "selection_predicates_verbatim": [
+        "r_name = 'AMERICA'",
+        "o_orderdate BETWEEN DATE '1995-01-01' AND DATE '1996-12-31'",
+        "p_type = 'ECONOMY ANODIZED STEEL'"
+      ],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "tree-shaped equality body when the nonrecursive ALL_NATIONS subquery is inlined; NATION appears as two distinct aliases n1/n2.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later.",
+          "aggregate outside R1",
+          "subquery/derived table is outside direct R1 SQL unless checked and inlined",
+          "EXTRACT, CASE, multiplication/subtraction and date expressions need explicit support"
+        ],
+        "preserve_without_silent_rewrite": [
+          "Preserve inner derived rows and outer CASE/SUM grouping; do not replace with a set projection. Define typed date/extract/arithmetic and aggregate behavior."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 123
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/TPCH-Q8.sql",
+        "sha256": "7bc089aa32ecc89f12968ed277282b40985c994247a8c04a04ad8c76c4d6a9b7"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "TPCH-Q9",
+      "select_clause_verbatim": "SELECT\n    nation, o_year,\n    SUM(v1) AS value1,\n    SUM(v2) AS value2",
+      "group_by_clause_verbatim": "GROUP BY nation, o_year;",
+      "aggregate_semantics": "two SUM aggregates grouped by nation and o_year",
+      "result_shape_from_SQL": "grouped aggregate rows",
+      "occurrences": [
+        {
+          "table": "PART"
+        },
+        {
+          "table": "SUPPLIER"
+        },
+        {
+          "table": "LINEITEM"
+        },
+        {
+          "table": "PARTSUPP"
+        },
+        {
+          "table": "ORDERS"
+        },
+        {
+          "table": "NATION"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "s_suppkey = l_suppkey",
+        "ps_suppkey = l_suppkey",
+        "ps_partkey = l_partkey",
+        "p_partkey = l_partkey",
+        "o_orderkey = l_orderkey",
+        "s_nationkey = n_nationkey"
+      ],
+      "selection_predicates_verbatim": [
+        "p_name LIKE '%green%'"
+      ],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "tree-shaped equality body when PROFIT subquery is inlined; LINEITEM connects ORDERS, PART, PARTSUPP and SUPPLIER/NATION branches.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later.",
+          "aggregate outside R1",
+          "subquery/derived table outside direct R1 SQL unless checked and inlined",
+          "EXTRACT, LIKE and arithmetic expressions need explicit support"
+        ],
+        "preserve_without_silent_rewrite": [
+          "Preserve both subquery measures and the nation/year grouping; exact expression/type and LIKE collation semantics need contracts."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 150
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/TPCH-Q9.sql",
+        "sha256": "6a5dbbd68b9184dfa0b8534d788b86449836c8d8a89fe71654d4b38988e6d43a"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "TPCH-Q10",
+      "select_clause_verbatim": "SELECT\n    c_custkey, c_name, c_address, c_phone, c_acctbal, c_comment, n_name,\n    SUM(l_extendedprice * (1 - l_discount)) AS revenue",
+      "group_by_clause_verbatim": "GROUP BY c_custkey, c_name, c_address, c_phone, c_acctbal, c_comment, n_name;",
+      "aggregate_semantics": "SUM(expression) grouped by customer fields and nation name",
+      "result_shape_from_SQL": "grouped aggregate rows",
+      "occurrences": [
+        {
+          "table": "CUSTOMER"
+        },
+        {
+          "table": "ORDERS"
+        },
+        {
+          "table": "LINEITEM"
+        },
+        {
+          "table": "NATION"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "c_custkey = o_custkey",
+        "l_orderkey = o_orderkey",
+        "c_nationkey = n_nationkey"
+      ],
+      "selection_predicates_verbatim": [
+        "o_orderdate >= DATE '1993-10-01'",
+        "o_orderdate < DATE '1993-10-01' + INTERVAL '3' MONTH",
+        "l_returnflag = 'R'"
+      ],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "tree-shaped equality body with ORDERS between CUSTOMER and LINEITEM, and NATION attached to CUSTOMER.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later.",
+          "aggregate outside R1",
+          "DATE + INTERVAL expression needs typed semantics"
+        ],
+        "preserve_without_silent_rewrite": [
+          "Preserve all group fields, return-flag/date predicates, and price arithmetic; R2 aggregate plus explicit date/interval/expression binding."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 172
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/TPCH-Q10.sql",
+        "sha256": "f553f21c8a1d3d780aefd5f0b7315fb641c84fef00152cd0086577758c04a09a"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "TPCDS-Q15",
+      "select_clause_verbatim": "SELECT\n    ca_zip, SUM(cs_sales_price)",
+      "group_by_clause_verbatim": "GROUP BY ca_zip;",
+      "aggregate_semantics": "SUM(cs_sales_price) grouped by ca_zip",
+      "result_shape_from_SQL": "grouped aggregate rows",
+      "occurrences": [
+        {
+          "table": "CATALOG_SALES"
+        },
+        {
+          "table": "CUSTOMER"
+        },
+        {
+          "table": "CUSTOMER_ADDRESS"
+        },
+        {
+          "table": "DATE_DIM"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "cs_bill_customer_sk = c_customer_sk",
+        "c_current_addr_sk = ca_address_sk",
+        "cs_sold_date_sk = d_date_sk"
+      ],
+      "selection_predicates_verbatim": [],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "tree-shaped join: CATALOG_SALES—CUSTOMER—CUSTOMER_ADDRESS, with DATE_DIM attached to CATALOG_SALES.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later.",
+          "GROUP BY/SUM outside R1"
+        ],
+        "preserve_without_silent_rewrite": [
+          "Preserve bag multiplicities, zipcode group existence, and SUM arithmetic; R2."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 185
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/TPCDS-Q15.sql",
+        "sha256": "b4808839cbbd7f15e901036c971cb4d70d5111526f8472ac85414fcd926c7d36"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    },
+    {
+      "label": "TPCDS-Q19",
+      "select_clause_verbatim": "SELECT\n    i_brand_id, i_brand, i_manufact_id, i_manufact,\n    SUM(ss_ext_sales_price)",
+      "group_by_clause_verbatim": "GROUP BY i_brand_id, i_brand, i_manufact_id, i_manufact;",
+      "aggregate_semantics": "SUM(ss_ext_sales_price) grouped by item brand/manufacturer fields",
+      "result_shape_from_SQL": "grouped aggregate rows",
+      "occurrences": [
+        {
+          "table": "STORE_SALES"
+        },
+        {
+          "table": "STORE"
+        },
+        {
+          "table": "CUSTOMER"
+        },
+        {
+          "table": "CUSTOMER_ADDRESS"
+        },
+        {
+          "table": "DATE_DIM"
+        },
+        {
+          "table": "ITEM"
+        }
+      ],
+      "join_equalities_verbatim": [
+        "d_date_sk = ss_sold_date_sk",
+        "ss_item_sk = i_item_sk",
+        "ss_customer_sk = c_customer_sk",
+        "c_current_addr_sk = ca_address_sk",
+        "ss_store_sk = s_store_sk"
+      ],
+      "selection_predicates_verbatim": [],
+      "structural_classification": {
+        "equality_join_body": "alpha_acyclic",
+        "family": "tree-shaped join centered at STORE_SALES, with DATE_DIM, ITEM, STORE and CUSTOMER branches; CUSTOMER_ADDRESS attaches to CUSTOMER.",
+        "qualification": "Manual classification of the source equality-join body/occurrences only; this is not a native admission result. Aggregate SELECT/GROUP BY output is recorded verbatim and is not reinterpreted as a set-CQ free-variable head."
+      },
+      "update_output_contract": {
+        "SQL_source_contract": "The SQL definition specifies aggregate result expressions, but contains no input-update regime, snapshot-versus-delta contract, milestone policy, or output-suppression setting.",
+        "runtime_evidence": null,
+        "runtime_contract_status": "unknown from the received source packet"
+      },
+      "expected_native_R1_compatibility": {
+        "compatible_as_written": false,
+        "reason": [
+          "Every original is an aggregate query; Refactor R1 is the free-connex equality-CQ set engine, while aggregates and SQL bag semantics are R2/later.",
+          "GROUP BY/SUM outside R1"
+        ],
+        "preserve_without_silent_rewrite": [
+          "Preserve four group expressions, bag multiplicities, and SUM arithmetic; R2."
+        ]
+      },
+      "expected_backend_evidence": {
+        "source_context": "The pinned DynaGox README describes Queries.md as experiment SQL and lists multiple comparison systems, but Queries.md does not assign this query to a specific backend or runtime mode.",
+        "backend_mapping": "unknown from this packet"
+      },
+      "source_ref": {
+        "local_path": "build/verification/b02-dynagox-source-v1/Queries.md",
+        "remote_path": "Queries.md",
+        "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+        "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+        "comment_line": 194
+      },
+      "sql": {
+        "path": "benchmarks/legacy/dynagox/queries/TPCDS-Q19.sql",
+        "sha256": "30547ee5a88af228dd8618f977e1667fcbf918e54318d7665fa68cf78da6dde8"
+      },
+      "native_run_eligible": false,
+      "catalog": null,
+      "data_record": "external_input_not_imported",
+      "source_license": "unresolved_A02_local_inspection_only"
+    }
+  ],
+  "cross_cutting_transformations": [
+    "Keep each original aggregate label and exact SELECT/GROUP BY output; do not replace COUNT, SUM, MAX, COUNT(DISTINCT), or grouped outputs with set enumeration.",
+    "Bind an exact source catalog with column types/nullability and declared row multiplicity. Join occurrences, aliases and duplicate input rows must remain distinct where SQL bag semantics count them.",
+    "Define exact arithmetic, overflow, NULL, collation, aggregate empty-input, group-existence and update-retraction behavior before adding these queries to an aggregate runtime.",
+    "Preserve scalar expressions and local filters as source constructs. TPCH queries use multiplication/subtraction, CASE, EXTRACT, DATE/INTERVAL arithmetic, BETWEEN and LIKE; the query source does not establish native support or type semantics for them.",
+    "Keep DUMBBELL and TPCH-Q5 marked cyclic. They need a separately labeled fallback/extension or a reviewed, semantics-preserving transformation; they are not R1 free-connex inputs.",
+    "TPCH-Q8/Q9 contain derived subqueries. Any inlining/normalization must retain inner row values and outer aggregation/grouping; do not infer an R1 route from an acyclic join skeleton."
+  ],
+  "update_output_and_provenance_gaps": [
+    "Queries.md gives SQL aggregate definitions, not input update order, insert/delete/FIFO regime, snapshot-vs-delta output, milestone schedule, or output-suppression policy. Per-query runtime contract remains unknown except the two scoped C++ source observations attached to CEB-Q1 and JOB-Q8.",
+    "Readme.md lists data preparation/conversion commands and graph conversion modes (insert/window/progress/degenerate), but the inspected materials do not bind those modes to every query or provide input trace checksums.",
+    "Dataset provenance, redistribution rights, dataset licenses and checksums are not established by this source packet. The README acknowledgement that a MultiHashMap design is inspired by F-IVM does not grant a repository-wide or dataset license.",
+    "The source packet does not establish a successful build, result reproduction, or performance measurement. No such claims are made here."
+  ],
+  "queries_source_sql_verbatim_sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+  "schema_version": 1,
+  "kind": "crown_imported_query_inventory",
+  "source_documents": [
+    {
+      "path": "benchmarks/legacy/dynagox/Queries.md",
+      "sha256": "edec79c4a58c455ac8d6feaba7f300d511807983cd0c4997f349bbb2296947df",
+      "git_blob_sha1": "c520700d12741ef0e5578087812b7e7256043e4a",
+      "url": "https://github.com/hkustDB/DynaGox/blob/c6811db68a34ab3b32722968c4e1e821f730c5ac/Queries.md"
+    },
+    {
+      "path": "benchmarks/legacy/dynagox/Readme.md",
+      "sha256": "9021b12aba40dd37356e5b6ff853862f568acc2c51c1c091f462de8499f47f93",
+      "git_blob_sha1": "a4548066af0e711ee6700073eef8d9605eb06b9d",
+      "url": "https://github.com/hkustDB/DynaGox/blob/c6811db68a34ab3b32722968c4e1e821f730c5ac/Readme.md"
+    }
+  ],
+  "root_review": {
+    "record": "build/verification/b02-dynagox-root-review-v1.json",
+    "sha256": "edd0c5d23b9d5a76753a02422b1abf63421159cfcae0f97fed1c44dfcd0b0306",
+    "independently_checked": [
+      "SQL SELECT/GROUP BY text and occurrence aliases",
+      "join-equality hypergraphs:22 acyclic and2 cyclic",
+      "all24 aggregate outputs preserved; no automatic set rewrite"
+    ]
+  },
+  "data_records": [
+    {
+      "id": "external_input_not_imported",
+      "bytes_sha256": null,
+      "license": null,
+      "available": false,
+      "native_timing_eligible": false
+    }
+  ],
+  "limits": [
+    "The named JOB/CEB/LSQB/TPC-H/TPC-DS definitions are pinned DynaGox experiment variants; this does not import or qualify the complete official suites.",
+    "No source data, runtime baseline executable or algorithm implementation is imported into the native engine.",
+    "Raw SQL source licensing remains unresolved for distribution; this local record grants no rights."
+  ]
+}

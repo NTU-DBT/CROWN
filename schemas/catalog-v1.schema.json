@@ -1,0 +1,186 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN version-1 standalone catalog",
+  "description": "A catalog is metadata, not proof that its declarations match external data. The native reader additionally validates names, references, type compatibility, enforced unique targets and fixed-decimal limits.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "catalog"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "catalog": {"$ref": "#/$defs/catalog_payload"}
+  },
+  "$defs": {
+    "identifier": {"type": "string", "minLength": 1},
+    "uint64": {"type": "integer", "minimum": 0, "maximum": 18446744073709551615},
+    "positive_uint64": {"type": "integer", "minimum": 1, "maximum": 18446744073709551615},
+    "scalar_type": {"enum": ["int64", "string", "bool", "date", "decimal"]},
+    "column_names": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/identifier"},
+      "uniqueItems": true,
+      "description": "Column names are resolved within the table named by the containing metadata. Empty arrays are valid key column sets."
+    },
+    "decimal_spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["precision", "scale"],
+      "properties": {
+        "precision": {"type": "integer", "minimum": 1, "maximum": 38},
+        "scale": {"type": "integer", "minimum": 0, "maximum": 38}
+      },
+      "allOf": [
+        {"if": {"properties": {"precision": {"const": 1}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 1}}}},
+        {"if": {"properties": {"precision": {"const": 2}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 2}}}},
+        {"if": {"properties": {"precision": {"const": 3}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 3}}}},
+        {"if": {"properties": {"precision": {"const": 4}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 4}}}},
+        {"if": {"properties": {"precision": {"const": 5}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 5}}}},
+        {"if": {"properties": {"precision": {"const": 6}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 6}}}},
+        {"if": {"properties": {"precision": {"const": 7}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 7}}}},
+        {"if": {"properties": {"precision": {"const": 8}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 8}}}},
+        {"if": {"properties": {"precision": {"const": 9}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 9}}}},
+        {"if": {"properties": {"precision": {"const": 10}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 10}}}},
+        {"if": {"properties": {"precision": {"const": 11}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 11}}}},
+        {"if": {"properties": {"precision": {"const": 12}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 12}}}},
+        {"if": {"properties": {"precision": {"const": 13}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 13}}}},
+        {"if": {"properties": {"precision": {"const": 14}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 14}}}},
+        {"if": {"properties": {"precision": {"const": 15}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 15}}}},
+        {"if": {"properties": {"precision": {"const": 16}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 16}}}},
+        {"if": {"properties": {"precision": {"const": 17}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 17}}}},
+        {"if": {"properties": {"precision": {"const": 18}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 18}}}},
+        {"if": {"properties": {"precision": {"const": 19}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 19}}}},
+        {"if": {"properties": {"precision": {"const": 20}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 20}}}},
+        {"if": {"properties": {"precision": {"const": 21}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 21}}}},
+        {"if": {"properties": {"precision": {"const": 22}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 22}}}},
+        {"if": {"properties": {"precision": {"const": 23}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 23}}}},
+        {"if": {"properties": {"precision": {"const": 24}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 24}}}},
+        {"if": {"properties": {"precision": {"const": 25}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 25}}}},
+        {"if": {"properties": {"precision": {"const": 26}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 26}}}},
+        {"if": {"properties": {"precision": {"const": 27}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 27}}}},
+        {"if": {"properties": {"precision": {"const": 28}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 28}}}},
+        {"if": {"properties": {"precision": {"const": 29}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 29}}}},
+        {"if": {"properties": {"precision": {"const": 30}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 30}}}},
+        {"if": {"properties": {"precision": {"const": 31}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 31}}}},
+        {"if": {"properties": {"precision": {"const": 32}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 32}}}},
+        {"if": {"properties": {"precision": {"const": 33}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 33}}}},
+        {"if": {"properties": {"precision": {"const": 34}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 34}}}},
+        {"if": {"properties": {"precision": {"const": 35}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 35}}}},
+        {"if": {"properties": {"precision": {"const": 36}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 36}}}},
+        {"if": {"properties": {"precision": {"const": 37}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 37}}}},
+        {"if": {"properties": {"precision": {"const": 38}}, "required": ["precision"]}, "then": {"properties": {"scale": {"maximum": 38}}}}
+      ]
+    },
+    "column": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type"],
+      "properties": {
+        "name": {"$ref": "#/$defs/identifier"},
+        "type": {"$ref": "#/$defs/scalar_type"},
+        "nullable": {"type": "boolean", "default": false},
+        "collation": {"type": "string", "const": "binary", "default": "binary"},
+        "decimal": {"$ref": "#/$defs/decimal_spec"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"type": {"const": "string"}}, "required": ["type"]},
+          "then": {},
+          "else": {"not": {"required": ["collation"]}}
+        },
+        {
+          "if": {"properties": {"type": {"const": "decimal"}}, "required": ["type"]},
+          "then": {},
+          "else": {"not": {"required": ["decimal"]}}
+        }
+      ]
+    },
+    "unique_constraint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "name", "columns", "status"],
+      "properties": {
+        "kind": {"type": "string", "const": "unique"},
+        "name": {"$ref": "#/$defs/identifier"},
+        "columns": {"$ref": "#/$defs/column_names"},
+        "status": {"enum": ["enforced", "untrusted"]}
+      }
+    },
+    "foreign_key_constraint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "name", "columns", "status", "references"],
+      "properties": {
+        "kind": {"type": "string", "const": "foreign_key"},
+        "name": {"$ref": "#/$defs/identifier"},
+        "columns": {"$ref": "#/$defs/column_names"},
+        "status": {"enum": ["enforced", "untrusted"]},
+        "references": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["table", "columns"],
+          "properties": {
+            "table": {"$ref": "#/$defs/identifier"},
+            "columns": {"$ref": "#/$defs/column_names"}
+          }
+        }
+      }
+    },
+    "constraint": {
+      "oneOf": [
+        {"$ref": "#/$defs/unique_constraint"},
+        {"$ref": "#/$defs/foreign_key_constraint"}
+      ]
+    },
+    "distinct_count": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["columns", "estimate"],
+      "properties": {
+        "columns": {"$ref": "#/$defs/column_names"},
+        "estimate": {"$ref": "#/$defs/uint64"}
+      }
+    },
+    "statistics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "row_count": {"$ref": "#/$defs/uint64"},
+        "distinct_counts": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/distinct_count"},
+          "default": []
+        }
+      }
+    },
+    "key_hint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["columns", "reason"],
+      "properties": {
+        "columns": {"$ref": "#/$defs/column_names"},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    },
+    "table": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "columns"],
+      "properties": {
+        "name": {"$ref": "#/$defs/identifier"},
+        "columns": {"type": "array", "items": {"$ref": "#/$defs/column"}, "uniqueItems": true},
+        "source_schema_version": {"$ref": "#/$defs/positive_uint64", "default": 1},
+        "constraints": {"type": "array", "items": {"$ref": "#/$defs/constraint"}, "default": []},
+        "statistics": {"$ref": "#/$defs/statistics"},
+        "key_hints": {"type": "array", "items": {"$ref": "#/$defs/key_hint"}, "default": []}
+      }
+    },
+    "catalog_payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "tables"],
+      "properties": {
+        "version": {"$ref": "#/$defs/positive_uint64"},
+        "tables": {"type": "array", "items": {"$ref": "#/$defs/table"}}
+      }
+    }
+  }
+}

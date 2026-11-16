@@ -1,0 +1,1 @@
+SELECT DISTINCT x FROM r WHERE NOT (tag='skip') OR x=3

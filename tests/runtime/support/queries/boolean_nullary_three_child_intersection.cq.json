@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "semantics": "set",
+  "catalog": {
+    "version": 1,
+    "tables": [
+      {"name": "X", "columns": [{"name": "x", "type": "string"}]},
+      {"name": "Y", "columns": [{"name": "y", "type": "string"}]},
+      {"name": "Z", "columns": [{"name": "z", "type": "string"}]}
+    ]
+  },
+  "query": {
+    "variables": [{"name": "x", "type": "string"}, {"name": "y", "type": "string"}, {"name": "z", "type": "string"}],
+    "atoms": [
+      {"id": "x_node", "table": "X", "terms": [{"var": "x"}]},
+      {"id": "y_node", "table": "Y", "terms": [{"var": "y"}]},
+      {"id": "z_node", "table": "Z", "terms": [{"var": "z"}]}
+    ],
+    "head": []
+  }
+}

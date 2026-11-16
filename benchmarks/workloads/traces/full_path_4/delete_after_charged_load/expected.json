@@ -1,0 +1,448 @@
+{
+  "epochs": [
+    {
+      "current_rows": [],
+      "phase": "charged_load",
+      "physical_changed": true,
+      "sequence": 1,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [],
+      "phase": "charged_load",
+      "physical_changed": true,
+      "sequence": 2,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [],
+      "phase": "charged_load",
+      "physical_changed": true,
+      "sequence": 3,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21,
+          28
+        ]
+      ],
+      "phase": "charged_load",
+      "physical_changed": true,
+      "sequence": 4,
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            0,
+            7,
+            14,
+            21,
+            28
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21,
+          28
+        ]
+      ],
+      "phase": "charged_load",
+      "physical_changed": true,
+      "sequence": 5,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21,
+          28
+        ]
+      ],
+      "phase": "charged_load",
+      "physical_changed": true,
+      "sequence": 6,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21,
+          28
+        ]
+      ],
+      "phase": "charged_load",
+      "physical_changed": true,
+      "sequence": 7,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21,
+          28
+        ],
+        [
+          1,
+          8,
+          15,
+          22,
+          29
+        ]
+      ],
+      "phase": "charged_load",
+      "physical_changed": true,
+      "sequence": 8,
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            1,
+            8,
+            15,
+            22,
+            29
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21,
+          28
+        ],
+        [
+          1,
+          8,
+          15,
+          22,
+          29
+        ]
+      ],
+      "phase": "charged_load",
+      "physical_changed": true,
+      "sequence": 9,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21,
+          28
+        ],
+        [
+          1,
+          8,
+          15,
+          22,
+          29
+        ]
+      ],
+      "phase": "charged_load",
+      "physical_changed": true,
+      "sequence": 10,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21,
+          28
+        ],
+        [
+          1,
+          8,
+          15,
+          22,
+          29
+        ]
+      ],
+      "phase": "charged_load",
+      "physical_changed": true,
+      "sequence": 11,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21,
+          28
+        ],
+        [
+          1,
+          8,
+          15,
+          22,
+          29
+        ],
+        [
+          2,
+          9,
+          16,
+          23,
+          30
+        ]
+      ],
+      "phase": "charged_load",
+      "physical_changed": true,
+      "sequence": 12,
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            2,
+            9,
+            16,
+            23,
+            30
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21,
+          28
+        ],
+        [
+          1,
+          8,
+          15,
+          22,
+          29
+        ]
+      ],
+      "phase": "delete_phase",
+      "physical_changed": true,
+      "sequence": 13,
+      "signed_delta": [
+        {
+          "operation": "delete",
+          "values": [
+            2,
+            9,
+            16,
+            23,
+            30
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21,
+          28
+        ],
+        [
+          1,
+          8,
+          15,
+          22,
+          29
+        ]
+      ],
+      "phase": "delete_phase",
+      "physical_changed": true,
+      "sequence": 14,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21,
+          28
+        ],
+        [
+          1,
+          8,
+          15,
+          22,
+          29
+        ]
+      ],
+      "phase": "delete_phase",
+      "physical_changed": true,
+      "sequence": 15,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21,
+          28
+        ],
+        [
+          1,
+          8,
+          15,
+          22,
+          29
+        ]
+      ],
+      "phase": "delete_phase",
+      "physical_changed": true,
+      "sequence": 16,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21,
+          28
+        ]
+      ],
+      "phase": "delete_phase",
+      "physical_changed": true,
+      "sequence": 17,
+      "signed_delta": [
+        {
+          "operation": "delete",
+          "values": [
+            1,
+            8,
+            15,
+            22,
+            29
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21,
+          28
+        ]
+      ],
+      "phase": "delete_phase",
+      "physical_changed": true,
+      "sequence": 18,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21,
+          28
+        ]
+      ],
+      "phase": "delete_phase",
+      "physical_changed": true,
+      "sequence": 19,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [
+        [
+          0,
+          7,
+          14,
+          21,
+          28
+        ]
+      ],
+      "phase": "delete_phase",
+      "physical_changed": true,
+      "sequence": 20,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [],
+      "phase": "delete_phase",
+      "physical_changed": true,
+      "sequence": 21,
+      "signed_delta": [
+        {
+          "operation": "delete",
+          "values": [
+            0,
+            7,
+            14,
+            21,
+            28
+          ]
+        }
+      ]
+    },
+    {
+      "current_rows": [],
+      "phase": "delete_phase",
+      "physical_changed": true,
+      "sequence": 22,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [],
+      "phase": "delete_phase",
+      "physical_changed": true,
+      "sequence": 23,
+      "signed_delta": []
+    },
+    {
+      "current_rows": [],
+      "phase": "delete_phase",
+      "physical_changed": true,
+      "sequence": 24,
+      "signed_delta": []
+    }
+  ],
+  "initial_rows": [],
+  "oracle": "independent_relational_and_sqlite",
+  "query": "full_path_4",
+  "schema_version": 1
+}

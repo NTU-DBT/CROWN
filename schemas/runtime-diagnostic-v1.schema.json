@@ -1,0 +1,569 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN runtime state and invariant diagnostic v1",
+  "description": "Typed deterministic diagnostic state, not a checkpoint, restore, WAL, or source-position format. Nodes/tables/occurrences refer to the bound physical program. Values preserve F01 types. Native inspection additionally checks source derivations, actual metadata and L/P/B/index/count consistency; a dump may deliberately describe corrupted observed state. Structural validation does not assert that state is valid.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/physical_diagnostic"
+    },
+    {
+      "$ref": "#/$defs/delta_diagnostic"
+    },
+    {
+      "$ref": "#/$defs/inspection_diagnostic"
+    }
+  ],
+  "$defs": {
+    "uint64": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "row": {
+      "type": "array",
+      "items": {
+        "$ref": "cq-v2.schema.json#/$defs/value"
+      }
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/row"
+      }
+    },
+    "count": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "count"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/row"
+        },
+        "count": {
+          "$ref": "#/$defs/uint64"
+        }
+      }
+    },
+    "record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "values",
+        "satisfied",
+        "child_present",
+        "survives"
+      ],
+      "properties": {
+        "values": {
+          "$ref": "#/$defs/row"
+        },
+        "satisfied": {
+          "$ref": "#/$defs/uint64"
+        },
+        "child_present": {
+          "type": "array",
+          "items": {
+            "type": "boolean"
+          }
+        },
+        "survives": {
+          "type": "boolean"
+        }
+      }
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "node",
+        "kind",
+        "records",
+        "survivors",
+        "parent",
+        "visible"
+      ],
+      "properties": {
+        "node": {
+          "$ref": "#/$defs/uint64"
+        },
+        "kind": {
+          "enum": [
+            "native",
+            "generalized"
+          ]
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/record"
+          }
+        },
+        "survivors": {
+          "$ref": "#/$defs/rows"
+        },
+        "parent": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/count"
+          }
+        },
+        "visible": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/count"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "support": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "physical_sha256",
+        "catalog_version",
+        "arithmetic",
+        "sequence",
+        "has_answer",
+        "nodes"
+      ],
+      "properties": {
+        "physical_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "catalog_version": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 18446744073709551615
+        },
+        "arithmetic": {
+          "const": "exact-nonnull-v1"
+        },
+        "sequence": {
+          "$ref": "#/$defs/uint64"
+        },
+        "has_answer": {
+          "type": "boolean"
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/node"
+          }
+        }
+      }
+    },
+    "physical": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "support",
+        "sequence",
+        "sources",
+        "derivations"
+      ],
+      "properties": {
+        "support": {
+          "$ref": "#/$defs/support"
+        },
+        "sequence": {
+          "$ref": "#/$defs/uint64"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/rows"
+          }
+        },
+        "derivations": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/count"
+            }
+          }
+        }
+      }
+    },
+    "bucket": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "count",
+        "rows"
+      ],
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/row"
+        },
+        "count": {
+          "$ref": "#/$defs/uint64"
+        },
+        "rows": {
+          "$ref": "#/$defs/rows"
+        }
+      }
+    },
+    "factor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "node",
+        "rows",
+        "parents",
+        "children"
+      ],
+      "properties": {
+        "node": {
+          "$ref": "#/$defs/uint64"
+        },
+        "rows": {
+          "$ref": "#/$defs/rows"
+        },
+        "parents": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/bucket"
+          }
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/bucket"
+          }
+        }
+      }
+    },
+    "live": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sequence",
+        "rows",
+        "parent_rows",
+        "child_rows",
+        "factors"
+      ],
+      "properties": {
+        "sequence": {
+          "$ref": "#/$defs/uint64"
+        },
+        "rows": {
+          "$ref": "#/$defs/uint64"
+        },
+        "parent_rows": {
+          "$ref": "#/$defs/uint64"
+        },
+        "child_rows": {
+          "$ref": "#/$defs/uint64"
+        },
+        "factors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/factor"
+          }
+        }
+      }
+    },
+    "delta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "physical",
+        "delta_maintained",
+        "sql_view",
+        "live"
+      ],
+      "properties": {
+        "physical": {
+          "$ref": "#/$defs/physical"
+        },
+        "delta_maintained": {
+          "type": "boolean"
+        },
+        "sql_view": {
+          "type": "boolean"
+        },
+        "live": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/live"
+            }
+          ]
+        }
+      }
+    },
+    "issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "component",
+        "key"
+      ],
+      "properties": {
+        "code": {
+          "enum": [
+            "missing_record",
+            "unexpected_record",
+            "missing_metadata",
+            "orphan_metadata",
+            "child_presence",
+            "satisfied_count",
+            "support_count",
+            "derivation_count",
+            "membership",
+            "sequence",
+            "storage",
+            "invalid_source",
+            "aggregate_count"
+          ]
+        },
+        "component": {
+          "enum": [
+            "source",
+            "derivation",
+            "record",
+            "survivor",
+            "parent",
+            "visible",
+            "sequence",
+            "storage",
+            "live_factor",
+            "live_parent",
+            "live_child",
+            "live_totals"
+          ]
+        },
+        "table": {
+          "$ref": "#/$defs/uint64"
+        },
+        "occurrence": {
+          "$ref": "#/$defs/uint64"
+        },
+        "node": {
+          "$ref": "#/$defs/uint64"
+        },
+        "child_slot": {
+          "$ref": "#/$defs/uint64"
+        },
+        "key": {
+          "$ref": "#/$defs/row"
+        },
+        "expected": {
+          "$ref": "#/$defs/uint64"
+        },
+        "actual": {
+          "$ref": "#/$defs/uint64"
+        }
+      }
+    },
+    "statistics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_rows",
+        "derivation_keys",
+        "native_records",
+        "generalized_records",
+        "survivors",
+        "parent_keys",
+        "visible_keys",
+        "child_flags",
+        "source_storage_records",
+        "support_storage_records",
+        "index_memberships",
+        "live_rows",
+        "live_parent_rows",
+        "live_child_rows",
+        "live_parent_buckets",
+        "live_child_buckets"
+      ],
+      "properties": {
+        "source_rows": {
+          "$ref": "#/$defs/uint64"
+        },
+        "derivation_keys": {
+          "$ref": "#/$defs/uint64"
+        },
+        "native_records": {
+          "$ref": "#/$defs/uint64"
+        },
+        "generalized_records": {
+          "$ref": "#/$defs/uint64"
+        },
+        "survivors": {
+          "$ref": "#/$defs/uint64"
+        },
+        "parent_keys": {
+          "$ref": "#/$defs/uint64"
+        },
+        "visible_keys": {
+          "$ref": "#/$defs/uint64"
+        },
+        "child_flags": {
+          "$ref": "#/$defs/uint64"
+        },
+        "source_storage_records": {
+          "$ref": "#/$defs/uint64"
+        },
+        "support_storage_records": {
+          "$ref": "#/$defs/uint64"
+        },
+        "index_memberships": {
+          "$ref": "#/$defs/uint64"
+        },
+        "live_rows": {
+          "$ref": "#/$defs/uint64"
+        },
+        "live_parent_rows": {
+          "$ref": "#/$defs/uint64"
+        },
+        "live_child_rows": {
+          "$ref": "#/$defs/uint64"
+        },
+        "live_parent_buckets": {
+          "$ref": "#/$defs/uint64"
+        },
+        "live_child_buckets": {
+          "$ref": "#/$defs/uint64"
+        }
+      }
+    },
+    "physical_diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "kind",
+        "state"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "integer",
+          "const": 1
+        },
+        "kind": {
+          "const": "physical"
+        },
+        "state": {
+          "$ref": "#/$defs/physical"
+        }
+      }
+    },
+    "delta_diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "kind",
+        "state"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "integer",
+          "const": 1
+        },
+        "kind": {
+          "const": "delta"
+        },
+        "state": {
+          "$ref": "#/$defs/delta"
+        }
+      }
+    },
+    "inspection_diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "kind",
+        "complete",
+        "valid",
+        "work",
+        "statistics",
+        "issues"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "integer",
+          "const": 1
+        },
+        "kind": {
+          "const": "inspection"
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "valid": {
+          "type": "boolean"
+        },
+        "work": {
+          "$ref": "#/$defs/uint64"
+        },
+        "statistics": {
+          "$ref": "#/$defs/statistics"
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/issue"
+          }
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "complete": {
+              "const": true
+            },
+            "valid": {
+              "const": true
+            },
+            "issues": {
+              "maxItems": 0
+            }
+          }
+        },
+        {
+          "properties": {
+            "valid": {
+              "const": false
+            }
+          },
+          "anyOf": [
+            {
+              "properties": {
+                "complete": {
+                  "const": false
+                }
+              }
+            },
+            {
+              "properties": {
+                "issues": {
+                  "minItems": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

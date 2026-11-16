@@ -1,0 +1,33 @@
+--- frozen-report/src/io/statistics_explain.cpp
++++ native-overlay/src/io/statistics_explain.cpp
+@@ -278,7 +278,7 @@
+ }
+ void render(Writer& w,const Report& r){
+   w.object([&](auto& o){o.number("schema_version",Report::schema_version);o.text("scope","owner_statistics_with_current_and_begin_bound_mode_context");
+-    o.field("capabilities",[&]{w.object([&](auto& c){c.text("cost_selection","not_implemented");c.null("estimated_total_state_bytes");c.boolean("global_cost_optimality",false);c.text("structural_proof","not_added_by_statistics");c.text("c01_project_gate","open");});});
++    o.field("capabilities",[&]{w.object([&](auto& c){c.text("cost_selection","not_implemented");c.null("estimated_total_state_bytes");c.boolean("global_cost_optimality",false);c.text("structural_proof","not_added_by_statistics");});});
+     o.field("plan",[&]{w.object([&](auto& p){p.text("physical_sha256",r.plan().physical_sha256());p.number("checked_native_height",*r.plan().validation().native_height);
+       p.text("route",name(r.plan().route()));p.text("authority","native_admitted_plan; identity_is_not_import_or_proof_authority");});});
+     const auto& mode=r.mode();o.field("boundary",[&]{w.object([&](auto& b){b.text("presence",name(mode.presence()));b.number("owner",mode.owner());b.number("committed_sequence",mode.sequence());
+--- frozen-report/schemas/statistics-explain-v3.schema.json
++++ native-overlay/schemas/statistics-explain-v3.schema.json
+@@ -30,8 +30,7 @@
+         "cost_selection",
+         "estimated_total_state_bytes",
+         "global_cost_optimality",
+-        "structural_proof",
+-        "c01_project_gate"
++        "structural_proof"
+       ],
+       "properties": {
+         "cost_selection": {
+@@ -45,9 +44,6 @@
+         },
+         "structural_proof": {
+           "const": "not_added_by_statistics"
+-        },
+-        "c01_project_gate": {
+-          "const": "open"
+         }
+       }
+     },

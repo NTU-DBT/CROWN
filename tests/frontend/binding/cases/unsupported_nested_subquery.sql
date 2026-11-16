@@ -1,0 +1,1 @@
+SELECT x.id FROM (SELECT id FROM A) AS x;

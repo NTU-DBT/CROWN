@@ -1,0 +1,1 @@
+SELECT * FROM A AS a NATURAL JOIN NoCommon AS n;

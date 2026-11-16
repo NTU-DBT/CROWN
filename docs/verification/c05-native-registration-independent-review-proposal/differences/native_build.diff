@@ -1,0 +1,52 @@
+--- docs/native_build.md	2026-11-07 17:59:41.664029950 +0800
++++ docs/verification/c05-native-registration-proposal/overlay/docs/native_build.md	2026-11-07 18:06:36.865660483 +0800
+@@ -136,6 +136,49 @@
+ author build is required by native CMake or CTest. There is no ranking CLI,
+ new report schema, evidence-import authority or automatic plan deployment.
+ 
++## C05 libraries and registration
++
++`crown_selection` contains five pure units and links `crown_ranking` plus its
++existing plan/SQL/core chain. It retains typed minimum-height proof authority,
++complete baseline assessments and immutable plan artifacts. Link
++`crown_selection_runtime` explicitly for actual-owner Physical/Delta/Session
++selection. Its one unit links the pure selector and production ranking bridge.
++`crown_selection_runtime_testing` compiles that same unit against only the
++matching testing ranking/runtime bridge. The macro is inherited through that
++target; production and testing runtime variants must not be combined.
++
++The runtime source list remains 14 units, and each report library remains six
++units. Neither depends on selection, and no selection target links a report
++library. The pure link and independent diagnostic-byte tests link without any
++runtime archive. See the [selection guide](selection.md),
++[cache-binding contract](selection_binding.md) and
++[logical accounting contract](selection_accounting.md).
++
++The proposed registration keeps the complete 143-test prefix with identical
++commands, ordering and settings, then appends 15 `C05` tests: ten producer and
++five independent consumers. They cover constrained/unconstrained decisions,
++literal depth and slot values, full source and byte binding, current/as-of
++lifecycle, whole-artifact cache behavior, aggregate budget boundaries and
++persistent allocation failures. The three fault consumers have a 7200-second
++timeout; the other new cases have 900 seconds. All inherit the shared native
++ASan/UBSan environment. The production/testing example objects compile the same
++`tests/examples/selection_usage.cpp` without adding duplicate runtime tests.
++
++The expected compile inventory is 214 existing target/source entries plus five
++pure units, two bridge variants, fifteen consumer units and two example objects:
++238 entries. These counts are registration expectations until root verifies
++actual CMake output. The complete native compiler/sanitizer/clean-source matrix
++is pending; an excluded test result or C05-only subset does not accept it.
++Use `ctest --test-dir build/debug -L C05 --output-on-failure` to select the new
++tests after native integration.
++
++All registered files use native source/include/fixture paths. The C05 tests
++reuse existing checked-in Boolean candidate fixtures; no temporary author
++artifact or excluded verification package is a build/runtime dependency.
++Existing CLI commands and report schemas are unchanged. Selection has no CLI,
++automatic reoptimization, deployment/migration, C03 model or allocator-byte
++prediction. A tuple/index-slot cap is never treated as a memory-byte cap.
++
+ The CLI commands are:
+ 
+ ```sh

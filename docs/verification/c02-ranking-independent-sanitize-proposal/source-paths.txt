@@ -1,0 +1,16 @@
+docs/verification/c02-baseline-ranking-proposal/overlay/include/crown/planner/ranking.hpp
+docs/verification/c02-baseline-ranking-proposal/overlay/include/crown/runtime/ranking_evidence.hpp
+docs/verification/c02-baseline-ranking-proposal/overlay/src/planner/candidate_binding.hpp
+docs/verification/c02-baseline-ranking-proposal/overlay/src/planner/candidates.cpp
+docs/verification/c02-baseline-ranking-proposal/overlay/src/planner/ranking.cpp
+docs/verification/c02-baseline-ranking-proposal/overlay/src/planner/ranking_detail.hpp
+docs/verification/c02-baseline-ranking-proposal/overlay/src/planner/ranking_integer.cpp
+docs/verification/c02-baseline-ranking-proposal/overlay/src/planner/ranking_payload.cpp
+docs/verification/c02-baseline-ranking-proposal/overlay/src/planner/ranking_payload.hpp
+docs/verification/c02-baseline-ranking-proposal/overlay/src/runtime/ranking_evidence.cpp
+docs/verification/c02-baseline-ranking-proposal/overlay/src/runtime/ranking_evidence_detail.hpp
+docs/verification/c02-baseline-ranking-proposal/overlay/third_party/nlohmann/json.hpp
+docs/verification/c02-ranking-independent-tests-proposal/provenance/producer-compile-closure.sh
+docs/verification/c02-ranking-independent-tests-proposal/reproduce-build.sh
+docs/verification/c02-ranking-independent-tests-proposal/tests/ranking_integer_independent_test.cpp
+docs/verification/c02-ranking-independent-tests-proposal/tests/ranking_public_independent_test.cpp

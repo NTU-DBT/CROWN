@@ -1,0 +1,42 @@
+--- /home/userroot/Codex/CROWN/tests/unit/ranking_exception_test.cpp
++++ /home/userroot/Codex/CROWN/docs/verification/c02-clang-allocation-diagnostic-proposal/direct_success_profile.cpp
+@@ -1,3 +1,6 @@
++#include <cstdio>
++#include <cstddef>
++static std::size_t diagnostic_counts[4]{};
+ #include "ranking_fixture.hpp"
+ #include "crown/runtime/ranking_evidence.hpp"
+ #include "candidate_binding.hpp"
+@@ -71,24 +74,20 @@
+   allocations=0;const auto now=planner::binding_detail::encode(f.catalog,f.query);check(allocations==old_count && now.capacity()==old.capacity() && now==old,"P07 encoder allocation/byte profile changed");
+   std::size_t positions=0,recovered=0;
+   for(const auto policy:{pr::Policy::height_only,pr::Policy::committed_input_native_depth,pr::Policy::tuple_index_slots}){
+-    pr::Request request;request.policy=policy;allocations=0;const auto expected=pr::rank(set,request,evidence);const auto count=allocations;
++    pr::Request request;request.policy=policy;allocations=0;const auto expected=pr::rank(set,request,evidence);const auto count=allocations;diagnostic_counts[static_cast<std::size_t>(policy)]=count;
+     check(expected.result && count<20'000,"baseline rank/fault guard");
+     const auto retained=result_image(*expected.result);const auto retained_usage=expected.result->usage();
+-    for(std::size_t i=0;i<count;++i){pr::Attempt failed;{Fault fault(i);failed=pr::rank(set,request,evidence);}
+-      check(triggered,"rank fault position was not reached");
+-      if(failed.result){check(failed.stop==pr::Stop::complete && result_image(*failed.result)==retained,"recovered cleanup allocation changed result");++recovered;}
+-      else{check(failed.stop==pr::Stop::allocation_failure,"rank allocation failure changed kind");}
+-      verify();check(result_image(*expected.result)==retained && expected.result->usage()==retained_usage,"rank failure changed prior Result keys/scores/usage");++positions;
+-    }
++    positions+=count; // Diagnostic: successful-call count only; no fault sweep.
++
+     const auto retry=pr::rank(set,request,evidence);check(retry.result && result_image(*retry.result)==retained,"rank retry changed selection/terms");verify();
+   }
+-  allocations=0;const auto baseline=rr::capture(set,owner);const auto count=allocations;check(baseline.evidence && count<20'000,"capture fault guard");
+-  for(std::size_t i=0;i<count;++i){rr::CaptureAttempt failed;{Fault fault(i);failed=rr::capture(set,owner);}
+-    check(triggered && !failed.evidence && failed.stop==pr::Stop::allocation_failure,"capture allocation failure published");verify();++positions;
+-  }
++  allocations=0;const auto baseline=rr::capture(set,owner);const auto count=allocations;diagnostic_counts[3]=count;check(baseline.evidence && count<20'000,"capture fault guard");
++  positions+=count; // Diagnostic: successful-call count only; no fault sweep.
++
+   const auto retried=rr::capture(set,owner);check(retried.evidence && retried.evidence->inputs().denominator()==7 && retried.evidence->inputs().depth_reasons()==0,"capture retry did not reproduce census");
+   check(baseline.evidence->captured().has_value() && retried.evidence->captured().has_value(),"physical capture lost native joint record");
+   same_workload_complete(baseline.evidence->captured()->workload(),retried.evidence->captured()->workload());
+   check(evidence.sources().size()==3 && set.candidate_count()==3,"input artifacts changed after failure sweeps");
+-  verify();std::cout<<"C02 transactional allocation positions="<<positions<<" recovered_cleanup_positions="<<recovered<<"; all policies/complete workload/canonical owner stable; P07 prefix allocation profile preserved\n";
++  verify();std::cout<<"C02 diagnostic direct successful-call allocations="<<positions<<" recovered_cleanup_positions="<<recovered<<"; all policies/complete workload/canonical owner stable; P07 prefix allocation profile preserved\n";
++std::printf("diagnostic-success-only height=%zu depth=%zu memory=%zu capture=%zu\n",diagnostic_counts[0],diagnostic_counts[1],diagnostic_counts[2],diagnostic_counts[3]);
+ }catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;}}

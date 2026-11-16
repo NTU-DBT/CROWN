@@ -1,0 +1,26 @@
+{
+  "working_directory": "/home/userroot/Codex/CROWN",
+  "author_executed_test": false,
+  "author_checked_python": false,
+  "before_after_source_check": "sha256sum --check --strict --status /tmp/crown-c02-independent-integer-checkpoint-1/input-before.sha256",
+  "before_after_source_check_exit": 0,
+  "consumer_compile": {
+    "command": "c++ -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -O2 -UNDEBUG -MMD -MF /tmp/crown-c02-independent-integer-checkpoint-1/ranking_integer_independent_test.d -Idocs/verification/c02-baseline-ranking-proposal/overlay/include -Iinclude -Idocs/verification/c02-baseline-ranking-proposal/overlay/src/planner -Isrc/planner -isystem third_party -c docs/verification/c02-ranking-independent-tests-proposal/tests/ranking_integer_independent_test.cpp -o /tmp/crown-c02-independent-integer-checkpoint-1/ranking_integer_independent_test.o",
+    "exit": 0,
+    "log": "compile.log"
+  },
+  "producer_object": {
+    "origin": "/tmp/crown-c02-baseline-integer-checkpoint-1/ranking_integer.cpp.o",
+    "sha256": "8e6c16f803a3bc4ba9a3b253afd959a71834fdc033e0cd3f2f6a49e741483862",
+    "producer_reported_compile_exit": 0,
+    "producer_reported_flags": ["-std=c++23", "-O2", "-g", "-UNDEBUG", "-Wall", "-Wextra", "-Wpedantic", "-Wconversion", "-Wsign-conversion", "-Werror", "-pthread"],
+    "producer_reported_includes": ["docs/verification/c02-baseline-ranking-proposal/overlay/include", "include", "docs/verification/c02-baseline-ranking-proposal/overlay/src/planner", "src/planner", "third_party (system)"],
+    "producer_reported_dependencies": "/tmp/crown-c02-baseline-integer-checkpoint-1/ranking_integer.cpp.d"
+  },
+  "link": {
+    "command": "c++ -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -O2 -UNDEBUG /tmp/crown-c02-independent-integer-checkpoint-1/ranking_integer_independent_test.o /tmp/crown-c02-independent-integer-checkpoint-1/ranking_integer.cpp.o -o /tmp/crown-c02-independent-integer-checkpoint-1/ranking_integer_independent_test",
+    "exit": 0,
+    "log": "link.log",
+    "project_archives": []
+  }
+}

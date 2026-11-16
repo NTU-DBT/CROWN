@@ -1,0 +1,10 @@
+/tmp/crown-c05-selection-implementation-sanitize-1/lib/libcrown_selection_runtime.a
+/tmp/crown-c05-selection-implementation-sanitize-1/lib/libcrown_selection.a
+build/sanitize/libcrown_ranking_runtime.a
+build/sanitize/libcrown_ranking.a
+build/sanitize/libcrown_runtime.a
+build/sanitize/libcrown_plan.a
+build/sanitize/libcrown_sql.a
+build/sanitize/_deps/libpg_query/libpg_query-18.1.0/libpg_query.a
+build/sanitize/libcrown_core.a
+/usr/bin/c++

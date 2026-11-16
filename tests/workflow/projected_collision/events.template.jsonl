@@ -1,0 +1,6 @@
+{"schema_version":1,"sequence":1,"catalog_version":1,"source_schema_version":1,"table":"records","operation":"insert","source_position":{"source":"projected-collision-input","offset":100},"values":[5,1]}
+{"schema_version":1,"sequence":2,"catalog_version":1,"source_schema_version":1,"table":"records","operation":"insert","source_position":{"source":"projected-collision-input","offset":200},"values":[5,2]}
+{"schema_version":1,"sequence":3,"catalog_version":1,"source_schema_version":1,"table":"records","operation":"delete","source_position":{"source":"projected-collision-input","offset":300},"values":[5,1]}
+{"schema_version":1,"sequence":4,"catalog_version":1,"source_schema_version":1,"table":"records","operation":"delete","source_position":{"source":"projected-collision-input","offset":400},"values":[5,2]}
+{"schema_version":1,"sequence":5,"catalog_version":1,"source_schema_version":1,"table":"records","operation":"insert","source_position":{"source":"projected-collision-input","offset":500},"values":[5,3]}
+{"schema_version":1,"sequence":6,"catalog_version":1,"source_schema_version":1,"table":"records","operation":"delete","source_position":{"source":"projected-collision-input","offset":600},"values":[5,4]}

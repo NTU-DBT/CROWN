@@ -1,0 +1,1241 @@
+--- a/include/crown/runtime/delta.hpp
++++ b/include/crown/runtime/delta.hpp
+@@ -196,6 +196,8 @@
+   DeltaRuntime(DeltaRuntime&&) noexcept;
+   DeltaRuntime& operator=(DeltaRuntime&&) noexcept;
+   [[nodiscard]] const PhysicalPlan& plan() const;
++  [[nodiscard]] ObservationSnapshot observations() const;
++  [[nodiscard]] ObservationTrace observation_trace() const;
+   [[nodiscard]] const DeltaOptions& options() const;
+   [[nodiscard]] DeltaCompletion completion() const;
+   [[nodiscard]] DeltaRuntimeProfile profile() const;
+--- /dev/null
++++ b/include/crown/runtime/observation.hpp
+@@ -0,0 +1,191 @@
++#pragma once
++
++#include <array>
++#include <cstddef>
++#include <cstdint>
++#include <memory>
++#include <optional>
++#include <span>
++#include <string_view>
++#include <vector>
++
++namespace crown::runtime {
++// Optional observation never disables deterministic budget/accounting state.
++// One configuration lives in SupportOptions and is inherited by all wrappers.
++enum class ObservationMode { off, counters, timed, trace };
++struct ObservationOptions {
++  ObservationMode mode = ObservationMode::timed; // Retains legacy delta clocks.
++  std::size_t trace_capacity = 256;
++  std::uint64_t sample_period = 1, sample_offset = 0;
++  bool trace_timings = true;
++  bool operator==(const ObservationOptions&) const = default;
++};
++enum class ObservationLayer { support, physical, delta };
++enum class ObservationOutcome { pending, committed, aborted };
++enum class MetricAvailability { unavailable, disabled, available };
++enum class MetricKind { counter, high_water, timing };
++enum class MetricId {
++  support_work,
++  support_native_record_visits,
++  support_reverse_index_records_visited,
++  support_child_key_probes,
++  support_child_key_events,
++  support_survivor_transitions,
++  support_parent_key_transitions,
++  support_visible_key_transitions,
++  support_candidates_created,
++  support_candidates_reclaimed,
++  support_storage_changes,
++  support_metadata_changes,
++  support_saved_child_flags,
++  support_journal_records,
++  support_events_enqueued,
++  support_events_applied,
++  support_queue_peak,
++  support_copied_rows,
++  support_copied_index_memberships,
++  support_copied_metadata_entries,
++  support_copied_child_flags,
++  physical_work_inclusive,
++  physical_work_exclusive,
++  physical_source_changes,
++  physical_aliases_visited,
++  physical_aliases_filtered,
++  physical_derivation_changes,
++  physical_native_crossings,
++  physical_constraint_rows,
++  physical_constraint_validations,
++  delta_work,
++  delta_candidates,
++  delta_accepted,
++  delta_rejected,
++  delta_replay_preparation_work,
++  delta_replay_first_work,
++  delta_replay_results_work,
++  delta_replay_termination_work,
++  delta_finalization_work,
++  delta_spool_rows_prepared,
++  delta_spool_bytes_prepared,
++  delta_mapped_records,
++  delta_transferred_records,
++  delta_discarded_records,
++  delta_serialization_attempts,
++  delta_serialization_successes,
++  delta_serialization_failures,
++  delta_sink_attempts,
++  delta_sink_successes,
++  delta_sink_failures,
++  delta_acknowledged_records,
++  delta_propagation_ns,
++  delta_internal_delta_ns,
++  delta_output_mapping_ns,
++  delta_serialization_ns,
++  delta_sink_wait_ns,
++  delta_clock_reads,
++  count
++};
++inline constexpr std::size_t observation_metric_count = static_cast<std::size_t>(MetricId::count);
++struct MetricDescriptor {
++  MetricId id;
++  std::string_view name, unit, accounting, scope;
++  ObservationLayer layer;
++  MetricKind kind;
++  // An inclusive work total contains lower-level work; it must not be summed
++  // with that work again. Other phase subsets also overlap their layer total.
++  std::string_view includes;
++};
++[[nodiscard]] std::span<const MetricDescriptor> observation_registry() noexcept;
++struct MetricValue {
++  std::uint64_t value = 0;
++  MetricAvailability availability = MetricAvailability::unavailable;
++  bool saturated = false;
++};
++struct ObservationSummary {
++  std::uint64_t attempt = 0, sequence = 0;
++  ObservationLayer owner = ObservationLayer::support;
++  ObservationOutcome outcome = ObservationOutcome::pending;
++  std::array<MetricValue,observation_metric_count> values{};
++  [[nodiscard]] const MetricValue& metric(MetricId id) const noexcept {
++    const auto index=static_cast<std::size_t>(id);
++    static constexpr MetricValue unavailable{};
++    return index<values.size()?values[index]:unavailable;
++  }
++};
++enum class TraceDisposition { disabled, not_sampled, pending, committed, aborted, released };
++enum class TraceKind {
++  begin, source_change, alias, native_event, child_enqueued, child_applied,
++  journal, reverse_visit, core_result, mapped_record, prepared, drain,
++  commit, abort, transferred, discarded, serialization_attempt,
++  serialization_success, serialization_failure, sink_attempt, sink_success,
++  sink_failure, acknowledged
++};
++inline constexpr std::uint64_t observation_no_id = UINT64_MAX;
++// Numeric IDs only. No tuple pins, string pointers, borrowed rows or callbacks.
++struct TraceRecord {
++  TraceKind kind = TraceKind::begin;
++  std::uint64_t event = 0, cause = 0;
++  std::uint64_t node = observation_no_id, occurrence = observation_no_id, prefix = 0;
++  std::uint64_t before = 0, after = 0, role = observation_no_id, tuple = observation_no_id;
++};
++struct ObservationSnapshot {
++  ObservationOptions options;
++  bool mandatory_accounting = true;
++  std::uint64_t support_owner = 0;
++  std::optional<ObservationSummary> current, last;
++  std::uint64_t attempts = 0, commits = 0, aborts = 0;
++  bool lifetime_counts_saturated = false;
++  TraceDisposition trace = TraceDisposition::disabled;
++  std::uint64_t trace_attempt = 0, trace_sequence = 0;
++  std::size_t trace_records = 0;
++  std::uint64_t trace_dropped = 0;
++  bool trace_dropped_saturated = false;
++  bool trace_truncated = false;
++  // Session decoration is read-only, and does not assert durable acceptance.
++  bool session_attached = false;
++  std::uint64_t session_committed_sequence = 0;
++};
++struct ObservationTrace {
++  ObservationSnapshot snapshot;
++  std::vector<TraceRecord> records;
++};
++namespace detail {
++struct ObservationTicket { std::uint64_t attempt=0; bool owns=false; };
++class ObservationState {
++ public:
++  [[nodiscard]] static std::shared_ptr<ObservationState> create(ObservationOptions);
++  explicit ObservationState(ObservationOptions);
++  [[nodiscard]] ObservationTicket begin(ObservationLayer,std::uint64_t) noexcept;
++  void finish(ObservationTicket,ObservationOutcome) noexcept;
++  void bind_owner(std::uint64_t owner) noexcept { snapshot_.support_owner=owner; }
++  void route(std::uint64_t occurrence,std::uint64_t prefix) noexcept {
++    occurrence_=occurrence; prefix_=prefix;
++  }
++  void set(MetricId,std::uint64_t) noexcept;
++  void add(MetricId,std::uint64_t=1) noexcept;
++  void unavailable(MetricId) noexcept;
++  void event(TraceKind,std::uint64_t event=0,std::uint64_t cause=0,
++      std::uint64_t node=observation_no_id,std::uint64_t occurrence=observation_no_id,
++      std::uint64_t prefix=0,std::uint64_t before=0,std::uint64_t after=0,
++      std::uint64_t role=observation_no_id,std::uint64_t tuple=observation_no_id) noexcept;
++  [[nodiscard]] bool clocks_enabled() const noexcept;
++  [[nodiscard]] std::uint64_t now() noexcept;
++  [[nodiscard]] ObservationSnapshot snapshot() const noexcept;
++  // Explicit allocating diagnostic read; hooks never call this method.
++  [[nodiscard]] ObservationTrace trace() const;
++ private:
++  ObservationOptions options_;
++  ObservationSnapshot snapshot_;
++  std::vector<TraceRecord> buffer_; // Resized once at admission, never grown.
++  bool selected_=false;
++  std::uint64_t occurrence_=observation_no_id,prefix_=0;
++  [[nodiscard]] ObservationSummary* target() noexcept;
++};
++[[nodiscard]] ObservationSnapshot observation_snapshot(const std::shared_ptr<ObservationState>&,ObservationOptions) noexcept;
++[[nodiscard]] ObservationTrace observation_trace(const std::shared_ptr<ObservationState>&,ObservationOptions);
++#ifdef CROWN_RUNTIME_TESTING
++// Exclusive test ownership only; nullptr restores the real steady clock.
++using ObservationClock = std::uint64_t (*)() noexcept;
++void set_observation_clock_for_testing(ObservationClock) noexcept;
++#endif
++} // namespace detail
++} // namespace crown::runtime
+--- a/include/crown/runtime/physical.hpp
++++ b/include/crown/runtime/physical.hpp
+@@ -107,6 +107,8 @@
+   PhysicalRuntime(PhysicalRuntime&&) noexcept;
+   PhysicalRuntime& operator=(PhysicalRuntime&& other) noexcept;
+   [[nodiscard]] const PhysicalPlan& plan() const;
++  [[nodiscard]] ObservationSnapshot observations() const;
++  [[nodiscard]] ObservationTrace observation_trace() const;
+   [[nodiscard]] const PhysicalRuntimeOptions& options() const;
+   [[nodiscard]] SupportOwnerId owner() const;
+   [[nodiscard]] std::uint64_t sequence() const;
+@@ -146,6 +148,7 @@
+   [[nodiscard]] PendingUpdate prepare_observed(const PhysicalSetUpdate& update,
+       const RouteObserver& observer, EpochViewOptions options);
+   [[nodiscard]] PendingUpdate begin_staged(const PhysicalSetUpdate& update);
++  [[nodiscard]] std::shared_ptr<detail::ObservationState> observation_state() const;
+   [[nodiscard]] Impl& impl() const;
+   std::shared_ptr<Impl> impl_;
+ };
+--- a/include/crown/runtime/session.hpp
++++ b/include/crown/runtime/session.hpp
+@@ -68,6 +68,8 @@
+   QuerySession(QuerySession&&)=delete;
+   QuerySession& operator=(QuerySession&&)=delete;
+   [[nodiscard]] SessionStatus status() const;
++  [[nodiscard]] ObservationSnapshot observations() const;
++  [[nodiscard]] ObservationTrace observation_trace() const;
+   [[nodiscard]] io::InputProgress progress() const;
+   void start();
+   void pause();
+--- a/include/crown/runtime/support.hpp
++++ b/include/crown/runtime/support.hpp
+@@ -4,6 +4,7 @@
+ #include "crown/storage/reference.hpp"
+ #include "crown/runtime/initialization.hpp"
+ #include "crown/runtime/inspection.hpp"
++#include "crown/runtime/observation.hpp"
+ #include <limits>
+ #include <memory>
+ 
+@@ -29,6 +30,7 @@
+   std::uint64_t support_limit = std::numeric_limits<std::uint64_t>::max();
+   PropagationOrder order = PropagationOrder::fifo;
+   bool capture_transitions = false;
++  ObservationOptions observation = {};
+ };
+ struct NativeSetUpdate {
+   std::uint64_t sequence;
+@@ -300,6 +302,8 @@
+   SupportRuntime(SupportRuntime&&) noexcept;
+   SupportRuntime& operator=(SupportRuntime&& other) noexcept;
+   [[nodiscard]] const PhysicalPlan& plan() const;
++  [[nodiscard]] ObservationSnapshot observations() const;
++  [[nodiscard]] ObservationTrace observation_trace() const;
+   [[nodiscard]] const SupportOptions& options() const;
+   [[nodiscard]] SupportOwnerId owner() const;
+   [[nodiscard]] std::uint64_t sequence() const;
+@@ -327,6 +331,7 @@
+   void initialize_native(std::span<const detail::NativeSeed> seeds,BuildOptions options,BuildMetrics& metrics);
+   void seed_sequence(std::uint64_t sequence) noexcept;
+   [[nodiscard]] Relation record_rows(NodeId node) const;
++  [[nodiscard]] std::shared_ptr<detail::ObservationState> observation_state() const;
+   [[nodiscard]] Impl& impl() const;
+   std::shared_ptr<Impl> impl_;
+ };
+--- a/src/runtime/delta.cpp
++++ b/src/runtime/delta.cpp
+@@ -25,16 +25,20 @@
+   return count*width;
+ }
+ struct PhaseTimer {
+-  using Clock=std::chrono::steady_clock;
+   std::uint64_t& counter;
+   const std::uint64_t* excluded;
+-  std::uint64_t previous;
+-  Clock::time_point started=Clock::now();
+-  explicit PhaseTimer(std::uint64_t& value,const std::uint64_t* nested=nullptr) noexcept
+-      :counter(value),excluded(nested),previous(nested?*nested:0) {}
++  std::uint64_t previous=0, started=0;
++  std::shared_ptr<detail::ObservationState> observation;
++  PhaseTimer(std::uint64_t& value,const std::shared_ptr<detail::ObservationState>& state,
++      const std::uint64_t* nested=nullptr) noexcept
++      :counter(value),excluded(nested),previous(nested?*nested:0),
++       observation(state && state->clocks_enabled()?state:nullptr) {
++    if (observation) started=observation->now();
++  }
+   ~PhaseTimer() {
+-    const auto elapsed=std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now()-started).count();
+-    const auto total=elapsed>0?static_cast<std::uint64_t>(elapsed):0;
++    if (!observation) return; // No clock expression is evaluated in off/counters.
++    const auto stopped=observation->now();
++    const auto total=stopped>started?stopped-started:0;
+     const auto child=excluded?*excluded-previous:0;
+     const auto amount=total>child?total-child:0;
+     counter+=std::min(amount,std::numeric_limits<std::uint64_t>::max()-counter);
+@@ -74,6 +78,7 @@
+   DeltaOptions options;
+   DeltaCompletion selected_completion=DeltaCompletion::anchored;
+   PhysicalRuntime physical;
++  std::shared_ptr<detail::ObservationState> observation;
+   storage::TupleLayout output_layout;
+   storage::TupleLayout core_layout;
+   std::vector<Factor> factors;
+@@ -89,7 +94,7 @@
+   Impl(PhysicalPlan plan,DeltaOptions value)
+       :Impl(PhysicalRuntime(std::move(plan),value.physical),value) {}
+   Impl(PhysicalRuntime owner,DeltaOptions value)
+-      :options(value),physical(std::move(owner)),output_layout(physical.result_layout(value.view)),
++      :options(value),physical(std::move(owner)),observation(physical.observation_state()),output_layout(physical.result_layout(value.view)),
+        core_layout(physical.result_layout(ResultView::core)),
+        ranks(physical.plan().nodes().size()) {
+     require(options.mode==DeltaMode::maintenance || options.mode==DeltaMode::delta,"invalid_options","unknown initial delta mode");
+@@ -635,6 +640,7 @@
+     void clear() noexcept { while (head) pop_front(); }
+   };
+   std::shared_ptr<Impl> owner;
++  std::shared_ptr<detail::ObservationState> observation;
+   std::optional<PhysicalEpoch> input;
+   storage::TupleLayout layout;
+   DeltaMetrics metrics;
+@@ -644,20 +650,53 @@
+   std::size_t payload_bytes=0;
+   bool leased=false;
+   bool retain_output=true, delivering=false, discard_requested=false;
+-  explicit Data(std::shared_ptr<Impl> runtime):owner(std::move(runtime)),layout(owner->output_layout) {
++  explicit Data(std::shared_ptr<Impl> runtime):owner(std::move(runtime)),observation(owner->observation),layout(owner->output_layout) {
+     stages.reserve(owner->physical.plan().inputs().size());
+   }
+   ~Data() { finish(); }
++  void observe() const noexcept {
++    if (!observation) return;
++    observation->set(MetricId::delta_work,metrics.work);
++    observation->set(MetricId::delta_candidates,metrics.candidates);
++    observation->set(MetricId::delta_accepted,metrics.accepted);
++    observation->set(MetricId::delta_rejected,metrics.rejected);
++    observation->set(MetricId::delta_replay_preparation_work,metrics.replay_preparation_work);
++    observation->set(MetricId::delta_replay_first_work,metrics.replay_first_work);
++    observation->set(MetricId::delta_replay_results_work,metrics.replay_results_work);
++    observation->set(MetricId::delta_replay_termination_work,metrics.replay_termination_work);
++    observation->set(MetricId::delta_finalization_work,metrics.finalization_work);
++    observation->set(MetricId::delta_propagation_ns,timings.propagation_ns);
++    observation->set(MetricId::delta_internal_delta_ns,timings.internal_delta_ns);
++    observation->set(MetricId::delta_output_mapping_ns,timings.output_mapping_ns);
++    observation->set(MetricId::delta_serialization_ns,timings.serialization_ns);
++    observation->set(MetricId::delta_sink_wait_ns,timings.sink_wait_ns);
++    observation->set(MetricId::delta_spool_rows_prepared,metrics.spool_rows);
++    observation->set(MetricId::delta_spool_bytes_prepared,metrics.spool_bytes);
++  }
++
+   void finish() noexcept {
+     if (delivering) { discard_requested=true; return; }
+     if (leased) {
+       if (!owner || !owner->output_active) std::terminate();
+       owner->output_active=false; leased=false;
+     }
++    if (observation && !rows.empty()) {
++      observation->add(MetricId::delta_discarded_records,static_cast<std::uint64_t>(rows.size()));
++      observation->event(TraceKind::discarded,0,0,observation_no_id,observation_no_id,0,
++          static_cast<std::uint64_t>(rows.size()),0);
++    }
+     owner.reset(); rows.clear();
+   }
+   void append(SetOperation operation,storage::Tuple tuple) {
+-    if (!retain_output) { owner->metric(metrics,metrics.discarded_records); return; }
++    if (observation) {
++      observation->add(MetricId::delta_mapped_records);
++      observation->event(TraceKind::mapped_record);
++    }
++    if (!retain_output) {
++      owner->metric(metrics,metrics.discarded_records);
++      if (observation) observation->add(MetricId::delta_discarded_records);
++      return;
++    }
+     const auto& options=owner->options;
+     require(rows.size()<options.spool_row_limit && rows.size()<std::numeric_limits<std::uint64_t>::max(),
+         "resource_limit","unpublished delta spool row limit exceeded; previous input preserved");
+@@ -682,6 +721,10 @@
+     const auto start=metrics.work;
+     owner->metric(metrics,metrics.discarded_records,static_cast<std::uint64_t>(rows.size()));
+     owner->charge(metrics,static_cast<std::uint64_t>(stages.size()));
++    if (observation) {
++      observation->add(MetricId::delta_discarded_records,static_cast<std::uint64_t>(rows.size()));
++      observation->event(TraceKind::drain);
++    }
+     retain_output=false; rows.clear(); payload_bytes=0;
+     for (auto& stage : stages) { stage.output_begin=0; stage.output_count=0; }
+     metrics.finalization_work+=metrics.work-start;
+@@ -842,10 +885,12 @@
+       }
+       if (earlier) { runtime.metric(metrics,metrics.rejected); continue; }
+       runtime.metric(metrics,metrics.accepted);
++      if (output.observation) output.observation->event(TraceKind::core_result,
++          metrics.accepted,0,runtime.factors[rank].node.value,occurrence.value,prefix);
+       if (on_output) transaction->on_output(row->values(),changed,operation==SetOperation::insert,removed,
+           replay?std::optional<std::size_t>{rank}:std::nullopt,replay?&*productive:nullptr);
+       if (!runtime.scalar_sql()) {
+-        PhaseTimer timing(output.timings.output_mapping_ns);
++        PhaseTimer timing(output.timings.output_mapping_ns,output.observation);
+         output.append(operation,runtime.map_result(std::move(*row),metrics));
+       }
+       if (replay) {
+@@ -907,18 +952,21 @@
+   SetOperation operation;
+   bool before_answer;
+   DeltaState phase=DeltaState::pending_delta;
++  detail::ObservationTicket observation_ticket;
+ 
+   Data(std::shared_ptr<Impl> runtime,const PhysicalSetUpdate& update)
+       :owner(std::move(runtime)),output(std::make_shared<Epoch::Data>(owner)),working(owner->live),
+        sequence(update.sequence),operation(update.operation),before_answer(owner->physical.has_answer()) {
+     if (owner->mode==DeltaMode::delta && owner->options.live_maintenance!=LiveMaintenance::eager)
+       transaction.emplace(*owner,output->metrics,working);
++    if (output->observation) observation_ticket=output->observation->begin(ObservationLayer::delta,sequence);
+     owner->processing=true; owner->lifecycle=phase;
+     try {
+-      PhaseTimer timing(output->timings.propagation_ns,&output->timings.internal_delta_ns);
++      PhaseTimer timing(output->timings.propagation_ns,output->observation,&output->timings.internal_delta_ns);
+       physical.emplace(owner->physical.begin_staged(update));
+     }
+     catch (...) { rollback(); throw; }
++    output->observe();
+   }
+   ~Data() { rollback(); }
+   bool active() const noexcept { return owner && physical && physical->active(); }
+@@ -928,19 +976,23 @@
+     if (!owner) return;
+     // Cursors and endpoint leases must close before the physical undo and
+     // before restoration of independently journaled live/index nodes.
+-    { PhaseTimer timing(output->timings.internal_delta_ns); stage.reset(); }
+-    { PhaseTimer timing(output->timings.propagation_ns); if (physical) physical->rollback(); }
+-    PhaseTimer timing(output->timings.internal_delta_ns);
+-    if (transaction) transaction->rollback();
+-    physical.reset(); transaction.reset(); working.reset();
+-    output->finish(); owner->processing=false; owner->lifecycle=DeltaState::ready;
++    { PhaseTimer timing(output->timings.internal_delta_ns,output->observation); stage.reset(); }
++    { PhaseTimer timing(output->timings.propagation_ns,output->observation); if (physical) physical->rollback(); }
++    {
++      PhaseTimer timing(output->timings.internal_delta_ns,output->observation);
++      if (transaction) transaction->rollback();
++      physical.reset(); transaction.reset(); working.reset();
++      output->finish(); owner->processing=false; owner->lifecycle=DeltaState::ready;
++    }
++    output->observe();
++    if (output->observation) output->observation->finish(observation_ticket,ObservationOutcome::aborted);
+     phase=DeltaState::aborted; owner.reset();
+   }
+   void finalize() {
+     auto& metrics=output->metrics;
+     if (owner->mode==DeltaMode::delta) {
+       if (owner->scalar_sql() && before_answer!=physical->support().has_answer) {
+-        PhaseTimer timing(output->timings.output_mapping_ns);
++        PhaseTimer timing(output->timings.output_mapping_ns,output->observation);
+         owner->metric(metrics,metrics.output_fields,2);
+         output->append(SetOperation::erase,owner->output_layout.tuple({Value{before_answer}}));
+         output->append(SetOperation::insert,owner->output_layout.tuple({Value{!before_answer}}));
+@@ -966,26 +1018,27 @@
+       metrics.finalization_work+=metrics.work-start;
+     }
+     set_phase(DeltaState::epoch_prepared);
++    if (output->observation) output->observation->event(TraceKind::prepared);
+   }
+   DeltaStep step() {
+     if (stage) {
+-      PhaseTimer timing(output->timings.internal_delta_ns,&output->timings.output_mapping_ns);
++      PhaseTimer timing(output->timings.internal_delta_ns,output->observation,&output->timings.output_mapping_ns);
+       if (stage->next()) return DeltaStep::core_result;
+       stage.reset(); return DeltaStep::progress;
+     }
+     const auto observer=[this](OccurrenceId occurrence,std::uint64_t prefix,const auto& before,const auto& after,
+         std::span<const JournalRecord> records) {
+       if (owner->mode==DeltaMode::delta) {
+-        PhaseTimer timing(output->timings.internal_delta_ns);
++        PhaseTimer timing(output->timings.internal_delta_ns,output->observation);
+         stage=std::make_unique<Impl::Stage>(*owner,*output,working,transaction?&*transaction:nullptr,
+             before,after,records,operation,occurrence,prefix);
+       }
+     };
+     {
+-      PhaseTimer timing(output->timings.propagation_ns,&output->timings.internal_delta_ns);
++      PhaseTimer timing(output->timings.propagation_ns,output->observation,&output->timings.internal_delta_ns);
+       if (physical->stage_next(observer,owner->options.epoch_view)) return DeltaStep::progress;
+     }
+-    PhaseTimer timing(output->timings.internal_delta_ns,&output->timings.output_mapping_ns);
++    PhaseTimer timing(output->timings.internal_delta_ns,output->observation,&output->timings.output_mapping_ns);
+     finalize(); return DeltaStep::prepared;
+   }
+ };
+@@ -1015,7 +1068,8 @@
+   require(bool(data_),"invalid_delta_epoch","moved-from pending delta epoch"); data_->validate();
+   require(data_->phase!=DeltaState::paused,"delta_paused","resume the paused delta epoch before stepping");
+   if (data_->phase==DeltaState::epoch_prepared) return DeltaStep::prepared;
+-  try { return data_->step(); } catch (...) { data_->rollback(); throw; }
++  try { const auto result=data_->step(); data_->output->observe(); return result; }
++  catch (...) { data_->rollback(); throw; }
+ }
+ void DeltaRuntime::PendingEpoch::pause() {
+   require(bool(data_),"invalid_delta_epoch","moved-from pending delta epoch"); data_->validate();
+@@ -1030,12 +1084,13 @@
+ void DeltaRuntime::PendingEpoch::start_drain() {
+   require(bool(data_),"invalid_delta_epoch","moved-from pending delta epoch"); data_->validate();
+   try {
+-    PhaseTimer timing(data_->output->timings.internal_delta_ns);
++    PhaseTimer timing(data_->output->timings.internal_delta_ns,data_->output->observation);
+     const auto start=data_->output->metrics.work;
+     data_->output->disable_output();
+     if (data_->stage) data_->stage->exclude_work(data_->output->metrics.work-start);
+     if (data_->phase!=DeltaState::epoch_prepared) data_->set_phase(DeltaState::draining);
+   } catch (...) { data_->rollback(); throw; }
++  data_->output->observe();
+ }
+ void DeltaRuntime::PendingEpoch::drain() {
+   require(bool(data_),"invalid_delta_epoch","moved-from pending delta epoch"); data_->validate();
+@@ -1051,17 +1106,20 @@
+   static_assert(std::is_nothrow_move_constructible_v<PhysicalEpoch>);
+   static_assert(std::is_nothrow_move_constructible_v<SignedResult>);
+   {
+-    PhaseTimer timing(data_->output->timings.propagation_ns);
++    PhaseTimer timing(data_->output->timings.propagation_ns,data_->output->observation);
+     data_->output->input.emplace(data_->physical->commit());
+   }
+   if (data_->transaction) {
+-    PhaseTimer timing(data_->output->timings.internal_delta_ns);
++    PhaseTimer timing(data_->output->timings.internal_delta_ns,data_->output->observation);
+     data_->transaction->commit();
+   }
+   {
+-    PhaseTimer timing(data_->output->timings.internal_delta_ns);
++    PhaseTimer timing(data_->output->timings.internal_delta_ns,data_->output->observation);
+     if (d.mode==DeltaMode::delta) { d.live=std::move(data_->working); d.live_sequence=data_->sequence; }
+   }
++  data_->output->observe();
++  if (data_->output->observation)
++    data_->output->observation->finish(data_->observation_ticket,ObservationOutcome::committed);
+   auto output=std::move(data_->output);
+   output->leased=!output->rows.empty(); d.output_active=output->leased; d.processing=false; d.lifecycle=DeltaState::ready;
+   data_->physical.reset(); data_->transaction.reset(); data_->phase=DeltaState::committed; data_->owner.reset();
+@@ -1093,6 +1151,10 @@
+   require(!data_->delivering,"runtime_busy","a sink callback owns the current output row");
+   if (data_->rows.empty()) return {};
+   std::optional<SignedResult> result{std::move(data_->rows.front())}; data_->rows.pop_front();
++  if (data_->observation) {
++    data_->observation->add(MetricId::delta_transferred_records);
++    data_->observation->event(TraceKind::transferred,result->ordinal);
++  }
+   if (data_->rows.empty()) data_->finish();
+   return result;
+ }
+@@ -1106,18 +1168,49 @@
+   require(!data->delivering,"runtime_busy","a sink callback owns the current output row");
+   if (data->rows.empty()) return false;
+   data->delivering=true;
++  bool serializing=false;
+   try {
+-    if (serialize) { PhaseTimer timing(data->timings.serialization_ns); serialize(data->rows.front()); }
+-    PhaseTimer timing(data->timings.sink_wait_ns); sink(data->rows.front());
++    if (serialize) {
++      serializing=true;
++      if (data->observation) {
++        data->observation->add(MetricId::delta_serialization_attempts);
++        data->observation->event(TraceKind::serialization_attempt,data->rows.front().ordinal);
++      }
++      { PhaseTimer timing(data->timings.serialization_ns,data->observation); serialize(data->rows.front()); }
++      if (data->observation) {
++        data->observation->add(MetricId::delta_serialization_successes);
++        data->observation->event(TraceKind::serialization_success,data->rows.front().ordinal);
++      }
++    }
++    serializing=false;
++    if (data->observation) {
++      data->observation->add(MetricId::delta_sink_attempts);
++      data->observation->event(TraceKind::sink_attempt,data->rows.front().ordinal);
++    }
++    { PhaseTimer timing(data->timings.sink_wait_ns,data->observation); sink(data->rows.front()); }
++    if (data->observation) {
++      data->observation->add(MetricId::delta_sink_successes);
++      data->observation->event(TraceKind::sink_success,data->rows.front().ordinal);
++    }
+   }
+   catch (...) {
+-    data->delivering=false;
++    if (data->observation) {
++      data->observation->add(serializing?MetricId::delta_serialization_failures:MetricId::delta_sink_failures);
++      data->observation->event(serializing?TraceKind::serialization_failure:TraceKind::sink_failure,data->rows.front().ordinal);
++    }
++    data->observe(); data->delivering=false;
+     if (data->discard_requested) data->finish();
+     throw;
+   }
+-  data->delivering=false;
++  data->observe(); data->delivering=false;
+   if (data->discard_requested) data->finish();
+-  else { data->rows.pop_front(); if (data->rows.empty()) data->finish(); }
++  else {
++    if (data->observation) {
++      data->observation->add(MetricId::delta_acknowledged_records);
++      data->observation->event(TraceKind::acknowledged,data->rows.front().ordinal);
++    }
++    data->rows.pop_front(); if (data->rows.empty()) data->finish();
++  }
+   return true;
+ }
+ void DeltaRuntime::Epoch::discard() noexcept { if (data_) data_->finish(); }
+@@ -1441,4 +1534,6 @@
+       rebuilt->parent_rows==d.live->parent_rows && rebuilt->child_index==d.live->child_index && rebuilt->child_rows==d.live->child_rows,
+       "runtime_contract","live cache or parent-separator counts differ from E-factor bootstrap");
+ }
++ObservationSnapshot DeltaRuntime::observations() const { return impl().physical.observations(); }
++ObservationTrace DeltaRuntime::observation_trace() const { return impl().physical.observation_trace(); }
+ }  // namespace crown::runtime
+--- /dev/null
++++ b/src/runtime/observation.cpp
+@@ -0,0 +1,186 @@
++#include "crown/runtime/observation.hpp"
++#include "crown/api/error.hpp"
++#include <algorithm>
++#include <chrono>
++#include <limits>
++
++namespace crown::runtime {
++namespace {
++constexpr std::array<MetricDescriptor,observation_metric_count> registry{{
++  {MetricId::support_work, "support.work", "abstract_actions", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::counter, ""},
++  {MetricId::support_native_record_visits, "support.native_record_visits", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::counter, ""},
++  {MetricId::support_reverse_index_records_visited, "support.reverse_index_records_visited", "count", "optional-observation-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::counter, ""},
++  {MetricId::support_child_key_probes, "support.child_key_probes", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::counter, ""},
++  {MetricId::support_child_key_events, "support.child_key_events", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::counter, ""},
++  {MetricId::support_survivor_transitions, "support.survivor_transitions", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::counter, ""},
++  {MetricId::support_parent_key_transitions, "support.parent_key_transitions", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::counter, ""},
++  {MetricId::support_visible_key_transitions, "support.visible_key_transitions", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::counter, ""},
++  {MetricId::support_candidates_created, "support.candidates_created", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::counter, ""},
++  {MetricId::support_candidates_reclaimed, "support.candidates_reclaimed", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::counter, ""},
++  {MetricId::support_storage_changes, "support.storage_changes", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::counter, ""},
++  {MetricId::support_metadata_changes, "support.metadata_changes", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::counter, ""},
++  {MetricId::support_saved_child_flags, "support.saved_child_flags", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::counter, ""},
++  {MetricId::support_journal_records, "support.journal_records", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::counter, ""},
++  {MetricId::support_events_enqueued, "support.events_enqueued", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::counter, ""},
++  {MetricId::support_events_applied, "support.events_applied", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::counter, ""},
++  {MetricId::support_queue_peak, "support.queue_peak", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::high_water, ""},
++  {MetricId::support_copied_rows, "support.copied_rows", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::counter, ""},
++  {MetricId::support_copied_index_memberships, "support.copied_index_memberships", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::counter, ""},
++  {MetricId::support_copied_metadata_entries, "support.copied_metadata_entries", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::counter, ""},
++  {MetricId::support_copied_child_flags, "support.copied_child_flags", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::support, MetricKind::counter, ""},
++  {MetricId::physical_work_inclusive, "physical.work_inclusive", "abstract_actions", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::physical, MetricKind::counter, "successfully charged support.work; incomplete nested charge is unavailable"},
++  {MetricId::physical_work_exclusive, "physical.work_exclusive", "abstract_actions", "optional-observation-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::physical, MetricKind::counter, "support.work excluded"},
++  {MetricId::physical_source_changes, "physical.source_changes", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::physical, MetricKind::counter, ""},
++  {MetricId::physical_aliases_visited, "physical.aliases_visited", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::physical, MetricKind::counter, ""},
++  {MetricId::physical_aliases_filtered, "physical.aliases_filtered", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::physical, MetricKind::counter, ""},
++  {MetricId::physical_derivation_changes, "physical.derivation_changes", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::physical, MetricKind::counter, ""},
++  {MetricId::physical_native_crossings, "physical.native_crossings", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::physical, MetricKind::counter, ""},
++  {MetricId::physical_constraint_rows, "physical.constraint_rows", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::physical, MetricKind::counter, ""},
++  {MetricId::physical_constraint_validations, "physical.constraint_validations", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::physical, MetricKind::counter, ""},
++  {MetricId::delta_work, "delta.work", "abstract_actions", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::counter, "view/cursor actions; excludes physical/support work"},
++  {MetricId::delta_candidates, "delta.candidates", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::counter, ""},
++  {MetricId::delta_accepted, "delta.accepted", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::counter, ""},
++  {MetricId::delta_rejected, "delta.rejected", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::counter, ""},
++  {MetricId::delta_replay_preparation_work, "delta.replay_preparation_work", "abstract_actions", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::counter, "subset of layer work; not additive with total"},
++  {MetricId::delta_replay_first_work, "delta.replay_first_work", "abstract_actions", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::counter, "subset of layer work; not additive with total"},
++  {MetricId::delta_replay_results_work, "delta.replay_results_work", "abstract_actions", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::counter, "subset of layer work; not additive with total"},
++  {MetricId::delta_replay_termination_work, "delta.replay_termination_work", "abstract_actions", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::counter, "subset of layer work; not additive with total"},
++  {MetricId::delta_finalization_work, "delta.finalization_work", "abstract_actions", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::counter, "subset of layer work; not additive with total"},
++  {MetricId::delta_spool_rows_prepared, "delta.spool_rows_prepared", "count", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::high_water, ""},
++  {MetricId::delta_spool_bytes_prepared, "delta.spool_bytes_prepared", "accounted_bytes", "mandatory-runtime-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::high_water, ""},
++  {MetricId::delta_mapped_records, "delta.mapped_records", "count", "optional-observation-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::counter, ""},
++  {MetricId::delta_transferred_records, "delta.transferred_records", "count", "optional-observation-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::counter, ""},
++  {MetricId::delta_discarded_records, "delta.discarded_records", "count", "optional-observation-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::counter, ""},
++  {MetricId::delta_serialization_attempts, "delta.serialization_attempts", "count", "optional-observation-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::counter, ""},
++  {MetricId::delta_serialization_successes, "delta.serialization_successes", "count", "optional-observation-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::counter, ""},
++  {MetricId::delta_serialization_failures, "delta.serialization_failures", "count", "optional-observation-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::counter, ""},
++  {MetricId::delta_sink_attempts, "delta.sink_attempts", "count", "optional-observation-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::counter, ""},
++  {MetricId::delta_sink_successes, "delta.sink_successes", "count", "optional-observation-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::counter, ""},
++  {MetricId::delta_sink_failures, "delta.sink_failures", "count", "optional-observation-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::counter, ""},
++  {MetricId::delta_acknowledged_records, "delta.acknowledged_records", "count", "optional-observation-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::counter, ""},
++  {MetricId::delta_propagation_ns, "delta.propagation_ns", "nanoseconds", "optional-observation-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::timing, "disjoint legacy delta timing phase"},
++  {MetricId::delta_internal_delta_ns, "delta.internal_delta_ns", "nanoseconds", "optional-observation-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::timing, "disjoint legacy delta timing phase"},
++  {MetricId::delta_output_mapping_ns, "delta.output_mapping_ns", "nanoseconds", "optional-observation-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::timing, "disjoint legacy delta timing phase"},
++  {MetricId::delta_serialization_ns, "delta.serialization_ns", "nanoseconds", "optional-observation-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::timing, "disjoint legacy delta timing phase"},
++  {MetricId::delta_sink_wait_ns, "delta.sink_wait_ns", "nanoseconds", "optional-observation-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::timing, "disjoint legacy delta timing phase"},
++  {MetricId::delta_clock_reads, "delta.clock_reads", "count", "optional-observation-v1", "admitted_attempt; aborted values are attempted work, not committed changes", ObservationLayer::delta, MetricKind::counter, ""},
++}};
++void increment(std::uint64_t& value,std::uint64_t amount,bool& saturated) noexcept {
++  const auto room=std::numeric_limits<std::uint64_t>::max()-value;
++  if (amount>room) { value=std::numeric_limits<std::uint64_t>::max(); saturated=true; }
++  else value+=amount;
++}
++#ifdef CROWN_RUNTIME_TESTING
++detail::ObservationClock test_clock=nullptr;
++#endif
++}
++std::span<const MetricDescriptor> observation_registry() noexcept { return registry; }
++namespace detail {
++std::shared_ptr<ObservationState> ObservationState::create(ObservationOptions options) {
++  if (options.mode!=ObservationMode::off && options.mode!=ObservationMode::counters &&
++      options.mode!=ObservationMode::timed && options.mode!=ObservationMode::trace)
++    throw Error("invalid_observation_options","unknown observation mode");
++  if (options.sample_period==0 || options.sample_offset>=options.sample_period)
++    throw Error("invalid_observation_options","invalid causal sampling period/offset");
++  if (options.mode==ObservationMode::off) return {};
++  return std::make_shared<ObservationState>(options);
++}
++ObservationState::ObservationState(ObservationOptions options):options_(options) {
++  snapshot_.options=options;
++  if (options.mode==ObservationMode::trace) buffer_.resize(options.trace_capacity);
++}
++ObservationSummary* ObservationState::target() noexcept {
++  if (snapshot_.current) return &*snapshot_.current;
++  return snapshot_.last?&*snapshot_.last:nullptr;
++}
++ObservationTicket ObservationState::begin(ObservationLayer layer,std::uint64_t sequence) noexcept {
++  bool owns=!snapshot_.current;
++  if (owns) {
++    increment(snapshot_.attempts,1,snapshot_.lifetime_counts_saturated);
++    snapshot_.current.emplace(); occurrence_=observation_no_id; prefix_=0;
++    auto& summary=*snapshot_.current;
++    summary.attempt=snapshot_.attempts; summary.sequence=sequence; summary.owner=layer;
++    selected_=options_.mode==ObservationMode::trace && !snapshot_.lifetime_counts_saturated &&
++        sequence%options_.sample_period==options_.sample_offset;
++    snapshot_.trace=options_.mode!=ObservationMode::trace?TraceDisposition::disabled:
++        selected_?TraceDisposition::pending:TraceDisposition::not_sampled;
++    snapshot_.trace_attempt=summary.attempt; snapshot_.trace_sequence=sequence;
++    snapshot_.trace_records=0; snapshot_.trace_dropped=0; snapshot_.trace_dropped_saturated=false; snapshot_.trace_truncated=false;
++    event(TraceKind::begin);
++  }
++  for (const auto& descriptor:registry) if (descriptor.layer==layer) {
++    auto& value=snapshot_.current->values[static_cast<std::size_t>(descriptor.id)];
++    if (value.availability==MetricAvailability::unavailable)
++      value.availability=descriptor.kind==MetricKind::timing && !clocks_enabled()?
++          MetricAvailability::disabled:MetricAvailability::available;
++  }
++  return {snapshot_.current->attempt,owns};
++}
++void ObservationState::finish(ObservationTicket ticket,ObservationOutcome outcome) noexcept {
++  if (!ticket.owns || !snapshot_.current || snapshot_.current->attempt!=ticket.attempt) return;
++  event(outcome==ObservationOutcome::committed?TraceKind::commit:TraceKind::abort);
++  snapshot_.current->outcome=outcome;
++  if (outcome==ObservationOutcome::committed) increment(snapshot_.commits,1,snapshot_.lifetime_counts_saturated);
++  else increment(snapshot_.aborts,1,snapshot_.lifetime_counts_saturated);
++  if (selected_) snapshot_.trace=outcome==ObservationOutcome::committed?TraceDisposition::committed:TraceDisposition::aborted;
++  snapshot_.last=*snapshot_.current; snapshot_.current.reset();
++}
++void ObservationState::set(MetricId id,std::uint64_t amount) noexcept {
++  if (auto* summary=target()) {
++    auto& value=summary->values[static_cast<std::size_t>(id)];
++    if (value.availability==MetricAvailability::available && !value.saturated) {
++      value.value=amount;
++      if (registry[static_cast<std::size_t>(id)].kind==MetricKind::timing && amount==UINT64_MAX)
++        value.saturated=true;
++    }
++  }
++}
++void ObservationState::unavailable(MetricId id) noexcept {
++  if (auto* summary=target()) summary->values[static_cast<std::size_t>(id)].availability=MetricAvailability::unavailable;
++}
++void ObservationState::add(MetricId id,std::uint64_t amount) noexcept {
++  if (auto* summary=target()) {
++    auto& value=summary->values[static_cast<std::size_t>(id)];
++    if (value.availability==MetricAvailability::available) increment(value.value,amount,value.saturated);
++  }
++}
++void ObservationState::event(TraceKind kind,std::uint64_t event_id,std::uint64_t cause,
++    std::uint64_t node,std::uint64_t occurrence,std::uint64_t prefix,std::uint64_t before,
++    std::uint64_t after,std::uint64_t role,std::uint64_t tuple) noexcept {
++  if (!selected_) return;
++  if (snapshot_.trace_records==buffer_.size()) {
++    increment(snapshot_.trace_dropped,1,snapshot_.trace_dropped_saturated); snapshot_.trace_truncated=true; return;
++  }
++  buffer_[snapshot_.trace_records++]={kind,event_id,cause,node,
++      occurrence==observation_no_id?occurrence_:occurrence,prefix==0?prefix_:prefix,before,after,role,tuple};
++}
++bool ObservationState::clocks_enabled() const noexcept {
++  return options_.mode==ObservationMode::timed || (options_.mode==ObservationMode::trace && options_.trace_timings);
++}
++std::uint64_t ObservationState::now() noexcept {
++  add(MetricId::delta_clock_reads);
++#ifdef CROWN_RUNTIME_TESTING
++  if (test_clock) return test_clock();
++#endif
++  const auto tick=std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
++  return tick>0?static_cast<std::uint64_t>(tick):0;
++}
++ObservationSnapshot ObservationState::snapshot() const noexcept { return snapshot_; }
++ObservationTrace ObservationState::trace() const {
++  ObservationTrace result; result.snapshot=snapshot_;
++  result.records.assign(buffer_.begin(),buffer_.begin()+static_cast<std::ptrdiff_t>(snapshot_.trace_records));
++  return result;
++}
++ObservationSnapshot observation_snapshot(const std::shared_ptr<ObservationState>& state,ObservationOptions options) noexcept {
++  if (state) return state->snapshot();
++  ObservationSnapshot result; result.options=options; return result;
++}
++ObservationTrace observation_trace(const std::shared_ptr<ObservationState>& state,ObservationOptions options) {
++  if (state) return state->trace();
++  return {observation_snapshot(state,options),{}};
++}
++#ifdef CROWN_RUNTIME_TESTING
++void set_observation_clock_for_testing(ObservationClock clock) noexcept { test_clock=clock; }
++#endif
++} // namespace detail
++} // namespace crown::runtime
+--- a/src/runtime/physical.cpp
++++ b/src/runtime/physical.cpp
+@@ -31,12 +31,13 @@
+   using Counts=std::map<Row,std::uint64_t>;
+   PhysicalRuntimeOptions options;
+   SupportRuntime kernel;
++  std::shared_ptr<detail::ObservationState> observation;
+   std::vector<storage::ReferenceTable> sources;
+   std::vector<Counts> counts;
+   std::uint64_t sequence=0;
+   BuildMetrics build_metrics;
+   bool updating=false, enforced_constraints=false;
+-  Impl(PhysicalPlan plan,PhysicalRuntimeOptions value):options(value),kernel(std::move(plan),value.support),counts(kernel.plan().inputs().size()) {
++  Impl(PhysicalPlan plan,PhysicalRuntimeOptions value):options(value),kernel(std::move(plan),value.support),observation(kernel.observation_state()),counts(kernel.plan().inputs().size()) {
+     require(options.derivation_limit>0,"invalid_options","physical derivation limit must be positive");
+     const auto& compiled=kernel.plan(); const auto& catalog=compiled.source_catalog();
+     const auto tables=catalog.tables.size();
+@@ -99,11 +100,44 @@
+   std::vector<CountUndo> undo;
+   std::size_t next_route=0;
+   bool routes_complete=false;
++  detail::ObservationTicket observation_ticket;
++  // Optional bookkeeping records successful nested charges, never an inference
++  // from coordinator/support counter magnitudes. Failed stage/charge is sticky
++  // until this pending update closes.
++  std::uint64_t observed_charged_support_work=0;
++  bool observed_support_accounting_complete=true;
+   Data(std::shared_ptr<Impl> value,const PhysicalSetUpdate& update)
+-      :owner(std::move(value)),output{update.sequence,update.table,update.operation,false,{}, {},{}} {}
++      :owner(std::move(value)),output{update.sequence,update.table,update.operation,false,{}, {},{}} {
++    if (owner->observation) observation_ticket=owner->observation->begin(ObservationLayer::physical,update.sequence);
++  }
+   ~Data() { rollback(); }
+   Impl& active() const {
+     require(owner && logical && logical->active(),"invalid_epoch","prepared physical update is closed"); return *owner;
++  }
++  void observe() const noexcept {
++    if (!owner || !owner->observation) return;
++    auto& observation=*owner->observation;
++    const auto& metrics=output.metrics;
++    observation.set(MetricId::physical_work_inclusive,metrics.work);
++    if (observed_support_accounting_complete) {
++      // Every successful charge is part of metrics.work, so this subtraction
++      // partitions actual charged work even when unrelated scan work dominates.
++      observation.set(MetricId::physical_work_exclusive,metrics.work-observed_charged_support_work);
++    } else {
++      // A logical stage may fail after partial work, or its completed work may
++      // exceed the coordinator's remaining budget. Neither is an inclusive
++      // physical total, even when unrelated coordinator work is numerically
++      // larger than all observed support work.
++      observation.unavailable(MetricId::physical_work_inclusive);
++      observation.unavailable(MetricId::physical_work_exclusive);
++    }
++    observation.set(MetricId::physical_source_changes,metrics.source_changes);
++    observation.set(MetricId::physical_aliases_visited,metrics.aliases_visited);
++    observation.set(MetricId::physical_aliases_filtered,metrics.aliases_filtered);
++    observation.set(MetricId::physical_derivation_changes,metrics.derivation_changes);
++    observation.set(MetricId::physical_native_crossings,metrics.native_crossings);
++    observation.set(MetricId::physical_constraint_rows,metrics.constraint_rows);
++    observation.set(MetricId::physical_constraint_validations,metrics.constraint_validations);
+   }
+   void charge(std::uint64_t amount=1) {
+     auto& work=output.metrics.work;
+@@ -119,6 +153,7 @@
+   void rollback() noexcept {
+     if (!owner) return;
+     if (logical) logical->rollback();
++    observe();
+     for (auto it=undo.rbegin();it!=undo.rend();++it) {
+       switch (it->kind) {
+         case CountKind::inserted: it->counts->erase(it->item); break;
+@@ -130,6 +165,7 @@
+     }
+     undo.clear(); source.reset(); logical.reset();
+     output.source.reset(); output.derivations.clear();
++    if (owner->observation) owner->observation->finish(observation_ticket,ObservationOutcome::aborted);
+     owner->updating=false; owner.reset();
+   }
+   void validate_constraints() {
+@@ -146,6 +182,10 @@
+   }
+   void route(OccurrenceId occurrence,std::uint64_t prefix,const Row& row,const RouteObserver& observer,EpochViewOptions view_options) {
+     metric(output.metrics.aliases_visited);
++    if (owner->observation) {
++      owner->observation->route(occurrence.value,prefix);
++      owner->observation->event(TraceKind::alias,0,0,owner->input(occurrence).node.value,occurrence.value,prefix);
++    }
+     const auto& input=owner->input(occurrence);
+     auto tuple=owner->kernel.plan().adapt_input(occurrence,row);
+     if (!tuple) { metric(output.metrics.aliases_filtered); return; }
+@@ -172,8 +212,16 @@
+       metric(output.metrics.native_crossings);
+       const auto before_work=logical->preview().metrics.work;
+       const auto checkpoint=logical->checkpoint();
++      if (owner->observation) observed_support_accounting_complete=false;
+       require(logical->stage(input.node,change.tuple.values()),"runtime_contract","derivation zero crossing did not change native membership");
+-      charge(logical->preview().metrics.work-before_work);
++      const auto support_work=logical->preview().metrics.work-before_work;
++      charge(support_work);
++      if (owner->observation) {
++        // charge() checked the full coordinator total, which already contains
++        // all earlier nested charges; this subset cannot overflow independently.
++        observed_charged_support_work+=support_work;
++        observed_support_accounting_complete=true;
++      }
+       if (observer) {
+         auto before_view=logical->stage_view(checkpoint,SnapshotSide::before,view_options);
+         auto after_view=logical->stage_view(checkpoint,SnapshotSide::after,view_options);
+@@ -187,6 +235,8 @@
+       const bool add=output.operation==SetOperation::insert;
+       if (existing.has_value()==add) { routes_complete=true; return; }
+       output.physical_changed=true; metric(output.metrics.source_changes);
++      if (owner->observation) owner->observation->event(TraceKind::source_change,0,0,
++          observation_no_id,observation_no_id,0,static_cast<std::uint64_t>(!add),static_cast<std::uint64_t>(add));
+       auto& table=owner->source(output.table); source.emplace(table.journal());
+       if (add) {
+         const auto inserted=source->insert(tuple);
+@@ -199,7 +249,7 @@
+       validate_constraints();
+       const auto& routes=owner->kernel.plan().base_routes()[output.table.value];
+       undo.reserve(routes.size()); output.derivations.reserve(routes.size());
+-      routes_complete=routes.empty();
++      routes_complete=routes.empty(); observe();
+     } catch (...) { rollback(); throw; }
+   }
+ };
+@@ -220,7 +270,7 @@
+     const auto position=data_->next_route;
+     // The source pin owns the complete input row across calls and facade moves.
+     data_->route(routes[position],static_cast<std::uint64_t>(position)+1,data_->output.source->tuple().values(),observer,options);
+-    ++data_->next_route; data_->routes_complete=data_->next_route==routes.size(); return true;
++    ++data_->next_route; data_->routes_complete=data_->next_route==routes.size(); data_->observe(); return true;
+   } catch (...) { data_->rollback(); throw; }
+ }
+ void PhysicalRuntime::PendingUpdate::rollback() noexcept { if (data_) data_->rollback(); }
+@@ -243,11 +293,14 @@
+   // The logical token is private and validated above. All operations from this
+   // point, including output movement and source/count undo cleanup, allocate
+   // nothing; public driver reads remain busy until the entire barrier ends.
++  data_->observe();
+   auto support=data_->logical->commit();
+   if (data_->source) data_->source->commit();
+   data_->source.reset(); data_->undo.clear(); data_->logical.reset();
+   PhysicalEpoch result{std::move(data_->output),std::move(support)};
+-  d.sequence=result.input.sequence; d.updating=false; data_->owner.reset();
++  d.sequence=result.input.sequence; d.updating=false;
++  if (d.observation) d.observation->finish(data_->observation_ticket,ObservationOutcome::committed);
++  data_->owner.reset();
+   return result;
+ }
+ 
+@@ -524,4 +577,7 @@
+     }
+   }
+ }
++std::shared_ptr<detail::ObservationState> PhysicalRuntime::observation_state() const { return impl().observation; }
++ObservationSnapshot PhysicalRuntime::observations() const { return impl().kernel.observations(); }
++ObservationTrace PhysicalRuntime::observation_trace() const { return impl().kernel.observation_trace(); }
+ }  // namespace crown::runtime
+--- a/src/runtime/session.cpp
++++ b/src/runtime/session.cpp
+@@ -59,6 +59,7 @@
+   std::optional<DeltaRuntime::PendingEpoch> pending;
+   std::optional<DeltaRuntime::Epoch> output;
+   io::InputProgress final_progress;
++  ObservationSnapshot retained_observation;
+ 
+   struct Guard {
+     Impl& data;
+@@ -138,14 +139,20 @@
+     if (pending) { pending->rollback(); pending.reset(); }
+     window_pending.reset(); pending_command_sequence.reset(); metadata_ready=false; metadata_draining=false;
+   }
++  void retain_observation() noexcept {
++    if (runtime) retained_observation=runtime->observations();
++    retained_observation.session_attached=true;
++    retained_observation.session_committed_sequence=committed_sequence;
++  }
+   void publish(DeltaRuntime::Epoch epoch,std::uint64_t sequence,bool discard) noexcept {
+     // The reader prepared its source map node before engine work. Once the
+     // engine publishes, every operation here is a nonthrowing move or cleanup.
+     acknowledge(); committed_sequence=sequence; pending.reset();
+-    if (discard) epoch.discard();
++    if (discard) { epoch.discard(); retain_observation(); }
+     else {
+       output.emplace(std::move(epoch));
+       // Even an inactive Epoch still owns PhysicalEpoch journals/source pins.
++      retain_observation();
+       if (!output->active()) output.reset();
+     }
+   }
+@@ -200,7 +207,7 @@
+   void stop() noexcept {
+     if (control==SessionState::stopped || control==SessionState::dropped) return;
+     abort();
+-    if (output) { output->discard(); output.reset(); }
++    if (output) { output->discard(); retain_observation(); output.reset(); }
+     if (reader) {
+       input_failed=input_failed || reader->failed();
+       final_progress=reader->close(); reader.reset();
+@@ -210,11 +217,16 @@
+       final_progress=queue->close(); queue.reset();
+     }
+     if (window) window->stop();
+-    input.reset(); control=SessionState::stopped;
++    retain_observation(); input.reset(); control=SessionState::stopped;
+   }
+   void drop() noexcept {
+     if (control==SessionState::dropped) return;
+-    stop(); window.reset(); runtime.reset(); final_progress=io::InputProgress{}; control=SessionState::dropped;
++    stop(); window.reset(); runtime.reset();
++    if (retained_observation.options.mode==ObservationMode::trace) {
++      retained_observation.trace=TraceDisposition::released;
++      retained_observation.trace_records=0;
++    }
++    final_progress=io::InputProgress{}; control=SessionState::dropped;
+   }
+ };
+ 
+@@ -327,13 +339,13 @@
+     const auto sequence=d.pending->sequence();
+     try { d.publish(d.pending->discard(),sequence,true); } catch (...) { d.abort(); throw; }
+   } else if (d.window_pending) { d.acknowledge(); }
+-  else if (d.output) { d.output->discard(); d.output.reset(); }
++  else if (d.output) { d.output->discard(); d.retain_observation(); d.output.reset(); }
+ }
+ std::optional<SignedResult> QuerySession::next_output() {
+   auto& d=*data_; Impl::Guard guard(d); d.available(true);
+   require(!d.has_private(),"session_pending_epoch","private pending output cannot be observed before commitment");
+   if (!d.output) return {};
+-  auto row=d.output->next(); if (!d.output->active()) d.output.reset(); return row;
++  auto row=d.output->next(); d.retain_observation(); if (!d.output->active()) d.output.reset(); return row;
+ }
+ SessionSnapshot QuerySession::snapshot(std::optional<SnapshotLimits> limits) const {
+   auto& d=*data_; Impl::Guard guard(d);
+@@ -371,4 +383,18 @@
+ }
+ void QuerySession::stop() { auto& d=*data_; Impl::Guard guard(d); d.stop(); }
+ void QuerySession::drop() { auto& d=*data_; Impl::Guard guard(d); d.drop(); }
++ObservationSnapshot QuerySession::observations() const {
++  auto& d=*data_; Impl::Guard guard(d);
++  auto result=d.runtime?d.runtime->observations():d.retained_observation;
++  result.session_attached=true; result.session_committed_sequence=d.committed_sequence;
++  return result;
++}
++ObservationTrace QuerySession::observation_trace() const {
++  auto& d=*data_; Impl::Guard guard(d);
++  // Drop releases optional trace storage, retaining only the fixed summary.
++  auto result=d.runtime?d.runtime->observation_trace():ObservationTrace{d.retained_observation,{}};
++  result.snapshot.session_attached=true;
++  result.snapshot.session_committed_sequence=d.committed_sequence;
++  return result;
++}
+ }  // namespace crown::runtime
+--- a/src/runtime/support.cpp
++++ b/src/runtime/support.cpp
+@@ -77,6 +77,7 @@
+ struct SupportRuntime::Impl {
+   PhysicalPlan plan;
+   SupportOptions options;
++  std::shared_ptr<detail::ObservationState> observation;
+   storage::TupleLayout sql_output;
+   SupportOwnerId owner=new_owner();
+   std::uint64_t sequence=0;
+@@ -85,7 +86,9 @@
+   std::unique_ptr<State> state;
+   std::vector<std::vector<std::size_t>> children;
+   std::vector<std::optional<std::size_t>> incoming;
+-  Impl(PhysicalPlan p,SupportOptions o):plan(std::move(p)),options(o),sql_output(sql_result_layout(plan)),state(std::make_unique<State>(plan)),children(plan.nodes().size()),incoming(plan.nodes().size()) {
++  Impl(PhysicalPlan p,SupportOptions o):plan(std::move(p)),options(o),observation(detail::ObservationState::create(o.observation)),sql_output(sql_result_layout(plan)),state(std::make_unique<State>(plan)),children(plan.nodes().size()),incoming(plan.nodes().size()) {
++    require(!(options.observation.mode==ObservationMode::off && options.capture_transitions),"invalid_observation_options","off mode conflicts with allocating full transition capture");
++    if (observation) observation->bind_owner(owner.value);
+     require(options.support_limit>0,"invalid_options","projection support limit must be positive");
+     require(options.order==PropagationOrder::fifo || options.order==PropagationOrder::lifo,"invalid_options","unknown propagation order");
+     for (const auto& node : plan.nodes()) children[node.id.value].resize(node.children.size());
+@@ -95,6 +98,29 @@
+   }
+   void readable() const { require(!updating,"runtime_busy","a prepared logical epoch is active"); }
+   void writable() const { readable(); require(readers==0,"runtime_busy","result cursors pin the committed epoch"); }
++  void observe(const SupportMetrics& metrics) const noexcept {
++    if (!observation) return;
++    observation->set(MetricId::support_work,metrics.work);
++    observation->set(MetricId::support_native_record_visits,metrics.native_record_visits);
++    observation->set(MetricId::support_child_key_probes,metrics.child_key_probes);
++    observation->set(MetricId::support_child_key_events,metrics.child_key_events);
++    observation->set(MetricId::support_survivor_transitions,metrics.survivor_transitions);
++    observation->set(MetricId::support_parent_key_transitions,metrics.parent_key_transitions);
++    observation->set(MetricId::support_visible_key_transitions,metrics.visible_key_transitions);
++    observation->set(MetricId::support_candidates_created,metrics.candidates_created);
++    observation->set(MetricId::support_candidates_reclaimed,metrics.candidates_reclaimed);
++    observation->set(MetricId::support_storage_changes,metrics.storage_changes);
++    observation->set(MetricId::support_metadata_changes,metrics.metadata_changes);
++    observation->set(MetricId::support_saved_child_flags,metrics.saved_child_flags);
++    observation->set(MetricId::support_journal_records,metrics.journal_records);
++    observation->set(MetricId::support_events_enqueued,metrics.events_enqueued);
++    observation->set(MetricId::support_events_applied,metrics.events_applied);
++    observation->set(MetricId::support_queue_peak,metrics.queue_peak);
++    observation->set(MetricId::support_copied_rows,metrics.copied_rows);
++    observation->set(MetricId::support_copied_index_memberships,metrics.copied_index_memberships);
++    observation->set(MetricId::support_copied_metadata_entries,metrics.copied_metadata_entries);
++    observation->set(MetricId::support_copied_child_flags,metrics.copied_child_flags);
++  }
+   SupportSnapshot snapshot(std::uint64_t visible_sequence) const;
+   const PhysicalNode& node(NodeId id) const {
+     require(id.value<plan.nodes().size(),"invalid_native_update","node is outside the physical plan"); return plan.nodes()[id.value];
+@@ -201,6 +227,15 @@
+       auto pin=state.storage.table(relation(node,role)).pin(handle);
+       journal->records.push_back({output.metrics.journal_records,cause,runtime.handle(node.id,role,handle),
+           std::move(before),std::move(after),std::move(pin)});
++      if (runtime.observation) {
++        const auto& item=journal->records.back();
++        const auto number=[](const SupportValueState& value) noexcept {
++          return value.support?value.support->value:value.satisfied?
++              static_cast<std::uint64_t>(value.satisfied->value):static_cast<std::uint64_t>(value.member);
++        };
++        runtime.observation->event(TraceKind::journal,item.ordinal,cause,node.id.value,
++            observation_no_id,0,number(item.before),number(item.after),static_cast<std::uint64_t>(role),handle.tuple.value);
++      }
+     }
+     void record(const PhysicalNode& node,TupleHandle handle,std::optional<RecordState> desired) {
+       auto& records=state.nodes[node.id.value].records; const auto found=records.find(handle.tuple);
+@@ -242,6 +277,9 @@
+       cause=output.metrics.events_enqueued;
+     }
+     void native_trace(const PhysicalNode& node,TupleHandle handle,const storage::Tuple& tuple,bool add) {
++      if (runtime.observation) runtime.observation->event(TraceKind::native_event,cause,0,node.id.value,
++          observation_no_id,0,static_cast<std::uint64_t>(!add),static_cast<std::uint64_t>(add),
++          static_cast<std::uint64_t>(SupportRole::records),handle.tuple.value);
+       if (runtime.options.capture_transitions) journal->events.push_back({cause,0,output.sequence,output.metrics.events_applied,SupportEventKind::native_update,
+           node.id,{},runtime.handle(node.id,SupportRole::records,handle),add?SetOperation::insert:SetOperation::erase,tuple,!add,add});
+     }
+@@ -249,6 +287,9 @@
+       metric(output.metrics.events_enqueued);
+       const auto id=output.metrics.events_enqueued;
+       applied.push_back(false); pending.push_back({edge_id,add,key,id});
++      if (runtime.observation) runtime.observation->event(TraceKind::child_enqueued,id,cause,
++          runtime.plan.edges()[edge_id].parent.value,observation_no_id,0,
++          static_cast<std::uint64_t>(!add),static_cast<std::uint64_t>(add));
+       if (pending.size()>output.metrics.queue_peak) metric(output.metrics.queue_peak,static_cast<std::uint64_t>(pending.size())-output.metrics.queue_peak);
+       if (runtime.options.capture_transitions) {
+         const auto& edge=runtime.plan.edges()[edge_id];
+@@ -334,7 +375,13 @@
+       if (parent.kind==NodeKind::native) {
+         const auto matching=table.bucket(state.storage.index(*edge.reverse_index),event.key);
+         for (const auto handle : matching) {
+-          metric(output.metrics.native_record_visits); const auto* tuple=table.get(handle);
++          metric(output.metrics.native_record_visits);
++          if (runtime.observation) {
++            runtime.observation->add(MetricId::support_reverse_index_records_visited);
++            runtime.observation->event(TraceKind::reverse_visit,event.id,cause,parent.id.value,
++                observation_no_id,0,0,0,static_cast<std::uint64_t>(SupportRole::records),handle.tuple.value);
++          }
++          const auto* tuple=table.get(handle);
+           require(tuple!=nullptr,"runtime_contract","reverse separator index contains a stale native handle");
+           presence(parent,handle,metadata.at(handle.tuple),edge.child_slot,event.appeared,*tuple);
+         }
+@@ -356,6 +403,8 @@
+         require(event.id>0 && event.id<=applied.size() && !applied[static_cast<std::size_t>(event.id-1)],"runtime_contract","event applied more than once");
+         applied[static_cast<std::size_t>(event.id-1)]=true; metric(output.metrics.events_applied); cause=event.id;
+         if (runtime.options.capture_transitions) journal->events.at(static_cast<std::size_t>(event.id-1)).applied_ordinal=output.metrics.events_applied;
++        if (runtime.observation) runtime.observation->event(TraceKind::child_applied,event.id,0,
++            runtime.plan.edges()[event.edge].parent.value);
+         child(event);
+       }
+       charge(static_cast<std::uint64_t>(applied.size()-checked_events));
+@@ -996,16 +1045,20 @@
+        journal(std::make_shared<SupportJournal>()),before_answer(output.has_answer) {
+     journal->sequence=sequence;
+     transaction=std::make_unique<Impl::Transaction>(*owner,*owner->state,output,journal);
+-  }
++    if (owner->observation) observation_ticket=owner->observation->begin(ObservationLayer::support,sequence);
++  }
++  detail::ObservationTicket observation_ticket;
+   ~Data() { rollback(); }
+   Impl& active() const {
+     require(bool(owner) && bool(transaction),"invalid_epoch","prepared epoch is closed"); return *owner;
+   }
+   void rollback() noexcept {
+     if (!owner) return;
++    owner->observe(output.metrics);
+     if (views) { views->abort(); views.reset(); }
+     transaction.reset();
+     output.journal.reset(); output.transitions.clear(); journal.reset();
++    if (owner->observation) owner->observation->finish(observation_ticket,ObservationOutcome::aborted);
+     owner->updating=false; owner.reset();
+   }
+   bool stage_tuple(const PhysicalNode& node,const storage::Tuple& tuple) {
+@@ -1016,7 +1069,7 @@
+       require(prefix!=std::numeric_limits<std::uint64_t>::max(),"sequence_overflow","logical stage prefix exhausted");
+       transaction->start(); transaction->native(node,tuple,add); transaction->drain();
+       output.native_changed=true; output.has_answer=d.answer(*d.state); output.journal=journal;
+-      ++prefix;
++      ++prefix; owner->observe(output.metrics);
+       return true;
+     } catch (...) { rollback(); throw; }
+   }
+@@ -1091,11 +1144,14 @@
+   require(bool(data_),"invalid_epoch","moved-from prepared epoch"); auto& d=data_->active();
+   // Validation above is the only throwing path. All output already exists;
+   // from here publication, return-value movement and teardown allocate nothing.
++  d.observe(data_->output.metrics);
+   data_->transaction->commit();
+   SupportEpoch result=std::move(data_->output);
+   data_->transaction.reset(); data_->journal.reset();
+   if (data_->views) { data_->views->phase=EpochView::Group::Phase::committed; data_->views.reset(); }
+-  d.sequence=result.sequence; d.updating=false; data_->owner.reset();
++  d.sequence=result.sequence; d.updating=false;
++  if (d.observation) d.observation->finish(data_->observation_ticket,ObservationOutcome::committed);
++  data_->owner.reset();
+   return result;
+ }
+ SupportRuntime::PendingEpoch SupportRuntime::begin_epoch(std::uint64_t sequence,SetOperation operation) {
+@@ -1109,6 +1165,13 @@
+ 
+ void SupportRuntime::initialize_native(std::span<const detail::NativeSeed> seeds,BuildOptions options,BuildMetrics& metrics) {
+   auto& d=impl(); d.writable();
++  // Initialization is not a sequence-zero stream of ordinary observed updates.
++  // Save by move; restoring observation on all exits allocates nothing.
++  struct RestoreObservation {
++    std::shared_ptr<detail::ObservationState>& target;
++    std::shared_ptr<detail::ObservationState> saved;
++    ~RestoreObservation() { target=std::move(saved); }
++  } restore_observation{d.observation,std::move(d.observation)};
+   require(d.sequence==0,"runtime_contract","initialization requires an unpublished empty support owner");
+   for (const auto& definition : d.plan.relations())
+     require(d.state->storage.table(definition.id).size()==0,"runtime_contract","initialization requires empty storage");
+@@ -1521,4 +1584,11 @@
+     else require(metadata.visible.empty(),"runtime_contract","hidden node has visible support counters");
+   }
+ }
++std::shared_ptr<detail::ObservationState> SupportRuntime::observation_state() const { return impl().observation; }
++ObservationSnapshot SupportRuntime::observations() const {
++  const auto& d=impl(); return detail::observation_snapshot(d.observation,d.options.observation);
++}
++ObservationTrace SupportRuntime::observation_trace() const {
++  const auto& d=impl(); return detail::observation_trace(d.observation,d.options.observation);
++}
+ }  // namespace crown::runtime

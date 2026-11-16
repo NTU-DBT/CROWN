@@ -1,0 +1,1172 @@
+[
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/ir/model.cpp.o -c /home/userroot/Codex/CROWN/src/ir/model.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/ir/model.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/ir/model.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/ir/scalar.cpp.o -c /home/userroot/Codex/CROWN/src/ir/scalar.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/ir/scalar.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/ir/scalar.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/ir/digest.cpp.o -c /home/userroot/Codex/CROWN/src/ir/digest.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/ir/digest.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/ir/digest.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/catalog/catalog.cpp.o -c /home/userroot/Codex/CROWN/src/catalog/catalog.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/catalog/catalog.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/catalog/catalog.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/io/catalog.cpp.o -c /home/userroot/Codex/CROWN/src/io/catalog.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/catalog.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/io/catalog.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/io/document.cpp.o -c /home/userroot/Codex/CROWN/src/io/document.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/document.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/io/document.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/io/recognition.cpp.o -c /home/userroot/Codex/CROWN/src/io/recognition.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/recognition.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/io/recognition.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/io/layout.cpp.o -c /home/userroot/Codex/CROWN/src/io/layout.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/layout.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/io/layout.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/storage/layout.cpp.o -c /home/userroot/Codex/CROWN/src/storage/layout.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/storage/layout.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/storage/layout.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/storage/arena.cpp.o -c /home/userroot/Codex/CROWN/src/storage/arena.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/storage/arena.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/storage/arena.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/storage/reference.cpp.o -c /home/userroot/Codex/CROWN/src/storage/reference.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/storage/reference.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/storage/reference.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/planner/recognize.cpp.o -c /home/userroot/Codex/CROWN/src/planner/recognize.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/planner/recognize.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/planner/recognize.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/planner/verify.cpp.o -c /home/userroot/Codex/CROWN/src/planner/verify.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/planner/verify.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/planner/verify.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/planner/exact.cpp.o -c /home/userroot/Codex/CROWN/src/planner/exact.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/planner/exact.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/planner/exact.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/planner/certificate.cpp.o -c /home/userroot/Codex/CROWN/src/planner/certificate.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/planner/certificate.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/planner/certificate.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/planner/fast_paths.cpp.o -c /home/userroot/Codex/CROWN/src/planner/fast_paths.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/planner/fast_paths.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/planner/fast_paths.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/planner/search_session.cpp.o -c /home/userroot/Codex/CROWN/src/planner/search_session.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/planner/search_session.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/planner/search_session.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/planner/residual.cpp.o -c /home/userroot/Codex/CROWN/src/planner/residual.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/planner/residual.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/planner/residual.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/planner/residual_reduce.cpp.o -c /home/userroot/Codex/CROWN/src/planner/residual_reduce.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/planner/residual_reduce.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/planner/residual_reduce.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/planner/residual_view.cpp.o -c /home/userroot/Codex/CROWN/src/planner/residual_view.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/planner/residual_view.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/planner/residual_view.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/planner/residual_trace.cpp.o -c /home/userroot/Codex/CROWN/src/planner/residual_trace.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/planner/residual_trace.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/planner/residual_trace.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/planner/residual_reconstruct.cpp.o -c /home/userroot/Codex/CROWN/src/planner/residual_reconstruct.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/planner/residual_reconstruct.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/planner/residual_reconstruct.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/io/ingest.cpp.o -c /home/userroot/Codex/CROWN/src/io/ingest.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/ingest.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/io/ingest.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/io/ingest_text.cpp.o -c /home/userroot/Codex/CROWN/src/io/ingest_text.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/ingest_text.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/io/ingest_text.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/io/batch.cpp.o -c /home/userroot/Codex/CROWN/src/io/batch.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/batch.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/io/batch.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/io/search.cpp.o -c /home/userroot/Codex/CROWN/src/io/search.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/search.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/io/search.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/io/residual.cpp.o -c /home/userroot/Codex/CROWN/src/io/residual.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/residual.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/io/residual.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/planner/candidates.cpp.o -c /home/userroot/Codex/CROWN/src/planner/candidates.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/planner/candidates.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/planner/candidates.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/planner/candidate_generator.cpp.o -c /home/userroot/Codex/CROWN/src/planner/candidate_generator.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/planner/candidate_generator.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/planner/candidate_generator.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/planner/candidate_key.cpp.o -c /home/userroot/Codex/CROWN/src/planner/candidate_key.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/planner/candidate_key.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/planner/candidate_key.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_core.dir/src/io/candidates.cpp.o -c /home/userroot/Codex/CROWN/src/io/candidates.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/candidates.cpp",
+  "output": "CMakeFiles/crown_core.dir/src/io/candidates.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_query_explain.dir/src/observability/query_explain.cpp.o -c /home/userroot/Codex/CROWN/src/observability/query_explain.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/observability/query_explain.cpp",
+  "output": "CMakeFiles/crown_query_explain.dir/src/observability/query_explain.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_query_explain.dir/src/io/query_explain.cpp.o -c /home/userroot/Codex/CROWN/src/io/query_explain.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/query_explain.cpp",
+  "output": "CMakeFiles/crown_query_explain.dir/src/io/query_explain.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -isystem /home/userroot/Codex/CROWN/build/release/_deps/libpg_query/libpg_query-18.1.0 -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_sql.dir/src/frontend/parser.cpp.o -c /home/userroot/Codex/CROWN/src/frontend/parser.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/frontend/parser.cpp",
+  "output": "CMakeFiles/crown_sql.dir/src/frontend/parser.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -isystem /home/userroot/Codex/CROWN/build/release/_deps/libpg_query/libpg_query-18.1.0 -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_sql.dir/src/frontend/bind.cpp.o -c /home/userroot/Codex/CROWN/src/frontend/bind.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/frontend/bind.cpp",
+  "output": "CMakeFiles/crown_sql.dir/src/frontend/bind.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -isystem /home/userroot/Codex/CROWN/build/release/_deps/libpg_query/libpg_query-18.1.0 -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_sql.dir/src/frontend/normalize.cpp.o -c /home/userroot/Codex/CROWN/src/frontend/normalize.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/frontend/normalize.cpp",
+  "output": "CMakeFiles/crown_sql.dir/src/frontend/normalize.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -isystem /home/userroot/Codex/CROWN/build/release/_deps/libpg_query/libpg_query-18.1.0 -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_sql.dir/src/frontend/adapter.cpp.o -c /home/userroot/Codex/CROWN/src/frontend/adapter.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/frontend/adapter.cpp",
+  "output": "CMakeFiles/crown_sql.dir/src/frontend/adapter.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -isystem /home/userroot/Codex/CROWN/build/release/_deps/libpg_query/libpg_query-18.1.0 -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_sql.dir/src/frontend/admission.cpp.o -c /home/userroot/Codex/CROWN/src/frontend/admission.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/frontend/admission.cpp",
+  "output": "CMakeFiles/crown_sql.dir/src/frontend/admission.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -isystem /home/userroot/Codex/CROWN/build/release/_deps/libpg_query/libpg_query-18.1.0 -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_sql.dir/src/io/sql.cpp.o -c /home/userroot/Codex/CROWN/src/io/sql.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/sql.cpp",
+  "output": "CMakeFiles/crown_sql.dir/src/io/sql.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -isystem /home/userroot/Codex/CROWN/build/release/_deps/libpg_query/libpg_query-18.1.0 -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_sql.dir/src/io/binding.cpp.o -c /home/userroot/Codex/CROWN/src/io/binding.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/binding.cpp",
+  "output": "CMakeFiles/crown_sql.dir/src/io/binding.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -isystem /home/userroot/Codex/CROWN/build/release/_deps/libpg_query/libpg_query-18.1.0 -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_sql.dir/src/io/normalization.cpp.o -c /home/userroot/Codex/CROWN/src/io/normalization.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/normalization.cpp",
+  "output": "CMakeFiles/crown_sql.dir/src/io/normalization.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -isystem /home/userroot/Codex/CROWN/build/release/_deps/libpg_query/libpg_query-18.1.0 -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_sql.dir/src/io/identity.cpp.o -c /home/userroot/Codex/CROWN/src/io/identity.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/identity.cpp",
+  "output": "CMakeFiles/crown_sql.dir/src/io/identity.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -isystem /home/userroot/Codex/CROWN/build/release/_deps/libpg_query/libpg_query-18.1.0 -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_sql.dir/src/io/admission.cpp.o -c /home/userroot/Codex/CROWN/src/io/admission.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/admission.cpp",
+  "output": "CMakeFiles/crown_sql.dir/src/io/admission.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_plan.dir/src/planner/lower.cpp.o -c /home/userroot/Codex/CROWN/src/planner/lower.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/planner/lower.cpp",
+  "output": "CMakeFiles/crown_plan.dir/src/planner/lower.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_plan.dir/src/io/physical.cpp.o -c /home/userroot/Codex/CROWN/src/io/physical.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/physical.cpp",
+  "output": "CMakeFiles/crown_plan.dir/src/io/physical.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_plan.dir/src/storage/physical.cpp.o -c /home/userroot/Codex/CROWN/src/storage/physical.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/storage/physical.cpp",
+  "output": "CMakeFiles/crown_plan.dir/src/storage/physical.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime.dir/src/runtime/support.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/support.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/support.cpp",
+  "output": "CMakeFiles/crown_runtime.dir/src/runtime/support.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime.dir/src/runtime/physical.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/physical.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/physical.cpp",
+  "output": "CMakeFiles/crown_runtime.dir/src/runtime/physical.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime.dir/src/runtime/delta.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/delta.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/delta.cpp",
+  "output": "CMakeFiles/crown_runtime.dir/src/runtime/delta.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime.dir/src/io/support.cpp.o -c /home/userroot/Codex/CROWN/src/io/support.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/support.cpp",
+  "output": "CMakeFiles/crown_runtime.dir/src/io/support.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime.dir/src/io/inspection.cpp.o -c /home/userroot/Codex/CROWN/src/io/inspection.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/inspection.cpp",
+  "output": "CMakeFiles/crown_runtime.dir/src/io/inspection.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime.dir/src/runtime/replay.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/replay.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/replay.cpp",
+  "output": "CMakeFiles/crown_runtime.dir/src/runtime/replay.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime.dir/src/runtime/session.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/session.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/session.cpp",
+  "output": "CMakeFiles/crown_runtime.dir/src/runtime/session.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime.dir/src/runtime/window.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/window.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/window.cpp",
+  "output": "CMakeFiles/crown_runtime.dir/src/runtime/window.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime.dir/src/runtime/observation.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/observation.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/observation.cpp",
+  "output": "CMakeFiles/crown_runtime.dir/src/runtime/observation.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime.dir/src/runtime/statistics.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/statistics.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/statistics.cpp",
+  "output": "CMakeFiles/crown_runtime.dir/src/runtime/statistics.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime.dir/src/runtime/owner_statistics.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/owner_statistics.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/owner_statistics.cpp",
+  "output": "CMakeFiles/crown_runtime.dir/src/runtime/owner_statistics.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime.dir/src/runtime/statistics_collection.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/statistics_collection.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/statistics_collection.cpp",
+  "output": "CMakeFiles/crown_runtime.dir/src/runtime/statistics_collection.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime.dir/src/runtime/workload_statistics.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/workload_statistics.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/workload_statistics.cpp",
+  "output": "CMakeFiles/crown_runtime.dir/src/runtime/workload_statistics.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime.dir/src/runtime/combined_statistics.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/combined_statistics.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/combined_statistics.cpp",
+  "output": "CMakeFiles/crown_runtime.dir/src/runtime/combined_statistics.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_explain.dir/src/observability/explain.cpp.o -c /home/userroot/Codex/CROWN/src/observability/explain.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/observability/explain.cpp",
+  "output": "CMakeFiles/crown_explain.dir/src/observability/explain.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_explain.dir/src/io/explain.cpp.o -c /home/userroot/Codex/CROWN/src/io/explain.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/explain.cpp",
+  "output": "CMakeFiles/crown_explain.dir/src/io/explain.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_explain.dir/src/io/run_context.cpp.o -c /home/userroot/Codex/CROWN/src/io/run_context.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/run_context.cpp",
+  "output": "CMakeFiles/crown_explain.dir/src/io/run_context.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_explain.dir/src/io/cursor_observation.cpp.o -c /home/userroot/Codex/CROWN/src/io/cursor_observation.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/cursor_observation.cpp",
+  "output": "CMakeFiles/crown_explain.dir/src/io/cursor_observation.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_explain.dir/src/observability/statistics_explain.cpp.o -c /home/userroot/Codex/CROWN/src/observability/statistics_explain.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/observability/statistics_explain.cpp",
+  "output": "CMakeFiles/crown_explain.dir/src/observability/statistics_explain.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_explain.dir/src/io/statistics_explain.cpp.o -c /home/userroot/Codex/CROWN/src/io/statistics_explain.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/statistics_explain.cpp",
+  "output": "CMakeFiles/crown_explain.dir/src/io/statistics_explain.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/reference -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_reference.dir/tests/reference/evaluator.cpp.o -c /home/userroot/Codex/CROWN/tests/reference/evaluator.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/reference/evaluator.cpp",
+  "output": "CMakeFiles/crown_reference.dir/tests/reference/evaluator.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/reference -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_reference.dir/tests/reference/tree_oracle.cpp.o -c /home/userroot/Codex/CROWN/tests/reference/tree_oracle.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/reference/tree_oracle.cpp",
+  "output": "CMakeFiles/crown_reference.dir/tests/reference/tree_oracle.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/reference -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_reference.dir/tests/reference/delta_model.cpp.o -c /home/userroot/Codex/CROWN/tests/reference/delta_model.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/reference/delta_model.cpp",
+  "output": "CMakeFiles/crown_reference.dir/tests/reference/delta_model.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/reference -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_reference.dir/tests/reference/residual_oracle.cpp.o -c /home/userroot/Codex/CROWN/tests/reference/residual_oracle.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/reference/residual_oracle.cpp",
+  "output": "CMakeFiles/crown_reference.dir/tests/reference/residual_oracle.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/reference -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_reference.dir/tests/reference/candidate_set.cpp.o -c /home/userroot/Codex/CROWN/tests/reference/candidate_set.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/reference/candidate_set.cpp",
+  "output": "CMakeFiles/crown_reference.dir/tests/reference/candidate_set.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown.dir/apps/crown/main.cpp.o -c /home/userroot/Codex/CROWN/apps/crown/main.cpp",
+  "file": "/home/userroot/Codex/CROWN/apps/crown/main.cpp",
+  "output": "CMakeFiles/crown.dir/apps/crown/main.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown.dir/apps/crown/explain.cpp.o -c /home/userroot/Codex/CROWN/apps/crown/explain.cpp",
+  "file": "/home/userroot/Codex/CROWN/apps/crown/explain.cpp",
+  "output": "CMakeFiles/crown.dir/apps/crown/explain.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_PLANNER_TESTING -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_planner_testing.dir/tests/support/planner_exact_baseline.cpp.o -c /home/userroot/Codex/CROWN/tests/support/planner_exact_baseline.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/support/planner_exact_baseline.cpp",
+  "output": "CMakeFiles/crown_planner_testing.dir/tests/support/planner_exact_baseline.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/src/planner -I/home/userroot/Codex/CROWN/tests/reference -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_planner_candidates_test.dir/tests/unit/candidates_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/candidates_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/candidates_test.cpp",
+  "output": "CMakeFiles/crown_planner_candidates_test.dir/tests/unit/candidates_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/src/planner -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_planner_candidates_exception_test.dir/tests/unit/candidates_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/candidates_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/candidates_exception_test.cpp",
+  "output": "CMakeFiles/crown_planner_candidates_exception_test.dir/tests/unit/candidates_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_planner_candidates_io_test.dir/tests/unit/candidates_io_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/candidates_io_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/candidates_io_test.cpp",
+  "output": "CMakeFiles/crown_planner_candidates_io_test.dir/tests/unit/candidates_io_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/reference -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_planner_residual_test.dir/tests/unit/residual_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/residual_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/residual_test.cpp",
+  "output": "CMakeFiles/crown_planner_residual_test.dir/tests/unit/residual_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_planner_residual_exception_test.dir/tests/unit/residual_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/residual_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/residual_exception_test.cpp",
+  "output": "CMakeFiles/crown_planner_residual_exception_test.dir/tests/unit/residual_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_planner_residual_io_test.dir/tests/unit/residual_io_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/residual_io_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/residual_io_test.cpp",
+  "output": "CMakeFiles/crown_planner_residual_io_test.dir/tests/unit/residual_io_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_PLANNER_TESTING -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_planner_continuation_test.dir/tests/unit/planner_continuation_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/planner_continuation_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/planner_continuation_test.cpp",
+  "output": "CMakeFiles/crown_planner_continuation_test.dir/tests/unit/planner_continuation_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_PLANNER_TESTING -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_planner_continuation_exception_test.dir/tests/unit/planner_continuation_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/planner_continuation_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/planner_continuation_exception_test.cpp",
+  "output": "CMakeFiles/crown_planner_continuation_exception_test.dir/tests/unit/planner_continuation_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_PLANNER_TESTING -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_planner_continuation_edge_test.dir/tests/unit/planner_continuation_edge_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/planner_continuation_edge_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/planner_continuation_edge_test.cpp",
+  "output": "CMakeFiles/crown_planner_continuation_edge_test.dir/tests/unit/planner_continuation_edge_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_PLANNER_TESTING -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_planner_progress_test.dir/tests/unit/planner_progress_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/planner_progress_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/planner_progress_test.cpp",
+  "output": "CMakeFiles/crown_planner_progress_test.dir/tests/unit/planner_progress_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_PLANNER_TESTING -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_planner_certificate_codec_test.dir/tests/unit/planner_certificate_codec_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/planner_certificate_codec_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/planner_certificate_codec_test.cpp",
+  "output": "CMakeFiles/crown_planner_certificate_codec_test.dir/tests/unit/planner_certificate_codec_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_PLANNER_TESTING -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_planner_fast_paths_test.dir/tests/unit/planner_fast_paths_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/planner_fast_paths_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/planner_fast_paths_test.cpp",
+  "output": "CMakeFiles/crown_planner_fast_paths_test.dir/tests/unit/planner_fast_paths_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_PLANNER_TESTING -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_planner_search_exception_test.dir/tests/unit/planner_search_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/planner_search_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/planner_search_exception_test.cpp",
+  "output": "CMakeFiles/crown_planner_search_exception_test.dir/tests/unit/planner_search_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_window_test.dir/tests/unit/window_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/window_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/window_test.cpp",
+  "output": "CMakeFiles/crown_window_test.dir/tests/unit/window_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_batch_window_exception_test.dir/tests/unit/batch_window_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/batch_window_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/batch_window_exception_test.cpp",
+  "output": "CMakeFiles/crown_batch_window_exception_test.dir/tests/unit/batch_window_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_transport_batch_test.dir/tests/unit/transport_batch_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/transport_batch_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/transport_batch_test.cpp",
+  "output": "CMakeFiles/crown_transport_batch_test.dir/tests/unit/transport_batch_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/support -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime_testing.dir/src/runtime/support.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/support.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/support.cpp",
+  "output": "CMakeFiles/crown_runtime_testing.dir/src/runtime/support.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/support -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime_testing.dir/src/runtime/physical.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/physical.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/physical.cpp",
+  "output": "CMakeFiles/crown_runtime_testing.dir/src/runtime/physical.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/support -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime_testing.dir/src/runtime/delta.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/delta.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/delta.cpp",
+  "output": "CMakeFiles/crown_runtime_testing.dir/src/runtime/delta.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/support -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime_testing.dir/src/io/support.cpp.o -c /home/userroot/Codex/CROWN/src/io/support.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/support.cpp",
+  "output": "CMakeFiles/crown_runtime_testing.dir/src/io/support.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/support -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime_testing.dir/src/io/inspection.cpp.o -c /home/userroot/Codex/CROWN/src/io/inspection.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/inspection.cpp",
+  "output": "CMakeFiles/crown_runtime_testing.dir/src/io/inspection.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/support -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime_testing.dir/src/runtime/replay.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/replay.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/replay.cpp",
+  "output": "CMakeFiles/crown_runtime_testing.dir/src/runtime/replay.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/support -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime_testing.dir/src/runtime/session.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/session.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/session.cpp",
+  "output": "CMakeFiles/crown_runtime_testing.dir/src/runtime/session.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/support -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime_testing.dir/src/runtime/window.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/window.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/window.cpp",
+  "output": "CMakeFiles/crown_runtime_testing.dir/src/runtime/window.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/support -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime_testing.dir/src/runtime/observation.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/observation.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/observation.cpp",
+  "output": "CMakeFiles/crown_runtime_testing.dir/src/runtime/observation.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/support -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime_testing.dir/src/runtime/statistics.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/statistics.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/statistics.cpp",
+  "output": "CMakeFiles/crown_runtime_testing.dir/src/runtime/statistics.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/support -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime_testing.dir/src/runtime/owner_statistics.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/owner_statistics.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/owner_statistics.cpp",
+  "output": "CMakeFiles/crown_runtime_testing.dir/src/runtime/owner_statistics.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/support -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime_testing.dir/src/runtime/statistics_collection.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/statistics_collection.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/statistics_collection.cpp",
+  "output": "CMakeFiles/crown_runtime_testing.dir/src/runtime/statistics_collection.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/support -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime_testing.dir/src/runtime/workload_statistics.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/workload_statistics.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/workload_statistics.cpp",
+  "output": "CMakeFiles/crown_runtime_testing.dir/src/runtime/workload_statistics.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/support -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime_testing.dir/src/runtime/combined_statistics.cpp.o -c /home/userroot/Codex/CROWN/src/runtime/combined_statistics.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/runtime/combined_statistics.cpp",
+  "output": "CMakeFiles/crown_runtime_testing.dir/src/runtime/combined_statistics.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_explain_testing.dir/src/observability/explain.cpp.o -c /home/userroot/Codex/CROWN/src/observability/explain.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/observability/explain.cpp",
+  "output": "CMakeFiles/crown_explain_testing.dir/src/observability/explain.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_explain_testing.dir/src/io/explain.cpp.o -c /home/userroot/Codex/CROWN/src/io/explain.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/explain.cpp",
+  "output": "CMakeFiles/crown_explain_testing.dir/src/io/explain.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_explain_testing.dir/src/io/run_context.cpp.o -c /home/userroot/Codex/CROWN/src/io/run_context.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/run_context.cpp",
+  "output": "CMakeFiles/crown_explain_testing.dir/src/io/run_context.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_explain_testing.dir/src/io/cursor_observation.cpp.o -c /home/userroot/Codex/CROWN/src/io/cursor_observation.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/cursor_observation.cpp",
+  "output": "CMakeFiles/crown_explain_testing.dir/src/io/cursor_observation.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_explain_testing.dir/src/observability/statistics_explain.cpp.o -c /home/userroot/Codex/CROWN/src/observability/statistics_explain.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/observability/statistics_explain.cpp",
+  "output": "CMakeFiles/crown_explain_testing.dir/src/observability/statistics_explain.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_explain_testing.dir/src/io/statistics_explain.cpp.o -c /home/userroot/Codex/CROWN/src/io/statistics_explain.cpp",
+  "file": "/home/userroot/Codex/CROWN/src/io/statistics_explain.cpp",
+  "output": "CMakeFiles/crown_explain_testing.dir/src/io/statistics_explain.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_capture_test.dir/tests/unit/statistics_capture_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/statistics_capture_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/statistics_capture_test.cpp",
+  "output": "CMakeFiles/crown_statistics_capture_test.dir/tests/unit/statistics_capture_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_capture_exceptions_test.dir/tests/unit/statistics_capture_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/statistics_capture_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/statistics_capture_exception_test.cpp",
+  "output": "CMakeFiles/crown_statistics_capture_exceptions_test.dir/tests/unit/statistics_capture_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_owner_test.dir/tests/unit/owner_statistics_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/owner_statistics_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/owner_statistics_test.cpp",
+  "output": "CMakeFiles/crown_statistics_owner_test.dir/tests/unit/owner_statistics_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_owner_exceptions_test.dir/tests/unit/owner_statistics_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/owner_statistics_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/owner_statistics_exception_test.cpp",
+  "output": "CMakeFiles/crown_statistics_owner_exceptions_test.dir/tests/unit/owner_statistics_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/src/runtime -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_collection_test.dir/tests/unit/statistics_collection_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/statistics_collection_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/statistics_collection_test.cpp",
+  "output": "CMakeFiles/crown_statistics_collection_test.dir/tests/unit/statistics_collection_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/src/runtime -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_workload_test.dir/tests/unit/workload_statistics_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/workload_statistics_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/workload_statistics_test.cpp",
+  "output": "CMakeFiles/crown_statistics_workload_test.dir/tests/unit/workload_statistics_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_workload_exceptions_test.dir/tests/unit/workload_statistics_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/workload_statistics_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/workload_statistics_exception_test.cpp",
+  "output": "CMakeFiles/crown_statistics_workload_exceptions_test.dir/tests/unit/workload_statistics_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_scalars_test.dir/tests/unit/scalar_statistics_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/scalar_statistics_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/scalar_statistics_test.cpp",
+  "output": "CMakeFiles/crown_statistics_scalars_test.dir/tests/unit/scalar_statistics_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_combined_production_test.dir/tests/unit/combined_statistics_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/combined_statistics_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/combined_statistics_test.cpp",
+  "output": "CMakeFiles/crown_statistics_combined_production_test.dir/tests/unit/combined_statistics_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_combined_exceptions_production_test.dir/tests/unit/combined_statistics_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/combined_statistics_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/combined_statistics_exception_test.cpp",
+  "output": "CMakeFiles/crown_statistics_combined_exceptions_production_test.dir/tests/unit/combined_statistics_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_report_exceptions_production_test.dir/tests/unit/statistics_explain_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/statistics_explain_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/statistics_explain_exception_test.cpp",
+  "output": "CMakeFiles/crown_statistics_report_exceptions_production_test.dir/tests/unit/statistics_explain_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_runtime_only_production_test.dir/tests/unit/statistics_runtime_only_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/statistics_runtime_only_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/statistics_runtime_only_test.cpp",
+  "output": "CMakeFiles/crown_statistics_runtime_only_production_test.dir/tests/unit/statistics_runtime_only_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_report_production_test.dir/tests/unit/statistics_explain_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/statistics_explain_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/statistics_explain_test.cpp",
+  "output": "CMakeFiles/crown_statistics_report_production_test.dir/tests/unit/statistics_explain_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_combined_testing_test.dir/tests/unit/combined_statistics_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/combined_statistics_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/combined_statistics_test.cpp",
+  "output": "CMakeFiles/crown_statistics_combined_testing_test.dir/tests/unit/combined_statistics_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_combined_exceptions_testing_test.dir/tests/unit/combined_statistics_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/combined_statistics_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/combined_statistics_exception_test.cpp",
+  "output": "CMakeFiles/crown_statistics_combined_exceptions_testing_test.dir/tests/unit/combined_statistics_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_report_exceptions_testing_test.dir/tests/unit/statistics_explain_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/statistics_explain_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/statistics_explain_exception_test.cpp",
+  "output": "CMakeFiles/crown_statistics_report_exceptions_testing_test.dir/tests/unit/statistics_explain_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_runtime_only_testing_test.dir/tests/unit/statistics_runtime_only_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/statistics_runtime_only_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/statistics_runtime_only_test.cpp",
+  "output": "CMakeFiles/crown_statistics_runtime_only_testing_test.dir/tests/unit/statistics_runtime_only_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_report_testing_test.dir/tests/unit/statistics_explain_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/statistics_explain_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/statistics_explain_test.cpp",
+  "output": "CMakeFiles/crown_statistics_report_testing_test.dir/tests/unit/statistics_explain_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_STATISTICS_ACCEPTANCE -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_delta_runtime_fifo_test.dir/tests/unit/delta_runtime_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/delta_runtime_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/delta_runtime_test.cpp",
+  "output": "CMakeFiles/crown_statistics_delta_runtime_fifo_test.dir/tests/unit/delta_runtime_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_STATISTICS_ACCEPTANCE -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_delta_replay_fifo_test.dir/tests/unit/delta_replay_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/delta_replay_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/delta_replay_test.cpp",
+  "output": "CMakeFiles/crown_statistics_delta_replay_fifo_test.dir/tests/unit/delta_replay_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_STATISTICS_ACCEPTANCE -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_window_fifo_test.dir/tests/unit/window_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/window_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/window_test.cpp",
+  "output": "CMakeFiles/crown_statistics_window_fifo_test.dir/tests/unit/window_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_STATISTICS_ACCEPTANCE -DCROWN_STATISTICS_LIFO -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_delta_runtime_lifo_test.dir/tests/unit/delta_runtime_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/delta_runtime_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/delta_runtime_test.cpp",
+  "output": "CMakeFiles/crown_statistics_delta_runtime_lifo_test.dir/tests/unit/delta_runtime_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_STATISTICS_ACCEPTANCE -DCROWN_STATISTICS_LIFO -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_delta_replay_lifo_test.dir/tests/unit/delta_replay_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/delta_replay_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/delta_replay_test.cpp",
+  "output": "CMakeFiles/crown_statistics_delta_replay_lifo_test.dir/tests/unit/delta_replay_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_STATISTICS_ACCEPTANCE -DCROWN_STATISTICS_LIFO -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -UNDEBUG -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_statistics_window_lifo_test.dir/tests/unit/window_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/window_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/window_test.cpp",
+  "output": "CMakeFiles/crown_statistics_window_lifo_test.dir/tests/unit/window_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime_observation_test.dir/tests/unit/runtime_observation_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/runtime_observation_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/runtime_observation_test.cpp",
+  "output": "CMakeFiles/crown_runtime_observation_test.dir/tests/unit/runtime_observation_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_observation_mode_binding_test.dir/tests/unit/observation_mode_binding_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/observation_mode_binding_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/observation_mode_binding_test.cpp",
+  "output": "CMakeFiles/crown_observation_mode_binding_test.dir/tests/unit/observation_mode_binding_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_observation_run_context_test.dir/tests/unit/observation_run_context_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/observation_run_context_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/observation_run_context_test.cpp",
+  "output": "CMakeFiles/crown_observation_run_context_test.dir/tests/unit/observation_run_context_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_cursor_observation_test.dir/tests/unit/cursor_observation_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/cursor_observation_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/cursor_observation_test.cpp",
+  "output": "CMakeFiles/crown_cursor_observation_test.dir/tests/unit/cursor_observation_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_query_explain_test.dir/tests/unit/query_explain_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/query_explain_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/query_explain_test.cpp",
+  "output": "CMakeFiles/crown_query_explain_test.dir/tests/unit/query_explain_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_composed_explain_test.dir/tests/unit/composed_explain_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/composed_explain_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/composed_explain_test.cpp",
+  "output": "CMakeFiles/crown_composed_explain_test.dir/tests/unit/composed_explain_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_window_sequence_test.dir/tests/unit/window_sequence_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/window_sequence_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/window_sequence_test.cpp",
+  "output": "CMakeFiles/crown_window_sequence_test.dir/tests/unit/window_sequence_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_initialization_test.dir/tests/unit/initialization_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/initialization_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/initialization_test.cpp",
+  "output": "CMakeFiles/crown_initialization_test.dir/tests/unit/initialization_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++ -DCROWN_RUNTIME_TESTING -I/home/userroot/Codex/CROWN/tests/support -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_runtime_inspection_test.dir/tests/unit/runtime_inspection_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/runtime_inspection_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/runtime_inspection_test.cpp",
+  "output": "CMakeFiles/crown_runtime_inspection_test.dir/tests/unit/runtime_inspection_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_initialization_scale_test.dir/tests/unit/initialization_scale_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/initialization_scale_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/initialization_scale_test.cpp",
+  "output": "CMakeFiles/crown_initialization_scale_test.dir/tests/unit/initialization_scale_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_initialization_exception_test.dir/tests/unit/initialization_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/initialization_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/initialization_exception_test.cpp",
+  "output": "CMakeFiles/crown_initialization_exception_test.dir/tests/unit/initialization_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_session_test.dir/tests/unit/session_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/session_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/session_test.cpp",
+  "output": "CMakeFiles/crown_session_test.dir/tests/unit/session_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_session_exception_test.dir/tests/unit/session_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/session_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/session_exception_test.cpp",
+  "output": "CMakeFiles/crown_session_exception_test.dir/tests/unit/session_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_ingest_test.dir/tests/unit/ingest_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/ingest_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/ingest_test.cpp",
+  "output": "CMakeFiles/crown_ingest_test.dir/tests/unit/ingest_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_ingest_exception_test.dir/tests/unit/ingest_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/ingest_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/ingest_exception_test.cpp",
+  "output": "CMakeFiles/crown_ingest_exception_test.dir/tests/unit/ingest_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_delta_lifecycle_test.dir/tests/unit/delta_lifecycle_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/delta_lifecycle_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/delta_lifecycle_test.cpp",
+  "output": "CMakeFiles/crown_delta_lifecycle_test.dir/tests/unit/delta_lifecycle_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_delta_lifecycle_exception_test.dir/tests/unit/delta_lifecycle_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/delta_lifecycle_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/delta_lifecycle_exception_test.cpp",
+  "output": "CMakeFiles/crown_delta_lifecycle_exception_test.dir/tests/unit/delta_lifecycle_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_delta_replay_scale_test.dir/tests/unit/delta_replay_scale_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/delta_replay_scale_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/delta_replay_scale_test.cpp",
+  "output": "CMakeFiles/crown_delta_replay_scale_test.dir/tests/unit/delta_replay_scale_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_delta_replay_test.dir/tests/unit/delta_replay_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/delta_replay_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/delta_replay_test.cpp",
+  "output": "CMakeFiles/crown_delta_replay_test.dir/tests/unit/delta_replay_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_delta_anchor_test.dir/tests/unit/delta_anchor_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/delta_anchor_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/delta_anchor_test.cpp",
+  "output": "CMakeFiles/crown_delta_anchor_test.dir/tests/unit/delta_anchor_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_epoch_index_test.dir/tests/unit/epoch_index_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/epoch_index_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/epoch_index_test.cpp",
+  "output": "CMakeFiles/crown_epoch_index_test.dir/tests/unit/epoch_index_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_delta_live_test.dir/tests/unit/delta_live_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/delta_live_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/delta_live_test.cpp",
+  "output": "CMakeFiles/crown_delta_live_test.dir/tests/unit/delta_live_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_delta_runtime_test.dir/tests/unit/delta_runtime_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/delta_runtime_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/delta_runtime_test.cpp",
+  "output": "CMakeFiles/crown_delta_runtime_test.dir/tests/unit/delta_runtime_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_delta_runtime_exception_test.dir/tests/unit/delta_runtime_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/delta_runtime_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/delta_runtime_exception_test.cpp",
+  "output": "CMakeFiles/crown_delta_runtime_exception_test.dir/tests/unit/delta_runtime_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_delta_factor_test.dir/tests/unit/delta_factor_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/delta_factor_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/delta_factor_test.cpp",
+  "output": "CMakeFiles/crown_delta_factor_test.dir/tests/unit/delta_factor_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/reference -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_delta_spec_test.dir/tests/unit/delta_spec_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/delta_spec_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/delta_spec_test.cpp",
+  "output": "CMakeFiles/crown_delta_spec_test.dir/tests/unit/delta_spec_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_fragment_cursor_test.dir/tests/unit/fragment_cursor_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/fragment_cursor_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/fragment_cursor_test.cpp",
+  "output": "CMakeFiles/crown_fragment_cursor_test.dir/tests/unit/fragment_cursor_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_fragment_cursor_exception_test.dir/tests/unit/fragment_cursor_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/fragment_cursor_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/fragment_cursor_exception_test.cpp",
+  "output": "CMakeFiles/crown_fragment_cursor_exception_test.dir/tests/unit/fragment_cursor_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_epoch_view_test.dir/tests/unit/epoch_view_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/epoch_view_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/epoch_view_test.cpp",
+  "output": "CMakeFiles/crown_epoch_view_test.dir/tests/unit/epoch_view_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_epoch_view_exception_test.dir/tests/unit/epoch_view_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/epoch_view_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/epoch_view_exception_test.cpp",
+  "output": "CMakeFiles/crown_epoch_view_exception_test.dir/tests/unit/epoch_view_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_result_cursor_test.dir/tests/unit/result_cursor_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/result_cursor_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/result_cursor_test.cpp",
+  "output": "CMakeFiles/crown_result_cursor_test.dir/tests/unit/result_cursor_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_result_cursor_exception_test.dir/tests/unit/result_cursor_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/result_cursor_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/result_cursor_exception_test.cpp",
+  "output": "CMakeFiles/crown_result_cursor_exception_test.dir/tests/unit/result_cursor_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_physical_runtime_test.dir/tests/unit/physical_runtime_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/physical_runtime_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/physical_runtime_test.cpp",
+  "output": "CMakeFiles/crown_physical_runtime_test.dir/tests/unit/physical_runtime_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_physical_runtime_exception_test.dir/tests/unit/physical_runtime_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/physical_runtime_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/physical_runtime_exception_test.cpp",
+  "output": "CMakeFiles/crown_physical_runtime_exception_test.dir/tests/unit/physical_runtime_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_prepared_epoch_test.dir/tests/unit/prepared_epoch_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/prepared_epoch_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/prepared_epoch_test.cpp",
+  "output": "CMakeFiles/crown_prepared_epoch_test.dir/tests/unit/prepared_epoch_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_prepared_epoch_exception_test.dir/tests/unit/prepared_epoch_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/prepared_epoch_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/prepared_epoch_exception_test.cpp",
+  "output": "CMakeFiles/crown_prepared_epoch_exception_test.dir/tests/unit/prepared_epoch_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_support_journal_test.dir/tests/unit/support_journal_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/support_journal_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/support_journal_test.cpp",
+  "output": "CMakeFiles/crown_support_journal_test.dir/tests/unit/support_journal_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_storage_journal_test.dir/tests/unit/storage_journal_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/storage_journal_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/storage_journal_test.cpp",
+  "output": "CMakeFiles/crown_storage_journal_test.dir/tests/unit/storage_journal_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_storage_journal_exception_test.dir/tests/unit/storage_journal_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/storage_journal_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/storage_journal_exception_test.cpp",
+  "output": "CMakeFiles/crown_storage_journal_exception_test.dir/tests/unit/storage_journal_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_arena_model_test.dir/tests/unit/arena_model_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/arena_model_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/arena_model_test.cpp",
+  "output": "CMakeFiles/crown_arena_model_test.dir/tests/unit/arena_model_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_arena_exception_test.dir/tests/unit/arena_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/arena_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/arena_exception_test.cpp",
+  "output": "CMakeFiles/crown_arena_exception_test.dir/tests/unit/arena_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_arena_storage_test.dir/tests/unit/arena_storage_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/arena_storage_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/arena_storage_test.cpp",
+  "output": "CMakeFiles/crown_arena_storage_test.dir/tests/unit/arena_storage_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_support_model_test.dir/tests/unit/support_model_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/support_model_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/support_model_test.cpp",
+  "output": "CMakeFiles/crown_support_model_test.dir/tests/unit/support_model_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_support_api_test.dir/tests/unit/support_api_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/support_api_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/support_api_test.cpp",
+  "output": "CMakeFiles/crown_support_api_test.dir/tests/unit/support_api_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_support_exception_test.dir/tests/unit/support_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/support_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/support_exception_test.cpp",
+  "output": "CMakeFiles/crown_support_exception_test.dir/tests/unit/support_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_physical_lowering_test.dir/tests/unit/physical_lowering_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/physical_lowering_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/physical_lowering_test.cpp",
+  "output": "CMakeFiles/crown_physical_lowering_test.dir/tests/unit/physical_lowering_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_physical_api_test.dir/tests/unit/physical_api_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/physical_api_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/physical_api_test.cpp",
+  "output": "CMakeFiles/crown_physical_api_test.dir/tests/unit/physical_api_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_layout_test.dir/tests/unit/layout_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/layout_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/layout_test.cpp",
+  "output": "CMakeFiles/crown_layout_test.dir/tests/unit/layout_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_storage_model_test.dir/tests/unit/storage_model_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/storage_model_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/storage_model_test.cpp",
+  "output": "CMakeFiles/crown_storage_model_test.dir/tests/unit/storage_model_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_storage_exception_test.dir/tests/unit/storage_exception_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/storage_exception_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/storage_exception_test.cpp",
+  "output": "CMakeFiles/crown_storage_exception_test.dir/tests/unit/storage_exception_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_admission_test.dir/tests/unit/admission_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/admission_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/admission_test.cpp",
+  "output": "CMakeFiles/crown_admission_test.dir/tests/unit/admission_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_schema_test.dir/tests/unit/schema_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/schema_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/schema_test.cpp",
+  "output": "CMakeFiles/crown_schema_test.dir/tests/unit/schema_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -I/home/userroot/Codex/CROWN/tests/reference -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_normalization_test.dir/tests/unit/normalization_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/normalization_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/normalization_test.cpp",
+  "output": "CMakeFiles/crown_normalization_test.dir/tests/unit/normalization_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_binding_test.dir/tests/unit/binding_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/binding_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/binding_test.cpp",
+  "output": "CMakeFiles/crown_binding_test.dir/tests/unit/binding_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/reference -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_catalog_test.dir/tests/unit/catalog_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/catalog_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/catalog_test.cpp",
+  "output": "CMakeFiles/crown_catalog_test.dir/tests/unit/catalog_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/reference -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_scalar_test.dir/tests/unit/scalar_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/scalar_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/scalar_test.cpp",
+  "output": "CMakeFiles/crown_scalar_test.dir/tests/unit/scalar_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_parser_test.dir/tests/unit/parser_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/parser_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/parser_test.cpp",
+  "output": "CMakeFiles/crown_parser_test.dir/tests/unit/parser_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/reference -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_semantics_test.dir/tests/unit/semantics_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/semantics_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/semantics_test.cpp",
+  "output": "CMakeFiles/crown_semantics_test.dir/tests/unit/semantics_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_recognition_test.dir/tests/unit/recognition_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/recognition_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/recognition_test.cpp",
+  "output": "CMakeFiles/crown_recognition_test.dir/tests/unit/recognition_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_tree_verifier_test.dir/tests/unit/tree_verifier_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/tree_verifier_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/tree_verifier_test.cpp",
+  "output": "CMakeFiles/crown_tree_verifier_test.dir/tests/unit/tree_verifier_test.cpp.o"
+},
+{
+  "directory": "/home/userroot/Codex/CROWN/build/release",
+  "command": "/usr/bin/c++  -I/home/userroot/Codex/CROWN/tests/reference -I/home/userroot/Codex/CROWN/include -isystem /home/userroot/Codex/CROWN/third_party -O3 -DNDEBUG -std=c++23 -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror -o CMakeFiles/crown_exact_oracle_test.dir/tests/unit/exact_oracle_test.cpp.o -c /home/userroot/Codex/CROWN/tests/unit/exact_oracle_test.cpp",
+  "file": "/home/userroot/Codex/CROWN/tests/unit/exact_oracle_test.cpp",
+  "output": "CMakeFiles/crown_exact_oracle_test.dir/tests/unit/exact_oracle_test.cpp.o"
+}
+]

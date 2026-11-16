@@ -1,0 +1,6 @@
+SELECT region, COUNT(*) AS n
+FROM orders
+GROUP BY region
+HAVING COUNT(*) > 1
+ORDER BY n
+LIMIT 5;

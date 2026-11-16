@@ -1,0 +1,1 @@
+SELECT DISTINCT r.x AS "雪", y FROM r,s

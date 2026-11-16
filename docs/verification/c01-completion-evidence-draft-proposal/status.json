@@ -1,0 +1,84 @@
+{
+  "card": "C01",
+  "packet_status": "excluded_draft",
+  "card_status_as_read": "in_progress",
+  "completion_claim": "not_verified",
+  "native_freeze": {
+    "count": 623,
+    "sha256": "25f7143860cf28f6c7ba0e89a5b40708d3fb71fec979408bf1135f0fa45b1ef0"
+  },
+  "execution_freeze": {
+    "count": 676,
+    "sha256": "70916b45f3105b21d281f49c12c0455c9de8f3b2d76daa74bf252f2bb2144f4d"
+  },
+  "expected_tests": 131,
+  "compile_command_entries": 195,
+  "final_matrix_acceptance": "PENDING_ROOT",
+  "configurations": {
+    "debug": {
+      "status": "passed",
+      "tests": "131/131",
+      "test_seconds": 1493.12,
+      "summary": "build/verification/statistics-debug-summary.json"
+    },
+    "release": {
+      "status": "passed",
+      "tests": "131/131",
+      "test_seconds": 274.9,
+      "summary": "build/verification/statistics-release-summary.json"
+    },
+    "clang": {
+      "status": "passed",
+      "tests": "131/131",
+      "test_seconds": 1207.95,
+      "summary": "build/verification/statistics-clang-summary.json"
+    },
+    "clean_source": {
+      "status": "passed",
+      "tests": "131/131",
+      "test_seconds": 276.48,
+      "summary": "build/verification/statistics-clean-source-summary.json"
+    },
+    "sanitize": {
+      "status": "running_terminal_result_pending",
+      "session_id": 63700,
+      "expected_tests": 131,
+      "passed_tests": null,
+      "test_seconds": null,
+      "summary": null
+    }
+  },
+  "source_audit": {
+    "preliminary_attempt_3": {
+      "status": "zero_errors_preliminary",
+      "pending": [
+        "complete matrix acceptance",
+        "final C01 metadata transition"
+      ],
+      "path": "build/verification/statistics-source-preliminary-audit-attempt-3.json"
+    },
+    "final": {
+      "status": "pending_root",
+      "path": null
+    }
+  },
+  "independent_matrix_evidence_audit": {
+    "attempt_1": "historical_not_accepted_trace_grammar_issue",
+    "attempt_2": {
+      "auditor_authority": "accepted_for_frozen_evidence_only",
+      "auditor_package_manifest_sha256": "4d9395cdcb9bf60e4365ed98ffec2c66ef3c4de7c27586061052a12615be93ec",
+      "audited_configurations": ["debug", "release", "clang", "clean-source"],
+      "observed_numeric_rows_per_configuration": 1047,
+      "compile_entries": 195,
+      "archive_roles": 6,
+      "errors": 0,
+      "allocation_differences": 0,
+      "accepted_matrix_evidence": false,
+      "pending": ["sanitize terminal evidence", "semantic symbol gate", "final matrix acceptance"]
+    },
+    "authority": "build/verification/statistics-matrix-audit-authority.json"
+  },
+  "final_733_source_seal_sha256": "PENDING_ROOT_FILL",
+  "final_source_audit": "PENDING_ROOT",
+  "metadata_transition": "PENDING_ROOT"
+}

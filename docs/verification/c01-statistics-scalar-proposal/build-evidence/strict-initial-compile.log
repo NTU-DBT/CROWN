@@ -1,0 +1,368 @@
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp: In function ‘{anonymous}::Counts {anonymous}::root_counts(const Counts&)’:
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:35:97: error: call of overloaded ‘size(const {anonymous}::Counts&)’ is ambiguous
+   35 | Counts root_counts(const Counts& survivors){return survivors.empty()?Counts{}:Counts{{Row{},size(survivors)}};}
+      |                                                                                             ~~~~^~~~~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+In file included from /usr/include/c++/13/string:53,
+                 from /usr/include/c++/13/stdexcept:39,
+                 from include/crown/api/error.hpp:3,
+                 from docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:1:
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = map<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:35:109: error: no matching function for call to ‘std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>::map(<brace-enclosed initializer list>)’
+   35 | Counts root_counts(const Counts& survivors){return survivors.empty()?Counts{}:Counts{{Row{},size(survivors)}};}
+      |                                                                                                             ^
+In file included from /usr/include/c++/13/map:63,
+                 from third_party/nlohmann/json.hpp:175,
+                 from include/crown/frontend/parser.hpp:5,
+                 from include/crown/frontend/bind.hpp:3,
+                 from include/crown/frontend/normalize.hpp:3,
+                 from include/crown/ir/physical.hpp:3,
+                 from include/crown/planner/lower.hpp:3,
+                 from docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:2:
+/usr/include/c++/13/bits/stl_map.h:302:9: note: candidate: ‘template<class _InputIterator> std::map<_Key, _Tp, _Compare, _Alloc>::map(_InputIterator, _InputIterator, const _Compare&, const allocator_type&) [with _Key = std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >; _Tp = long unsigned int; _Compare = std::less<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> > >; _Alloc = std::allocator<std::pair<const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int> >]’
+  302 |         map(_InputIterator __first, _InputIterator __last,
+      |         ^~~
+/usr/include/c++/13/bits/stl_map.h:302:9: note:   template argument deduction/substitution failed:
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:35:109: note:   candidate expects 4 arguments, 1 provided
+   35 | Counts root_counts(const Counts& survivors){return survivors.empty()?Counts{}:Counts{{Row{},size(survivors)}};}
+      |                                                                                                             ^
+/usr/include/c++/13/bits/stl_map.h:285:9: note: candidate: ‘template<class _InputIterator> std::map<_Key, _Tp, _Compare, _Alloc>::map(_InputIterator, _InputIterator) [with _Key = std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >; _Tp = long unsigned int; _Compare = std::less<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> > >; _Alloc = std::allocator<std::pair<const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int> >]’
+  285 |         map(_InputIterator __first, _InputIterator __last)
+      |         ^~~
+/usr/include/c++/13/bits/stl_map.h:285:9: note:   template argument deduction/substitution failed:
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:35:109: note:   candidate expects 2 arguments, 1 provided
+   35 | Counts root_counts(const Counts& survivors){return survivors.empty()?Counts{}:Counts{{Row{},size(survivors)}};}
+      |                                                                                                             ^
+/usr/include/c++/13/bits/stl_map.h:268:9: note: candidate: ‘template<class _InputIterator> std::map<_Key, _Tp, _Compare, _Alloc>::map(_InputIterator, _InputIterator, const allocator_type&) [with _Key = std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >; _Tp = long unsigned int; _Compare = std::less<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> > >; _Alloc = std::allocator<std::pair<const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int> >]’
+  268 |         map(_InputIterator __first, _InputIterator __last,
+      |         ^~~
+/usr/include/c++/13/bits/stl_map.h:268:9: note:   template argument deduction/substitution failed:
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:35:109: note:   candidate expects 3 arguments, 1 provided
+   35 | Counts root_counts(const Counts& survivors){return survivors.empty()?Counts{}:Counts{{Row{},size(survivors)}};}
+      |                                                                                                             ^
+/usr/include/c++/13/bits/stl_map.h:262:7: note: candidate: ‘std::map<_Key, _Tp, _Compare, _Alloc>::map(std::initializer_list<std::pair<const _Key, _Val> >, const allocator_type&) [with _Key = std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >; _Tp = long unsigned int; _Compare = std::less<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> > >; _Alloc = std::allocator<std::pair<const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int> >; allocator_type = std::allocator<std::pair<const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int> >]’
+  262 |       map(initializer_list<value_type> __l, const allocator_type& __a)
+      |       ^~~
+/usr/include/c++/13/bits/stl_map.h:262:7: note:   candidate expects 2 arguments, 1 provided
+/usr/include/c++/13/bits/stl_map.h:256:7: note: candidate: ‘std::map<_Key, _Tp, _Compare, _Alloc>::map(std::map<_Key, _Tp, _Compare, _Alloc>&&, std::__type_identity_t<_Alloc>&) [with _Key = std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >; _Tp = long unsigned int; _Compare = std::less<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> > >; _Alloc = std::allocator<std::pair<const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int> >; std::__type_identity_t<_Alloc> = std::allocator<std::pair<const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int> >]’
+  256 |       map(map&& __m, const __type_identity_t<allocator_type>& __a)
+      |       ^~~
+/usr/include/c++/13/bits/stl_map.h:256:7: note:   candidate expects 2 arguments, 1 provided
+/usr/include/c++/13/bits/stl_map.h:252:7: note: candidate: ‘std::map<_Key, _Tp, _Compare, _Alloc>::map(const std::map<_Key, _Tp, _Compare, _Alloc>&, std::__type_identity_t<_Alloc>&) [with _Key = std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >; _Tp = long unsigned int; _Compare = std::less<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> > >; _Alloc = std::allocator<std::pair<const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int> >; std::__type_identity_t<_Alloc> = std::allocator<std::pair<const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int> >]’
+  252 |       map(const map& __m, const __type_identity_t<allocator_type>& __a)
+      |       ^~~
+/usr/include/c++/13/bits/stl_map.h:252:7: note:   candidate expects 2 arguments, 1 provided
+/usr/include/c++/13/bits/stl_map.h:248:7: note: candidate: ‘std::map<_Key, _Tp, _Compare, _Alloc>::map(const allocator_type&) [with _Key = std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >; _Tp = long unsigned int; _Compare = std::less<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> > >; _Alloc = std::allocator<std::pair<const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int> >; allocator_type = std::allocator<std::pair<const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int> >]’
+  248 |       map(const allocator_type& __a)
+      |       ^~~
+/usr/include/c++/13/bits/stl_map.h:248:33: note:   no known conversion for argument 1 from ‘<brace-enclosed initializer list>’ to ‘const std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>::allocator_type&’ {aka ‘const std::allocator<std::pair<const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int> >&’}
+  248 |       map(const allocator_type& __a)
+      |           ~~~~~~~~~~~~~~~~~~~~~~^~~
+/usr/include/c++/13/bits/stl_map.h:240:7: note: candidate: ‘std::map<_Key, _Tp, _Compare, _Alloc>::map(std::initializer_list<std::pair<const _Key, _Val> >, const _Compare&, const allocator_type&) [with _Key = std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >; _Tp = long unsigned int; _Compare = std::less<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> > >; _Alloc = std::allocator<std::pair<const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int> >; allocator_type = std::allocator<std::pair<const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int> >]’
+  240 |       map(initializer_list<value_type> __l,
+      |       ^~~
+/usr/include/c++/13/bits/stl_map.h:240:40: note:   no known conversion for argument 1 from ‘<brace-enclosed initializer list>’ to ‘std::initializer_list<std::pair<const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int> >’
+  240 |       map(initializer_list<value_type> __l,
+      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+/usr/include/c++/13/bits/stl_map.h:227:7: note: candidate: ‘std::map<_Key, _Tp, _Compare, _Alloc>::map(std::map<_Key, _Tp, _Compare, _Alloc>&&) [with _Key = std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >; _Tp = long unsigned int; _Compare = std::less<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> > >; _Alloc = std::allocator<std::pair<const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int> >]’
+  227 |       map(map&&) = default;
+      |       ^~~
+/usr/include/c++/13/bits/stl_map.h:227:11: note:   no known conversion for argument 1 from ‘<brace-enclosed initializer list>’ to ‘std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>&&’
+  227 |       map(map&&) = default;
+      |           ^~~~~
+/usr/include/c++/13/bits/stl_map.h:219:7: note: candidate: ‘std::map<_Key, _Tp, _Compare, _Alloc>::map(const std::map<_Key, _Tp, _Compare, _Alloc>&) [with _Key = std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >; _Tp = long unsigned int; _Compare = std::less<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> > >; _Alloc = std::allocator<std::pair<const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int> >]’
+  219 |       map(const map&) = default;
+      |       ^~~
+/usr/include/c++/13/bits/stl_map.h:219:11: note:   no known conversion for argument 1 from ‘<brace-enclosed initializer list>’ to ‘const std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>&’
+  219 |       map(const map&) = default;
+      |           ^~~~~~~~~~
+/usr/include/c++/13/bits/stl_map.h:206:7: note: candidate: ‘std::map<_Key, _Tp, _Compare, _Alloc>::map(const _Compare&, const allocator_type&) [with _Key = std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >; _Tp = long unsigned int; _Compare = std::less<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> > >; _Alloc = std::allocator<std::pair<const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int> >; allocator_type = std::allocator<std::pair<const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int> >]’
+  206 |       map(const _Compare& __comp,
+      |       ^~~
+/usr/include/c++/13/bits/stl_map.h:206:27: note:   no known conversion for argument 1 from ‘<brace-enclosed initializer list>’ to ‘const std::less<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> > >&’
+  206 |       map(const _Compare& __comp,
+      |           ~~~~~~~~~~~~~~~~^~~~~~
+/usr/include/c++/13/bits/stl_map.h:197:7: note: candidate: ‘std::map<_Key, _Tp, _Compare, _Alloc>::map() [with _Key = std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >; _Tp = long unsigned int; _Compare = std::less<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> > >; _Alloc = std::allocator<std::pair<const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int> >]’
+  197 |       map() = default;
+      |       ^~~
+/usr/include/c++/13/bits/stl_map.h:197:7: note:   candidate expects 0 arguments, 1 provided
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp: In function ‘void {anonymous}::distribution(const crown::runtime::statistics::Distribution&, const Counts&, uint64_t, std::size_t)’:
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:38:67: error: call of overloaded ‘size(const {anonymous}::Counts&)’ is ambiguous
+   38 |   check(actual.completion==st::Completion::exact&&actual.ndv==size(expected)&&actual.visited==visited,"exact population/visit count");
+      |                                                               ~~~~^~~~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = map<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp: In function ‘void {anonymous}::ranked_distribution(const crown::runtime::statistics::Distribution&, const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >&, const std::vector<long unsigned int>&, uint64_t, std::size_t, bool)’:
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:69:67: error: call of overloaded ‘size(const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >&)’ is ambiguous
+   69 |   check(actual.completion==st::Completion::exact&&actual.ndv==size(ordered)&&actual.visited==visited,"literal scalar NDV/visits");
+      |                                                               ~~~~^~~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp: In function ‘void {anonymous}::scalar_order(crown::ScalarType, const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >&)’:
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:91:65: error: call of overloaded ‘size(const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >&)’ is ambiguous
+   91 |   ranked_distribution(b.distribution,ordered,multiplicities,size(ordered),64);
+      |                                                             ~~~~^~~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:96:162: error: call of overloaded ‘size(const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >&)’ is ambiguous
+   96 |   auto exact=limits();exact.work=indexed.usage().work;st::Budget at(exact);ranked_distribution(st::index(table,index,at).distribution,ordered,multiplicities,size(ordered),64);
+      |                                                                                                                                                              ~~~~^~~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:103:67: error: call of overloaded ‘size(const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >&)’ is ambiguous
+  103 |   ranked_distribution(hot.distribution,ordered,multiplicities,size(ordered),3);
+      |                                                               ~~~~^~~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:104:137: error: call of overloaded ‘size(const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >&)’ is ambiguous
+  104 |   top.heavy_keys=0;st::Budget no_heavy(top);ranked_distribution(st::index(table,index,no_heavy).distribution,ordered,multiplicities,size(ordered),0);
+      |                                                                                                                                     ~~~~^~~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:105:81: error: call of overloaded ‘size(const std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >&)’ is ambiguous
+  105 |   table.clear();ranked_distribution(hot.distribution,ordered,multiplicities,size(ordered),3);
+      |                                                                             ~~~~^~~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp: In function ‘crown::PhysicalPlan {anonymous}::alias_plan()’:
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:149:207: error: could not convert ‘{{"g", crown::NodeKind::generalized, scope, {{1}, {2}}, <brace-enclosed initializer list>(), <brace-enclosed initializer list>()}, {"left", crown::NodeKind::native, scope, <brace-enclosed initializer list>(), 0, <brace-enclosed initializer list>()}, {"right", crown::NodeKind::native, scope, <brace-enclosed initializer list>(), 1, <brace-enclosed initializer list>()}}’ from ‘<brace-enclosed initializer list>’ to ‘std::vector<crown::TreeNode>’
+  149 |   return planner::lower_tree(catalog,query,FreeConnexTree{NodeId{0},{{"g",NodeKind::generalized,scope,{{1},{2}},{},{}},{"left",NodeKind::native,scope,{},0,{}},{"right",NodeKind::native,scope,{},1,{}}},{},{}});
+      |                                                                                                                                                                                                               ^
+      |                                                                                                                                                                                                               |
+      |                                                                                                                                                                                                               <brace-enclosed initializer list>
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp: In function ‘crown::runtime::statistics::OwnerRequest {anonymous}::alias_request(const crown::PhysicalPlan&)’:
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:157:3: error: this ‘for’ clause does not guard... [-Werror=misleading-indentation]
+  157 |   for(const auto& index:plan.indexes())out.selections.push_back({st::IndexScope{index.id},{}});return out;
+      |   ^~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:157:96: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘for’
+  157 |   for(const auto& index:plan.indexes())out.selections.push_back({st::IndexScope{index.id},{}});return out;
+      |                                                                                                ^~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp: In member function ‘void {anonymous}::AliasModel::apply(const crown::PhysicalPlan&, crown::SetOperation, const crown::Row&)’:
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:168:160: error: call of overloaded ‘size({anonymous}::Counts)’ is ambiguous
+  168 |       const bool candidate=native[0].contains(key)||native[1].contains(key),member=native[0].contains(key)&&native[1].contains(key);const auto before_root=size(joined());
+      |                                                                                                                                                            ~~~~^~~~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = map<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:175:328: error: call of overloaded ‘size({anonymous}::Counts)’ is ambiguous
+  175 |       const bool next=native[0].contains(key)&&native[1].contains(key);if(member!=next){transition(events.at(0,op,ws::Role::survivor,NodeId{0}),member?1:0,next?1:0);transition(events.at(0,op,ws::Role::visible_support,NodeId{0}),member?1:0,next?1:0);transition(events.at(0,op,ws::Role::parent_support,NodeId{0}),before_root,size(joined()));}
+      |                                                                                                                                                                                                                                                                                                                                    ~~~~^~~~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = map<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp: In member function ‘void {anonymous}::AliasModel::check_state(const crown::runtime::statistics::OwnerCapture&, const crown::PhysicalPlan&, const crown::runtime::statistics::OwnerRequest&) const’:
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:181:121: error: call of overloaded ‘size(const crown::Relation&)’ is ambiguous
+  181 |       if(std::holds_alternative<st::SourceScope>(expected.scope)){component(actual,project(source,*expected.fields),size(source),size(source));continue;}
+      |                                                                                                                     ~~~~^~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::set<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> > >; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = set<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> > >; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:181:134: error: call of overloaded ‘size(const crown::Relation&)’ is ambiguous
+  181 |       if(std::holds_alternative<st::SourceScope>(expected.scope)){component(actual,project(source,*expected.fields),size(source),size(source));continue;}
+      |                                                                                                                                  ~~~~^~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::set<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> > >; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = set<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> > >; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:182:176: error: call of overloaded ‘size(const std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>&)’ is ambiguous
+  182 |       if(const auto* occurrence=std::get_if<st::OccurrenceScope>(&expected.scope)){const auto& population=native[occurrence->occurrence.value];component(actual,population,size(population),size(population));check(actual.node_kind==NodeKind::native,"native occurrence kind");continue;}
+      |                                                                                                                                                                            ~~~~^~~~~~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = map<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:182:193: error: call of overloaded ‘size(const std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>&)’ is ambiguous
+  182 |       if(const auto* occurrence=std::get_if<st::OccurrenceScope>(&expected.scope)){const auto& population=native[occurrence->occurrence.value];component(actual,population,size(population),size(population));check(actual.node_kind==NodeKind::native,"native occurrence kind");continue;}
+      |                                                                                                                                                                                             ~~~~^~~~~~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = map<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:183:320: error: call of overloaded ‘size({anonymous}::Counts&)’ is ambiguous
+  183 |       if(const auto* node=std::get_if<st::NodeScope>(&expected.scope)){const auto id=node->node.value;Counts population=id==0?(node->role==SupportRole::records?candidates():joined()):ones(native[id-1]);if(node->role==SupportRole::parent_support&&id==0)population=root_counts(population);component(actual,population,size(population),size(population));check(actual.node_kind==(id?NodeKind::native:NodeKind::generalized),"alias node kind");continue;}
+      |                                                                                                                                                                                                                                                                                                                            ~~~~^~~~~~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = map<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:183:337: error: call of overloaded ‘size({anonymous}::Counts&)’ is ambiguous
+  183 |       if(const auto* node=std::get_if<st::NodeScope>(&expected.scope)){const auto id=node->node.value;Counts population=id==0?(node->role==SupportRole::records?candidates():joined()):ones(native[id-1]);if(node->role==SupportRole::parent_support&&id==0)population=root_counts(population);component(actual,population,size(population),size(population));check(actual.node_kind==(id?NodeKind::native:NodeKind::generalized),"alias node kind");continue;}
+      |                                                                                                                                                                                                                                                                                                                                             ~~~~^~~~~~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = map<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:185:233: error: call of overloaded ‘size(const std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>&)’ is ambiguous
+  185 |       bool matched=false;for(const auto& node:plan.nodes())if(node.visible_relation&&*node.visible_relation==index.relation){const auto population=node.id.value?ones(native[node.id.value-1]):joined();component(actual,population,size(population),size(population));matched=true;break;}check(matched,"known visible index population");
+      |                                                                                                                                                                                                                                     ~~~~^~~~~~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = map<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:185:250: error: call of overloaded ‘size(const std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>&)’ is ambiguous
+  185 |       bool matched=false;for(const auto& node:plan.nodes())if(node.visible_relation&&*node.visible_relation==index.relation){const auto population=node.id.value?ones(native[node.id.value-1]):joined();component(actual,population,size(population),size(population));matched=true;break;}check(matched,"known visible index population");
+      |                                                                                                                                                                                                                                                      ~~~~^~~~~~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = map<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp: In function ‘void {anonymous}::typed_alias_trace()’:
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:206:34: error: call of overloaded ‘size(crown::Relation&)’ is ambiguous
+  206 |   auto cap=limits();cap.rows=size(model.source);const auto incomplete=runtime.capture_combined_statistics(request,cap);
+      |                              ~~~~^~~~~~~~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::set<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> > >; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = set<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> > >; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:208:103: error: call of overloaded ‘size(crown::Relation&)’ is ambiguous
+  208 |   distribution(*incomplete.state().components()[0].distribution,project(model.source,Fields{{0}}),size(model.source));unknown(*incomplete.state().components()[1].distribution);model.events.check_snapshot(incomplete.workload(),sequence,0);
+      |                                                                                                   ~~~~^~~~~~~~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::set<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> > >; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = set<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> > >; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp: In function ‘crown::PhysicalPlan {anonymous}::constraint_plan()’:
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:222:111: error: converting to ‘std::optional<crown::NodeId>’ from initializer list would use explicit constructor ‘constexpr std::optional<_Tp>::optional(_Up&&) [with _Up = int; typename std::enable_if<__and_v<std::__not_<std::is_same<std::optional<_Tp>, typename std::remove_cv<typename std::remove_reference<_Iter>::type>::type> >, std::__not_<std::is_same<std::in_place_t, typename std::remove_cv<typename std::remove_reference<_Iter>::type>::type> >, std::is_constructible<_Tp, _Up>, std::__not_<std::is_convertible<_Iter, _Iterator> > >, bool>::type <anonymous> = false; _Tp = crown::NodeId]’
+  222 |   return planner::lower_tree(catalog,query,FreeConnexTree{{0},{{"c",NodeKind::native,{{0},{1}},{},0,{}}},{},{}});
+      |                                                                                                               ^
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp: In member function ‘void {anonymous}::ConstraintModel::apply(uint64_t, crown::SetOperation, const crown::Row&)’:
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:234:29: error: call of overloaded ‘size({anonymous}::Counts&)’ is ambiguous
+  234 |     const auto old_root=size(native);const auto prior_visible=visible();const Row projection{key[0]};const auto prior=prior_visible.find(projection);const auto visible_before=prior==prior_visible.end()?0:prior->second;
+      |                         ~~~~^~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = map<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:236:186: error: call of overloaded ‘size({anonymous}::Counts&)’ is ambiguous
+  236 |     if((before==0)!=(after==0)){transition(events.at(0,op,ws::Role::survivor,NodeId{0}),before?1:0,after?1:0);transition(events.at(0,op,ws::Role::parent_support,NodeId{0}),old_root,size(native));const auto next_visible=visible();const auto next=next_visible.find(projection);transition(events.at(0,op,ws::Role::visible_support,NodeId{0}),visible_before,next==next_visible.end()?0:next->second);}
+      |                                                                                                                                                                                      ~~~~^~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = map<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp: In member function ‘void {anonymous}::ConstraintModel::check_state(const crown::runtime::statistics::OwnerCapture&, const crown::runtime::statistics::OwnerRequest&) const’:
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:241:174: error: call of overloaded ‘size(const std::set<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> > >&)’ is ambiguous
+  241 |       if(const auto* source=std::get_if<st::SourceScope>(&expected.scope)){const auto& rows=sources[source->table.value];component(actual,project(rows,*expected.fields),size(rows),size(rows));continue;}
+      |                                                                                                                                                                          ~~~~^~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::set<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> > >; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = set<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> > >; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:241:185: error: call of overloaded ‘size(const std::set<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> > >&)’ is ambiguous
+  241 |       if(const auto* source=std::get_if<st::SourceScope>(&expected.scope)){const auto& rows=sources[source->table.value];component(actual,project(rows,*expected.fields),size(rows),size(rows));continue;}
+      |                                                                                                                                                                                     ~~~~^~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::set<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> > >; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = set<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> > >; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:242:99: error: call of overloaded ‘size(const {anonymous}::Counts&)’ is ambiguous
+  242 |       if(std::holds_alternative<st::OccurrenceScope>(expected.scope)){component(actual,native,size(native),size(native));continue;}
+      |                                                                                               ~~~~^~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = map<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:242:112: error: call of overloaded ‘size(const {anonymous}::Counts&)’ is ambiguous
+  242 |       if(std::holds_alternative<st::OccurrenceScope>(expected.scope)){component(actual,native,size(native),size(native));continue;}
+      |                                                                                                            ~~~~^~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = map<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:243:228: error: call of overloaded ‘size(const {anonymous}::Counts&)’ is ambiguous
+  243 |       const auto role=std::get<st::NodeScope>(expected.scope).role;const Counts population=role==SupportRole::parent_support?root_counts(native):role==SupportRole::visible?visible():ones(native);component(actual,population,size(population),size(population));check(actual.node_kind==NodeKind::native,"constrained native kind");
+      |                                                                                                                                                                                                                                ~~~~^~~~~~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = map<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:243:245: error: call of overloaded ‘size(const {anonymous}::Counts&)’ is ambiguous
+  243 |       const auto role=std::get<st::NodeScope>(expected.scope).role;const Counts population=role==SupportRole::parent_support?root_counts(native):role==SupportRole::visible?visible():ones(native);component(actual,population,size(population),size(population));check(actual.node_kind==NodeKind::native,"constrained native kind");
+      |                                                                                                                                                                                                                                                 ~~~~^~~~~~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:30:15: note: candidate: ‘uint64_t {anonymous}::size(const auto:62&) [with auto:62 = std::map<std::vector<std::variant<long int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; uint64_t = long unsigned int]’
+   30 | std::uint64_t size(const auto& values){return static_cast<std::uint64_t>(values.size());}
+      |               ^~~~
+/usr/include/c++/13/bits/range_access.h:264:5: note: candidate: ‘constexpr decltype (__cont.size()) std::size(const _Container&) [with _Container = map<vector<variant<long int, __cxx11::basic_string<char, char_traits<char>, allocator<char> >, bool, crown::Date, crown::Decimal> >, long unsigned int>; decltype (__cont.size()) = long unsigned int]’
+  264 |     size(const _Container& __cont) noexcept(noexcept(__cont.size()))
+      |     ^~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp: At global scope:
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:46:6: error: ‘void {anonymous}::component(const crown::runtime::statistics::Component&, const Counts&, uint64_t, uint64_t, std::size_t)’ defined but not used [-Werror=unused-function]
+   46 | void component(const st::Component& actual,const Counts& expected,std::uint64_t cardinality,std::uint64_t visited,std::size_t top=64) {
+      |      ^~~~~~~~~
+docs/verification/c01-statistics-scalar-proposal/scalar_statistics_test.cpp:34:10: error: ‘crown::Relation {anonymous}::keys(const Counts&)’ defined but not used [-Werror=unused-function]
+   34 | Relation keys(const Counts& values){Relation out;for(const auto& [key,count]:values){static_cast<void>(count);out.insert(key);}return out;}
+      |          ^~~~
+cc1plus: all warnings being treated as errors

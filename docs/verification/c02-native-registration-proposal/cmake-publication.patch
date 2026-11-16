@@ -1,0 +1,112 @@
+--- CMakeLists.txt	2026-11-07 11:43:08.556780457 +0800
++++ docs/verification/c02-native-registration-proposal/overlay/CMakeLists.txt	2026-11-07 14:18:47.081210715 +0800
+@@ -22,8 +22,19 @@
+ 
+ set(JSON_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/third_party/nlohmann/json.hpp")
+ file(SHA256 "${JSON_HEADER}" JSON_SHA256)
+-if(NOT JSON_SHA256 STREQUAL "aaf127c04cb31c406e5b04a63f1ae89369fccde6d8fa7cdda1ed4f32dfc5de63")
+-  message(FATAL_ERROR "Vendored nlohmann/json 3.12.0 checksum mismatch")
++if(NOT JSON_SHA256 STREQUAL "f763c58b102e65242d09275aec4b2f343268280ab4587b15587ad143b2e2a406")
++  message(FATAL_ERROR "Vendored nlohmann/json 3.12.0 + CROWN cleanup patch checksum mismatch")
++endif()
++# The upstream control is a separate header-only executable, never a CROWN
++# dependency. Keep the original bytes and complete local difference offline.
++set(JSON_UPSTREAM_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/third_party/nlohmann/upstream/nlohmann/json.hpp")
++file(SHA256 "${JSON_UPSTREAM_HEADER}" JSON_UPSTREAM_SHA256)
++if(NOT JSON_UPSTREAM_SHA256 STREQUAL "aaf127c04cb31c406e5b04a63f1ae89369fccde6d8fa7cdda1ed4f32dfc5de63")
++  message(FATAL_ERROR "Preserved upstream nlohmann/json 3.12.0 checksum mismatch")
++endif()
++file(SHA256 "${CMAKE_CURRENT_SOURCE_DIR}/third_party/nlohmann/patches/crown-cleanup-oom.patch" JSON_PATCH_SHA256)
++if(NOT JSON_PATCH_SHA256 STREQUAL "65acb363a5b9787022eb3eb058641a0533a6cf6b642db5605a7c5848d681c9a9")
++  message(FATAL_ERROR "CROWN JSON cleanup patch checksum mismatch")
+ endif()
+ add_library(crown_json INTERFACE)
+ target_include_directories(crown_json SYSTEM INTERFACE third_party)
+@@ -52,6 +63,12 @@
+ target_include_directories(crown_plan PUBLIC include)
+ target_link_libraries(crown_plan PUBLIC crown_sql crown_core PRIVATE crown_options)
+ 
++# Pure retained-candidate ranking: no runtime, observation or report dependency.
++add_library(crown_ranking src/planner/ranking.cpp src/planner/ranking_integer.cpp
++  src/planner/ranking_payload.cpp)
++target_include_directories(crown_ranking PUBLIC include)
++target_link_libraries(crown_ranking PUBLIC crown_plan PRIVATE crown_options)
++
+ set(CROWN_RUNTIME_SOURCES src/runtime/support.cpp src/runtime/physical.cpp src/runtime/delta.cpp
+   src/io/support.cpp src/io/inspection.cpp src/runtime/replay.cpp src/runtime/session.cpp src/runtime/window.cpp src/runtime/observation.cpp
+   src/runtime/statistics.cpp src/runtime/owner_statistics.cpp src/runtime/statistics_collection.cpp
+@@ -61,6 +78,12 @@
+ find_package(Threads REQUIRED)
+ target_link_libraries(crown_runtime PUBLIC crown_plan PRIVATE crown_options Threads::Threads)
+ 
++# Opt in by linking this bridge. Neither crown_runtime nor crown_explain links
++# back to ranking; existing runtime/report source lists remain unchanged.
++add_library(crown_ranking_runtime src/runtime/ranking_evidence.cpp)
++target_include_directories(crown_ranking_runtime PUBLIC include)
++target_link_libraries(crown_ranking_runtime PUBLIC crown_ranking crown_runtime PRIVATE crown_options)
++
+ # Final report layer: runtime never depends on observability or report IO.
+ set(CROWN_EXPLAIN_SOURCES src/observability/explain.cpp src/io/explain.cpp
+   src/io/run_context.cpp src/io/cursor_observation.cpp
+@@ -474,6 +497,61 @@
+   set_tests_properties(support_api support_exceptions support_fixtures PROPERTIES TIMEOUT 180)
+   set_tests_properties(arena_model arena_exceptions arena_storage PROPERTIES TIMEOUT 60)
+   set_tests_properties(storage_journal storage_journal_exceptions PROPERTIES TIMEOUT 120)
++
++  # Append C02 registrations after all 131 preceding tests. Keep the testing
++  # bridge on exactly one runtime ABI and outside both report libraries.
++  add_library(crown_ranking_runtime_testing STATIC src/runtime/ranking_evidence.cpp)
++  target_include_directories(crown_ranking_runtime_testing PUBLIC include)
++  target_link_libraries(crown_ranking_runtime_testing PUBLIC crown_ranking crown_runtime_testing PRIVATE crown_options)
++
++  function(crown_add_ranking_test name source library)
++    add_executable(crown_${name}_test tests/unit/${source}.cpp)
++    target_include_directories(crown_${name}_test PRIVATE tests/support src/planner)
++    target_compile_options(crown_${name}_test PRIVATE -UNDEBUG)
++    target_link_libraries(crown_${name}_test PRIVATE ${library} crown_options)
++    add_test(NAME ${name} COMMAND crown_${name}_test ${ARGN})
++    set_tests_properties(${name} PROPERTIES TIMEOUT 900 LABELS C02)
++  endfunction()
++
++  crown_add_ranking_test(ranking_binding ranking_binding_test crown_ranking)
++  crown_add_ranking_test(ranking_pure_link ranking_pure_link_test crown_ranking)
++  crown_add_ranking_test(ranking_contract ranking_contract_test crown_ranking_runtime)
++  crown_add_ranking_test(ranking_empty ranking_empty_test crown_ranking_runtime)
++  crown_add_ranking_test(ranking_payload_time ranking_payload_time_test crown_ranking_runtime)
++  crown_add_ranking_test(ranking_census ranking_census_test crown_ranking_runtime_testing)
++  target_include_directories(crown_ranking_census_test PRIVATE src/runtime)
++  crown_add_ranking_test(ranking_exceptions ranking_exception_test crown_ranking_runtime)
++  crown_add_ranking_test(ranking_normalized_exceptions ranking_normalized_exception_test crown_ranking_runtime)
++  set_tests_properties(ranking_exceptions ranking_normalized_exceptions PROPERTIES TIMEOUT 3600)
++  crown_add_ranking_test(ranking_public_independent ranking_public_independent_test crown_ranking_runtime "${CMAKE_CURRENT_SOURCE_DIR}")
++  crown_add_ranking_test(ranking_integer_independent ranking_integer_independent_test crown_ranking)
++
++  # Compile the documented public functions under both runtime definitions.
++  # These are example objects, not extra duplicate execution fixtures.
++  foreach(c02_variant IN ITEMS production testing)
++    add_library(crown_ranking_usage_${c02_variant} OBJECT tests/examples/ranking_usage.cpp)
++    if(c02_variant STREQUAL "production")
++      set(c02_bridge crown_ranking_runtime)
++    else()
++      set(c02_bridge crown_ranking_runtime_testing)
++    endif()
++    target_link_libraries(crown_ranking_usage_${c02_variant} PRIVATE ${c02_bridge} crown_options)
++  endforeach()
++
++  add_executable(crown_json_cleanup_test tests/unit/json_cleanup_test.cpp)
++  target_compile_options(crown_json_cleanup_test PRIVATE -UNDEBUG)
++  target_link_libraries(crown_json_cleanup_test PRIVATE crown_json crown_options)
++  add_executable(crown_json_upstream_control_test tests/unit/json_cleanup_test.cpp)
++  target_compile_options(crown_json_upstream_control_test PRIVATE -UNDEBUG)
++  target_include_directories(crown_json_upstream_control_test SYSTEM PRIVATE third_party/nlohmann/upstream)
++  target_link_libraries(crown_json_upstream_control_test PRIVATE crown_options)
++  add_test(NAME json_cleanup COMMAND crown_json_cleanup_test --cleanup)
++  add_test(NAME json_patch_compatibility
++    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tools/verify_json_cleanup.py
++      --original $<TARGET_FILE:crown_json_upstream_control_test>
++      --patched $<TARGET_FILE:crown_json_cleanup_test>)
++  set_tests_properties(json_cleanup json_patch_compatibility PROPERTIES TIMEOUT 300 LABELS C02)
++
+   if(CROWN_SANITIZERS)
+     set_tests_properties(planner_residual_exceptions PROPERTIES TIMEOUT 7200)
+     get_property(crown_test_names DIRECTORY PROPERTY TESTS)

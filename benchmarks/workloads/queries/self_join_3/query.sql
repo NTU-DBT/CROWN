@@ -1,0 +1,1 @@
+SELECT DISTINCT "a0"."c0" AS "x0", "a0"."c1" AS "x1", "a1"."c1" AS "x2", "a2"."c1" AS "x3" FROM "edge" AS "a0" CROSS JOIN "edge" AS "a1" CROSS JOIN "edge" AS "a2" WHERE "a1"."c0" = "a0"."c1" AND "a2"."c0" = "a1"."c1";

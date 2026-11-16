@@ -1,0 +1,7 @@
+overlay_file	native_destination	origin	change
+overlay/CMakeLists.txt	CMakeLists.txt	CMakeLists.txt	append_pure_selection_matched_bridges_and_15_tests
+overlay/README.md	README.md	README.md	append_selection_pending_scope_to_verified_c02_baseline
+overlay/docs/native_build.md	docs/native_build.md	docs/native_build.md	append_selection_build_contract_to_verified_c02_baseline
+overlay/docs/selection.md	docs/selection.md	docs/verification/c05-selection-implementation-proposal/GUIDE.md	native_links_target_names_and_pending_scope
+overlay/docs/selection_binding.md	docs/selection_binding.md	docs/verification/c05-selection-implementation-proposal/BINDING.md	native_link_and_publication_wording
+overlay/docs/selection_accounting.md	docs/selection_accounting.md	docs/verification/c05-selection-implementation-proposal/ACCOUNTING.md	exact_copy_charge_contract

@@ -1,0 +1,84 @@
+--- docs/verification/c01-statistics-native-benchmark-oracle-revision-proposal/input-pins.sha256	2026-11-07 11:14:22.071894480 +0800
++++ docs/verification/c01-statistics-native-benchmark-metadata-revision-proposal/input-pins.sha256	2026-11-07 11:22:40.207444239 +0800
+@@ -1,6 +1,10 @@
+ a281668f3abf1a978d43fafb914fe8a6851b8876181581d755adb8cf21f53887  docs/verification/c01-statistics-native-benchmark-proposal/package.sha256
+ 84d2917e9df44d67ce33965607452d5c2d2b3c89ecd50233d9372abf34ae3336  docs/verification/c01-statistics-native-benchmark-proposal/input-pins.sha256
+ e74d0f5d63c36734ea31d28fa02be70dd9b94740759e566dd414afb479c5d027  docs/verification/c01-statistics-native-benchmark-proposal/native_benchmark.cpp
++6c9f818a539a1f44f05169795620fd82147a661e6a861ec474af17328bbcd39b  docs/verification/c01-statistics-native-benchmark-oracle-revision-proposal/package.sha256
++9ae091a54fcd16a53449ac235ee081358e31283aabefb90fb1994798c88d207b  docs/verification/c01-statistics-native-benchmark-oracle-revision-proposal/input-pins.sha256
++7f2ce2e8b9a86088b0e181263351dc246aac9ad4ca544c8acb5fbbb127b842a6  docs/verification/c01-statistics-native-benchmark-oracle-revision-proposal/native_benchmark.cpp
++7b97648c8a58ee6c3d686add6909053783dad6697c4d361a1431244c58e52a60  docs/verification/c01-statistics-native-benchmark-oracle-revision-proposal/oracle-correction.diff
+ cb0ecb64935f80bf4915aa069de1bf01bcf1ea2f22a591f6f7408d405fcf4cfe  docs/verification/c01-statistics-combined-proposal/PACKAGE_SHA256SUMS
+ 4bc21abf9b8833e6f624643bac370fc6efc638c9feba8d8e3476477e38886156  docs/verification/c01-statistics-combined-proposal/source-files.sha256
+ 0f3b62a22bcabb2c24586852e886321f8b11e3d17faaba507dc897f4dbc45afe  src/runtime/support.cpp
+@@ -10,6 +14,9 @@
+ b9de8c5725c90be3bb9db252bb545f57ef169f3e60909a2ebd37479c61632eed  build/verification/c01-statistics-native-benchmark-root-attempt-1.json
+ 829f4706dd628ad326fd10c109e92a58835eec35298e8ab3005ba8a74f3e721c  build/verification/c01-statistics-native-benchmark-root-attempt-1-stderr.log
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  build/verification/c01-statistics-native-benchmark-root-attempt-1-raw.json
++b6c8b4882b21ba13a12ec3c6f5a5667ec636e5a5b3b6a38a73705793b00696f6  build/verification/c01-statistics-native-benchmark-input-preflight-attempt-2.json
++d45b9db8bbb4efaa01ac53ab71a4aaabf2c8264c9a7d1110475de25d8c78a402  docs/verification/c01-statistics-native-benchmark-metadata-revision-proposal/build-only.sh
++7f2ce2e8b9a86088b0e181263351dc246aac9ad4ca544c8acb5fbbb127b842a6  docs/verification/c01-statistics-native-benchmark-metadata-revision-proposal/native_benchmark.cpp
+ 73d29e49086dbcd6fda7f94cd89ffded0456cd0da6a6c503e65cf63505611f40  build/release/compile_commands.json
+ 92a96fd0f01ade3862fb4fbbabe316337719f71eb43361f5eb6b250cdfe04d6a  build/release/libcrown_plan.a
+ 6ba92b30615a1b35c7b499d1067647be49be47757b8ee58cb1098c65d275d26e  build/release/libcrown_sql.a
+@@ -29,4 +36,5 @@
+ daea53ef1a4220926f11dfd476f9acc56d9f7e4bdc68e5bd36368c3631909e35  /tmp/crown-c01-native-benchmark-author/runtime_support.o
+ 38f0be2ceafa598e7e37f1b8a9cf4b493759d6228edae128c406646e2f84c8c7  /tmp/crown-c01-native-benchmark-author/runtime_window.o
+ 71e37e44b7993c5819c6727f57b6b7f32c757ce4c137678e712fbeca32e6a184  /tmp/crown-c01-native-benchmark-author/runtime_workload_statistics.o
+-2827e2263ef2fdc124564dab2ec6dd50bf4813162896122707314d735a80f9e  /tmp/crown-c01-native-benchmark-author/storage_reference.o
++2827e2263ef2fdc124564dab2dec6dd50bf4813162896122707314d735a80f9e  /tmp/crown-c01-native-benchmark-author/storage_reference.o
++ada8dae17e73c568fdec0886466d19a0352377fefb778b8ff6ef445a9b1549d8  /tmp/crown-c01-native-benchmark-oracle-revision-final/crown_c01_native_benchmark
+--- docs/verification/c01-statistics-native-benchmark-oracle-revision-proposal/build-only.sh	2026-11-07 11:13:24.877079419 +0800
++++ docs/verification/c01-statistics-native-benchmark-metadata-revision-proposal/build-only.sh	2026-11-07 11:22:26.730772502 +0800
+@@ -22,11 +22,23 @@
+ compiler=${CXX:-c++}
+ mkdir -p "$build_root"
+ 
++# Validate every pinned file, including all checksum-line syntax and digest
++# lengths. GNU sha256sum --strict makes malformed lines fatal instead of
++# silently ignoring them.
++(
++  cd "$repo_root"
++  sha256sum --check --strict --status \
++    docs/verification/c01-statistics-native-benchmark-metadata-revision-proposal/input-pins.sha256
++) || {
++  printf '%s\n' "metadata revision input pins do not match or are malformed" >&2
++  exit 1
++}
++
+ # Reuse exactly the 15 successful O3 runtime/collector/storage objects from
+ # the frozen benchmark's author build. A changed or missing object is fatal.
+ (
+   cd "$object_root"
+-  sha256sum --check --status <<'EOF'
++  sha256sum --check --strict --status <<'EOF'
+ 498194b88732948c1e3dace183c0fd46c7f8b8372d17b2cee7e13adaea352a34  io_inspection.o
+ b252f506d402f09bdc0be9f9d928b8744d23eec4075a227cce00534e48ec790e  io_support.o
+ 6a08b4d43baf6d7711c21620cdaf7c3c6e838960e3bcfcf69f760c765c556eba  runtime_combined_statistics.o
+@@ -41,7 +53,7 @@
+ daea53ef1a4220926f11dfd476f9acc56d9f7e4bdc68e5bd36368c3631909e35  runtime_support.o
+ 38f0be2ceafa598e7e37f1b8a9cf4b493759d6228edae128c406646e2f84c8c7  runtime_window.o
+ 71e37e44b7993c5819c6727f57b6b7f32c757ce4c137678e712fbeca32e6a184  runtime_workload_statistics.o
+-2827e2263ef2fdc124564dab2ec6dd50bf4813162896122707314d735a80f9e  storage_reference.o
++2827e2263ef2fdc124564dab2dec6dd50bf4813162896122707314d735a80f9e  storage_reference.o
+ EOF
+ ) || {
+   printf '%s\n' "pinned O3 runtime/collector/storage objects do not match" >&2
+@@ -49,7 +61,7 @@
+ }
+ (
+   cd "$repo_root"
+-  sha256sum --check --status <<'EOF'
++  sha256sum --check --strict --status <<'EOF'
+ 92a96fd0f01ade3862fb4fbbabe316337719f71eb43361f5eb6b250cdfe04d6a  build/release/libcrown_plan.a
+ 6ba92b30615a1b35c7b499d1067647be49be47757b8ee58cb1098c65d275d26e  build/release/libcrown_sql.a
+ 784b820ff9284ad75033552056fd2a81113f7eb54be5db56959f31ce778bcf9d  build/release/libcrown_core.a
+@@ -73,7 +85,7 @@
+ 
+ "$compiler" "${common_flags[@]}" \
+   -MMD -MF "$build_root/native_benchmark.d" \
+-  -c "$repo_root/docs/verification/c01-statistics-native-benchmark-oracle-revision-proposal/native_benchmark.cpp" \
++  -c "$repo_root/docs/verification/c01-statistics-native-benchmark-metadata-revision-proposal/native_benchmark.cpp" \
+   -o "$build_root/native_benchmark.o" \
+   >"$build_root/native_benchmark.log" 2>&1
+ 

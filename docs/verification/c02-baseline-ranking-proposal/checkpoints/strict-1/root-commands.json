@@ -1,0 +1,16 @@
+{
+  "scope": "strict-only checkpoint; no author execution or SAN/native/card acceptance",
+  "cwd": "/home/userroot/Codex/CROWN",
+  "commands": [
+    {"name": "binding", "argv": ["/tmp/crown-c02-baseline-coherent-strict-1/executables/ranking_binding_test"], "timeout_seconds": 900},
+    {"name": "pure_link", "argv": ["/tmp/crown-c02-baseline-coherent-strict-1/executables/ranking_pure_link_test"], "timeout_seconds": 900},
+    {"name": "contract", "argv": ["/tmp/crown-c02-baseline-coherent-strict-1/executables/ranking_contract_test"], "timeout_seconds": 900},
+    {"name": "empty", "argv": ["/tmp/crown-c02-baseline-coherent-strict-1/executables/ranking_empty_test"], "timeout_seconds": 900},
+    {"name": "payload_time", "argv": ["/tmp/crown-c02-baseline-coherent-strict-1/executables/ranking_payload_time_test"], "timeout_seconds": 900},
+    {"name": "census", "argv": ["/tmp/crown-c02-baseline-coherent-strict-1/executables/ranking_census_test"], "timeout_seconds": 900},
+    {"name": "persistent_faults", "argv": ["/tmp/crown-c02-baseline-coherent-strict-1/executables/ranking_exception_test"], "timeout_seconds": 3600},
+    {"name": "inherited_candidates", "argv": ["/tmp/crown-c02-baseline-coherent-strict-1/executables/candidates_test", "/home/userroot/Codex/CROWN/tests/candidates"], "timeout_seconds": 900},
+    {"name": "inherited_candidate_faults", "argv": ["/tmp/crown-c02-baseline-coherent-strict-1/executables/candidates_exception_test"], "timeout_seconds": 3600},
+    {"name": "inherited_candidate_reports", "argv": ["python3", "tools/verify_candidate_reports.py", "/tmp/crown-c02-baseline-coherent-strict-1/executables/candidates_io_test", "/home/userroot/Codex/CROWN"], "timeout_seconds": 900}
+  ]
+}

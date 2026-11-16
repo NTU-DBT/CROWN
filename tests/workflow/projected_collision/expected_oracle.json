@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "query": "projected_collision",
+  "oracle_definition": "Two distinct physical records project to one logical key; deleting either witness alone must preserve the answer.",
+  "initial_current_rows": [],
+  "events": [
+    {
+      "sequence": 1,
+      "source_position": {
+        "source": "projected-collision-input",
+        "offset": 100
+      },
+      "input": {
+        "table": "records",
+        "operation": "insert",
+        "values": [
+          5,
+          1
+        ]
+      },
+      "current_rows": [
+        [
+          5
+        ]
+      ],
+      "added": [
+        [
+          5
+        ]
+      ],
+      "removed": [],
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            5
+          ]
+        }
+      ]
+    },
+    {
+      "sequence": 2,
+      "source_position": {
+        "source": "projected-collision-input",
+        "offset": 200
+      },
+      "input": {
+        "table": "records",
+        "operation": "insert",
+        "values": [
+          5,
+          2
+        ]
+      },
+      "current_rows": [
+        [
+          5
+        ]
+      ],
+      "added": [],
+      "removed": [],
+      "signed_delta": []
+    },
+    {
+      "sequence": 3,
+      "source_position": {
+        "source": "projected-collision-input",
+        "offset": 300
+      },
+      "input": {
+        "table": "records",
+        "operation": "delete",
+        "values": [
+          5,
+          1
+        ]
+      },
+      "current_rows": [
+        [
+          5
+        ]
+      ],
+      "added": [],
+      "removed": [],
+      "signed_delta": []
+    },
+    {
+      "sequence": 4,
+      "source_position": {
+        "source": "projected-collision-input",
+        "offset": 400
+      },
+      "input": {
+        "table": "records",
+        "operation": "delete",
+        "values": [
+          5,
+          2
+        ]
+      },
+      "current_rows": [],
+      "added": [],
+      "removed": [
+        [
+          5
+        ]
+      ],
+      "signed_delta": [
+        {
+          "operation": "delete",
+          "values": [
+            5
+          ]
+        }
+      ]
+    },
+    {
+      "sequence": 5,
+      "source_position": {
+        "source": "projected-collision-input",
+        "offset": 500
+      },
+      "input": {
+        "table": "records",
+        "operation": "insert",
+        "values": [
+          5,
+          3
+        ]
+      },
+      "current_rows": [
+        [
+          5
+        ]
+      ],
+      "added": [
+        [
+          5
+        ]
+      ],
+      "removed": [],
+      "signed_delta": [
+        {
+          "operation": "insert",
+          "values": [
+            5
+          ]
+        }
+      ]
+    },
+    {
+      "sequence": 6,
+      "source_position": {
+        "source": "projected-collision-input",
+        "offset": 600
+      },
+      "input": {
+        "table": "records",
+        "operation": "delete",
+        "values": [
+          5,
+          4
+        ]
+      },
+      "current_rows": [
+        [
+          5
+        ]
+      ],
+      "added": [],
+      "removed": [],
+      "signed_delta": []
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+--- /home/userroot/Codex/CROWN/tests/unit/ranking_normalized_exception_test.cpp
++++ /home/userroot/Codex/CROWN/docs/verification/c02-clang-allocation-diagnostic-usage-revision-proposal/normalized_success_profile.cpp
+@@ -1,3 +1,6 @@
++#include <cstdio>
++#include <cstddef>
++static std::size_t diagnostic_counts[4]{};
+ #include "ranking_exception_support.hpp"
+ 
+ int main(){try{
+@@ -26,7 +29,7 @@
+   const auto captured=rr::capture(set,owner);check(captured.evidence && captured.evidence->inputs().depth_reasons()==0,"normalized fault capture failed");
+   const auto evidence=captured.evidence->inputs();std::size_t positions=0,recovered=0;
+   for(const auto policy:{pr::Policy::height_only,pr::Policy::committed_input_native_depth,pr::Policy::tuple_index_slots}){
+-    pr::Request request;request.policy=policy;allocations=0;const auto expected=pr::rank(set,request,evidence);const auto count=allocations;
++    pr::Request request;request.policy=policy;allocations=0;const auto expected=pr::rank(set,request,evidence);const auto count=allocations;diagnostic_counts[static_cast<std::size_t>(policy)]=count;
+     check(expected.result && count<100'000,"normalized rank/fault position guard");
+     const auto retained=result_image(*expected.result);const auto usage=expected.result->usage();
+     if(policy==pr::Policy::tuple_index_slots){std::vector<std::string> scores;for(const auto& score:expected.result->scores()){
+@@ -34,19 +37,15 @@
+       std::sort(scores.begin(),scores.end());check(scores==std::vector<std::string>{"24","32","32"},"normalized literal memory oracle changed");}
+     if(policy==pr::Policy::committed_input_native_depth){std::vector<std::string> scores;for(const auto& score:expected.result->scores()){check(score.denominator=="7","normalized physical denominator changed");scores.push_back(score.numerator);}
+       std::sort(scores.begin(),scores.end());check(scores==std::vector<std::string>{"10","10","13"},"normalized literal depth oracle changed");}
+-    for(std::size_t i=0;i<count;++i){pr::Attempt attempt;{Fault fault(i);attempt=pr::rank(set,request,evidence);}
+-      check(triggered,"normalized rank injection was not reached");
+-      if(attempt.result){check(attempt.stop==pr::Stop::complete && result_image(*attempt.result)==retained,"normalized cleanup recovery changed complete result");++recovered;}
+-      else{check(attempt.stop==pr::Stop::allocation_failure || attempt.stop==pr::Stop::lowering_limit,"normalized allocation failure changed resource kind");}
+-      verify();check(result_image(*expected.result)==retained && expected.result->usage()==usage,"normalized replay failure rewrote prior result");++positions;
+-    }
+-    const auto retry=pr::rank(set,request,evidence);check(retry.result && result_image(*retry.result)==retained,"normalized retry changed complete result");verify();
++    positions+=count; // Diagnostic: successful-call count only; no fault sweep.
++
++    const auto retry=pr::rank(set,request,evidence);check(retry.result && result_image(*retry.result)==retained,"normalized retry changed complete result");verify();check(expected.result->usage()==usage,"diagnostic positive retry changed retained usage");
+   }
+-  allocations=0;const auto baseline=rr::capture(set,owner);const auto count=allocations;check(baseline.evidence && count<100'000,"normalized capture position guard");
+-  for(std::size_t i=0;i<count;++i){rr::CaptureAttempt attempt;{Fault fault(i);attempt=rr::capture(set,owner);}
+-    check(triggered && !attempt.evidence && attempt.stop==pr::Stop::allocation_failure,"normalized capture failed nontransactionally");verify();++positions;
+-  }
++  allocations=0;const auto baseline=rr::capture(set,owner);const auto count=allocations;diagnostic_counts[3]=count;check(baseline.evidence && count<100'000,"normalized capture position guard");
++  positions+=count; // Diagnostic: successful-call count only; no fault sweep.
++
+   const auto retry=rr::capture(set,owner);check(retry.evidence && retry.evidence->captured() && baseline.evidence->captured(),"normalized capture retry lost native record");
+   same_workload_complete(baseline.evidence->captured()->workload(),retry.evidence->captured()->workload());verify();
+-  std::cout<<"C02 normalized replay allocation positions="<<positions<<" recovered_cleanup_positions="<<recovered<<"; complete owner/workload/result preserved\n";
++  std::cout<<"C02 diagnostic normalized successful-call allocations="<<positions<<" recovered_cleanup_positions="<<recovered<<"; complete owner/workload/result preserved\n";
++std::printf("diagnostic-success-only height=%zu depth=%zu memory=%zu capture=%zu\n",diagnostic_counts[0],diagnostic_counts[1],diagnostic_counts[2],diagnostic_counts[3]);
+ }catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;}}

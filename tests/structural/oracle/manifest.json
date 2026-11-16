@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "name": "empty_body",
+      "query": "../plans/queries/empty_body.cq.json",
+      "height_status": "proven_minimum",
+      "minimum_height": 0
+    },
+    {
+      "name": "singleton",
+      "query": "../plans/queries/singleton.cq.json",
+      "height_status": "proven_minimum",
+      "minimum_height": 1
+    },
+    {
+      "name": "projected_singleton",
+      "query": "../plans/queries/projected_singleton.cq.json",
+      "height_status": "proven_minimum",
+      "minimum_height": 1
+    },
+    {
+      "name": "boolean_singleton",
+      "query": "../plans/queries/boolean_query.cq.json",
+      "height_status": "proven_minimum",
+      "minimum_height": 1
+    },
+    {
+      "name": "full_two_edge_generalized_root",
+      "query": "../plans/queries/two_edge.cq.json",
+      "height_status": "proven_minimum",
+      "minimum_height": 1
+    },
+    {
+      "name": "projected_endpoint_two_edge",
+      "query": "queries/projected_endpoint_two_edge.cq.json",
+      "height_status": "proven_minimum",
+      "minimum_height": 2
+    },
+    {
+      "name": "full_four_edge_path",
+      "query": "queries/full_four_edge_path.cq.json",
+      "height_status": "proven_minimum",
+      "minimum_height": 2
+    },
+    {
+      "name": "equal_scopes_distinct_occurrences",
+      "query": "../plans/queries/duplicate_scopes.cq.json",
+      "height_status": "proven_minimum",
+      "minimum_height": 1
+    },
+    {
+      "name": "disconnected_full",
+      "query": "../plans/queries/disconnected.cq.json",
+      "height_status": "proven_minimum",
+      "minimum_height": 1
+    },
+    {
+      "name": "disconnected_proper",
+      "query": "queries/disconnected_proper.cq.json",
+      "height_status": "proven_minimum",
+      "minimum_height": 1
+    },
+    {
+      "name": "disconnected_boolean",
+      "query": "queries/disconnected_boolean.cq.json",
+      "height_status": "proven_minimum",
+      "minimum_height": 1
+    },
+    {
+      "name": "full_star_3",
+      "query": "queries/full_star_3.cq.json",
+      "height_status": "proven_minimum",
+      "minimum_height": 1
+    },
+    {
+      "name": "full_star_8",
+      "query": "queries/full_star_8.cq.json",
+      "height_status": "proven_minimum",
+      "minimum_height": 1
+    },
+    {
+      "name": "high_variable_singleton_65",
+      "query": "queries/high_variable_singleton.cq.json",
+      "height_status": "proven_minimum",
+      "minimum_height": 1
+    },
+    {
+      "name": "native_nullary_atom",
+      "query": "queries/native_nullary_atom.cq.json",
+      "height_status": "proven_minimum",
+      "minimum_height": 1
+    },
+    {
+      "name": "residual_counterexample_7",
+      "query": "../plans/queries/residual_counterexample_7.cq.json",
+      "height_status": "proven_minimum",
+      "minimum_height": 3
+    },
+    {
+      "name": "residual_counterexample_9",
+      "query": "../plans/queries/residual_counterexample_9.cq.json",
+      "height_status": "proven_minimum",
+      "minimum_height": 3
+    },
+    {
+      "name": "full_two_edge_renamed_permuted",
+      "query": "queries/full_two_edge_renamed_permuted.cq.json",
+      "height_status": "proven_minimum",
+      "minimum_height": 1
+    },
+    {
+      "name": "residual_7_renamed_permuted",
+      "query": "queries/residual_7_renamed_permuted.cq.json",
+      "height_status": "proven_minimum",
+      "minimum_height": 3
+    },
+    {
+      "name": "unsupported_nonfree_endpoint_path",
+      "query": "queries/unsupported_nonfree_endpoint_path.cq.json",
+      "height_status": "unsupported",
+      "minimum_height": null
+    },
+    {
+      "name": "unsupported_cyclic_triangle",
+      "query": "queries/unsupported_cyclic_triangle.cq.json",
+      "height_status": "unsupported",
+      "minimum_height": null
+    }
+  ]
+}

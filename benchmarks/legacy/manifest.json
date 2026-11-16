@@ -1,0 +1,2377 @@
+{
+  "title": "Classified pinned legacy workload sources",
+  "status": "Source inspection only; no legacy executable or real dataset is used for native timing or correctness claims.",
+  "scope": "All116 task scenarios/13 labels in the five local specs, relevant original SQL/templates/setup/Scala and runner sources; raw sources retained at their original paths.",
+  "source_pins_from_source_baselines": {
+    "CROWN": "NTU-DBT/CROWN e369a623517723b3be3ea3e9806779f3c591e7f9 (recorded by docs/source_baselines.md)",
+    "DynaGox": "hkustDB/DynaGox c6811db68a34ab3b32722968c4e1e821f730c5ac (remote pin recorded by docs/source_baselines.md; no local checkout)"
+  },
+  "consolidation": {
+    "task_rows_total": 116,
+    "distinct_spec_query_labels": 13,
+    "parallelism_adds_new_query_labels": false,
+    "interpretation": "Task rows are backend/data/parallelism scenarios, not distinct SQL queries."
+  },
+  "specs": [
+    {
+      "path": "experiments/specs/agg_queries.spec",
+      "task_rows": 12,
+      "entries": [
+        "star_cnt",
+        "snb4_window"
+      ],
+      "scenario_note": "6 backend rows per query."
+    },
+    {
+      "path": "experiments/specs/enclosureness.spec",
+      "task_rows": 20,
+      "entries": [
+        "length3"
+      ],
+      "scenario_note": "One CROWN query; 4 named inputs (epinions, bitcoin, berkstan, google) × 5 winbig.factor values (0.05, 0.1, 0.2, 0.5, 1)."
+    },
+    {
+      "path": "experiments/specs/full_join_queries.spec",
+      "task_rows": 42,
+      "entries": [
+        "length3_filter",
+        "length4_filter",
+        "TwoComb",
+        "snb1_window",
+        "snb2_window",
+        "snb3_window",
+        "dumbbell_full"
+      ],
+      "scenario_note": "7 labels × 6 backend rows; fulljoin is a spec family name, not an SQL OUTER JOIN."
+    },
+    {
+      "path": "experiments/specs/join_project_queries.spec",
+      "task_rows": 18,
+      "entries": [
+        "length3_project",
+        "length4_project",
+        "dumbbell"
+      ],
+      "scenario_note": "3 labels × 6 backend rows."
+    },
+    {
+      "path": "experiments/specs/parallelism.spec",
+      "task_rows": 24,
+      "entries": [
+        "length4_filter",
+        "snb3_window"
+      ],
+      "scenario_note": "No new query shapes: length4_filter (CROWN/Flink) and snb3_window (CROWN/DBToaster), each at 1,2,4,8,16,32."
+    }
+  ],
+  "query_entries": [
+    {
+      "label": "star_cnt",
+      "spec_rows": {
+        "experiments/specs/agg_queries.spec": "tasks 1-6"
+      },
+      "flink_query": "experiments/flink/star_cnt/query.sql",
+      "dbtoaster_query": "experiments/dbtoaster/star_cnt/query.sql.template",
+      "dbtoaster_cpp_query": "experiments/dbtoaster_cpp/star_cnt/query.sql.template",
+      "scala": [
+        "crown/src/main/scala/StarCntDistributedJob.scala",
+        "crown/src/main/scala/StarCntProcessFunctions.scala"
+      ],
+      "head_and_semantics": "Flink: GROUP BY A.src, A.window_start, A.window_end; COUNT(*); plain aggregate output. DBToaster groups only by A.src; DBToaster C++ uses nonstandard COUNT(A.dst,B.dst,C.dst,D.dst).",
+      "shape": "Four binary edge occurrences share one source variable (star); equality skeleton is alpha-acyclic and the grouping head is structurally free-connex.",
+      "r1": "Unsupported as written: GROUP BY/COUNT are R2; aggregation and window semantics need separate contracts. The native engine executes admitted set CQs; it does not execute this aggregate/window query as written.",
+      "source_sha256": {
+        "experiments/flink/star_cnt/query.sql": "a986f661a37d447490d9a68d6b5170aa33f6b4d6d4208f59662881c4518741b5",
+        "experiments/dbtoaster/star_cnt/query.sql.template": "0023eaa2eeac35a4569ffd4077f3ee5c924a99ecc83d10e889b220d0670002ae",
+        "experiments/dbtoaster_cpp/star_cnt/query.sql.template": "8f88f1a6934efb79ab56f3e7ff2b50bd20871072c7c69e817945499f32dade99"
+      },
+      "scala_source_sha256": {
+        "crown/src/main/scala/StarCntDistributedJob.scala": "0f7ac1e08abb9614ae9c2c2a2f9212cc64b9c8eba3e077f849bf1f548fc7d45a",
+        "crown/src/main/scala/StarCntProcessFunctions.scala": "be97ffa2fdffaf77ffc51e9114a499242d16fc6e86da0b9a08a6d847aa01b2c0"
+      },
+      "execution_status": "source_inspected_not_runnable",
+      "update_contract": "unresolved_external_window_trace_and_input_identity",
+      "expected_backend": "legacy_source_variants_not_a_verified_native_comparison",
+      "output_contract": "backend_specific_runner_modes_and_heads_recorded_above_not_interchangeable",
+      "data_record": "legacy_external_data_unavailable",
+      "scenario_ids": [
+        "agg_queries/task1",
+        "agg_queries/task2",
+        "agg_queries/task3",
+        "agg_queries/task4",
+        "agg_queries/task5",
+        "agg_queries/task6"
+      ]
+    },
+    {
+      "label": "length3",
+      "spec_rows": {
+        "experiments/specs/enclosureness.spec": "tasks 1-20"
+      },
+      "flink_query": null,
+      "dbtoaster_query": null,
+      "dbtoaster_cpp_query": null,
+      "scala": [
+        "crown/src/main/scala/L3DistributedJobWithTag.scala",
+        "crown/src/main/scala/L3ProcessFunctions.scala",
+        "experiments/data-tools/src/main/scala/experiments/data/produce/length3/DataProducer.scala",
+        "experiments/data-tools/src/main/scala/experiments/data/utils/DynamicGraphGenerator.scala"
+      ],
+      "head_and_semantics": "No SQL or explicit SELECT/head is present for this label. Scala maps G1(A,B), G2(B,C), G3(C,D); the job applies endpoint threshold n (spec value 0). Treat the output head/mode as unspecified pending a written query contract.",
+      "shape": "Three-edge path; full-path head would be alpha-acyclic/free-connex, but this is only a candidate because the head is not declared.",
+      "r1": "Needs explicit head, output mode, and input trace semantics. Graph path alone is not enough to admit a workload.",
+      "source_sha256": {},
+      "scala_source_sha256": {
+        "crown/src/main/scala/L3DistributedJobWithTag.scala": "1e3514966e97f3856a5042b3a2de48852607d6426d5c09586275d84b932a139a",
+        "crown/src/main/scala/L3ProcessFunctions.scala": "cdf1b7f554a11a1439a97dd399d900baaec20a7a01c00bcef047134c67f3f6e9",
+        "experiments/data-tools/src/main/scala/experiments/data/produce/length3/DataProducer.scala": "c20f00bed425fbabaf4d4a143ae3331b5891c4027aba9e7fec6e28b3fb541a5a",
+        "experiments/data-tools/src/main/scala/experiments/data/utils/DynamicGraphGenerator.scala": "2028aee785e3df8b0417dc26221baec9126f05a4fc3409971d51aa6986ee3e4b"
+      },
+      "execution_status": "source_inspected_not_runnable",
+      "update_contract": "unresolved_external_window_trace_and_input_identity",
+      "expected_backend": "legacy_source_variants_not_a_verified_native_comparison",
+      "output_contract": "backend_specific_runner_modes_and_heads_recorded_above_not_interchangeable",
+      "data_record": "legacy_external_data_unavailable",
+      "scenario_ids": [
+        "enclosureness/task1",
+        "enclosureness/task2",
+        "enclosureness/task3",
+        "enclosureness/task4",
+        "enclosureness/task5",
+        "enclosureness/task6",
+        "enclosureness/task7",
+        "enclosureness/task8",
+        "enclosureness/task9",
+        "enclosureness/task10",
+        "enclosureness/task11",
+        "enclosureness/task12",
+        "enclosureness/task13",
+        "enclosureness/task14",
+        "enclosureness/task15",
+        "enclosureness/task16",
+        "enclosureness/task17",
+        "enclosureness/task18",
+        "enclosureness/task19",
+        "enclosureness/task20"
+      ]
+    },
+    {
+      "label": "length3_filter",
+      "spec_rows": {
+        "experiments/specs/full_join_queries.spec": "tasks 1-6"
+      },
+      "flink_query": "experiments/flink/length3_filter/query.sql",
+      "dbtoaster_query": "experiments/dbtoaster/length3_filter/query.sql.template",
+      "dbtoaster_cpp_query": "experiments/dbtoaster_cpp/length3_filter/query.sql.template",
+      "scala": [
+        "crown/src/main/scala/L3DistributedJob.scala",
+        "crown/src/main/scala/L3ProcessFunctions.scala"
+      ],
+      "head_and_semantics": "Flink emits path variables A.src,A.dst,C.src,C.dst plus window_start/end and uses C.dst > parameter; plain SELECT is SQL bag. DBToaster templates emit the four path variables without windows; plain SELECT is bag.",
+      "shape": "Three-edge path with a local constant predicate; full logical path head is free-connex.",
+      "r1": "Bag SELECT is unavailable in R1. Set-mode admission is a candidate only after preserving intended semantics (for example, proving uniqueness or explicitly selecting DISTINCT); HOP window input must be adapted. Local constant filter is within the bounded predicate family if its source is non-null.",
+      "source_sha256": {
+        "experiments/flink/length3_filter/query.sql": "fefa11aef436ecb3827b089625294acebafb15d3eb1a5cc276aa83856434ccfb",
+        "experiments/dbtoaster/length3_filter/query.sql.template": "4960a228278c3bb0203b3788a1762fd55f4fab3d10b0582d171c1afbbf409a90",
+        "experiments/dbtoaster_cpp/length3_filter/query.sql.template": "c56cc840c1f4a804e80acf15e91b6521b50cf4c743726bc70d307235c0d13a29"
+      },
+      "scala_source_sha256": {
+        "crown/src/main/scala/L3DistributedJob.scala": "da4025105b234b974707e08a633b7aa649a5d0e2649fdeb68554114283bbd745",
+        "crown/src/main/scala/L3ProcessFunctions.scala": "cdf1b7f554a11a1439a97dd399d900baaec20a7a01c00bcef047134c67f3f6e9"
+      },
+      "execution_status": "source_inspected_not_runnable",
+      "update_contract": "unresolved_external_window_trace_and_input_identity",
+      "expected_backend": "legacy_source_variants_not_a_verified_native_comparison",
+      "output_contract": "backend_specific_runner_modes_and_heads_recorded_above_not_interchangeable",
+      "data_record": "legacy_external_data_unavailable",
+      "scenario_ids": [
+        "full_join_queries/task1",
+        "full_join_queries/task2",
+        "full_join_queries/task3",
+        "full_join_queries/task4",
+        "full_join_queries/task5",
+        "full_join_queries/task6"
+      ]
+    },
+    {
+      "label": "length4_filter",
+      "spec_rows": {
+        "experiments/specs/full_join_queries.spec": "tasks 7-12",
+        "experiments/specs/parallelism.spec": "tasks 1-12"
+      },
+      "flink_query": "experiments/flink/length4_filter/query.sql",
+      "dbtoaster_query": "experiments/dbtoaster/length4_filter/query.sql.template",
+      "dbtoaster_cpp_query": "experiments/dbtoaster_cpp/length4_filter/query.sql.template",
+      "scala": [
+        "crown/src/main/scala/L4DistributedJob.scala",
+        "crown/src/main/scala/L4ProcessFunctions.scala"
+      ],
+      "head_and_semantics": "Flink and DBToaster templates expose the five path vertices (Flink also emits window_start/end) and filter D.dst > parameter; plain SELECT means bag.",
+      "shape": "Four-edge path with a local constant predicate; full logical path head is free-connex.",
+      "r1": "Bag SELECT unavailable as written; set-mode needs an explicit semantics decision. Filter is a bounded local predicate for non-null input; HOP window adapter required.",
+      "source_sha256": {
+        "experiments/flink/length4_filter/query.sql": "74c4d99fd4cd9a32c8783cc470ec3e398a41aeb66f21ba583e6d5c30d52b0992",
+        "experiments/dbtoaster/length4_filter/query.sql.template": "6a5e6d4cc629417e3f692bdb7fd288a4891fa06fb1fe86ce3018f36b5723cc50",
+        "experiments/dbtoaster_cpp/length4_filter/query.sql.template": "287af5a484bb0f88e674b335cc7c76936522f44187deee0cf388e9ca813a66c6"
+      },
+      "scala_source_sha256": {
+        "crown/src/main/scala/L4DistributedJob.scala": "48dc103f96f81e892866c8b1f628c62c2ea234e73dd37ced8da9df81fc224162",
+        "crown/src/main/scala/L4ProcessFunctions.scala": "242babe2fcd2dcc79e4634aedfa846604394c6f857cde3eace611ebdc777da65"
+      },
+      "execution_status": "source_inspected_not_runnable",
+      "update_contract": "unresolved_external_window_trace_and_input_identity",
+      "expected_backend": "legacy_source_variants_not_a_verified_native_comparison",
+      "output_contract": "backend_specific_runner_modes_and_heads_recorded_above_not_interchangeable",
+      "data_record": "legacy_external_data_unavailable",
+      "scenario_ids": [
+        "full_join_queries/task7",
+        "full_join_queries/task8",
+        "full_join_queries/task9",
+        "full_join_queries/task10",
+        "full_join_queries/task11",
+        "full_join_queries/task12",
+        "parallelism/task1",
+        "parallelism/task2",
+        "parallelism/task3",
+        "parallelism/task4",
+        "parallelism/task5",
+        "parallelism/task6",
+        "parallelism/task7",
+        "parallelism/task8",
+        "parallelism/task9",
+        "parallelism/task10",
+        "parallelism/task11",
+        "parallelism/task12"
+      ]
+    },
+    {
+      "label": "TwoComb",
+      "spec_rows": {
+        "experiments/specs/full_join_queries.spec": "tasks 13-18"
+      },
+      "flink_query": "experiments/flink/TwoComb/query.sql",
+      "dbtoaster_query": null,
+      "dbtoaster_cpp_query": "experiments/dbtoaster_cpp/TwoComb/query.sql.template",
+      "scala": [
+        "crown/src/main/scala/TwoCombJob.scala",
+        "crown/src/main/scala/TwoCombProcessFunctions.scala"
+      ],
+      "head_and_semantics": "Flink emits the three-edge path endpoints/interior variables plus window_start/end; DBToaster C++ adds unary V1(src) and V2(dst) endpoint filters and emits the path variables without time fields. Both use plain SELECT (bag).",
+      "shape": "Three-edge path plus endpoint unary occurrences; alpha-acyclic and free-connex with the shown full path head.",
+      "r1": "Bag semantics unavailable as written; set-mode needs explicit contract. HOP windows/materialized unary inputs need adaptation. The spec filter value 32684 does not occur in these SQL sources.",
+      "source_sha256": {
+        "experiments/flink/TwoComb/query.sql": "5d0cd7f5fd6759fc37de5f2e2814e3c30eca8d7d6d5c943c5a922c899441b69b",
+        "experiments/dbtoaster_cpp/TwoComb/query.sql.template": "e559cee0e04bd38bc9e47dd43b1b4e20b4e4ebbdbcc84315e7e9cd19730487ca"
+      },
+      "scala_source_sha256": {
+        "crown/src/main/scala/TwoCombJob.scala": "9661a9f26de85518a303d86cd081272b77d80a812463201a808fc1deca24f1a4",
+        "crown/src/main/scala/TwoCombProcessFunctions.scala": "574ec9e46447439be3e2a0ee3a43aa2c237ca1a6481fece16c339470ed37af93"
+      },
+      "execution_status": "source_inspected_not_runnable",
+      "update_contract": "unresolved_external_window_trace_and_input_identity",
+      "expected_backend": "legacy_source_variants_not_a_verified_native_comparison",
+      "output_contract": "backend_specific_runner_modes_and_heads_recorded_above_not_interchangeable",
+      "data_record": "legacy_external_data_unavailable",
+      "scenario_ids": [
+        "full_join_queries/task13",
+        "full_join_queries/task14",
+        "full_join_queries/task15",
+        "full_join_queries/task16",
+        "full_join_queries/task17",
+        "full_join_queries/task18"
+      ]
+    },
+    {
+      "label": "snb1_window",
+      "spec_rows": {
+        "experiments/specs/full_join_queries.spec": "tasks 19-24"
+      },
+      "flink_query": "experiments/flink/snb1_window/query.sql",
+      "dbtoaster_query": "experiments/dbtoaster/snb1_window/query.sql.template",
+      "dbtoaster_cpp_query": "experiments/dbtoaster_cpp/snb1_window/query.sql.template",
+      "scala": [
+        "crown/src/main/scala/SNBQ1Job.scala",
+        "crown/src/main/scala/SNBQ1ProcessFunctions.scala"
+      ],
+      "head_and_semantics": "Person ⋈ Message ⋈ Knows by person id/creator and knows person2; Flink emits selected person/message/knows fields and window_start/end. DBToaster templates omit window columns. Plain SELECT is bag.",
+      "shape": "Three-occurrence join tree (Message—Person—Knows); shown logical head includes all join variables, so equality skeleton is free-connex.",
+      "r1": "Bag unavailable as written; set-mode needs explicit semantics. HOP/event-time/windowed input adaptation required.",
+      "source_sha256": {
+        "experiments/flink/snb1_window/query.sql": "39bdf55508674e95d160894e6f8d67f921269fdc0b25e2630bbde5adf54aba2f",
+        "experiments/dbtoaster/snb1_window/query.sql.template": "d59aea1a62fe94bcfb3bc1902336277d22037381c0052519a77d8f35a61415cd",
+        "experiments/dbtoaster_cpp/snb1_window/query.sql.template": "806f4b8062c8f6a088a7313c86ab90a6c666eb9c35e9a7012b0f3715e7a60ae6"
+      },
+      "scala_source_sha256": {
+        "crown/src/main/scala/SNBQ1Job.scala": "0d3294e38b913bab344a664fd9972f086c36dea92d462c1d1fb7ac61e893ea5b",
+        "crown/src/main/scala/SNBQ1ProcessFunctions.scala": "58ff3f1890800d64bb95bb0ed49ac951f151b0fddbf6ce92be42ac1e380ce2f4"
+      },
+      "execution_status": "source_inspected_not_runnable",
+      "update_contract": "unresolved_external_window_trace_and_input_identity",
+      "expected_backend": "legacy_source_variants_not_a_verified_native_comparison",
+      "output_contract": "backend_specific_runner_modes_and_heads_recorded_above_not_interchangeable",
+      "data_record": "legacy_external_data_unavailable",
+      "scenario_ids": [
+        "full_join_queries/task19",
+        "full_join_queries/task20",
+        "full_join_queries/task21",
+        "full_join_queries/task22",
+        "full_join_queries/task23",
+        "full_join_queries/task24"
+      ]
+    },
+    {
+      "label": "snb2_window",
+      "spec_rows": {
+        "experiments/specs/full_join_queries.spec": "tasks 25-30"
+      },
+      "flink_query": "experiments/flink/snb2_window/query.sql",
+      "dbtoaster_query": "experiments/dbtoaster/snb2_window/query.sql.template",
+      "dbtoaster_cpp_query": "experiments/dbtoaster_cpp/snb2_window/query.sql.template",
+      "scala": [
+        "crown/src/main/scala/SNBQ2Job.scala",
+        "crown/src/main/scala/SNBQ2ProcessFunctions.scala"
+      ],
+      "head_and_semantics": "Five occurrences: Tag, Message, MessageTag, and a self-join of Knows. Flink predicates include m_c_replyof IS NULL and k1.person1 < 100000; DBToaster templates use a string sentinel and regexp_match length check instead. Plain SELECT is bag; window columns appear only in Flink.",
+      "shape": "Acyclic join tree with a knows self-join; projected head retains the join keys used by the equality skeleton.",
+      "r1": "Bag unavailable; nullable IS NULL source requires explicit NULL adapter (current native core rejects nullable inputs); self-join itself is supported. HOP adaptation required. DBToaster predicate differs syntactically/possibly semantically.",
+      "source_sha256": {
+        "experiments/flink/snb2_window/query.sql": "a4a2573e45dbe03e63d582ca70e0b89db51509416e8e38a87d0b481cc43410da",
+        "experiments/dbtoaster/snb2_window/query.sql.template": "ecdeccf1d0994541191cd71bd53137acdb2c5a351a54c0e3dc2cbd7233705464",
+        "experiments/dbtoaster_cpp/snb2_window/query.sql.template": "71d69c3ad6f873169f1f9b517702408dc0a92bd3f3bb897e4ee0b60f92fd6a0c"
+      },
+      "scala_source_sha256": {
+        "crown/src/main/scala/SNBQ2Job.scala": "eb858343c3cee57cb95629e6d775c0667f02cbebb4815767e0e1e7f05452f75d",
+        "crown/src/main/scala/SNBQ2ProcessFunctions.scala": "deb011571406cebd8d4d0bff816fe13e4d87a886975d1e50ed4f243a4c4f62b8"
+      },
+      "execution_status": "source_inspected_not_runnable",
+      "update_contract": "unresolved_external_window_trace_and_input_identity",
+      "expected_backend": "legacy_source_variants_not_a_verified_native_comparison",
+      "output_contract": "backend_specific_runner_modes_and_heads_recorded_above_not_interchangeable",
+      "data_record": "legacy_external_data_unavailable",
+      "scenario_ids": [
+        "full_join_queries/task25",
+        "full_join_queries/task26",
+        "full_join_queries/task27",
+        "full_join_queries/task28",
+        "full_join_queries/task29",
+        "full_join_queries/task30"
+      ]
+    },
+    {
+      "label": "snb3_window",
+      "spec_rows": {
+        "experiments/specs/full_join_queries.spec": "tasks 31-36",
+        "experiments/specs/parallelism.spec": "tasks 13-24"
+      },
+      "flink_query": "experiments/flink/snb3_window/query.sql",
+      "dbtoaster_query": "experiments/dbtoaster/snb3_window/query.sql.template",
+      "dbtoaster_cpp_query": "experiments/dbtoaster_cpp/snb3_window/query.sql.template",
+      "scala": [
+        "crown/src/main/scala/SNBQ3Job.scala",
+        "crown/src/main/scala/SNBQ3ProcessFunctions.scala"
+      ],
+      "head_and_semantics": "Person ⋈ Message ⋈ Knows k1 ⋈ Knows k2; Flink has local k1.person1 < 100000 and cross-occurrence k2.person2 <> k1.person1. DBToaster templates replace the numeric cutoff with regexp_match and omit window fields. Plain SELECT is bag.",
+      "shape": "Acyclic equality skeleton (K1—K2—Person—Message), full logical head; cross-occurrence inequality extends it beyond an equality CQ.",
+      "r1": "Bag unavailable and cross-relation <> is unsupported in R1 (R3 comparison extension); HOP adaptation required. The local numeric cutoff is bounded. Regex/numeric predicate equivalence is unverified.",
+      "source_sha256": {
+        "experiments/flink/snb3_window/query.sql": "8dd033cbdd584b3753f6599da9b77f1e8d1ac97b99fbbf802253a1de4665b9a7",
+        "experiments/dbtoaster/snb3_window/query.sql.template": "80022d00d04820f38400a644eb16ac3b0997d309dd4c87fc0b530a4a288585db",
+        "experiments/dbtoaster_cpp/snb3_window/query.sql.template": "b64ce9ccaa5bd5f5177fc2203b8314c279676cb3ff24c8577f22285ae11dddfb"
+      },
+      "scala_source_sha256": {
+        "crown/src/main/scala/SNBQ3Job.scala": "323acb9f74e003306e60e0623fdc9dc9586770c42c6f50773ee4ec32c076e6bb",
+        "crown/src/main/scala/SNBQ3ProcessFunctions.scala": "2488c4b40471deef9609108a0730744779e295fa09e29686629e91250721c253"
+      },
+      "execution_status": "source_inspected_not_runnable",
+      "update_contract": "unresolved_external_window_trace_and_input_identity",
+      "expected_backend": "legacy_source_variants_not_a_verified_native_comparison",
+      "output_contract": "backend_specific_runner_modes_and_heads_recorded_above_not_interchangeable",
+      "data_record": "legacy_external_data_unavailable",
+      "scenario_ids": [
+        "full_join_queries/task31",
+        "full_join_queries/task32",
+        "full_join_queries/task33",
+        "full_join_queries/task34",
+        "full_join_queries/task35",
+        "full_join_queries/task36",
+        "parallelism/task13",
+        "parallelism/task14",
+        "parallelism/task15",
+        "parallelism/task16",
+        "parallelism/task17",
+        "parallelism/task18",
+        "parallelism/task19",
+        "parallelism/task20",
+        "parallelism/task21",
+        "parallelism/task22",
+        "parallelism/task23",
+        "parallelism/task24"
+      ]
+    },
+    {
+      "label": "dumbbell_full",
+      "spec_rows": {
+        "experiments/specs/full_join_queries.spec": "tasks 37-42"
+      },
+      "flink_query": "experiments/flink/dumbbell_full/query.sql",
+      "dbtoaster_query": "experiments/dbtoaster/dumbbell_full/query.sql.template",
+      "dbtoaster_cpp_query": "experiments/dbtoaster_cpp/dumbbell_full/query.sql.template",
+      "scala": [
+        "crown/src/main/scala/DumbbellCrownTriangleJob.scala",
+        "crown/src/main/scala/DumbbellCrownTriangleProcessFunction.scala"
+      ],
+      "head_and_semantics": "Flink SELECT DISTINCT emits both Triangle view tuples and bridge edge, with window fields; Triangle view applies > threshold to each triangle vertex. DBToaster templates SELECT * over seven raw edge occurrences, no DISTINCT and no matching threshold.",
+      "shape": "At the Flink view boundary, Triangle—bridge—Triangle is an acyclic path. Expanding each Triangle to raw graph edges yields two cyclic 3-cycles, so the whole raw CQ body is cyclic.",
+      "r1": "Only the outer set query over independently maintained Triangle relations is a structural candidate; raw expansion is outside free-connex R1. Triangle maintenance and HOP windows need separate adapters. DBToaster source is not the same query as written.",
+      "source_sha256": {
+        "experiments/flink/dumbbell_full/query.sql": "b56c512f87238339073a2b6a96dc1cf15549b776e018947e7d3b5f564ea6d105",
+        "experiments/dbtoaster/dumbbell_full/query.sql.template": "0fe6176f57853b63e9189f52069eba2e193aaf161c76212a6a18500444161cb9",
+        "experiments/dbtoaster_cpp/dumbbell_full/query.sql.template": "fc7575a6b33b7d40a655071688be4b542c2f783307dceba9e4916eda72e32509"
+      },
+      "scala_source_sha256": {
+        "crown/src/main/scala/DumbbellCrownTriangleJob.scala": "b799d2277ca508dac9d72294f7a2ede19db28cea4164857506eb761fcde52d9a",
+        "crown/src/main/scala/DumbbellCrownTriangleProcessFunction.scala": "d5aa45407be361e97dc00aa09aad7986120af5700f6d9ed12f68ed55d96f29c2"
+      },
+      "execution_status": "source_inspected_not_runnable",
+      "update_contract": "unresolved_external_window_trace_and_input_identity",
+      "expected_backend": "legacy_source_variants_not_a_verified_native_comparison",
+      "output_contract": "backend_specific_runner_modes_and_heads_recorded_above_not_interchangeable",
+      "data_record": "legacy_external_data_unavailable",
+      "scenario_ids": [
+        "full_join_queries/task37",
+        "full_join_queries/task38",
+        "full_join_queries/task39",
+        "full_join_queries/task40",
+        "full_join_queries/task41",
+        "full_join_queries/task42"
+      ]
+    },
+    {
+      "label": "length3_project",
+      "spec_rows": {
+        "experiments/specs/join_project_queries.spec": "tasks 1-6"
+      },
+      "flink_query": "experiments/flink/length3_project/query.sql",
+      "dbtoaster_query": "experiments/dbtoaster/length3_project/query.sql.template",
+      "dbtoaster_cpp_query": "experiments/dbtoaster_cpp/length3_project/query.sql.template",
+      "scala": [
+        "crown/src/main/scala/L3ProjDistributedJob.scala",
+        "crown/src/main/scala/L3ProjectionProcessFunctions.scala"
+      ],
+      "head_and_semantics": "Flink SELECT DISTINCT emits the two interior path variables plus window_start/end. DBToaster templates emit the two interior variables with plain SELECT (bag), no time fields.",
+      "shape": "Three-edge path with a contiguous internal-variable projection; H and H+F are alpha-acyclic/free-connex.",
+      "r1": "Flink set query is structurally R1-eligible after HOP/window inputs are materialized; the DBToaster bag form is not R1 as written. The native engine executes admitted set CQs; no unmodified legacy windowed SQL replay is established by this inventory.",
+      "source_sha256": {
+        "experiments/flink/length3_project/query.sql": "937a747de92064392d4429b58df315cfd4f9bd1ac140fe5be9d6cae0898b8062",
+        "experiments/dbtoaster/length3_project/query.sql.template": "271c5b8248094f9a57a16eee5eadd39c5dbb104d495c35e741879c3764a5142f",
+        "experiments/dbtoaster_cpp/length3_project/query.sql.template": "41c933b2890a07a942fa3200119041220e180f15a67e36a183aa8d57d726ad1e"
+      },
+      "scala_source_sha256": {
+        "crown/src/main/scala/L3ProjDistributedJob.scala": "b191611487ea6d8b2392f5a6b2c4f43a5e2bfb9d9856f374e2c210ef4710fe5d",
+        "crown/src/main/scala/L3ProjectionProcessFunctions.scala": "31e50481b273ed54eb0ea0fcf1e58a25f5539c1d45060a5019271ad129693634"
+      },
+      "execution_status": "source_inspected_not_runnable",
+      "update_contract": "unresolved_external_window_trace_and_input_identity",
+      "expected_backend": "legacy_source_variants_not_a_verified_native_comparison",
+      "output_contract": "backend_specific_runner_modes_and_heads_recorded_above_not_interchangeable",
+      "data_record": "legacy_external_data_unavailable",
+      "scenario_ids": [
+        "join_project_queries/task1",
+        "join_project_queries/task2",
+        "join_project_queries/task3",
+        "join_project_queries/task4",
+        "join_project_queries/task5",
+        "join_project_queries/task6"
+      ]
+    },
+    {
+      "label": "length4_project",
+      "spec_rows": {
+        "experiments/specs/join_project_queries.spec": "tasks 7-12"
+      },
+      "flink_query": "experiments/flink/length4_project/query.sql",
+      "dbtoaster_query": "experiments/dbtoaster/length4_project/query.sql.template",
+      "dbtoaster_cpp_query": "experiments/dbtoaster_cpp/length4_project/query.sql.template",
+      "scala": [
+        "crown/src/main/scala/L4ProjDistributedJob.scala",
+        "crown/src/main/scala/L4ProjectionProcessFunctions.scala"
+      ],
+      "head_and_semantics": "Flink SELECT DISTINCT emits three internal path vertices plus window_start/end; DBToaster templates emit the same path variables with plain SELECT (bag). Both have D.dst > parameter. No filter value is set in join_project_queries.spec; runner/build defaults it to -1.",
+      "shape": "Four-edge path with contiguous internal-variable projection; equality skeleton is free-connex.",
+      "r1": "Flink set shape is eligible after local filter binding and HOP/window adaptation; DBToaster bag form is unsupported R1. Parameter default is an implicit workload condition to make explicit.",
+      "source_sha256": {
+        "experiments/flink/length4_project/query.sql": "8b96d685e95b39a05131b672f15e33c49f01cebf76985f6d5c30fb09ab6fbbd7",
+        "experiments/dbtoaster/length4_project/query.sql.template": "ef65108e91b9ac1c37d0090612a3e8c9e7f64260b56882cbb38e397c3d590717",
+        "experiments/dbtoaster_cpp/length4_project/query.sql.template": "891f861c3e028c13e537171dc3f8e05544df02515f179d39e2e4570c831d70dd"
+      },
+      "scala_source_sha256": {
+        "crown/src/main/scala/L4ProjDistributedJob.scala": "1e11e76944cc93366724c5363fe8651c799a9d1868c5c3253554b6d8f55af909",
+        "crown/src/main/scala/L4ProjectionProcessFunctions.scala": "c2e7269c2a25d9cb78e424f01dd75ee87b7f76102be839262498b3afc86f4920"
+      },
+      "execution_status": "source_inspected_not_runnable",
+      "update_contract": "unresolved_external_window_trace_and_input_identity",
+      "expected_backend": "legacy_source_variants_not_a_verified_native_comparison",
+      "output_contract": "backend_specific_runner_modes_and_heads_recorded_above_not_interchangeable",
+      "data_record": "legacy_external_data_unavailable",
+      "scenario_ids": [
+        "join_project_queries/task7",
+        "join_project_queries/task8",
+        "join_project_queries/task9",
+        "join_project_queries/task10",
+        "join_project_queries/task11",
+        "join_project_queries/task12"
+      ]
+    },
+    {
+      "label": "dumbbell",
+      "spec_rows": {
+        "experiments/specs/join_project_queries.spec": "tasks 13-18"
+      },
+      "flink_query": "experiments/flink/dumbbell/query.sql",
+      "dbtoaster_query": "experiments/dbtoaster/dumbbell/query.sql.template",
+      "dbtoaster_cpp_query": "experiments/dbtoaster_cpp/dumbbell/query.sql.template",
+      "scala": [
+        "crown/src/main/scala/DumbbellCrownTriangleProjectJob.scala",
+        "crown/src/main/scala/DumbbellCrownTriangleProjectProcessFunction.scala"
+      ],
+      "head_and_semantics": "Flink SELECT DISTINCT emits only bridge edge plus window fields; Triangle view filters each cycle vertex > 0 per spec. DBToaster templates emit bridge endpoints with plain SELECT over seven raw edges and no such filter.",
+      "shape": "Outer relation-level path Triangle—bridge—Triangle is free-connex for the bridge head; expanding Triangle views yields cyclic raw bodies.",
+      "r1": "Outer set query is eligible only with separately maintained Triangle inputs and adapted HOP windows; raw graph query is cyclic. DBToaster bag/filter source differs; native R1 cannot claim equivalence.",
+      "source_sha256": {
+        "experiments/flink/dumbbell/query.sql": "83c405e876eef5b7fa0ae5159d52efe2322f8abdb1fedb91ecafb7252898ffe9",
+        "experiments/dbtoaster/dumbbell/query.sql.template": "e14ba213146e4c4345f713907a90c8fbfcde11b4fd128a2304f2a7598953d92d",
+        "experiments/dbtoaster_cpp/dumbbell/query.sql.template": "9fb767cc660c574bef097dc2fb9aeb8079db9636d9fdd23df75a3133529e5b80"
+      },
+      "scala_source_sha256": {
+        "crown/src/main/scala/DumbbellCrownTriangleProjectJob.scala": "770fa344cc690fbcf84a582f2589f3a60ae0b17bf2403ba16c2bfd0fb39837a5",
+        "crown/src/main/scala/DumbbellCrownTriangleProjectProcessFunction.scala": "9c47b698338cbc22cd4d4d05dec2ca59d520227ca762311511d60e61b8f29357"
+      },
+      "execution_status": "source_inspected_not_runnable",
+      "update_contract": "unresolved_external_window_trace_and_input_identity",
+      "expected_backend": "legacy_source_variants_not_a_verified_native_comparison",
+      "output_contract": "backend_specific_runner_modes_and_heads_recorded_above_not_interchangeable",
+      "data_record": "legacy_external_data_unavailable",
+      "scenario_ids": [
+        "join_project_queries/task13",
+        "join_project_queries/task14",
+        "join_project_queries/task15",
+        "join_project_queries/task16",
+        "join_project_queries/task17",
+        "join_project_queries/task18"
+      ]
+    },
+    {
+      "label": "snb4_window",
+      "spec_rows": {
+        "experiments/specs/agg_queries.spec": "tasks 7-12"
+      },
+      "flink_query": "experiments/flink/snb4_window/query.sql",
+      "dbtoaster_query": "experiments/dbtoaster/snb4_window/query.sql.template",
+      "dbtoaster_cpp_query": "experiments/dbtoaster_cpp/snb4_window/query.sql.template",
+      "scala": [
+        "crown/src/main/scala/SNBQ4Job.scala",
+        "crown/src/main/scala/SNBQ4ProcessFunctions.scala"
+      ],
+      "head_and_semantics": "GROUP BY t_name,t_tagid; COUNT(DISTINCT m_messageid). Flink uses IS NULL and numeric <100000 plus HOP window views; DBToaster templates use a string sentinel and regexp_match. Window is not a group key, so aggregation spans rows from all windows in the source.",
+      "shape": "Acyclic Tag—MessageTag—Message—Knows join tree, with projected aggregate head.",
+      "r1": "Unsupported in R1: GROUP BY and distinct aggregate require R2; nullable predicate and window semantics require adapters. DBToaster predicate differs from Flink.",
+      "source_sha256": {
+        "experiments/flink/snb4_window/query.sql": "f7028516f82b439dc1d649feb152e8456413fefa6a16b1b0462bf7d4456f1c4c",
+        "experiments/dbtoaster/snb4_window/query.sql.template": "fad3acdc99d1cc287008784ee9c5651c6d728fbd31f1fcb9bb6e66a813b939b1",
+        "experiments/dbtoaster_cpp/snb4_window/query.sql.template": "9af03d238b7e8282979ea5431d435b3dc0d976eec59cfb2c444c7e3789eb024f"
+      },
+      "scala_source_sha256": {
+        "crown/src/main/scala/SNBQ4Job.scala": "e7fc1162812790f1bb5e54d94a878c610d23aee01931c608fa6508d588c5446d",
+        "crown/src/main/scala/SNBQ4ProcessFunctions.scala": "efd4d031aed72382c0068742cbb21a0a33bb638bf2c7be8193ebd2f31d82e566"
+      },
+      "execution_status": "source_inspected_not_runnable",
+      "update_contract": "unresolved_external_window_trace_and_input_identity",
+      "expected_backend": "legacy_source_variants_not_a_verified_native_comparison",
+      "output_contract": "backend_specific_runner_modes_and_heads_recorded_above_not_interchangeable",
+      "data_record": "legacy_external_data_unavailable",
+      "scenario_ids": [
+        "agg_queries/task7",
+        "agg_queries/task8",
+        "agg_queries/task9",
+        "agg_queries/task10",
+        "agg_queries/task11",
+        "agg_queries/task12"
+      ]
+    }
+  ],
+  "other_non_spec_sql_queries": [
+    {
+      "path": "experiments/snbquery/query1.sql",
+      "sha256": "0f7e20766895581e851d673e745c78b969a747595bf7bd63e9b173afbfcfe7ff",
+      "note": "Standalone non-spec DBToaster SNB query; not the corresponding windowed spec source."
+    },
+    {
+      "path": "experiments/snbquery/query2.sql",
+      "sha256": "bc4bcf41924acd773a67dd314692f32c22556369b50384467a892763aa2a37db",
+      "note": "Standalone non-spec DBToaster SNB query; not the corresponding windowed spec source."
+    },
+    {
+      "path": "experiments/snbquery/query3.sql",
+      "sha256": "d2207a57e803823b39bc934e7cdc367bd6eab69889e3a12b3ad12b12dd96c402",
+      "note": "Standalone non-spec DBToaster SNB query; not the corresponding windowed spec source."
+    }
+  ],
+  "dialect_and_source_boundaries": [
+    "Flink SQL is loaded through Flink StreamTableEnvironment; the query fragments refer to views declared in sibling SQL files. Setup uses Flink-only HOP(TABLE ..., DESCRIPTOR(...)), WATERMARK, filesystem connector DDL and ${...} interpolation. Extract query, bind a schema, resolve parameters, and adapt window outputs/expiry before native SQL use.",
+    "DBToaster and DBToaster C++ sources are custom CREATE STREAM / FROM FILE / LINE DELIMITED SQL templates, not PostgreSQL source SQL. They often omit Flink window columns and sometimes use different filters, outputs or duplicate semantics; preserve each backend variant separately.",
+    "CROWN sources are handwritten Scala ProcessFunction/Job classes rather than SQL compilation. No local *.cpp query implementation exists under experiments/; dbtoaster_cpp workload sources found here are SQL templates and prepare-data scripts. docs/source_baselines.md records a separate pinned remote DynaGox C++ baseline with fixed specializations, not a local equivalent for these labels.",
+    "Current native state per docs/sql_support.md and docs/sql_admission.md: parse/bind/normalize/admit and reference CQ/structural paths exist, but maintained SQL execution is not implemented (admission reports execution_status:not_lowered). Plain/bag SELECT and GROUP BY/COUNT are unavailable; nullable inputs are rejected; cross-relation comparisons are unavailable; streaming/window/CDC codecs are unavailable. An R1-eligible shape is not current executable SQL support."
+  ],
+  "runner_modes_and_trace_gaps": [
+    "execute_all.sh selects crown with fullEnumEnable=true/deltaEnumEnable=false and crown_delta with the inverse; DbToaster is invoked with --no-output; Trill output defaults false. This is runner behavior, not fully encoded per workload in the specs.",
+    "Specs provide datasets, thresholds, input.insert.only=false on selected DBToaster rows, window factors and parallelism, but do not provide canonical trace files, seeds, per-source update contracts, checksums, or a common expected output-mode contract. Flink HOP inputs need an explicit event-time/window-expiry trace adapter; CROWN documents +/- graph events and * enumeration trigger, but the spec does not pin traces.",
+    "Add explicit mode labels for current snapshot, per-commit set delta, bag multiplicity, aggregate changes, and output-suppressed maintenance; retain backend-specific expected semantics. Do not equate a spec label with cross-backend semantic identity without normalization/oracle evidence."
+  ],
+  "data_and_license_gaps": [
+    "No benchmark CSV/raw data files or data checksums were found under experiments. Paths are external placeholders or dataset names; enclosureness names epinions, bitcoin, berkstan, google, but no license/provenance is recorded here.",
+    "No dataset license files or checksum manifest were found under experiments. docs/source_baselines.md reports no root project LICENSE/NOTICE/COPYING and does not choose a project or legacy-source license; vendored notices are component-specific and do not license these datasets.",
+    "Flink/DBToaster templates reference external paths such as ${path.to.data.raw}, dbtoaster.message.window.csv, and dbtoaster_cpp.graph1.csv. Dataset generation/conversion source does not pin produced bytes, seeds, or source-data redistribution rights.",
+    "The three experiments/snbquery/query1-3.sql files are standalone non-spec DBToaster examples and are not interchangeable with snb1_window/snb2_window/snb3_window."
+  ],
+  "coverage_gap": "The legacy set includes graph paths, internal projections, stars, endpoint unary filters, two macro-dumbbell shapes, and several SNB joins, but it does not cover the all-free-connex class from Refactor.md §2.2. Keep the generated structural families in the parent manifest (arbitrary arity, self-joins/repeated and contained scopes, disconnected products, Boolean/projection heads and deeper/generalized joins); graph-only legacy coverage must remain labeled as such.",
+  "source_sha256_local": {
+    "benchmarks/legacy/basis/Refactor-v52.md": "bb90e4a4e97e2817a0869ad86c5c8b00e571bb241f153fb44641c71f86fcd5ce",
+    "crown/src/main/scala/DumbbellCrownTriangleJob.scala": "b799d2277ca508dac9d72294f7a2ede19db28cea4164857506eb761fcde52d9a",
+    "crown/src/main/scala/DumbbellCrownTriangleProcessFunction.scala": "d5aa45407be361e97dc00aa09aad7986120af5700f6d9ed12f68ed55d96f29c2",
+    "crown/src/main/scala/DumbbellCrownTriangleProjectJob.scala": "770fa344cc690fbcf84a582f2589f3a60ae0b17bf2403ba16c2bfd0fb39837a5",
+    "crown/src/main/scala/DumbbellCrownTriangleProjectProcessFunction.scala": "9c47b698338cbc22cd4d4d05dec2ca59d520227ca762311511d60e61b8f29357",
+    "crown/src/main/scala/L3DistributedJob.scala": "da4025105b234b974707e08a633b7aa649a5d0e2649fdeb68554114283bbd745",
+    "crown/src/main/scala/L3DistributedJobWithTag.scala": "1e3514966e97f3856a5042b3a2de48852607d6426d5c09586275d84b932a139a",
+    "crown/src/main/scala/L3ProcessFunctions.scala": "cdf1b7f554a11a1439a97dd399d900baaec20a7a01c00bcef047134c67f3f6e9",
+    "crown/src/main/scala/L3ProjDistributedJob.scala": "b191611487ea6d8b2392f5a6b2c4f43a5e2bfb9d9856f374e2c210ef4710fe5d",
+    "crown/src/main/scala/L3ProjectionProcessFunctions.scala": "31e50481b273ed54eb0ea0fcf1e58a25f5539c1d45060a5019271ad129693634",
+    "crown/src/main/scala/L4DistributedJob.scala": "48dc103f96f81e892866c8b1f628c62c2ea234e73dd37ced8da9df81fc224162",
+    "crown/src/main/scala/L4ProcessFunctions.scala": "242babe2fcd2dcc79e4634aedfa846604394c6f857cde3eace611ebdc777da65",
+    "crown/src/main/scala/L4ProjDistributedJob.scala": "1e11e76944cc93366724c5363fe8651c799a9d1868c5c3253554b6d8f55af909",
+    "crown/src/main/scala/L4ProjectionProcessFunctions.scala": "c2e7269c2a25d9cb78e424f01dd75ee87b7f76102be839262498b3afc86f4920",
+    "crown/src/main/scala/SNBQ1Job.scala": "0d3294e38b913bab344a664fd9972f086c36dea92d462c1d1fb7ac61e893ea5b",
+    "crown/src/main/scala/SNBQ1ProcessFunctions.scala": "58ff3f1890800d64bb95bb0ed49ac951f151b0fddbf6ce92be42ac1e380ce2f4",
+    "crown/src/main/scala/SNBQ2Job.scala": "eb858343c3cee57cb95629e6d775c0667f02cbebb4815767e0e1e7f05452f75d",
+    "crown/src/main/scala/SNBQ2ProcessFunctions.scala": "deb011571406cebd8d4d0bff816fe13e4d87a886975d1e50ed4f243a4c4f62b8",
+    "crown/src/main/scala/SNBQ3Job.scala": "323acb9f74e003306e60e0623fdc9dc9586770c42c6f50773ee4ec32c076e6bb",
+    "crown/src/main/scala/SNBQ3ProcessFunctions.scala": "2488c4b40471deef9609108a0730744779e295fa09e29686629e91250721c253",
+    "crown/src/main/scala/SNBQ4Job.scala": "e7fc1162812790f1bb5e54d94a878c610d23aee01931c608fa6508d588c5446d",
+    "crown/src/main/scala/SNBQ4ProcessFunctions.scala": "efd4d031aed72382c0068742cbb21a0a33bb638bf2c7be8193ebd2f31d82e566",
+    "crown/src/main/scala/StarCntDistributedJob.scala": "0f7ac1e08abb9614ae9c2c2a2f9212cc64b9c8eba3e077f849bf1f548fc7d45a",
+    "crown/src/main/scala/StarCntProcessFunctions.scala": "be97ffa2fdffaf77ffc51e9114a499242d16fc6e86da0b9a08a6d847aa01b2c0",
+    "crown/src/main/scala/TwoCombJob.scala": "9661a9f26de85518a303d86cd081272b77d80a812463201a808fc1deca24f1a4",
+    "crown/src/main/scala/TwoCombProcessFunctions.scala": "574ec9e46447439be3e2a0ee3a43aa2c237ca1a6481fece16c339470ed37af93",
+    "docs/source_baselines.md": "87544312fee3aa29d6e8583017c63a3f5f4251e4b2f594201a9348fe570bb6c4",
+    "experiments/build_all.sh": "6028059915cebae32959983179de1e5d31505592ffb3cfaa4c48a01348dce93e",
+    "experiments/data-tools/src/main/scala/experiments/data/produce/length3/DataProducer.scala": "c20f00bed425fbabaf4d4a143ae3331b5891c4027aba9e7fec6e28b3fb541a5a",
+    "experiments/data-tools/src/main/scala/experiments/data/utils/DynamicGraphGenerator.scala": "2028aee785e3df8b0417dc26221baec9126f05a4fc3409971d51aa6986ee3e4b",
+    "experiments/dbtoaster/dumbbell/query.sql.template": "e14ba213146e4c4345f713907a90c8fbfcde11b4fd128a2304f2a7598953d92d",
+    "experiments/dbtoaster/dumbbell_full/query.sql.template": "0fe6176f57853b63e9189f52069eba2e193aaf161c76212a6a18500444161cb9",
+    "experiments/dbtoaster/length3_filter/query.sql.template": "4960a228278c3bb0203b3788a1762fd55f4fab3d10b0582d171c1afbbf409a90",
+    "experiments/dbtoaster/length3_project/query.sql.template": "271c5b8248094f9a57a16eee5eadd39c5dbb104d495c35e741879c3764a5142f",
+    "experiments/dbtoaster/length4_filter/query.sql.template": "6a5e6d4cc629417e3f692bdb7fd288a4891fa06fb1fe86ce3018f36b5723cc50",
+    "experiments/dbtoaster/length4_project/query.sql.template": "ef65108e91b9ac1c37d0090612a3e8c9e7f64260b56882cbb38e397c3d590717",
+    "experiments/dbtoaster/snb1_window/query.sql.template": "d59aea1a62fe94bcfb3bc1902336277d22037381c0052519a77d8f35a61415cd",
+    "experiments/dbtoaster/snb2_window/query.sql.template": "ecdeccf1d0994541191cd71bd53137acdb2c5a351a54c0e3dc2cbd7233705464",
+    "experiments/dbtoaster/snb3_window/query.sql.template": "80022d00d04820f38400a644eb16ac3b0997d309dd4c87fc0b530a4a288585db",
+    "experiments/dbtoaster/snb4_window/query.sql.template": "fad3acdc99d1cc287008784ee9c5651c6d728fbd31f1fcb9bb6e66a813b939b1",
+    "experiments/dbtoaster/star_cnt/query.sql.template": "0023eaa2eeac35a4569ffd4077f3ee5c924a99ecc83d10e889b220d0670002ae",
+    "experiments/dbtoaster_cpp/TwoComb/query.sql.template": "e559cee0e04bd38bc9e47dd43b1b4e20b4e4ebbdbcc84315e7e9cd19730487ca",
+    "experiments/dbtoaster_cpp/dumbbell/query.sql.template": "9fb767cc660c574bef097dc2fb9aeb8079db9636d9fdd23df75a3133529e5b80",
+    "experiments/dbtoaster_cpp/dumbbell_full/query.sql.template": "fc7575a6b33b7d40a655071688be4b542c2f783307dceba9e4916eda72e32509",
+    "experiments/dbtoaster_cpp/length3_filter/query.sql.template": "c56cc840c1f4a804e80acf15e91b6521b50cf4c743726bc70d307235c0d13a29",
+    "experiments/dbtoaster_cpp/length3_project/query.sql.template": "41c933b2890a07a942fa3200119041220e180f15a67e36a183aa8d57d726ad1e",
+    "experiments/dbtoaster_cpp/length4_filter/query.sql.template": "287af5a484bb0f88e674b335cc7c76936522f44187deee0cf388e9ca813a66c6",
+    "experiments/dbtoaster_cpp/length4_project/query.sql.template": "891f861c3e028c13e537171dc3f8e05544df02515f179d39e2e4570c831d70dd",
+    "experiments/dbtoaster_cpp/snb1_window/query.sql.template": "806f4b8062c8f6a088a7313c86ab90a6c666eb9c35e9a7012b0f3715e7a60ae6",
+    "experiments/dbtoaster_cpp/snb2_window/query.sql.template": "71d69c3ad6f873169f1f9b517702408dc0a92bd3f3bb897e4ee0b60f92fd6a0c",
+    "experiments/dbtoaster_cpp/snb3_window/query.sql.template": "b64ce9ccaa5bd5f5177fc2203b8314c279676cb3ff24c8577f22285ae11dddfb",
+    "experiments/dbtoaster_cpp/snb4_window/query.sql.template": "9af03d238b7e8282979ea5431d435b3dc0d976eec59cfb2c444c7e3789eb024f",
+    "experiments/dbtoaster_cpp/star_cnt/query.sql.template": "8f88f1a6934efb79ab56f3e7ff2b50bd20871072c7c69e817945499f32dade99",
+    "experiments/execute_all.sh": "51f86399e7bbfa01658d8c8d49ced0ff389ccd9745eb5ea4d417292cc566dc5b",
+    "experiments/flink/TwoComb/graph.sql": "12724ad8daea0b2f16d89331a145b5a115d92d2775f3c6e12deda39fcb470119",
+    "experiments/flink/TwoComb/graphWindowed.sql": "a4825862bce3421d7c6358e9fd14b6c94e7fa07535ff98916d5b9fd3c5467b0b",
+    "experiments/flink/TwoComb/query.sql": "5d0cd7f5fd6759fc37de5f2e2814e3c30eca8d7d6d5c943c5a922c899441b69b",
+    "experiments/flink/TwoComb/v1.sql": "eec7e8fb146e58b4a89e1012dcb21e83920b96b05927c582b5787df61a57d495",
+    "experiments/flink/TwoComb/v1Windowed.sql": "39e4764388b260e0dda2a1ef4f449a869267c3e6e14c30017e0c0cee82a8e099",
+    "experiments/flink/TwoComb/v2.sql": "c284c63c93826d599967729f8a1fb6bb73bf7b08d46f2f88971b63c1377ae2e6",
+    "experiments/flink/TwoComb/v2Windowed.sql": "95980640aad0b56d191756359a34ae27ecf5ec83e9f3f0387b6bddebc19b01df",
+    "experiments/flink/dumbbell/graph.sql": "c753e29bac48be781fc2eac3698b7b103e8be59a6c31abd95e9520de3e208388",
+    "experiments/flink/dumbbell/query.sql": "83c405e876eef5b7fa0ae5159d52efe2322f8abdb1fedb91ecafb7252898ffe9",
+    "experiments/flink/dumbbell/triangle.sql": "6294a2b09b024ca61a47894b2cef6a38c072d7cbba20c332bb25f5302aa620d7",
+    "experiments/flink/dumbbell/window.sql": "f00e7af2ed9877cc46950cfe32784e6abba8af5b1bc39a443ddbb6f1838ab2e9",
+    "experiments/flink/dumbbell_full/graph.sql": "c753e29bac48be781fc2eac3698b7b103e8be59a6c31abd95e9520de3e208388",
+    "experiments/flink/dumbbell_full/query.sql": "b56c512f87238339073a2b6a96dc1cf15549b776e018947e7d3b5f564ea6d105",
+    "experiments/flink/dumbbell_full/triangle.sql": "6294a2b09b024ca61a47894b2cef6a38c072d7cbba20c332bb25f5302aa620d7",
+    "experiments/flink/dumbbell_full/window.sql": "f00e7af2ed9877cc46950cfe32784e6abba8af5b1bc39a443ddbb6f1838ab2e9",
+    "experiments/flink/length3_filter/graph.sql": "c753e29bac48be781fc2eac3698b7b103e8be59a6c31abd95e9520de3e208388",
+    "experiments/flink/length3_filter/query.sql": "fefa11aef436ecb3827b089625294acebafb15d3eb1a5cc276aa83856434ccfb",
+    "experiments/flink/length3_filter/window.sql": "f00e7af2ed9877cc46950cfe32784e6abba8af5b1bc39a443ddbb6f1838ab2e9",
+    "experiments/flink/length3_project/graph.sql": "c753e29bac48be781fc2eac3698b7b103e8be59a6c31abd95e9520de3e208388",
+    "experiments/flink/length3_project/query.sql": "937a747de92064392d4429b58df315cfd4f9bd1ac140fe5be9d6cae0898b8062",
+    "experiments/flink/length3_project/window.sql": "f00e7af2ed9877cc46950cfe32784e6abba8af5b1bc39a443ddbb6f1838ab2e9",
+    "experiments/flink/length4_filter/graph.sql": "c753e29bac48be781fc2eac3698b7b103e8be59a6c31abd95e9520de3e208388",
+    "experiments/flink/length4_filter/query.sql": "74c4d99fd4cd9a32c8783cc470ec3e398a41aeb66f21ba583e6d5c30d52b0992",
+    "experiments/flink/length4_filter/window.sql": "f00e7af2ed9877cc46950cfe32784e6abba8af5b1bc39a443ddbb6f1838ab2e9",
+    "experiments/flink/length4_project/graph.sql": "c753e29bac48be781fc2eac3698b7b103e8be59a6c31abd95e9520de3e208388",
+    "experiments/flink/length4_project/query.sql": "8b96d685e95b39a05131b672f15e33c49f01cebf76985f6d5c30fb09ab6fbbd7",
+    "experiments/flink/length4_project/window.sql": "f00e7af2ed9877cc46950cfe32784e6abba8af5b1bc39a443ddbb6f1838ab2e9",
+    "experiments/flink/snb1_window/knows.sql": "a0188a8e6231ec1c9b6691361c563e3fa95b9b03408967dd1893a93cc153bf72",
+    "experiments/flink/snb1_window/knowsWindowed.sql": "9502effbc15bacaf619f5ab8c9e95eadb268fd3d7a73293fd4481a046babe5ca",
+    "experiments/flink/snb1_window/message.sql": "eb9b7c6fbd7f3756d2e13e38a53512efc13b5b1d4aff56b9b36cd0d2ab4f21db",
+    "experiments/flink/snb1_window/messageWindowed.sql": "0461d0a2400949d687c9ca93d2ad5f9befc303f8c273bf516ecb5b0f34a66424",
+    "experiments/flink/snb1_window/person.sql": "588bac89adf0bd28c78e1019c76f04d968b9b2ff7081db0cbc364fa5eacc34a0",
+    "experiments/flink/snb1_window/personWindowed.sql": "ed5e050e718270a27a95bdd80607f9ca7179f40249776c68f092de826772cdff",
+    "experiments/flink/snb1_window/query.sql": "39bdf55508674e95d160894e6f8d67f921269fdc0b25e2630bbde5adf54aba2f",
+    "experiments/flink/snb2_window/knows.sql": "a0188a8e6231ec1c9b6691361c563e3fa95b9b03408967dd1893a93cc153bf72",
+    "experiments/flink/snb2_window/knowsWindowed.sql": "9502effbc15bacaf619f5ab8c9e95eadb268fd3d7a73293fd4481a046babe5ca",
+    "experiments/flink/snb2_window/message.sql": "eb9b7c6fbd7f3756d2e13e38a53512efc13b5b1d4aff56b9b36cd0d2ab4f21db",
+    "experiments/flink/snb2_window/messageWindowed.sql": "9c7346e50a45708e1319f7dd7a65aadfd821e33e7743d9b110a129283444bc26",
+    "experiments/flink/snb2_window/messagetag.sql": "0ae5c377639b82bd39d89bf55d66399131812572875fa1e1737c6c8c839a6e58",
+    "experiments/flink/snb2_window/messagetagWindowed.sql": "300158910cf569f3e96fcf8cff9377e839bcff50b1b93303526290799bd4a607",
+    "experiments/flink/snb2_window/query.sql": "a4a2573e45dbe03e63d582ca70e0b89db51509416e8e38a87d0b481cc43410da",
+    "experiments/flink/snb2_window/tag.sql": "e52d39175bea44b1b3cd573871eb7905df4bab4331bdaeefdfe7f2f1b5f9f9bd",
+    "experiments/flink/snb3_window/knows.sql": "a0188a8e6231ec1c9b6691361c563e3fa95b9b03408967dd1893a93cc153bf72",
+    "experiments/flink/snb3_window/knowsWindowed.sql": "9502effbc15bacaf619f5ab8c9e95eadb268fd3d7a73293fd4481a046babe5ca",
+    "experiments/flink/snb3_window/message.sql": "eb9b7c6fbd7f3756d2e13e38a53512efc13b5b1d4aff56b9b36cd0d2ab4f21db",
+    "experiments/flink/snb3_window/messageWindowed.sql": "0461d0a2400949d687c9ca93d2ad5f9befc303f8c273bf516ecb5b0f34a66424",
+    "experiments/flink/snb3_window/person.sql": "a8968802f834c3d1778368477d3612254d79d1f477ec8976b9d7090e655c1ff9",
+    "experiments/flink/snb3_window/personWindowed.sql": "ed5e050e718270a27a95bdd80607f9ca7179f40249776c68f092de826772cdff",
+    "experiments/flink/snb3_window/query.sql": "8dd033cbdd584b3753f6599da9b77f1e8d1ac97b99fbbf802253a1de4665b9a7",
+    "experiments/flink/snb4_window/knows.sql": "a0188a8e6231ec1c9b6691361c563e3fa95b9b03408967dd1893a93cc153bf72",
+    "experiments/flink/snb4_window/knowsWindowed.sql": "9502effbc15bacaf619f5ab8c9e95eadb268fd3d7a73293fd4481a046babe5ca",
+    "experiments/flink/snb4_window/message.sql": "eb9b7c6fbd7f3756d2e13e38a53512efc13b5b1d4aff56b9b36cd0d2ab4f21db",
+    "experiments/flink/snb4_window/messageWindowed.sql": "9c7346e50a45708e1319f7dd7a65aadfd821e33e7743d9b110a129283444bc26",
+    "experiments/flink/snb4_window/messagetag.sql": "0ae5c377639b82bd39d89bf55d66399131812572875fa1e1737c6c8c839a6e58",
+    "experiments/flink/snb4_window/messagetagWindowed.sql": "300158910cf569f3e96fcf8cff9377e839bcff50b1b93303526290799bd4a607",
+    "experiments/flink/snb4_window/query.sql": "f7028516f82b439dc1d649feb152e8456413fefa6a16b1b0462bf7d4456f1c4c",
+    "experiments/flink/snb4_window/tag.sql": "304dfe78c6715c76d53020661ccb06563a2edc4c022287a0f16a94adf8956f77",
+    "experiments/flink/star_cnt/graph.sql": "c753e29bac48be781fc2eac3698b7b103e8be59a6c31abd95e9520de3e208388",
+    "experiments/flink/star_cnt/query.sql": "a986f661a37d447490d9a68d6b5170aa33f6b4d6d4208f59662881c4518741b5",
+    "experiments/flink/star_cnt/window.sql": "f00e7af2ed9877cc46950cfe32784e6abba8af5b1bc39a443ddbb6f1838ab2e9",
+    "experiments/snbquery/query1.sql": "0f7e20766895581e851d673e745c78b969a747595bf7bd63e9b173afbfcfe7ff",
+    "experiments/snbquery/query2.sql": "bc4bcf41924acd773a67dd314692f32c22556369b50384467a892763aa2a37db",
+    "experiments/snbquery/query3.sql": "d2207a57e803823b39bc934e7cdc367bd6eab69889e3a12b3ad12b12dd96c402",
+    "experiments/specs/agg_queries.spec": "8e9a6d4699e0bc459415ca2aadd46670c426bd61937648b19655e0c8bc0dcef5",
+    "experiments/specs/enclosureness.spec": "77351f2d53b1105fdede5c2d45fb44cbf3ba1e0c83a263a25d1f6234aa1e00ba",
+    "experiments/specs/full_join_queries.spec": "6ee57ba152dd0a00aa6629cae764bc266139f13d1015c12ec6df6db334691a9d",
+    "experiments/specs/join_project_queries.spec": "2f9337f2993b7a6a6898e87a6540f8120adb31976b2cf8b742ad84085beb1ce2",
+    "experiments/specs/parallelism.spec": "89384468bb1e220ea27d518697d6fe18daeb3e9dbeb8091384382d9b41ca7753"
+  },
+  "schema_version": 1,
+  "kind": "crown_legacy_workload_inventory",
+  "scenarios": [
+    {
+      "id": "agg_queries/task1",
+      "spec": "experiments/specs/agg_queries.spec",
+      "task": 1,
+      "label": "star_cnt",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "star_cnt",
+        "minicluster.entry.class": "StarCntDistributedJob",
+        "test.entry.class": "fake"
+      }
+    },
+    {
+      "id": "agg_queries/task2",
+      "spec": "experiments/specs/agg_queries.spec",
+      "task": 2,
+      "label": "star_cnt",
+      "properties": {
+        "system.name": "flink",
+        "experiment.name": "star_cnt"
+      }
+    },
+    {
+      "id": "agg_queries/task3",
+      "spec": "experiments/specs/agg_queries.spec",
+      "task": 3,
+      "label": "star_cnt",
+      "properties": {
+        "system.name": "dbtoaster_cpp",
+        "experiment.name": "star_cnt"
+      }
+    },
+    {
+      "id": "agg_queries/task4",
+      "spec": "experiments/specs/agg_queries.spec",
+      "task": 4,
+      "label": "star_cnt",
+      "properties": {
+        "system.name": "dbtoaster",
+        "experiment.name": "star_cnt",
+        "input.insert.only": "false",
+        "line.count.multiplier": "4",
+        "dataset.name": "star_cnt_perf_del"
+      }
+    },
+    {
+      "id": "agg_queries/task5",
+      "spec": "experiments/specs/agg_queries.spec",
+      "task": 5,
+      "label": "star_cnt",
+      "properties": {
+        "system.name": "crown_delta",
+        "experiment.name": "star_cnt",
+        "minicluster.entry.class": "StarCntDistributedJob",
+        "test.entry.class": "fake"
+      }
+    },
+    {
+      "id": "agg_queries/task6",
+      "spec": "experiments/specs/agg_queries.spec",
+      "task": 6,
+      "label": "star_cnt",
+      "properties": {
+        "system.name": "trill",
+        "experiment.name": "star_cnt",
+        "graph.inputsize": "508837"
+      }
+    },
+    {
+      "id": "agg_queries/task7",
+      "spec": "experiments/specs/agg_queries.spec",
+      "task": 7,
+      "label": "snb4_window",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "snb4_window",
+        "minicluster.entry.class": "SNBQ4Job",
+        "test.entry.class": "fake"
+      }
+    },
+    {
+      "id": "agg_queries/task8",
+      "spec": "experiments/specs/agg_queries.spec",
+      "task": 8,
+      "label": "snb4_window",
+      "properties": {
+        "system.name": "flink",
+        "experiment.name": "snb4_window"
+      }
+    },
+    {
+      "id": "agg_queries/task9",
+      "spec": "experiments/specs/agg_queries.spec",
+      "task": 9,
+      "label": "snb4_window",
+      "properties": {
+        "system.name": "dbtoaster_cpp",
+        "experiment.name": "snb4_window"
+      }
+    },
+    {
+      "id": "agg_queries/task10",
+      "spec": "experiments/specs/agg_queries.spec",
+      "task": 10,
+      "label": "snb4_window",
+      "properties": {
+        "system.name": "dbtoaster",
+        "experiment.name": "snb4_window",
+        "input.insert.only": "false",
+        "dataset.name": "snb4_window_perf_del"
+      }
+    },
+    {
+      "id": "agg_queries/task11",
+      "spec": "experiments/specs/agg_queries.spec",
+      "task": 11,
+      "label": "snb4_window",
+      "properties": {
+        "system.name": "crown_delta",
+        "experiment.name": "snb4_window",
+        "minicluster.entry.class": "SNBQ4Job",
+        "test.entry.class": "fake"
+      }
+    },
+    {
+      "id": "agg_queries/task12",
+      "spec": "experiments/specs/agg_queries.spec",
+      "task": 12,
+      "label": "snb4_window",
+      "properties": {
+        "system.name": "trill",
+        "experiment.name": "snb4_window",
+        "graph.inputsize": "0"
+      }
+    },
+    {
+      "id": "enclosureness/task1",
+      "spec": "experiments/specs/enclosureness.spec",
+      "task": 1,
+      "label": "length3",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3",
+        "minicluster.entry.class": "L3DistributedJobWithTag",
+        "filter.condition.value": "0",
+        "input.file": "epinions",
+        "winbig.factor": "0.05"
+      }
+    },
+    {
+      "id": "enclosureness/task2",
+      "spec": "experiments/specs/enclosureness.spec",
+      "task": 2,
+      "label": "length3",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3",
+        "minicluster.entry.class": "L3DistributedJobWithTag",
+        "filter.condition.value": "0",
+        "input.file": "bitcoin",
+        "winbig.factor": "0.05"
+      }
+    },
+    {
+      "id": "enclosureness/task3",
+      "spec": "experiments/specs/enclosureness.spec",
+      "task": 3,
+      "label": "length3",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3",
+        "minicluster.entry.class": "L3DistributedJobWithTag",
+        "filter.condition.value": "0",
+        "input.file": "berkstan",
+        "winbig.factor": "0.05"
+      }
+    },
+    {
+      "id": "enclosureness/task4",
+      "spec": "experiments/specs/enclosureness.spec",
+      "task": 4,
+      "label": "length3",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3",
+        "minicluster.entry.class": "L3DistributedJobWithTag",
+        "filter.condition.value": "0",
+        "input.file": "google",
+        "winbig.factor": "0.05"
+      }
+    },
+    {
+      "id": "enclosureness/task5",
+      "spec": "experiments/specs/enclosureness.spec",
+      "task": 5,
+      "label": "length3",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3",
+        "minicluster.entry.class": "L3DistributedJobWithTag",
+        "filter.condition.value": "0",
+        "input.file": "epinions",
+        "winbig.factor": "0.1"
+      }
+    },
+    {
+      "id": "enclosureness/task6",
+      "spec": "experiments/specs/enclosureness.spec",
+      "task": 6,
+      "label": "length3",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3",
+        "minicluster.entry.class": "L3DistributedJobWithTag",
+        "filter.condition.value": "0",
+        "input.file": "bitcoin",
+        "winbig.factor": "0.1"
+      }
+    },
+    {
+      "id": "enclosureness/task7",
+      "spec": "experiments/specs/enclosureness.spec",
+      "task": 7,
+      "label": "length3",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3",
+        "minicluster.entry.class": "L3DistributedJobWithTag",
+        "filter.condition.value": "0",
+        "input.file": "berkstan",
+        "winbig.factor": "0.1"
+      }
+    },
+    {
+      "id": "enclosureness/task8",
+      "spec": "experiments/specs/enclosureness.spec",
+      "task": 8,
+      "label": "length3",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3",
+        "minicluster.entry.class": "L3DistributedJobWithTag",
+        "filter.condition.value": "0",
+        "input.file": "google",
+        "winbig.factor": "0.1"
+      }
+    },
+    {
+      "id": "enclosureness/task9",
+      "spec": "experiments/specs/enclosureness.spec",
+      "task": 9,
+      "label": "length3",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3",
+        "minicluster.entry.class": "L3DistributedJobWithTag",
+        "filter.condition.value": "0",
+        "input.file": "epinions",
+        "winbig.factor": "0.2"
+      }
+    },
+    {
+      "id": "enclosureness/task10",
+      "spec": "experiments/specs/enclosureness.spec",
+      "task": 10,
+      "label": "length3",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3",
+        "minicluster.entry.class": "L3DistributedJobWithTag",
+        "filter.condition.value": "0",
+        "input.file": "bitcoin",
+        "winbig.factor": "0.2"
+      }
+    },
+    {
+      "id": "enclosureness/task11",
+      "spec": "experiments/specs/enclosureness.spec",
+      "task": 11,
+      "label": "length3",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3",
+        "minicluster.entry.class": "L3DistributedJobWithTag",
+        "filter.condition.value": "0",
+        "input.file": "berkstan",
+        "winbig.factor": "0.2"
+      }
+    },
+    {
+      "id": "enclosureness/task12",
+      "spec": "experiments/specs/enclosureness.spec",
+      "task": 12,
+      "label": "length3",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3",
+        "minicluster.entry.class": "L3DistributedJobWithTag",
+        "filter.condition.value": "0",
+        "input.file": "google",
+        "winbig.factor": "0.2"
+      }
+    },
+    {
+      "id": "enclosureness/task13",
+      "spec": "experiments/specs/enclosureness.spec",
+      "task": 13,
+      "label": "length3",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3",
+        "minicluster.entry.class": "L3DistributedJobWithTag",
+        "filter.condition.value": "0",
+        "input.file": "epinions",
+        "winbig.factor": "0.5"
+      }
+    },
+    {
+      "id": "enclosureness/task14",
+      "spec": "experiments/specs/enclosureness.spec",
+      "task": 14,
+      "label": "length3",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3",
+        "minicluster.entry.class": "L3DistributedJobWithTag",
+        "filter.condition.value": "0",
+        "input.file": "bitcoin",
+        "winbig.factor": "0.5"
+      }
+    },
+    {
+      "id": "enclosureness/task15",
+      "spec": "experiments/specs/enclosureness.spec",
+      "task": 15,
+      "label": "length3",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3",
+        "minicluster.entry.class": "L3DistributedJobWithTag",
+        "filter.condition.value": "0",
+        "input.file": "berkstan",
+        "winbig.factor": "0.5"
+      }
+    },
+    {
+      "id": "enclosureness/task16",
+      "spec": "experiments/specs/enclosureness.spec",
+      "task": 16,
+      "label": "length3",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3",
+        "minicluster.entry.class": "L3DistributedJobWithTag",
+        "filter.condition.value": "0",
+        "input.file": "google",
+        "winbig.factor": "0.5"
+      }
+    },
+    {
+      "id": "enclosureness/task17",
+      "spec": "experiments/specs/enclosureness.spec",
+      "task": 17,
+      "label": "length3",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3",
+        "minicluster.entry.class": "L3DistributedJobWithTag",
+        "filter.condition.value": "0",
+        "input.file": "epinions",
+        "winbig.factor": "1"
+      }
+    },
+    {
+      "id": "enclosureness/task18",
+      "spec": "experiments/specs/enclosureness.spec",
+      "task": 18,
+      "label": "length3",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3",
+        "minicluster.entry.class": "L3DistributedJobWithTag",
+        "filter.condition.value": "0",
+        "input.file": "bitcoin",
+        "winbig.factor": "1"
+      }
+    },
+    {
+      "id": "enclosureness/task19",
+      "spec": "experiments/specs/enclosureness.spec",
+      "task": 19,
+      "label": "length3",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3",
+        "minicluster.entry.class": "L3DistributedJobWithTag",
+        "filter.condition.value": "0",
+        "input.file": "berkstan",
+        "winbig.factor": "1"
+      }
+    },
+    {
+      "id": "enclosureness/task20",
+      "spec": "experiments/specs/enclosureness.spec",
+      "task": 20,
+      "label": "length3",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3",
+        "minicluster.entry.class": "L3DistributedJobWithTag",
+        "filter.condition.value": "0",
+        "input.file": "google",
+        "winbig.factor": "1"
+      }
+    },
+    {
+      "id": "full_join_queries/task1",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 1,
+      "label": "length3_filter",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3_filter",
+        "minicluster.entry.class": "L3DistributedJob",
+        "test.entry.class": "L3GraphTest",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "full_join_queries/task2",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 2,
+      "label": "length3_filter",
+      "properties": {
+        "system.name": "flink",
+        "experiment.name": "length3_filter",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "full_join_queries/task3",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 3,
+      "label": "length3_filter",
+      "properties": {
+        "system.name": "dbtoaster_cpp",
+        "experiment.name": "length3_filter",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "full_join_queries/task4",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 4,
+      "label": "length3_filter",
+      "properties": {
+        "system.name": "dbtoaster",
+        "experiment.name": "length3_filter",
+        "input.insert.only": "false",
+        "line.count.multiplier": "3",
+        "filter.condition.value": "32684",
+        "dataset.name": "length3_filter_perf_del"
+      }
+    },
+    {
+      "id": "full_join_queries/task5",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 5,
+      "label": "length3_filter",
+      "properties": {
+        "system.name": "crown_delta",
+        "experiment.name": "length3_filter",
+        "minicluster.entry.class": "L3DistributedJob",
+        "test.entry.class": "L3GraphTest",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "full_join_queries/task6",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 6,
+      "label": "length3_filter",
+      "properties": {
+        "system.name": "trill",
+        "experiment.name": "length3_filter",
+        "graph.inputsize": "508837",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "full_join_queries/task7",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 7,
+      "label": "length4_filter",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length4_filter",
+        "minicluster.entry.class": "L4DistributedJob",
+        "test.entry.class": "L4GraphTest",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "full_join_queries/task8",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 8,
+      "label": "length4_filter",
+      "properties": {
+        "system.name": "flink",
+        "experiment.name": "length4_filter",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "full_join_queries/task9",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 9,
+      "label": "length4_filter",
+      "properties": {
+        "system.name": "dbtoaster_cpp",
+        "experiment.name": "length4_filter",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "full_join_queries/task10",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 10,
+      "label": "length4_filter",
+      "properties": {
+        "system.name": "dbtoaster",
+        "experiment.name": "length4_filter",
+        "input.insert.only": "false",
+        "line.count.multiplier": "4",
+        "filter.condition.value": "32684",
+        "dataset.name": "length4_filter_perf_del"
+      }
+    },
+    {
+      "id": "full_join_queries/task11",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 11,
+      "label": "length4_filter",
+      "properties": {
+        "system.name": "crown_delta",
+        "experiment.name": "length4_filter",
+        "minicluster.entry.class": "L4DistributedJob",
+        "test.entry.class": "L4GraphTest",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "full_join_queries/task12",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 12,
+      "label": "length4_filter",
+      "properties": {
+        "system.name": "trill",
+        "experiment.name": "length4_filter",
+        "graph.inputsize": "508837",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "full_join_queries/task13",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 13,
+      "label": "TwoComb",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "TwoComb",
+        "minicluster.entry.class": "TwoCombJob",
+        "test.entry.class": "fake",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "full_join_queries/task14",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 14,
+      "label": "TwoComb",
+      "properties": {
+        "system.name": "flink",
+        "experiment.name": "TwoComb",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "full_join_queries/task15",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 15,
+      "label": "TwoComb",
+      "properties": {
+        "system.name": "dbtoaster_cpp",
+        "experiment.name": "TwoComb",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "full_join_queries/task16",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 16,
+      "label": "TwoComb",
+      "properties": {
+        "system.name": "dbtoaster",
+        "experiment.name": "TwoComb",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "full_join_queries/task17",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 17,
+      "label": "TwoComb",
+      "properties": {
+        "system.name": "crown_delta",
+        "experiment.name": "TwoComb",
+        "minicluster.entry.class": "TwoCombJob",
+        "test.entry.class": "fake",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "full_join_queries/task18",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 18,
+      "label": "TwoComb",
+      "properties": {
+        "system.name": "trill",
+        "experiment.name": "TwoComb",
+        "graph.inputsize": "508837",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "full_join_queries/task19",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 19,
+      "label": "snb1_window",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "snb1_window",
+        "minicluster.entry.class": "SNBQ1Job",
+        "test.entry.class": "fake"
+      }
+    },
+    {
+      "id": "full_join_queries/task20",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 20,
+      "label": "snb1_window",
+      "properties": {
+        "system.name": "flink",
+        "experiment.name": "snb1_window"
+      }
+    },
+    {
+      "id": "full_join_queries/task21",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 21,
+      "label": "snb1_window",
+      "properties": {
+        "system.name": "dbtoaster_cpp",
+        "experiment.name": "snb1_window"
+      }
+    },
+    {
+      "id": "full_join_queries/task22",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 22,
+      "label": "snb1_window",
+      "properties": {
+        "system.name": "dbtoaster",
+        "experiment.name": "snb1_window",
+        "input.insert.only": "false",
+        "dataset.name": "snb1_window_perf_del"
+      }
+    },
+    {
+      "id": "full_join_queries/task23",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 23,
+      "label": "snb1_window",
+      "properties": {
+        "system.name": "crown_delta",
+        "experiment.name": "snb1_window",
+        "minicluster.entry.class": "SNBQ1Job",
+        "test.entry.class": "fake"
+      }
+    },
+    {
+      "id": "full_join_queries/task24",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 24,
+      "label": "snb1_window",
+      "properties": {
+        "system.name": "trill",
+        "experiment.name": "snb1_window",
+        "graph.inputsize": "0"
+      }
+    },
+    {
+      "id": "full_join_queries/task25",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 25,
+      "label": "snb2_window",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "snb2_window",
+        "minicluster.entry.class": "SNBQ2Job",
+        "test.entry.class": "fake"
+      }
+    },
+    {
+      "id": "full_join_queries/task26",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 26,
+      "label": "snb2_window",
+      "properties": {
+        "system.name": "flink",
+        "experiment.name": "snb2_window"
+      }
+    },
+    {
+      "id": "full_join_queries/task27",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 27,
+      "label": "snb2_window",
+      "properties": {
+        "system.name": "dbtoaster_cpp",
+        "experiment.name": "snb2_window"
+      }
+    },
+    {
+      "id": "full_join_queries/task28",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 28,
+      "label": "snb2_window",
+      "properties": {
+        "system.name": "dbtoaster",
+        "experiment.name": "snb2_window",
+        "input.insert.only": "false",
+        "dataset.name": "snb2_window_perf_del"
+      }
+    },
+    {
+      "id": "full_join_queries/task29",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 29,
+      "label": "snb2_window",
+      "properties": {
+        "system.name": "crown_delta",
+        "experiment.name": "snb2_window",
+        "minicluster.entry.class": "SNBQ2Job",
+        "test.entry.class": "fake"
+      }
+    },
+    {
+      "id": "full_join_queries/task30",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 30,
+      "label": "snb2_window",
+      "properties": {
+        "system.name": "trill",
+        "experiment.name": "snb2_window",
+        "graph.inputsize": "0"
+      }
+    },
+    {
+      "id": "full_join_queries/task31",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 31,
+      "label": "snb3_window",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "snb3_window",
+        "minicluster.entry.class": "SNBQ3Job",
+        "test.entry.class": "fake"
+      }
+    },
+    {
+      "id": "full_join_queries/task32",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 32,
+      "label": "snb3_window",
+      "properties": {
+        "system.name": "flink",
+        "experiment.name": "snb3_window"
+      }
+    },
+    {
+      "id": "full_join_queries/task33",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 33,
+      "label": "snb3_window",
+      "properties": {
+        "system.name": "dbtoaster_cpp",
+        "experiment.name": "snb3_window"
+      }
+    },
+    {
+      "id": "full_join_queries/task34",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 34,
+      "label": "snb3_window",
+      "properties": {
+        "system.name": "dbtoaster",
+        "experiment.name": "snb3_window",
+        "input.insert.only": "false",
+        "dataset.name": "snb3_window_perf_del"
+      }
+    },
+    {
+      "id": "full_join_queries/task35",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 35,
+      "label": "snb3_window",
+      "properties": {
+        "system.name": "crown_delta",
+        "experiment.name": "snb3_window",
+        "minicluster.entry.class": "SNBQ3Job",
+        "test.entry.class": "fake"
+      }
+    },
+    {
+      "id": "full_join_queries/task36",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 36,
+      "label": "snb3_window",
+      "properties": {
+        "system.name": "trill",
+        "experiment.name": "snb3_window",
+        "graph.inputsize": "0"
+      }
+    },
+    {
+      "id": "full_join_queries/task37",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 37,
+      "label": "dumbbell_full",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "dumbbell_full",
+        "minicluster.entry.class": "DumbbellCrownTriangleJob",
+        "test.entry.class": "fake",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "full_join_queries/task38",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 38,
+      "label": "dumbbell_full",
+      "properties": {
+        "system.name": "flink",
+        "experiment.name": "dumbbell_full",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "full_join_queries/task39",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 39,
+      "label": "dumbbell_full",
+      "properties": {
+        "system.name": "dbtoaster_cpp",
+        "experiment.name": "dumbbell_full",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "full_join_queries/task40",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 40,
+      "label": "dumbbell_full",
+      "properties": {
+        "system.name": "dbtoaster",
+        "experiment.name": "dumbbell_full",
+        "input.insert.only": "false",
+        "line.count.multiplier": "7",
+        "dataset.name": "dumbbell_full_perf_del",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "full_join_queries/task41",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 41,
+      "label": "dumbbell_full",
+      "properties": {
+        "system.name": "crown_delta",
+        "experiment.name": "dumbbell_full",
+        "minicluster.entry.class": "DumbbellCrownTriangleJob",
+        "test.entry.class": "fake",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "full_join_queries/task42",
+      "spec": "experiments/specs/full_join_queries.spec",
+      "task": 42,
+      "label": "dumbbell_full",
+      "properties": {
+        "system.name": "trill",
+        "experiment.name": "dumbbell_full",
+        "graph.inputsize": "508837",
+        "filter.condition.value": "32684"
+      }
+    },
+    {
+      "id": "join_project_queries/task1",
+      "spec": "experiments/specs/join_project_queries.spec",
+      "task": 1,
+      "label": "length3_project",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length3_project",
+        "minicluster.entry.class": "L3ProjDistributedJob",
+        "test.entry.class": "fake"
+      }
+    },
+    {
+      "id": "join_project_queries/task2",
+      "spec": "experiments/specs/join_project_queries.spec",
+      "task": 2,
+      "label": "length3_project",
+      "properties": {
+        "system.name": "flink",
+        "experiment.name": "length3_project"
+      }
+    },
+    {
+      "id": "join_project_queries/task3",
+      "spec": "experiments/specs/join_project_queries.spec",
+      "task": 3,
+      "label": "length3_project",
+      "properties": {
+        "system.name": "dbtoaster_cpp",
+        "experiment.name": "length3_project"
+      }
+    },
+    {
+      "id": "join_project_queries/task4",
+      "spec": "experiments/specs/join_project_queries.spec",
+      "task": 4,
+      "label": "length3_project",
+      "properties": {
+        "system.name": "dbtoaster",
+        "experiment.name": "length3_project",
+        "input.insert.only": "false",
+        "line.count.multiplier": "3",
+        "dataset.name": "length3_project_perf_del"
+      }
+    },
+    {
+      "id": "join_project_queries/task5",
+      "spec": "experiments/specs/join_project_queries.spec",
+      "task": 5,
+      "label": "length3_project",
+      "properties": {
+        "system.name": "crown_delta",
+        "experiment.name": "length3_project",
+        "minicluster.entry.class": "L3ProjDistributedJob",
+        "test.entry.class": "fake"
+      }
+    },
+    {
+      "id": "join_project_queries/task6",
+      "spec": "experiments/specs/join_project_queries.spec",
+      "task": 6,
+      "label": "length3_project",
+      "properties": {
+        "system.name": "trill",
+        "experiment.name": "length3_project",
+        "graph.inputsize": "508837"
+      }
+    },
+    {
+      "id": "join_project_queries/task7",
+      "spec": "experiments/specs/join_project_queries.spec",
+      "task": 7,
+      "label": "length4_project",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length4_project",
+        "minicluster.entry.class": "L4ProjDistributedJob",
+        "test.entry.class": "L4ProjGraphTest"
+      }
+    },
+    {
+      "id": "join_project_queries/task8",
+      "spec": "experiments/specs/join_project_queries.spec",
+      "task": 8,
+      "label": "length4_project",
+      "properties": {
+        "system.name": "flink",
+        "experiment.name": "length4_project"
+      }
+    },
+    {
+      "id": "join_project_queries/task9",
+      "spec": "experiments/specs/join_project_queries.spec",
+      "task": 9,
+      "label": "length4_project",
+      "properties": {
+        "system.name": "dbtoaster_cpp",
+        "experiment.name": "length4_project"
+      }
+    },
+    {
+      "id": "join_project_queries/task10",
+      "spec": "experiments/specs/join_project_queries.spec",
+      "task": 10,
+      "label": "length4_project",
+      "properties": {
+        "system.name": "dbtoaster",
+        "experiment.name": "length4_project",
+        "input.insert.only": "false",
+        "line.count.multiplier": "4",
+        "dataset.name": "length4_project_perf_del"
+      }
+    },
+    {
+      "id": "join_project_queries/task11",
+      "spec": "experiments/specs/join_project_queries.spec",
+      "task": 11,
+      "label": "length4_project",
+      "properties": {
+        "system.name": "crown_delta",
+        "experiment.name": "length4_project",
+        "minicluster.entry.class": "L4ProjDistributedJob",
+        "test.entry.class": "L4ProjGraphTest"
+      }
+    },
+    {
+      "id": "join_project_queries/task12",
+      "spec": "experiments/specs/join_project_queries.spec",
+      "task": 12,
+      "label": "length4_project",
+      "properties": {
+        "system.name": "trill",
+        "experiment.name": "length4_project",
+        "graph.inputsize": "508837"
+      }
+    },
+    {
+      "id": "join_project_queries/task13",
+      "spec": "experiments/specs/join_project_queries.spec",
+      "task": 13,
+      "label": "dumbbell",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "dumbbell",
+        "minicluster.entry.class": "DumbbellCrownTriangleProjectJob",
+        "test.entry.class": "fake",
+        "filter.condition.value": "0"
+      }
+    },
+    {
+      "id": "join_project_queries/task14",
+      "spec": "experiments/specs/join_project_queries.spec",
+      "task": 14,
+      "label": "dumbbell",
+      "properties": {
+        "system.name": "flink",
+        "experiment.name": "dumbbell"
+      }
+    },
+    {
+      "id": "join_project_queries/task15",
+      "spec": "experiments/specs/join_project_queries.spec",
+      "task": 15,
+      "label": "dumbbell",
+      "properties": {
+        "system.name": "dbtoaster_cpp",
+        "experiment.name": "dumbbell"
+      }
+    },
+    {
+      "id": "join_project_queries/task16",
+      "spec": "experiments/specs/join_project_queries.spec",
+      "task": 16,
+      "label": "dumbbell",
+      "properties": {
+        "system.name": "dbtoaster",
+        "experiment.name": "dumbbell",
+        "input.insert.only": "false",
+        "line.count.multiplier": "7",
+        "dataset.name": "dumbbell_perf_del"
+      }
+    },
+    {
+      "id": "join_project_queries/task17",
+      "spec": "experiments/specs/join_project_queries.spec",
+      "task": 17,
+      "label": "dumbbell",
+      "properties": {
+        "system.name": "crown_delta",
+        "experiment.name": "dumbbell",
+        "minicluster.entry.class": "DumbbellCrownTriangleProjectJob",
+        "test.entry.class": "fake",
+        "filter.condition.value": "0"
+      }
+    },
+    {
+      "id": "join_project_queries/task18",
+      "spec": "experiments/specs/join_project_queries.spec",
+      "task": 18,
+      "label": "dumbbell",
+      "properties": {
+        "system.name": "trill",
+        "experiment.name": "dumbbell",
+        "graph.inputsize": "508837"
+      }
+    },
+    {
+      "id": "parallelism/task1",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 1,
+      "label": "length4_filter",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length4_filter",
+        "minicluster.entry.class": "L4DistributedJob",
+        "test.entry.class": "L4GraphTest",
+        "filter.condition.value": "32684",
+        "executor.cores": "0",
+        "minicluster.parallelism": "1"
+      }
+    },
+    {
+      "id": "parallelism/task2",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 2,
+      "label": "length4_filter",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length4_filter",
+        "minicluster.entry.class": "L4DistributedJob",
+        "test.entry.class": "L4GraphTest",
+        "filter.condition.value": "32684",
+        "executor.cores": "0-1",
+        "minicluster.parallelism": "2"
+      }
+    },
+    {
+      "id": "parallelism/task3",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 3,
+      "label": "length4_filter",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length4_filter",
+        "minicluster.entry.class": "L4DistributedJob",
+        "test.entry.class": "L4GraphTest",
+        "filter.condition.value": "32684",
+        "executor.cores": "0-3",
+        "minicluster.parallelism": "4"
+      }
+    },
+    {
+      "id": "parallelism/task4",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 4,
+      "label": "length4_filter",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length4_filter",
+        "minicluster.entry.class": "L4DistributedJob",
+        "test.entry.class": "L4GraphTest",
+        "filter.condition.value": "32684",
+        "executor.cores": "0-7",
+        "minicluster.parallelism": "8"
+      }
+    },
+    {
+      "id": "parallelism/task5",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 5,
+      "label": "length4_filter",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length4_filter",
+        "minicluster.entry.class": "L4DistributedJob",
+        "test.entry.class": "L4GraphTest",
+        "filter.condition.value": "32684",
+        "executor.cores": "0-15",
+        "minicluster.parallelism": "16"
+      }
+    },
+    {
+      "id": "parallelism/task6",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 6,
+      "label": "length4_filter",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "length4_filter",
+        "minicluster.entry.class": "L4DistributedJob",
+        "test.entry.class": "L4GraphTest",
+        "filter.condition.value": "32684",
+        "executor.cores": "0-31",
+        "minicluster.parallelism": "32"
+      }
+    },
+    {
+      "id": "parallelism/task7",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 7,
+      "label": "length4_filter",
+      "properties": {
+        "system.name": "flink",
+        "experiment.name": "length4_filter",
+        "filter.condition.value": "32684",
+        "executor.cores": "0",
+        "perf.parallelism": "1"
+      }
+    },
+    {
+      "id": "parallelism/task8",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 8,
+      "label": "length4_filter",
+      "properties": {
+        "system.name": "flink",
+        "experiment.name": "length4_filter",
+        "filter.condition.value": "32684",
+        "executor.cores": "0-1",
+        "perf.parallelism": "2"
+      }
+    },
+    {
+      "id": "parallelism/task9",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 9,
+      "label": "length4_filter",
+      "properties": {
+        "system.name": "flink",
+        "experiment.name": "length4_filter",
+        "filter.condition.value": "32684",
+        "executor.cores": "0-3",
+        "perf.parallelism": "4"
+      }
+    },
+    {
+      "id": "parallelism/task10",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 10,
+      "label": "length4_filter",
+      "properties": {
+        "system.name": "flink",
+        "experiment.name": "length4_filter",
+        "filter.condition.value": "32684",
+        "executor.cores": "0-7",
+        "perf.parallelism": "8"
+      }
+    },
+    {
+      "id": "parallelism/task11",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 11,
+      "label": "length4_filter",
+      "properties": {
+        "system.name": "flink",
+        "experiment.name": "length4_filter",
+        "filter.condition.value": "32684",
+        "executor.cores": "0-15",
+        "perf.parallelism": "16"
+      }
+    },
+    {
+      "id": "parallelism/task12",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 12,
+      "label": "length4_filter",
+      "properties": {
+        "system.name": "flink",
+        "experiment.name": "length4_filter",
+        "filter.condition.value": "32684",
+        "executor.cores": "0-31",
+        "perf.parallelism": "32"
+      }
+    },
+    {
+      "id": "parallelism/task13",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 13,
+      "label": "snb3_window",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "snb3_window",
+        "minicluster.entry.class": "SNBQ3Job",
+        "test.entry.class": "fake",
+        "filter.condition.value": "100000",
+        "executor.cores": "0",
+        "minicluster.parallelism": "1"
+      }
+    },
+    {
+      "id": "parallelism/task14",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 14,
+      "label": "snb3_window",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "snb3_window",
+        "minicluster.entry.class": "SNBQ3Job",
+        "test.entry.class": "fake",
+        "filter.condition.value": "100000",
+        "executor.cores": "0-1",
+        "minicluster.parallelism": "2"
+      }
+    },
+    {
+      "id": "parallelism/task15",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 15,
+      "label": "snb3_window",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "snb3_window",
+        "minicluster.entry.class": "SNBQ3Job",
+        "test.entry.class": "fake",
+        "filter.condition.value": "100000",
+        "executor.cores": "0-3",
+        "minicluster.parallelism": "4"
+      }
+    },
+    {
+      "id": "parallelism/task16",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 16,
+      "label": "snb3_window",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "snb3_window",
+        "minicluster.entry.class": "SNBQ3Job",
+        "test.entry.class": "fake",
+        "filter.condition.value": "100000",
+        "executor.cores": "0-7",
+        "minicluster.parallelism": "8"
+      }
+    },
+    {
+      "id": "parallelism/task17",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 17,
+      "label": "snb3_window",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "snb3_window",
+        "minicluster.entry.class": "SNBQ3Job",
+        "test.entry.class": "fake",
+        "filter.condition.value": "100000",
+        "executor.cores": "0-15",
+        "minicluster.parallelism": "16"
+      }
+    },
+    {
+      "id": "parallelism/task18",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 18,
+      "label": "snb3_window",
+      "properties": {
+        "system.name": "crown",
+        "experiment.name": "snb3_window",
+        "minicluster.entry.class": "SNBQ3Job",
+        "test.entry.class": "fake",
+        "filter.condition.value": "100000",
+        "executor.cores": "0-31",
+        "minicluster.parallelism": "32"
+      }
+    },
+    {
+      "id": "parallelism/task19",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 19,
+      "label": "snb3_window",
+      "properties": {
+        "system.name": "dbtoaster",
+        "experiment.name": "snb3_window",
+        "input.insert.only": "false",
+        "dataset.name": "snb3_window_perf_del",
+        "executor.cores": "0",
+        "executor.memory": "100G",
+        "master.url": "local[1]",
+        "partitions.num": "1"
+      }
+    },
+    {
+      "id": "parallelism/task20",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 20,
+      "label": "snb3_window",
+      "properties": {
+        "system.name": "dbtoaster",
+        "experiment.name": "snb3_window",
+        "input.insert.only": "false",
+        "dataset.name": "snb3_window_perf_del",
+        "executor.cores": "0-1",
+        "executor.memory": "50G",
+        "master.url": "local[2]",
+        "partitions.num": "2"
+      }
+    },
+    {
+      "id": "parallelism/task21",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 21,
+      "label": "snb3_window",
+      "properties": {
+        "system.name": "dbtoaster",
+        "experiment.name": "snb3_window",
+        "input.insert.only": "false",
+        "dataset.name": "snb3_window_perf_del",
+        "executor.cores": "0-3",
+        "executor.memory": "25G",
+        "master.url": "local[4]",
+        "partitions.num": "4"
+      }
+    },
+    {
+      "id": "parallelism/task22",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 22,
+      "label": "snb3_window",
+      "properties": {
+        "system.name": "dbtoaster",
+        "experiment.name": "snb3_window",
+        "input.insert.only": "false",
+        "dataset.name": "snb3_window_perf_del",
+        "executor.cores": "0-7",
+        "executor.memory": "12G",
+        "master.url": "local[8]",
+        "partitions.num": "8"
+      }
+    },
+    {
+      "id": "parallelism/task23",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 23,
+      "label": "snb3_window",
+      "properties": {
+        "system.name": "dbtoaster",
+        "experiment.name": "snb3_window",
+        "input.insert.only": "false",
+        "dataset.name": "snb3_window_perf_del",
+        "executor.cores": "0-15",
+        "executor.memory": "6G",
+        "master.url": "local[16]",
+        "partitions.num": "16"
+      }
+    },
+    {
+      "id": "parallelism/task24",
+      "spec": "experiments/specs/parallelism.spec",
+      "task": 24,
+      "label": "snb3_window",
+      "properties": {
+        "system.name": "dbtoaster",
+        "experiment.name": "snb3_window",
+        "input.insert.only": "false",
+        "dataset.name": "snb3_window_perf_del",
+        "executor.cores": "0-31",
+        "executor.memory": "3G",
+        "master.url": "local[32]",
+        "partitions.num": "32"
+      }
+    }
+  ],
+  "source_git_blob_at_pin": {
+    "crown/src/main/scala/DumbbellCrownTriangleJob.scala": "935d58960782526b99b01b5e0813f6a07d383bdf",
+    "crown/src/main/scala/DumbbellCrownTriangleProcessFunction.scala": "bdd0cba06807fce0ed366158082bd7fe9e148a09",
+    "crown/src/main/scala/DumbbellCrownTriangleProjectJob.scala": "22aff3044d2c569e6ceeb88f460a8d7969b2f8bc",
+    "crown/src/main/scala/DumbbellCrownTriangleProjectProcessFunction.scala": "15cb236c4696e66e8b6dc3e6a7583d5d0901b7a9",
+    "crown/src/main/scala/L3DistributedJob.scala": "450525c2ad3e9d6286d6ac94dab8c32dfbd0aae3",
+    "crown/src/main/scala/L3DistributedJobWithTag.scala": "dd22c109df78032fafb85c089a8508a3a9ad2c5d",
+    "crown/src/main/scala/L3ProcessFunctions.scala": "135df50fd48199d32f258dd4a0b569189d1937e1",
+    "crown/src/main/scala/L3ProjDistributedJob.scala": "3634213d0ff0e553a4f013a289a31bceb0ce26e5",
+    "crown/src/main/scala/L3ProjectionProcessFunctions.scala": "4031518abebfa48d942693329076f3c6928024ba",
+    "crown/src/main/scala/L4DistributedJob.scala": "9fa76726412314452bebea88effac5f34f6e4dd7",
+    "crown/src/main/scala/L4ProcessFunctions.scala": "06a4bcd08e892d2c2b7779a68a09c16772c49a90",
+    "crown/src/main/scala/L4ProjDistributedJob.scala": "d8da981ee4b42421a7c6c2dff6a4e16154029b83",
+    "crown/src/main/scala/L4ProjectionProcessFunctions.scala": "c0a85bc04ad4f7a2ebd22ac37878394edf70e201",
+    "crown/src/main/scala/SNBQ1Job.scala": "46eb9810443eb9e37fda4831c70bb27c12f7be52",
+    "crown/src/main/scala/SNBQ1ProcessFunctions.scala": "6ee821fde9e21ec4c8f15ae87065bce0aaf9af7d",
+    "crown/src/main/scala/SNBQ2Job.scala": "3ccbc9c488450ae19b7bbc46163825481296cd54",
+    "crown/src/main/scala/SNBQ2ProcessFunctions.scala": "cf80a33f9588663022fb1addf3df577c307b5e28",
+    "crown/src/main/scala/SNBQ3Job.scala": "97eb74559bd0a0fdd0a6408411076c5b1df51cc4",
+    "crown/src/main/scala/SNBQ3ProcessFunctions.scala": "0082fbdeaf30493e0f3f0a596382eb068aa21b56",
+    "crown/src/main/scala/SNBQ4Job.scala": "47bac3f16affa8d8e5e59684faefe5ef64b3f1f1",
+    "crown/src/main/scala/SNBQ4ProcessFunctions.scala": "e00bae5fc98d04057daba737c6b798984efa2fcb",
+    "crown/src/main/scala/StarCntDistributedJob.scala": "e1e830a23ba6f58f071ce3d1f4a39e118d25295b",
+    "crown/src/main/scala/StarCntProcessFunctions.scala": "ce070b0d681a140f3bca6020b19889c042b73639",
+    "crown/src/main/scala/TwoCombJob.scala": "1a330098701fc8b9263ab67881ecdf1172697f42",
+    "crown/src/main/scala/TwoCombProcessFunctions.scala": "4cc859d04a2a11f16651b7f1125191bd23b4c2a8",
+    "experiments/build_all.sh": "cc5cb5bbea00690d5beafcae13f810b15b159211",
+    "experiments/data-tools/src/main/scala/experiments/data/produce/length3/DataProducer.scala": "970ec8c6310f10e6b8551e6c300791990694e1b3",
+    "experiments/data-tools/src/main/scala/experiments/data/utils/DynamicGraphGenerator.scala": "4987eb9ca6693129f1d2c93ca69b7d4b86029464",
+    "experiments/dbtoaster/dumbbell/query.sql.template": "c96500118a55d98a664eaff0a7d644ee22b38d7a",
+    "experiments/dbtoaster/dumbbell_full/query.sql.template": "0b6c3d6c5ebaf72fb4db1aaebc2fa7138fd1ec0c",
+    "experiments/dbtoaster/length3_filter/query.sql.template": "a8860ba59e8d43d862ce1d0aa12ad07dfdc07c93",
+    "experiments/dbtoaster/length3_project/query.sql.template": "5a8361a4915430b7f76f49f31af0ed72a3741cda",
+    "experiments/dbtoaster/length4_filter/query.sql.template": "bd412ab3a0351b16b6fe1bcb16563df57d0a8a76",
+    "experiments/dbtoaster/length4_project/query.sql.template": "036417fb032c4e3283dcc26f67926bcc02b74dc1",
+    "experiments/dbtoaster/snb1_window/query.sql.template": "381f062e8b53a004c34bafa5123af64270557c3a",
+    "experiments/dbtoaster/snb2_window/query.sql.template": "635b0c903744e03797cbe591fc17df0458c578a3",
+    "experiments/dbtoaster/snb3_window/query.sql.template": "0c99b1e12d5acd3be295a2cfc05882dd2d98b12d",
+    "experiments/dbtoaster/snb4_window/query.sql.template": "3b0010d8d75a3b28eca536c54f46f563dffdf3a6",
+    "experiments/dbtoaster/star_cnt/query.sql.template": "907d2c752827dc528229c612765c7c5465a31b16",
+    "experiments/dbtoaster_cpp/TwoComb/query.sql.template": "4b977b6d3945b502ce4386d47df5c7901705c7e4",
+    "experiments/dbtoaster_cpp/dumbbell/query.sql.template": "ec6371e2c6d79001642b1e0438fecf9615490fa0",
+    "experiments/dbtoaster_cpp/dumbbell_full/query.sql.template": "f448dd523f0943eb833620d6c0866dddd9e90106",
+    "experiments/dbtoaster_cpp/length3_filter/query.sql.template": "989fd8b808599b41abd73fdde7eac291d55b98b6",
+    "experiments/dbtoaster_cpp/length3_project/query.sql.template": "8242d1930702ef5f0cdefbc16f1687e12e37150d",
+    "experiments/dbtoaster_cpp/length4_filter/query.sql.template": "1300df19b58a1e10c562cfab41d2b98720e83f0a",
+    "experiments/dbtoaster_cpp/length4_project/query.sql.template": "226177095817ae56741848c5e869f3c3e931f78e",
+    "experiments/dbtoaster_cpp/snb1_window/query.sql.template": "271931af3288873a03fc5ebc7ab7415f4ade4a77",
+    "experiments/dbtoaster_cpp/snb2_window/query.sql.template": "401947e5637741b0d25895724a0b08f2495f4af1",
+    "experiments/dbtoaster_cpp/snb3_window/query.sql.template": "523e6b8d34f8865d4904cfa2be1615cc4e7c95d0",
+    "experiments/dbtoaster_cpp/snb4_window/query.sql.template": "6995ba06a202729f1b08aa5c294d2ae6d25a4afb",
+    "experiments/dbtoaster_cpp/star_cnt/query.sql.template": "243ff29eaaaec02776cc0fdda7111786cb5bd3f0",
+    "experiments/execute_all.sh": "87fc0cf5df0b3dbecfd9a879a9274bc2d3e63eca",
+    "experiments/flink/TwoComb/graph.sql": "4c7629a2659259bad867f07373dcb77090ae7c4e",
+    "experiments/flink/TwoComb/graphWindowed.sql": "a66b2a61b7efdb5739564a085fae10e79134b9e5",
+    "experiments/flink/TwoComb/query.sql": "260bdaea50f7167070a7339163d832c424359fe1",
+    "experiments/flink/TwoComb/v1.sql": "1516cb2d3d16568178a0081de9f07619a75d1613",
+    "experiments/flink/TwoComb/v1Windowed.sql": "fc19ca8d26d1a89bbadd4d19e9ec7af0751df7be",
+    "experiments/flink/TwoComb/v2.sql": "a81754241cbb49e59cc1430037f8858391b04256",
+    "experiments/flink/TwoComb/v2Windowed.sql": "58bc4b3d2556bfd1acd7175b057f7796713be3ab",
+    "experiments/flink/dumbbell/graph.sql": "b17cb413071f6b1233b5135de5b351877581969a",
+    "experiments/flink/dumbbell/query.sql": "e6c506161b421167938ce92f9c562821e399b36f",
+    "experiments/flink/dumbbell/triangle.sql": "953206367f0010be3aa14022435fc94b02e0a1c4",
+    "experiments/flink/dumbbell/window.sql": "fec1b97e905655085aa3e0ab01e8316cf4c70416",
+    "experiments/flink/dumbbell_full/graph.sql": "b17cb413071f6b1233b5135de5b351877581969a",
+    "experiments/flink/dumbbell_full/query.sql": "5c30136f6157869da2ba85d80ee7edcc4ae72464",
+    "experiments/flink/dumbbell_full/triangle.sql": "953206367f0010be3aa14022435fc94b02e0a1c4",
+    "experiments/flink/dumbbell_full/window.sql": "fec1b97e905655085aa3e0ab01e8316cf4c70416",
+    "experiments/flink/length3_filter/graph.sql": "b17cb413071f6b1233b5135de5b351877581969a",
+    "experiments/flink/length3_filter/query.sql": "db947745cc1b515010b588f9a5fcee51eaab0159",
+    "experiments/flink/length3_filter/window.sql": "fec1b97e905655085aa3e0ab01e8316cf4c70416",
+    "experiments/flink/length3_project/graph.sql": "b17cb413071f6b1233b5135de5b351877581969a",
+    "experiments/flink/length3_project/query.sql": "77ed6213b76cd286a9f9d873aa44b0aa3aede818",
+    "experiments/flink/length3_project/window.sql": "fec1b97e905655085aa3e0ab01e8316cf4c70416",
+    "experiments/flink/length4_filter/graph.sql": "b17cb413071f6b1233b5135de5b351877581969a",
+    "experiments/flink/length4_filter/query.sql": "1956b922a4cca8ed221b73571af5cbd2cf516679",
+    "experiments/flink/length4_filter/window.sql": "fec1b97e905655085aa3e0ab01e8316cf4c70416",
+    "experiments/flink/length4_project/graph.sql": "b17cb413071f6b1233b5135de5b351877581969a",
+    "experiments/flink/length4_project/query.sql": "27e34e24b88658a0a30294cd558da6fd2fbf8aef",
+    "experiments/flink/length4_project/window.sql": "fec1b97e905655085aa3e0ab01e8316cf4c70416",
+    "experiments/flink/snb1_window/knows.sql": "7363f86a80370a267a1a815c0e53ac0a174017f0",
+    "experiments/flink/snb1_window/knowsWindowed.sql": "9db3d8aef93dab12eca247c636d78eb4d559fb1f",
+    "experiments/flink/snb1_window/message.sql": "dfff575f5940e2349ba57e4a2c176884c2db5b95",
+    "experiments/flink/snb1_window/messageWindowed.sql": "44537c78b7cd4990cc64f0382802cc42b4c0ff4c",
+    "experiments/flink/snb1_window/person.sql": "cc6cbed5e65543571504d8982d410f9287fcc01e",
+    "experiments/flink/snb1_window/personWindowed.sql": "12204873c458be9735bba014a07f69099d467922",
+    "experiments/flink/snb1_window/query.sql": "44fa230fdf0888dab5ec79c14b70df73b44bb8e8",
+    "experiments/flink/snb2_window/knows.sql": "7363f86a80370a267a1a815c0e53ac0a174017f0",
+    "experiments/flink/snb2_window/knowsWindowed.sql": "9db3d8aef93dab12eca247c636d78eb4d559fb1f",
+    "experiments/flink/snb2_window/message.sql": "dfff575f5940e2349ba57e4a2c176884c2db5b95",
+    "experiments/flink/snb2_window/messageWindowed.sql": "de3253585e02ac5ad7290be4655ffaa93d3ec35b",
+    "experiments/flink/snb2_window/messagetag.sql": "2fe88a171963bcda657a5ce9c83a9580d09d79db",
+    "experiments/flink/snb2_window/messagetagWindowed.sql": "ebf0d7b2b4ea216feb4af1f859d2842aaa288b3c",
+    "experiments/flink/snb2_window/query.sql": "be5f04dc08db556841499de55d74c5c91bace6fb",
+    "experiments/flink/snb2_window/tag.sql": "6881f13e3d859e5dfee0e23602cdb4d0ab82ab8a",
+    "experiments/flink/snb3_window/knows.sql": "7363f86a80370a267a1a815c0e53ac0a174017f0",
+    "experiments/flink/snb3_window/knowsWindowed.sql": "9db3d8aef93dab12eca247c636d78eb4d559fb1f",
+    "experiments/flink/snb3_window/message.sql": "dfff575f5940e2349ba57e4a2c176884c2db5b95",
+    "experiments/flink/snb3_window/messageWindowed.sql": "44537c78b7cd4990cc64f0382802cc42b4c0ff4c",
+    "experiments/flink/snb3_window/person.sql": "c07e03d9b103973106181df2ad7581662d8c64dd",
+    "experiments/flink/snb3_window/personWindowed.sql": "12204873c458be9735bba014a07f69099d467922",
+    "experiments/flink/snb3_window/query.sql": "71d45bfda50685a617cdf8e1e19cb1677529c11a",
+    "experiments/flink/snb4_window/knows.sql": "7363f86a80370a267a1a815c0e53ac0a174017f0",
+    "experiments/flink/snb4_window/knowsWindowed.sql": "9db3d8aef93dab12eca247c636d78eb4d559fb1f",
+    "experiments/flink/snb4_window/message.sql": "dfff575f5940e2349ba57e4a2c176884c2db5b95",
+    "experiments/flink/snb4_window/messageWindowed.sql": "de3253585e02ac5ad7290be4655ffaa93d3ec35b",
+    "experiments/flink/snb4_window/messagetag.sql": "2fe88a171963bcda657a5ce9c83a9580d09d79db",
+    "experiments/flink/snb4_window/messagetagWindowed.sql": "ebf0d7b2b4ea216feb4af1f859d2842aaa288b3c",
+    "experiments/flink/snb4_window/query.sql": "00c9f00060e09e2f555a2ef30223da6477b4874e",
+    "experiments/flink/snb4_window/tag.sql": "31341714698b2b669bf41f5a4de717d05964f150",
+    "experiments/flink/star_cnt/graph.sql": "b17cb413071f6b1233b5135de5b351877581969a",
+    "experiments/flink/star_cnt/query.sql": "5c6fad821e517a05efdfb677d00e518d6c8c4f2b",
+    "experiments/flink/star_cnt/window.sql": "fec1b97e905655085aa3e0ab01e8316cf4c70416",
+    "experiments/snbquery/query1.sql": "6007b96452ac6c0c5910599ae45cead22eead28f",
+    "experiments/snbquery/query2.sql": "04cfe5ee182a383d773c530c3c567e02b765a6a9",
+    "experiments/snbquery/query3.sql": "70775f330475e9daff1c4e5c67464f8875f1d577",
+    "experiments/specs/agg_queries.spec": "611163a77997e5b104407ac0e28417e77aea9cb2",
+    "experiments/specs/enclosureness.spec": "9824cdddf3d189e9580b8e62dd0f5407b96f7343",
+    "experiments/specs/full_join_queries.spec": "aea0ac588f848e36e453945834be7dfab23a603e",
+    "experiments/specs/join_project_queries.spec": "15d3c3dff534c091d75ab73fffb9085ccca67b91",
+    "experiments/specs/parallelism.spec": "cfb452f822344f1b092b54214adf84dc60ca05e4"
+  },
+  "data_records": [
+    {
+      "id": "legacy_external_data_unavailable",
+      "origin": "external_SNAP_SNB_or_runner_placeholder_paths",
+      "availability": "not_imported",
+      "bytes_sha256": null,
+      "data_license": "not_recorded_in_local_legacy_sources",
+      "use_for_native_run": false
+    }
+  ],
+  "review": {
+    "reviewer": "root",
+    "proposal_sha256": "c53a7baa0ad3718d01fc81a38bad2161f3ac3af3226265932cb906bc7552304a",
+    "local_source_fingerprints_verified": 122,
+    "pinned_git_blobs_verified": 120,
+    "pin": "e369a623517723b3be3ea3e9806779f3c591e7f9",
+    "corrections": [
+      "Two stale statements implying the current native engine cannot execute maintained SQL were corrected; raw legacy SQL remains adaptation-required."
+    ],
+    "build_or_timing_claim": false
+  }
+}

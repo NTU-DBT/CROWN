@@ -1,0 +1,36 @@
+{
+  "statement": {
+    "begin": 0,
+    "end": 30
+  },
+  "ast": {
+    "version": 180006,
+    "stmts": [
+      {
+        "stmt": {
+          "SelectStmt": {
+            "targetList": [
+              {
+                "ResTarget": {
+                  "name": "payload",
+                  "val": {
+                    "A_Const": {
+                      "sval": {
+                        "sval": "left;right"
+                      },
+                      "location": 7
+                    }
+                  },
+                  "location": 7
+                }
+              }
+            ],
+            "limitOption": "LIMIT_OPTION_DEFAULT",
+            "op": "SETOP_NONE"
+          }
+        },
+        "stmt_len": 30
+      }
+    ]
+  }
+}

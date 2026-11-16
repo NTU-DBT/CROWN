@@ -1,0 +1,21 @@
+{
+  "files": {
+    "docs/verification/o07-cursor-observation-proposal/overlay/include/crown/runtime/observation.hpp": "8ff201a70fd960dba6609ee82c45aa76a3a8d23a8960bacec051fe864becde32",
+    "docs/verification/o07-cursor-observation-proposal/overlay/include/crown/runtime/support.hpp": "54f27d7b62479c88415ad3c26416e7086ddcc1920212707bd987f669c569f160",
+    "tests/integration/support.py": "adbd1d6ea5955e380276a312fabf18c331a94e8e87bce92ba56e7118ea17997b",
+    "tests/unit/delta_lifecycle_exception_test.cpp": "e9423cf9e9f5f14d98daed38460e2f4bea47e39fe41ce2b10becbf64b7532576",
+    "tests/unit/delta_runtime_exception_test.cpp": "4fe9c1dec12a9d63532f8609c359f1ba55e5e399e6fb3196f7535a52e6b292d3",
+    "tests/unit/epoch_view_exception_test.cpp": "46516c40dcbd1b7588714d790fb266cf1ba18f6e735805a3d2863404067cdc21",
+    "tests/unit/epoch_view_test.cpp": "a56811595f867f5f1e1330384d36b3bf9feba2801f9370c9f9ad0bb1b6fa4af4",
+    "tests/unit/initialization_exception_test.cpp": "c3202c31b58682b550465e2a004236954fa78ad9ba1239b656222d1fc851a39c",
+    "tests/unit/physical_runtime_exception_test.cpp": "66e407caca9bc4f64b03e409b1a3b0f215c0d0ec32cb3481d6ae55dfbc53390f",
+    "tests/unit/physical_runtime_test.cpp": "57dac52bc8d239b9d91467900632aac2b9260699e6210a8da1d3f61428cdd154",
+    "tests/unit/prepared_epoch_exception_test.cpp": "0f78942fbbcb9575749ac67de29d6d9b6e434f5d35c8d80381dc9a0c21842459",
+    "tests/unit/prepared_epoch_test.cpp": "54b785502b08fca0bc0c9596d1bf6728b82fd4ec54b4eb04ee05a5a086ab7b09",
+    "tests/unit/result_cursor_exception_test.cpp": "a53f138fe78c6584bbcaf589d1a9ae20b5862c3c8c5c6f79d48361baf9179704",
+    "tests/unit/support_api_test.cpp": "32a70ddbedf05dda9a63aeff0c3c8c6d5ef68620d65b23069c6acbd6a86c2445",
+    "tests/unit/support_exception_test.cpp": "c9a70fd55fec1f653048f6b56152d186dc542cc4f3a1a96ad1f591a3a7133a58",
+    "tests/unit/support_journal_test.cpp": "6ed7c337a552ff003b50d796dbf19c6bbc136a31f17b841e3b5245624d449467",
+    "tests/unit/support_model_test.cpp": "a0780fb5b3596bc1a07729b68e2d7c1eeb7206972966a1ab32a4883710705156"
+  }
+}

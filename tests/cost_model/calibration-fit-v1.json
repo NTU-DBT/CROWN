@@ -1,0 +1,91 @@
+{
+  "format": "c03-calibration-fit-literals-v1",
+  "provenance": "synthetic hand-computed calibration fixtures; elapsed_ns values are not measured timings",
+  "coefficient_unit": "nanoseconds_per_component_unit",
+  "rank_definition": "rank of the integer design matrix over the rationals",
+  "component_order": [
+    "base_input",
+    "base_change",
+    "adapter_visit",
+    "derivation_change",
+    "survivor_transition",
+    "parent_count_update",
+    "parent_presence_transition",
+    "visible_count_update",
+    "visible_presence_transition",
+    "edge_lookup",
+    "native_bucket_touch",
+    "generalized_hit",
+    "annotation_change",
+    "snapshot_start",
+    "snapshot_row",
+    "snapshot_end",
+    "delta_start",
+    "delta_row",
+    "delta_end",
+    "encoded_byte",
+    "checkpoint_start",
+    "checkpoint_byte"
+  ],
+  "fixtures": [
+    {
+      "name": "identifiable_three_features",
+      "feature_indices": [9, 10, 14],
+      "features": ["edge_lookup", "native_bucket_touch", "snapshot_row"],
+      "known_rates": [5, 2, 7],
+      "samples": [
+        {"units": [1, 2, 0], "elapsed_ns": 9, "arithmetic": "1*5 + 2*2 + 0*7 = 9"},
+        {"units": [3, 0, 1], "elapsed_ns": 22, "arithmetic": "3*5 + 0*2 + 1*7 = 22"},
+        {"units": [0, 1, 2], "elapsed_ns": 16, "arithmetic": "0*5 + 1*2 + 2*7 = 16"},
+        {"units": [2, 1, 1], "elapsed_ns": 19, "arithmetic": "2*5 + 1*2 + 1*7 = 19"}
+      ],
+      "expected": {
+        "design_rank": 3,
+        "feature_count": 3,
+        "all_rates_identifiable": true,
+        "rates": {"edge_lookup": "5/1", "native_bucket_touch": "2/1", "snapshot_row": "7/1"},
+        "elapsed_totals_ns": [9, 22, 16, 19]
+      }
+    },
+    {
+      "name": "collinear_two_features",
+      "feature_indices": [9, 10],
+      "features": ["edge_lookup", "native_bucket_touch"],
+      "one_feasible_nonnegative_rate_pair": [4, 2],
+      "samples": [
+        {"units": [1, 2], "elapsed_ns": 8, "arithmetic": "1*4 + 2*2 = 8"},
+        {"units": [3, 6], "elapsed_ns": 24, "arithmetic": "3*4 + 6*2 = 24"},
+        {"units": [2, 4], "elapsed_ns": 16, "arithmetic": "2*4 + 4*2 = 16"}
+      ],
+      "expected": {
+        "design_rank": 1,
+        "feature_count": 2,
+        "all_rates_identifiable": false,
+        "individual_rates": null,
+        "identified_combination": "edge_lookup + 2*native_bucket_touch = 8",
+        "other_feasible_nonnegative_rate_pairs": [[8, 0], [0, 4]],
+        "elapsed_totals_ns": [8, 24, 16]
+      }
+    },
+    {
+      "name": "measured_zero_and_unused_zero_column",
+      "feature_indices": [12, 21],
+      "features": ["annotation_change", "checkpoint_byte"],
+      "samples": [
+        {"units": [1, 0], "elapsed_ns": 0, "arithmetic": "1*0 + 0*unobserved = 0"},
+        {"units": [3, 0], "elapsed_ns": 0, "arithmetic": "3*0 + 0*unobserved = 0"},
+        {"units": [5, 0], "elapsed_ns": 0, "arithmetic": "5*0 + 0*unobserved = 0"}
+      ],
+      "expected": {
+        "design_rank": 1,
+        "feature_count": 2,
+        "all_rates_identifiable": false,
+        "rates": {
+          "annotation_change": {"value": "0/1", "identifiable": true, "reason": "positive units with zero elapsed totals force a zero rate in this exact fixture"},
+          "checkpoint_byte": {"value": null, "identifiable": false, "reason": "units are zero in every sample; zero cost is not established"}
+        },
+        "elapsed_totals_ns": [0, 0, 0]
+      }
+    }
+  ]
+}

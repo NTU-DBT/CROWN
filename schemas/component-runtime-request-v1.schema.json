@@ -1,0 +1,293 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "B04 optional replay adapter request v1",
+  "description": "Exact unit-set physical integer-pair trace shared by native and qualified legacy observers. The chosen executable supplies the semantics; its documented output and capability checks remain mandatory.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "case_id",
+    "query_family",
+    "command",
+    "output",
+    "warmup_passes",
+    "measured_passes",
+    "limits",
+    "events"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "case_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "query_family": {
+      "type": "string",
+      "minLength": 1
+    },
+    "command": {
+      "enum": [
+        "verify",
+        "measure"
+      ]
+    },
+    "output": {
+      "enum": [
+        "cardinality",
+        "delta_and_snapshot",
+        "compressed_bag",
+        "groups_full",
+        "groups_replacements",
+        "none"
+      ]
+    },
+    "warmup_passes": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "measured_passes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input_events",
+        "output_records",
+        "output_bytes"
+      ],
+      "properties": {
+        "input_events": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "output_records": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "output_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        }
+      }
+    },
+    "program": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sql",
+        "catalog"
+      ],
+      "properties": {
+        "sql": {
+          "type": "string"
+        },
+        "catalog": {
+          "$ref": "catalog-v1.schema.json"
+        },
+        "compiled_set": {
+          "description": "Native set/session only: a complete physical source is reconstructed and compared with the actual SQL normalization, then re-lowered under the requested backend.",
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "physical-plan-v1.schema.json"
+            },
+            {
+              "$ref": "physical-plan-v2.schema.json"
+            }
+          ]
+        }
+      }
+    },
+    "native": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "memory_limit_bytes"
+      ],
+      "properties": {
+        "physical_options": {
+          "description": "Omitted or {} selects the ordinary reference defaults; a nonempty object uses the strict existing versioned DTO.",
+          "anyOf": [
+            {
+              "type": "object",
+              "maxProperties": 0
+            },
+            {
+              "$ref": "physical-plan-options-v1.schema.json"
+            },
+            {
+              "$ref": "physical-plan-options-v2.schema.json"
+            }
+          ]
+        },
+        "memory_limit_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 18446744073709551615
+        },
+        "work_limit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "count_limit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "multiplicity_limit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "aggregate_source_only": {
+          "type": "boolean"
+        },
+        "mode": {
+          "enum": [
+            "delta",
+            "maintenance"
+          ]
+        },
+        "live_maintenance": {
+          "enum": [
+            "on_output",
+            "incremental",
+            "eager"
+          ]
+        },
+        "completion": {
+          "enum": [
+            "automatic",
+            "ordered_replay",
+            "anchored",
+            "root_first"
+          ]
+        },
+        "spool_rows": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "spool_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "queue_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "transaction_batch_size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        },
+        "observation_interval": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        }
+      }
+    },
+    "session": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "transport_batch_size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        },
+        "output_action": {
+          "enum": [
+            "maintenance",
+            "discard",
+            "serialize",
+            "durable"
+          ]
+        },
+        "durability": {
+          "enum": [
+            "volatile",
+            "wal"
+          ]
+        },
+        "checkpoint_interval": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "consumer_delay_us": {
+          "description": "Experimental synthetic service wait with an actual committed epoch retained; included in loop/output time. Zero adds no wait clock reads.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "recover_after": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 18446744073709551615
+          },
+          "uniqueItems": true
+        },
+        "state_directory": {
+          "type": "string"
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "maxItems": 1000000,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operation",
+          "table",
+          "values"
+        ],
+        "properties": {
+          "operation": {
+            "enum": [
+              "+",
+              "-"
+            ]
+          },
+          "table": {
+            "type": "string",
+            "minLength": 1
+          },
+          "phase": {
+            "type": "string"
+          },
+          "values": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "integer",
+            "minimum": -9223372036854775808,
+            "maximum": 9223372036854775807
+            }
+          }
+        }
+      }
+    }
+  },
+  "$comment": "JSON Schema cannot verify unit-set membership across events, source/catalog/tree equality, input count grants, work/account budgets, transaction versus observation divisibility, increasing aligned recovery points, filesystem exclusivity, or baseline numeric/query restrictions. Native set/rows/session/aggregate need program and native; fixed legacy observers do not compile that metadata. Signed records and absolute group replacements are distinct protocols. See examples/component-runtime sources and docs/component_evaluation.md."
+}

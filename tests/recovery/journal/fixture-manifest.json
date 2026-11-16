@@ -1,0 +1,132 @@
+{
+  "commit_binding": {
+    "input_body_bytes": 136,
+    "input_body_sha256": "7dc08dba65898efde205ca8008e3b4b102e79c13f7fcdee0b52af9edfe3c9779",
+    "input_frame": "physical-input"
+  },
+  "fixture_fields": {
+    "arithmetic_identity": 1,
+    "base_command_sequence": 0,
+    "base_physical_sequence": 0,
+    "catalog_version": 7,
+    "checkpoint_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "default_policy": [
+      1,
+      1000000,
+      18446744073709551615,
+      0,
+      0,
+      2,
+      256,
+      1,
+      0,
+      1,
+      0,
+      1,
+      1000000,
+      18446744073709551615,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1000000,
+      1,
+      1000000,
+      1,
+      1000000,
+      65536,
+      67108864
+    ],
+    "final_checkpoint_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "generation": 1,
+    "input_kind": 0,
+    "physical_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "query_id": "0123456789abcdef0123456789abcdef",
+    "source_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "format": "CROWNWAL",
+  "format_spec": {
+    "bytes": 3398,
+    "file": "format.json",
+    "sha256": "7342878ad6d1a42855d72dc7123d83eeb6cd28995021a0bf4738db5a3a8c53fa"
+  },
+  "frames": {
+    "checkpoint": {
+      "body_bytes": 89,
+      "body_sha256": "b42732624f35247023a2bd82540c3e8c38b310a67e50766d63c30b81ab7d0fe8",
+      "frame_bytes": 237,
+      "frame_sha256": "5787e87ce1dc039780b9ddcead392c632390e7b2446d2b37f809571f46bdb134",
+      "hex_file": "checkpoint.hex",
+      "hex_file_bytes": 475,
+      "prefix84_sha256": "e981e7f58c218838bad98358b0ec268ca72f56c62317609cae088cdbb07c98da"
+    },
+    "header": {
+      "body_bytes": 476,
+      "body_sha256": "99086292d4b361949d37bd61c3960e2f5594df3eecd4e08474a44c0bd7db8e2f",
+      "frame_bytes": 624,
+      "frame_sha256": "3c74ae6646534de49cf894fd8a7d85d9543c63b7d88a4a830295be65c074622e",
+      "hex_file": "header.hex",
+      "hex_file_bytes": 1249,
+      "prefix84_sha256": "c0eb5047404f6ec873cb294b035ccdac8b9201d15d4ee415b053c7b119f4c902"
+    },
+    "physical-commit": {
+      "body_bytes": 107,
+      "body_sha256": "b88afc6ea7e9769e18dde46cbb869acea4ab0ff47ed1a52853ab4698c75fbc90",
+      "frame_bytes": 255,
+      "frame_sha256": "1c58c9191f7adced0a4f7778fecc2386052f654fa1cdb7ca24d7ca5d2cc03126",
+      "hex_file": "physical-commit.hex",
+      "hex_file_bytes": 511,
+      "prefix84_sha256": "61ad96c180bf19e0a99dce2e69d6c98c9a336b9ee6c3c46e645de0d9d50921db"
+    },
+    "physical-input": {
+      "body_bytes": 136,
+      "body_sha256": "7dc08dba65898efde205ca8008e3b4b102e79c13f7fcdee0b52af9edfe3c9779",
+      "frame_bytes": 284,
+      "frame_sha256": "acd7b394394796a6965edfdbd97abcbe9c237361a353ed2d13bf7a51525ab768",
+      "hex_file": "physical-input.hex",
+      "hex_file_bytes": 569,
+      "prefix84_sha256": "74a19dfdba83d3064c183e6ba3a166c172f3ee1a278b1cbeb121c7739cf98f1b"
+    },
+    "window-insert-input": {
+      "body_bytes": 53,
+      "body_sha256": "81905a44cc3d15a789666807562e3ae0ae5bd40c93f63167ace20b5836cd6a07",
+      "frame_bytes": 201,
+      "frame_sha256": "53dea4b64f843b646ec039f15eadcc77fced96ee00d45566e5a2e85ce9e1dee6",
+      "hex_file": "window-insert-input.hex",
+      "hex_file_bytes": 403,
+      "prefix84_sha256": "0adddccffb5c6a022e644a5db4cbde9c4e2d8d6089d624bf67d17e674f0f0edd"
+    },
+    "window-watermark-input": {
+      "body_bytes": 29,
+      "body_sha256": "b5f62284cefa71e6e25fa751157cd9fe234de3ac8f03d000ddda7efadeffd235",
+      "frame_bytes": 177,
+      "frame_sha256": "19d233e752aa4a3b318a3519ab6d1a63e958e447525c6d3ca2c1327bd3d74d29",
+      "hex_file": "window-watermark-input.hex",
+      "hex_file_bytes": 355,
+      "prefix84_sha256": "54e2105b9f47639b5779d13bc40fc1c4c4a43d23da6416d0173671a713fc598d"
+    },
+    "window-withdraw-input": {
+      "body_bytes": 29,
+      "body_sha256": "b9969e2034cb4bda108a1347bb37018f9e960529701f5d9bc85aaa54bf0616e1",
+      "frame_bytes": 177,
+      "frame_sha256": "c51535f9d0242b2e53743d0ed97bd641bf492320c7b0ac5352dce492793ea133",
+      "hex_file": "window-withdraw-input.hex",
+      "hex_file_bytes": 355,
+      "prefix84_sha256": "79eec6fe9fbe0e09d2d9b54780700a901d946fed23a79728c9f91f576386977c"
+    }
+  },
+  "generator_source": {
+    "bytes": 10333,
+    "file": "fixture.py",
+    "sha256": "18be33429872e201b91d60908ebb13b70f40754a41eebdc35321cb249ad51c31"
+  },
+  "header_layout": {
+    "original_prefix_bytes": 84,
+    "prefix_checksum": "lowercase ASCII SHA256 of the original 84-byte prefix",
+    "prefix_checksum_bytes": 64,
+    "total_header_bytes": 148
+  },
+  "integer_byte_order": "little",
+  "version": 1
+}

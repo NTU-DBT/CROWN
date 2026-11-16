@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "catalog": {
+    "version": 1,
+    "tables": [
+      {
+        "name": "a",
+        "columns": [
+          {"name": "id", "type": "int64"},
+          {"name": "group_id", "type": "int64"},
+          {"name": "label", "type": "string"}
+        ]
+      },
+      {
+        "name": "b",
+        "columns": [
+          {"name": "id", "type": "int64"},
+          {"name": "group_id", "type": "int64"},
+          {"name": "payload", "type": "string"},
+          {"name": "day", "type": "date"},
+          {"name": "amount", "type": "decimal", "decimal": {"precision": 8, "scale": 2}}
+        ]
+      },
+      {
+        "name": "gateleft",
+        "columns": [{"name": "id", "type": "int64"}]
+      },
+      {
+        "name": "gateright",
+        "columns": [{"name": "id", "type": "int64"}]
+      },
+      {
+        "name": "triple",
+        "columns": [
+          {"name": "id", "type": "int64"},
+          {"name": "first_key", "type": "string"},
+          {"name": "second_key", "type": "string"},
+          {"name": "third_key", "type": "string"}
+        ]
+      },
+      {
+        "name": "versioned",
+        "columns": [
+          {"name": "id", "type": "int64"},
+          {"name": "revision", "type": "int64"}
+        ]
+      },
+      {
+        "name": "nullableinput",
+        "columns": [{"name": "value", "type": "string", "nullable": true}]
+      }
+    ]
+  }
+}

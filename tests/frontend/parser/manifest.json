@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "success_cases": [
+    {"name": "comments", "input": "cases/comments.sql", "snapshot": "snapshots/comments.expected.json"},
+    {"name": "quoted_and_folded_identifiers", "input": "cases/identifiers_aliases.sql", "snapshot": "snapshots/identifiers_aliases.expected.json"},
+    {"name": "self_join_and_composite_expression", "input": "cases/self_join_expression.sql", "snapshot": "snapshots/self_join_expression.expected.json"},
+    {"name": "semicolon_inside_string", "input": "cases/semicolon_in_string.sql", "snapshot": "snapshots/semicolon_in_string.expected.json"},
+    {"name": "unicode_locations", "input": "cases/unicode_locations.sql", "snapshot": "snapshots/unicode_locations.expected.json"},
+    {"name": "unsupported_bag_grouping_is_syntax_only", "input": "cases/unsupported_bag_grouping.sql", "snapshot": "snapshots/unsupported_bag_grouping.expected.json"},
+    {"name": "unsupported_ddl_is_syntax_only", "input": "cases/unsupported_ddl.sql", "snapshot": "snapshots/unsupported_ddl.expected.json"}
+  ],
+  "failure_cases": [
+    {
+      "name": "comments_and_empty_semicolons",
+      "input": "cases/empty_comments.sql",
+      "expected": {"code": "empty_sql", "message": "expected one nonempty SQL statement", "byte_offset": 0, "character_position": 1, "line": 1, "column": 1}
+    },
+    {
+      "name": "two_statements",
+      "input": "cases/multiple_statements.sql",
+      "expected": {"code": "multiple_statements", "message": "expected exactly one SQL statement", "byte_offset": 10, "character_position": 11, "line": 2, "column": 1}
+    },
+    {
+      "name": "malformed_second_statement",
+      "input": "cases/malformed_second_statement.sql",
+      "expected": {"code": "sql_syntax_error", "message": "syntax error at or near \";\"", "byte_offset": 21, "character_position": 22, "line": 1, "column": 22}
+    },
+    {
+      "name": "invalid_utf8",
+      "input_hex": "53454c45435420ff3b",
+      "expected": {"code": "invalid_encoding", "message": "SQL source must be valid UTF-8", "byte_offset": 7, "character_position": null, "line": null, "column": null}
+    },
+    {
+      "name": "embedded_nul",
+      "input_hex": "53454c4543540020313b",
+      "expected": {"code": "invalid_encoding", "message": "SQL source contains an embedded NUL byte", "byte_offset": 6, "character_position": 7, "line": 1, "column": 7}
+    },
+    {
+      "name": "source_size_limit",
+      "generated_input": {"prefix_hex": "53454c45435420313b", "fill_hex": "20", "total_bytes": 1048577},
+      "expected": {"code": "resource_limit", "message": "SQL source exceeds the configured byte limit", "byte_offset": null, "character_position": null, "line": null, "column": null}
+    },
+    {
+      "name": "ast_depth_limit",
+      "generated_input": {"prefix": "SELECT ", "repeat": "NOT ", "repeat_count": 300, "suffix": "TRUE;"},
+      "expected": {"code": "resource_limit", "message": "SQL AST exceeds the configured nesting limit", "byte_offset": null, "character_position": null, "line": null, "column": null}
+    }
+  ]
+}

@@ -1,0 +1,963 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://crown.local/schemas/workload-measurement-v2.schema.json",
+  "title": "Native workload record with source/support arena diagnostics",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "kind",
+    "request",
+    "binding_sha256",
+    "physical_sha256",
+    "artifact_sha256",
+    "input_sha256",
+    "output_mode",
+    "runtime_mode",
+    "backend",
+    "records",
+    "output_rows",
+    "sequence",
+    "source_positions"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 2
+    },
+    "kind": {
+      "enum": [
+        "native_workload_verification",
+        "native_workload_measurement"
+      ]
+    },
+    "request": {
+      "$ref": "#/$defs/request"
+    },
+    "binding_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "physical_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "artifact_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "input_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "output_mode": {
+      "enum": [
+        "maintenance",
+        "snapshot",
+        "delta"
+      ]
+    },
+    "runtime_mode": {
+      "enum": [
+        "maintenance",
+        "delta"
+      ]
+    },
+    "backend": {
+      "enum": [
+        "reference_ordered_v1",
+        "indexed_chained_v1"
+      ]
+    },
+    "records": {
+      "$ref": "#/$defs/u64"
+    },
+    "output_rows": {
+      "$ref": "#/$defs/u64"
+    },
+    "sequence": {
+      "$ref": "#/$defs/u64"
+    },
+    "source_positions": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/u64"
+      }
+    },
+    "verified": {
+      "const": true
+    },
+    "timings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "file_read_ns",
+        "artifact_validation_ns",
+        "initialization_ns",
+        "loop_wall_ns",
+        "eof_decode_ns",
+        "final_diagnostics_ns",
+        "sink_close_ns",
+        "teardown_ns"
+      ],
+      "properties": {
+        "file_read_ns": {
+          "$ref": "#/$defs/u64"
+        },
+        "artifact_validation_ns": {
+          "$ref": "#/$defs/u64"
+        },
+        "initialization_ns": {
+          "$ref": "#/$defs/u64"
+        },
+        "loop_wall_ns": {
+          "$ref": "#/$defs/u64"
+        },
+        "eof_decode_ns": {
+          "$ref": "#/$defs/u64"
+        },
+        "final_diagnostics_ns": {
+          "$ref": "#/$defs/u64"
+        },
+        "sink_close_ns": {
+          "$ref": "#/$defs/u64"
+        },
+        "teardown_ns": {
+          "$ref": "#/$defs/u64"
+        }
+      }
+    },
+    "memory_initial": {
+      "$ref": "#/$defs/memory"
+    },
+    "memory_final": {
+      "$ref": "#/$defs/memory"
+    },
+    "epochs": {
+      "type": "array",
+      "maxItems": 4096,
+      "items": {
+        "$ref": "#/$defs/epoch"
+      }
+    },
+    "workload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "metadata",
+        "detail_availability",
+        "committed_epoch",
+        "descriptors"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "off",
+            "counters"
+          ]
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "attempts",
+            "committed",
+            "aborted",
+            "selected",
+            "complete",
+            "truncated",
+            "committed_truncated",
+            "saturated",
+            "invalid_descriptor",
+            "protocol_error"
+          ],
+          "properties": {
+            "attempts": {
+              "$ref": "#/$defs/u64"
+            },
+            "committed": {
+              "$ref": "#/$defs/u64"
+            },
+            "aborted": {
+              "$ref": "#/$defs/u64"
+            },
+            "selected": {
+              "$ref": "#/$defs/u64"
+            },
+            "complete": {
+              "$ref": "#/$defs/u64"
+            },
+            "truncated": {
+              "$ref": "#/$defs/u64"
+            },
+            "committed_truncated": {
+              "$ref": "#/$defs/u64"
+            },
+            "saturated": {
+              "type": "boolean"
+            },
+            "invalid_descriptor": {
+              "type": "boolean"
+            },
+            "protocol_error": {
+              "type": "boolean"
+            }
+          }
+        },
+        "detail_availability": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "committed_epoch": {
+          "$ref": "#/$defs/u64"
+        },
+        "descriptors": {
+          "type": "array",
+          "maxItems": 4096,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "table",
+              "scope",
+              "operation",
+              "role",
+              "node",
+              "occurrence",
+              "edge",
+              "index",
+              "event_operation",
+              "inputs",
+              "changed",
+              "noop",
+              "visited",
+              "complete_detail_inputs",
+              "changes",
+              "zero_to_positive",
+              "positive_to_zero",
+              "count",
+              "sum",
+              "min",
+              "max",
+              "bins",
+              "saturated"
+            ],
+            "properties": {
+              "kind": {
+                "$ref": "#/$defs/u64"
+              },
+              "table": {
+                "$ref": "#/$defs/u64"
+              },
+              "scope": {
+                "$ref": "#/$defs/u64"
+              },
+              "operation": {
+                "$ref": "#/$defs/u64"
+              },
+              "role": {
+                "$ref": "#/$defs/u64"
+              },
+              "inputs": {
+                "$ref": "#/$defs/u64"
+              },
+              "node": {
+                "$ref": "#/$defs/optional_id"
+              },
+              "occurrence": {
+                "$ref": "#/$defs/optional_id"
+              },
+              "edge": {
+                "$ref": "#/$defs/optional_id"
+              },
+              "index": {
+                "$ref": "#/$defs/optional_id"
+              },
+              "event_operation": {
+                "$ref": "#/$defs/optional_id"
+              },
+              "changed": {
+                "$ref": "#/$defs/u64"
+              },
+              "noop": {
+                "$ref": "#/$defs/u64"
+              },
+              "visited": {
+                "$ref": "#/$defs/u64"
+              },
+              "complete_detail_inputs": {
+                "$ref": "#/$defs/u64"
+              },
+              "changes": {
+                "$ref": "#/$defs/u64"
+              },
+              "zero_to_positive": {
+                "$ref": "#/$defs/u64"
+              },
+              "positive_to_zero": {
+                "$ref": "#/$defs/u64"
+              },
+              "count": {
+                "$ref": "#/$defs/u64"
+              },
+              "sum": {
+                "$ref": "#/$defs/u64"
+              },
+              "min": {
+                "$ref": "#/$defs/u64"
+              },
+              "max": {
+                "$ref": "#/$defs/u64"
+              },
+              "saturated": {
+                "type": "boolean"
+              },
+              "bins": {
+                "type": "array",
+                "minItems": 65,
+                "maxItems": 65,
+                "items": {
+                  "$ref": "#/$defs/u64"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "sink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "calls",
+        "bytes",
+        "requested_delay_us_per_record"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "discard",
+            "file"
+          ]
+        },
+        "calls": {
+          "$ref": "#/$defs/u64"
+        },
+        "bytes": {
+          "$ref": "#/$defs/u64"
+        },
+        "requested_delay_us_per_record": {
+          "$ref": "#/$defs/u64"
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "collector_compiler",
+        "cplusplus",
+        "pointer_bits",
+        "kernel",
+        "machine",
+        "clock",
+        "clock_is_steady",
+        "actual_affinity",
+        "actual_threads"
+      ],
+      "properties": {
+        "collector_compiler": {
+          "type": "string"
+        },
+        "cplusplus": {
+          "$ref": "#/$defs/u64"
+        },
+        "pointer_bits": {
+          "enum": [
+            32,
+            64
+          ]
+        },
+        "kernel": {
+          "type": "string"
+        },
+        "machine": {
+          "type": "string"
+        },
+        "clock": {
+          "const": "std::chrono::steady_clock"
+        },
+        "clock_is_steady": {
+          "const": true
+        },
+        "actual_affinity": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/u64"
+          }
+        },
+        "actual_threads": {
+          "$ref": "#/$defs/u64"
+        }
+      }
+    },
+    "runtime_options": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "delta_work_limit",
+        "spool_row_limit",
+        "spool_byte_limit",
+        "input_format",
+        "initial_state",
+        "memory_scope",
+        "annotation_semantics"
+      ],
+      "properties": {
+        "delta_work_limit": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/u64"
+            }
+          ]
+        },
+        "spool_row_limit": {
+          "$ref": "#/$defs/u64"
+        },
+        "spool_byte_limit": {
+          "$ref": "#/$defs/u64"
+        },
+        "input_format": {
+          "const": "jsonl"
+        },
+        "initial_state": {
+          "const": "empty_all_tables"
+        },
+        "memory_scope": {
+          "const": "shared_native_runtime_program_and_EventReader_account"
+        },
+        "annotation_semantics": {
+          "const": "not_enabled_exact_set_core"
+        }
+      }
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "qualification": {
+      "type": "string",
+      "minLength": 1
+    },
+    "experimental_height": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Present only for explicitly requested V3 experimental upper artifacts. The native collector independently replays the original minimum proof and checks the actual upper tree; the height gap is actual minus original. This field never upgrades the selected tree to minimum-height authority.",
+      "required": [
+        "status",
+        "original_minimum_height",
+        "actual_native_height",
+        "height_gap"
+      ],
+      "properties": {
+        "status": {
+          "const": "checked_upper_only"
+        },
+        "original_minimum_height": {
+          "$ref": "#/$defs/u64"
+        },
+        "actual_native_height": {
+          "$ref": "#/$defs/u64"
+        },
+        "height_gap": {
+          "$ref": "#/$defs/u64"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "native_workload_verification"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "verified"
+        ],
+        "not": {
+          "required": [
+            "timings"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "native_workload_measurement"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "timings",
+          "memory_initial",
+          "memory_final",
+          "epochs",
+          "workload",
+          "sink",
+          "environment",
+          "runtime_options",
+          "scope",
+          "qualification"
+        ],
+        "not": {
+          "required": [
+            "verified"
+          ]
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "u64": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "optional_id": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/u64"
+        }
+      ]
+    },
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "command",
+        "output_mode",
+        "codec",
+        "sink",
+        "sink_delay_us",
+        "observation",
+        "workload_counters",
+        "memory_limit_bytes",
+        "max_events",
+        "max_output_calls",
+        "max_encoded_bytes",
+        "phases",
+        "label",
+        "preflight_receipt_sha256"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "command": {
+          "enum": [
+            "verify",
+            "measure"
+          ]
+        },
+        "output_mode": {
+          "enum": [
+            "maintenance",
+            "snapshot",
+            "delta"
+          ]
+        },
+        "codec": {
+          "enum": [
+            "none",
+            "jsonl"
+          ]
+        },
+        "sink": {
+          "enum": [
+            "discard",
+            "file"
+          ]
+        },
+        "sink_delay_us": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000
+        },
+        "observation": {
+          "enum": [
+            "off",
+            "counters",
+            "timed"
+          ]
+        },
+        "workload_counters": {
+          "type": "boolean"
+        },
+        "memory_limit_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967296
+        },
+        "max_events": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4096
+        },
+        "max_output_calls": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000
+        },
+        "max_encoded_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1073741824
+        },
+        "phases": {
+          "type": "array",
+          "maxItems": 4096,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          }
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 256
+        },
+        "preflight_receipt_sha256": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/sha256"
+            }
+          ]
+        }
+      }
+    },
+    "memory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "limit_bytes",
+        "current_requested_bytes",
+        "current_payload_bytes",
+        "current_allocations",
+        "peak_requested_bytes",
+        "successful_allocations",
+        "freed_allocations"
+      ],
+      "properties": {
+        "limit_bytes": {
+          "$ref": "#/$defs/u64"
+        },
+        "current_requested_bytes": {
+          "$ref": "#/$defs/u64"
+        },
+        "current_payload_bytes": {
+          "$ref": "#/$defs/u64"
+        },
+        "current_allocations": {
+          "$ref": "#/$defs/u64"
+        },
+        "peak_requested_bytes": {
+          "$ref": "#/$defs/u64"
+        },
+        "successful_allocations": {
+          "$ref": "#/$defs/u64"
+        },
+        "freed_allocations": {
+          "$ref": "#/$defs/u64"
+        }
+      }
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "availability",
+        "saturated",
+        "unit",
+        "includes",
+        "scope"
+      ],
+      "properties": {
+        "value": {
+          "$ref": "#/$defs/u64"
+        },
+        "availability": {
+          "enum": [
+            "available",
+            "disabled",
+            "unavailable"
+          ]
+        },
+        "saturated": {
+          "type": "boolean"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "includes": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        }
+      }
+    },
+    "epoch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sequence",
+        "phase",
+        "decode_ns",
+        "native_prepare_commit_ns",
+        "output_setup_ns",
+        "output_next_ns",
+        "encoding_ns",
+        "sink_write_wait_ns",
+        "output_release_ns",
+        "epoch_release_ns",
+        "input_ack_ns",
+        "event_active_ns",
+        "diagnostics_ns",
+        "output_rows",
+        "output_calls",
+        "memory",
+        "mandatory_at_commit",
+        "operator_metrics",
+        "cursor_work",
+        "storage"
+      ],
+      "properties": {
+        "sequence": {
+          "$ref": "#/$defs/u64"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "decode_ns": {
+          "$ref": "#/$defs/u64"
+        },
+        "native_prepare_commit_ns": {
+          "$ref": "#/$defs/u64"
+        },
+        "output_setup_ns": {
+          "$ref": "#/$defs/u64"
+        },
+        "output_next_ns": {
+          "$ref": "#/$defs/u64"
+        },
+        "encoding_ns": {
+          "$ref": "#/$defs/u64"
+        },
+        "sink_write_wait_ns": {
+          "$ref": "#/$defs/u64"
+        },
+        "output_release_ns": {
+          "$ref": "#/$defs/u64"
+        },
+        "epoch_release_ns": {
+          "$ref": "#/$defs/u64"
+        },
+        "input_ack_ns": {
+          "$ref": "#/$defs/u64"
+        },
+        "event_active_ns": {
+          "$ref": "#/$defs/u64"
+        },
+        "diagnostics_ns": {
+          "$ref": "#/$defs/u64"
+        },
+        "output_rows": {
+          "$ref": "#/$defs/u64"
+        },
+        "memory": {
+          "$ref": "#/$defs/memory"
+        },
+        "output_calls": {
+          "type": "array",
+          "maxItems": 1000000,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "nanoseconds",
+              "returned_row"
+            ],
+            "properties": {
+              "nanoseconds": {
+                "$ref": "#/$defs/u64"
+              },
+              "returned_row": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "mandatory_at_commit": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "work",
+            "stages",
+            "journal_records",
+            "view_work",
+            "candidates",
+            "accepted",
+            "rejected",
+            "spool_rows",
+            "spool_bytes",
+            "finalization_work",
+            "replay_preparation_work",
+            "live_rows_copied"
+          ],
+          "properties": {
+            "work": {
+              "$ref": "#/$defs/u64"
+            },
+            "stages": {
+              "$ref": "#/$defs/u64"
+            },
+            "journal_records": {
+              "$ref": "#/$defs/u64"
+            },
+            "view_work": {
+              "$ref": "#/$defs/u64"
+            },
+            "candidates": {
+              "$ref": "#/$defs/u64"
+            },
+            "accepted": {
+              "$ref": "#/$defs/u64"
+            },
+            "rejected": {
+              "$ref": "#/$defs/u64"
+            },
+            "spool_rows": {
+              "$ref": "#/$defs/u64"
+            },
+            "spool_bytes": {
+              "$ref": "#/$defs/u64"
+            },
+            "finalization_work": {
+              "$ref": "#/$defs/u64"
+            },
+            "replay_preparation_work": {
+              "$ref": "#/$defs/u64"
+            },
+            "live_rows_copied": {
+              "$ref": "#/$defs/u64"
+            }
+          }
+        },
+        "operator_metrics": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/metric"
+          }
+        },
+        "cursor_work": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "startup",
+            "results",
+            "termination"
+          ],
+          "properties": {
+            "startup": {
+              "$ref": "#/$defs/u64"
+            },
+            "results": {
+              "$ref": "#/$defs/u64"
+            },
+            "termination": {
+              "$ref": "#/$defs/u64"
+            }
+          }
+        },
+        "storage": {
+          "$ref": "#/$defs/storage"
+        }
+      }
+    },
+    "arena": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "slots",
+        "live_records",
+        "retained_records",
+        "pins",
+        "free_slots",
+        "exhausted_slots"
+      ],
+      "properties": {
+        "slots": {
+          "$ref": "#/$defs/u64"
+        },
+        "live_records": {
+          "$ref": "#/$defs/u64"
+        },
+        "retained_records": {
+          "$ref": "#/$defs/u64"
+        },
+        "pins": {
+          "$ref": "#/$defs/u64"
+        },
+        "free_slots": {
+          "$ref": "#/$defs/u64"
+        },
+        "exhausted_slots": {
+          "$ref": "#/$defs/u64"
+        }
+      }
+    },
+    "storage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "support",
+        "derivation_keys"
+      ],
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/arena"
+        },
+        "support": {
+          "$ref": "#/$defs/arena"
+        },
+        "derivation_keys": {
+          "$ref": "#/$defs/u64"
+        }
+      }
+    }
+  }
+}

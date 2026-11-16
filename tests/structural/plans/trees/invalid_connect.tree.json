@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "catalog_version": 1,
+  "semantics": "set",
+  "root": "r_node",
+  "nodes": [
+    {
+      "id": "r_node",
+      "kind": "native",
+      "scope": [
+        "x",
+        "y"
+      ],
+      "children": [
+        "s_node"
+      ],
+      "occurrence": "r"
+    },
+    {
+      "id": "s_node",
+      "kind": "native",
+      "scope": [
+        "y",
+        "z"
+      ],
+      "children": [
+        "t_node"
+      ],
+      "occurrence": "s"
+    },
+    {
+      "id": "t_node",
+      "kind": "native",
+      "scope": [
+        "x",
+        "z"
+      ],
+      "children": [],
+      "occurrence": "t"
+    }
+  ]
+}

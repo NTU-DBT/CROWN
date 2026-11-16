@@ -1,0 +1,25 @@
+{
+  "scope": "excluded compiler-only preparation; not native acceptance",
+  "builds": [
+    {
+      "runtime_translation_units": 9,
+      "testing": true,
+      "optimization": "0",
+      "archive": "/tmp/crown-o07-mode-binding-compile/libcrown_runtime_o07_mode_binding.a",
+      "archive_sha256": "3a51a21032690940c3c7c83f05ddd56e275811f61955f2ed438f9487b7bcb2b9",
+      "executed_tests": false,
+      "baseline_nonruntime_audit": 49
+    },
+    {
+      "runtime_translation_units": 9,
+      "testing": false,
+      "optimization": "3",
+      "archive": "/tmp/crown-o07-mode-binding-production/libcrown_runtime_o07_mode_binding.a",
+      "archive_sha256": "b590a3465d12b328ee67bfb182843a31477d87484254f3d98efdf87cc49f4982",
+      "executed_tests": false,
+      "baseline_nonruntime_audit": 49
+    }
+  ],
+  "pinned_baseline_files": 57,
+  "mirrored_files": 3
+}

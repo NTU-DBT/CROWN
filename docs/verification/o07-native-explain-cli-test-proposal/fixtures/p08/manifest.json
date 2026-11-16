@@ -1,0 +1,225 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "native_singleton_root",
+      "query": "tests/structural/plans/queries/singleton.cq.json",
+      "tree": "tests/structural/plans/trees/singleton.tree.json",
+      "expected": {
+        "valid": true,
+        "route": "tree",
+        "nodes": {
+          "n": {"scope": ["x"], "parent": null, "children": [], "separator": [], "visible": ["x"], "connex": true}
+        }
+      }
+    },
+    {
+      "id": "projected_singleton_hidden_column",
+      "query": "tests/structural/plans/queries/projected_singleton.cq.json",
+      "tree": "tests/structural/plans/trees/projected_singleton.tree.json",
+      "expected": {
+        "valid": true,
+        "route": "tree",
+        "nodes": {
+          "n": {"scope": ["hidden", "x"], "parent": null, "children": [], "separator": [], "visible": ["x"], "connex": true}
+        }
+      }
+    },
+    {
+      "id": "native_root_projected_two_edge",
+      "query": "tests/structural/plans/queries/two_edge_projected.cq.json",
+      "tree": "tests/structural/plans/trees/projected_two_edge_native_root.tree.json",
+      "expected": {
+        "valid": true,
+        "route": "tree",
+        "nodes": {
+          "r_node": {"scope": ["hidden", "x", "y"], "parent": null, "children": ["s_node"], "separator": [], "visible": ["x", "y"], "connex": true},
+          "s_node": {"scope": ["y", "z"], "parent": "r_node", "children": [], "separator": ["y"], "visible": ["y", "z"], "connex": true}
+        }
+      }
+    },
+    {
+      "id": "boolean_native_root",
+      "query": "tests/structural/plans/queries/boolean_query.cq.json",
+      "tree": "tests/structural/plans/trees/boolean_query.tree.json",
+      "expected": {
+        "valid": true,
+        "route": "tree",
+        "nodes": {
+          "n": {"scope": ["x"], "parent": null, "children": [], "separator": [], "visible": [], "connex": true}
+        }
+      }
+    },
+    {
+      "id": "native_nullary_atom_empty_key",
+      "query": "tests/structural/oracle/queries/native_nullary_atom.cq.json",
+      "tree": "tests/structural/lowering/trees/nullary_native.tree.json",
+      "expected": {
+        "valid": true,
+        "route": "tree",
+        "nodes": {
+          "unit_node": {"scope": [], "parent": null, "children": [], "separator": [], "visible": [], "connex": true}
+        }
+      }
+    },
+    {
+      "id": "empty_body_constant_true",
+      "query": "tests/structural/plans/queries/empty_body.cq.json",
+      "tree": "tests/structural/plans/trees/empty_body.tree.json",
+      "expected": {"valid": true, "route": "constant_true", "nodes": {}}
+    },
+    {
+      "id": "contradictory_cyclic_body_constant_false",
+      "query": "tests/structural/lowering/queries/constant_false.cq.json",
+      "tree": "tests/structural/plans/trees/empty_body.tree.json",
+      "expected": {"valid": true, "route": "constant_false", "nodes": {}}
+    },
+    {
+      "id": "disconnected_product_empty_scope_root",
+      "query": "tests/structural/plans/queries/disconnected.cq.json",
+      "tree": "tests/structural/plans/trees/disconnected_empty_scope_root.tree.json",
+      "expected": {
+        "valid": true,
+        "route": "tree",
+        "nodes": {
+          "g": {"scope": [], "parent": null, "children": ["r_node", "s_node"], "separator": [], "visible": [], "connex": true},
+          "r_node": {"scope": ["x"], "parent": "g", "children": [], "separator": [], "visible": ["x"], "connex": true},
+          "s_node": {"scope": ["y"], "parent": "g", "children": [], "separator": [], "visible": ["y"], "connex": true}
+        }
+      }
+    },
+    {
+      "id": "same_table_self_join_equal_occurrence_scopes",
+      "query": "tests/structural/lowering/queries/self_join_equal_scope.cq.json",
+      "tree": "tests/structural/lowering/trees/self_join_equal_scope.tree.json",
+      "expected": {
+        "valid": true,
+        "route": "tree",
+        "nodes": {
+          "g": {"scope": ["x", "y"], "parent": null, "children": ["left_node", "right_node"], "separator": [], "visible": ["x", "y"], "connex": true},
+          "left_node": {"scope": ["x", "y"], "parent": "g", "children": [], "separator": ["x", "y"], "visible": ["x", "y"], "connex": true},
+          "right_node": {"scope": ["x", "y"], "parent": "g", "children": [], "separator": ["x", "y"], "visible": ["x", "y"], "connex": true}
+        }
+      }
+    },
+    {
+      "id": "generalized_root_three_children",
+      "query": "tests/structural/oracle/queries/full_star_3.cq.json",
+      "tree": "tests/structural/lowering/trees/generalized_root_3.tree.json",
+      "expected": {
+        "valid": true,
+        "route": "tree",
+        "nodes": {
+          "g": {"scope": ["c"], "parent": null, "children": ["edge0_node", "edge1_node", "edge2_node"], "separator": [], "visible": ["c"], "connex": true},
+          "edge0_node": {"scope": ["c", "leaf0"], "parent": "g", "children": [], "separator": ["c"], "visible": ["c", "leaf0"], "connex": true},
+          "edge1_node": {"scope": ["c", "leaf1"], "parent": "g", "children": [], "separator": ["c"], "visible": ["c", "leaf1"], "connex": true},
+          "edge2_node": {"scope": ["c", "leaf2"], "parent": "g", "children": [], "separator": ["c"], "visible": ["c", "leaf2"], "connex": true}
+        }
+      }
+    },
+    {
+      "id": "generalized_root_eight_children",
+      "query": "tests/structural/oracle/queries/full_star_8.cq.json",
+      "tree": "tests/structural/lowering/trees/generalized_root_8.tree.json",
+      "expected": {
+        "valid": true,
+        "route": "tree",
+        "nodes": {
+          "g": {"scope": ["c"], "parent": null, "children": ["edge0_node", "edge1_node", "edge2_node", "edge3_node", "edge4_node", "edge5_node", "edge6_node", "edge7_node"], "separator": [], "visible": ["c"], "connex": true},
+          "edge0_node": {"scope": ["c", "leaf0"], "parent": "g", "children": [], "separator": ["c"], "visible": ["c", "leaf0"], "connex": true},
+          "edge1_node": {"scope": ["c", "leaf1"], "parent": "g", "children": [], "separator": ["c"], "visible": ["c", "leaf1"], "connex": true},
+          "edge2_node": {"scope": ["c", "leaf2"], "parent": "g", "children": [], "separator": ["c"], "visible": ["c", "leaf2"], "connex": true},
+          "edge3_node": {"scope": ["c", "leaf3"], "parent": "g", "children": [], "separator": ["c"], "visible": ["c", "leaf3"], "connex": true},
+          "edge4_node": {"scope": ["c", "leaf4"], "parent": "g", "children": [], "separator": ["c"], "visible": ["c", "leaf4"], "connex": true},
+          "edge5_node": {"scope": ["c", "leaf5"], "parent": "g", "children": [], "separator": ["c"], "visible": ["c", "leaf5"], "connex": true},
+          "edge6_node": {"scope": ["c", "leaf6"], "parent": "g", "children": [], "separator": ["c"], "visible": ["c", "leaf6"], "connex": true},
+          "edge7_node": {"scope": ["c", "leaf7"], "parent": "g", "children": [], "separator": ["c"], "visible": ["c", "leaf7"], "connex": true}
+        }
+      }
+    },
+    {
+      "id": "nested_generalized_nodes_hidden_visible_branches",
+      "query": "tests/structural/plans/queries/residual_counterexample_9.cq.json",
+      "tree": "tests/structural/plans/trees/residual_height_three_9_atom.tree.json",
+      "expected": {
+        "valid": true,
+        "route": "tree",
+        "nodes": {
+          "g_y": {"scope": ["y"], "parent": null, "children": ["r_node", "g_ya"], "separator": [], "visible": ["y"], "connex": true},
+          "r_node": {"scope": ["r_private", "x", "y", "z"], "parent": "g_y", "children": ["s_node", "l_node", "e_node"], "separator": ["y"], "visible": ["x", "y"], "connex": true},
+          "s_node": {"scope": ["s_private", "x", "y", "z"], "parent": "r_node", "children": ["v_node"], "separator": ["x", "y", "z"], "visible": ["x", "y"], "connex": false},
+          "l_node": {"scope": ["r_private"], "parent": "r_node", "children": [], "separator": ["r_private"], "visible": [], "connex": false},
+          "e_node": {"scope": ["w", "x"], "parent": "r_node", "children": [], "separator": ["x"], "visible": ["w", "x"], "connex": true},
+          "v_node": {"scope": ["s_private"], "parent": "s_node", "children": [], "separator": ["s_private"], "visible": [], "connex": false},
+          "g_ya": {"scope": ["a", "y"], "parent": "g_y", "children": ["t_node", "u_node"], "separator": ["y"], "visible": ["y"], "connex": true},
+          "t_node": {"scope": ["a", "b", "y"], "parent": "g_ya", "children": ["b_node"], "separator": ["a", "y"], "visible": ["y"], "connex": false},
+          "u_node": {"scope": ["a", "c", "y"], "parent": "g_ya", "children": ["c_node"], "separator": ["a", "y"], "visible": ["y"], "connex": false},
+          "b_node": {"scope": ["b"], "parent": "t_node", "children": [], "separator": ["b"], "visible": [], "connex": false},
+          "c_node": {"scope": ["c"], "parent": "u_node", "children": [], "separator": ["c"], "visible": [], "connex": false}
+        }
+      }
+    },
+    {
+      "id": "composite_reordered_separator_mixed_scalar_types",
+      "query": "tests/structural/lowering/queries/composite_reordered_mixed_types.cq.json",
+      "tree": "tests/structural/lowering/trees/composite_reordered_mixed_types.tree.json",
+      "expected": {
+        "valid": true,
+        "route": "tree",
+        "nodes": {
+          "r_node": {"scope": ["a", "b", "c"], "parent": null, "children": ["s_node"], "separator": [], "visible": ["a", "b", "c"], "connex": true},
+          "s_node": {"scope": ["a", "b", "d"], "parent": "r_node", "children": [], "separator": ["a", "b"], "visible": ["a", "b", "d"], "connex": true}
+        }
+      }
+    },
+    {
+      "id": "wide_sixty_five_column_native_scope",
+      "query": "tests/structural/oracle/queries/high_variable_singleton.cq.json",
+      "tree": "tests/structural/lowering/trees/wide_singleton.tree.json",
+      "expected": {
+        "valid": true,
+        "route": "tree",
+        "nodes": {
+          "wide_node": {
+            "scope": ["v00", "v01", "v02", "v03", "v04", "v05", "v06", "v07", "v08", "v09", "v10", "v11", "v12", "v13", "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24", "v25", "v26", "v27", "v28", "v29", "v30", "v31", "v32", "v33", "v34", "v35", "v36", "v37", "v38", "v39", "v40", "v41", "v42", "v43", "v44", "v45", "v46", "v47", "v48", "v49", "v50", "v51", "v52", "v53", "v54", "v55", "v56", "v57", "v58", "v59", "v60", "v61", "v62", "v63", "v64"],
+            "parent": null,
+            "children": [],
+            "separator": [],
+            "visible": ["v00", "v01", "v02", "v03", "v04", "v05", "v06", "v07", "v08", "v09", "v10", "v11", "v12", "v13", "v14", "v15", "v16", "v17", "v18", "v19", "v20", "v21", "v22", "v23", "v24", "v25", "v26", "v27", "v28", "v29", "v30", "v31", "v32", "v33", "v34", "v35", "v36", "v37", "v38", "v39", "v40", "v41", "v42", "v43", "v44", "v45", "v46", "v47", "v48", "v49", "v50", "v51", "v52", "v53", "v54", "v55", "v56", "v57", "v58", "v59", "v60", "v61", "v62", "v63", "v64"],
+            "connex": true
+          }
+        }
+      }
+    },
+    {
+      "id": "invalid_missing_native_occurrence_cover",
+      "query": "tests/structural/plans/queries/cover.cq.json",
+      "tree": "tests/structural/plans/trees/invalid_cover.tree.json",
+      "expected": {"valid": false}
+    },
+    {
+      "id": "invalid_running_intersection_connect",
+      "query": "tests/structural/plans/queries/connect.cq.json",
+      "tree": "tests/structural/plans/trees/invalid_connect.tree.json",
+      "expected": {"valid": false}
+    },
+    {
+      "id": "invalid_generalized_guard",
+      "query": "tests/structural/plans/queries/guard.cq.json",
+      "tree": "tests/structural/plans/trees/invalid_guard.tree.json",
+      "expected": {"valid": false}
+    },
+    {
+      "id": "invalid_generalized_below_native_above",
+      "query": "tests/structural/plans/queries/above.cq.json",
+      "tree": "tests/structural/plans/trees/invalid_above.tree.json",
+      "expected": {"valid": false}
+    },
+    {
+      "id": "invalid_connex_hidden_separator",
+      "query": "tests/structural/plans/queries/connex.cq.json",
+      "tree": "tests/structural/plans/trees/invalid_connex.tree.json",
+      "expected": {"valid": false}
+    }
+  ]
+}

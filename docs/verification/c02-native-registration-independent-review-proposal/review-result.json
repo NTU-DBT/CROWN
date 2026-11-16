@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "card": "C02",
+  "review_state": "accepted_frozen_static_publication_review",
+  "accepted": true,
+  "accepted_scope": "Exact publication/source mapping and six root recipes, static review only",
+  "native_matrix_accepted": false,
+  "reviewer_compiled_or_executed_programs": false,
+  "remaining_blockers": [],
+  "author_package": {
+    "path": "docs/verification/c02-native-registration-proposal/PACKAGE_SHA256SUMS",
+    "sha256": "2a4b0f76caec3c20bb512a642bba90e2c07ac4482c2c11462a539b35c3a17d78",
+    "entries_hash_checked": 78,
+    "input_manifest_sha256": "08a92c0dca224107b35aafbede9f80d35e24c061bacecd6270e8c233c1ed09a3",
+    "input_manifest_entries": 633,
+    "input_manifest_entries_rerun_by_reviewer": false,
+    "source_manifest_sha256": "c86f38f21540fde74d0004d3ff55af4c1ef5aea054a62c5edcb6a068bb4915ba",
+    "source_entries_hash_checked": 38,
+    "source_map_sha256": "e3fd7f876c08ab39594ff89caf071b78cdad0810ddf56aefd362375ce96fa060",
+    "source_provenance_sha256": "cee96eddce5938b24f7a3b14fc25ff1aca3684829659d4a0a3783dc911209a01",
+    "exact_copy_rows_compared": 29,
+    "pre_edit_entries_hash_checked": 7,
+    "new_paths": 31
+  },
+  "registration": {
+    "old_ordered_commands_preserved": 131,
+    "new_ordered_names": 12,
+    "expected_total": 143,
+    "ordered_names_sha256": "3160e499257bc742462fc8e809c795e2c12e4f30a1edd43d951a2e0e0e5793e9",
+    "sorted_names_sha256": "5afdb9379b4adfc66684530d26f066cd73ea80f790d36763c9df4441d10734b1",
+    "prior_compile_entries_from_retained_database": 195,
+    "new_compile_entries_from_source_inventory": 19,
+    "expected_compile_entries": 214,
+    "native_generation_performed_by_reviewer": false
+  },
+  "compile_evidence_read": {
+    "directory": "/tmp/crown-c02-native-registration-release-1",
+    "recorded_commands": 36,
+    "nonzero_exit_records": 0,
+    "diagnostic_log_bytes": 0,
+    "new_translation_units": 19,
+    "testing_macro_commands": ["ranking_bridge_testing", "ranking_census", "ranking_usage_testing"],
+    "commands_invoked_by_reviewer": false
+  },
+  "accepted_preparation_aggregation": {
+    "path": "build/verification/c02-preparation-execution-completion.json",
+    "sha256": "4c39ded5d7d09d2802181e476f236c403f8f7533d8606e6fe3f3a53fa58e2d60",
+    "scope": "Five accepted root precursor receipts; no native registration acceptance"
+  },
+  "root_selective_publication_json": {
+    "path": "build/verification/c02-publication-json-root-attempt-1.json",
+    "sha256": "59cd4a3d43762ecfc65942db7c44bcab381c8468ab28178433d9b2ef1dc897d8",
+    "status": "passed",
+    "cleanup_cases": 30,
+    "fault_positions": 96,
+    "serialization_bytes": 254162,
+    "serialization_sha256": "80ac5ebf394ee05c966339df63394915de66fe156efcba675c15e6b9681aa318",
+    "native_matrix_replacement": false
+  },
+  "preserved_predecessor_evidence": {
+    "path": "build/verification/c02-c01-predecessor-build-evidence.json",
+    "sha256": "8f34680efd0d8433de59a9a50f789b6272296f4e73e5c074967357e4a64ff823",
+    "release_compile_database_sha256": "a559f5050aa922de86d31e902ce221408528031b6cd86d41ee6ea22abf52260e",
+    "current_C01_manifest_FILE_sha256": "95eda9c8b4b6e631a9b85bc0d1c84315c1577aa0dbcb84801d570c9217ce070e",
+    "historical_manifest_live_entries_checked": false
+  },
+  "root_recipes": [
+    {"path": "/tmp/crown-ranking-matrix.py", "sha256": "e8a068ceaf27922a433b0e73c16929eea95ff956cd228f080c0d8bf016176fa7"},
+    {"path": "/tmp/crown-ranking-symbols.py", "sha256": "876a727a431ec05234c723359afe8f124a10ebb8f36fcd7352be796837f035bb"},
+    {"path": "/tmp/crown-ranking-clean-evidence.py", "sha256": "83fe42168d49a2bf980a1fc0e66bb9a619c4b1ae548c5e168ba52271db199c98"},
+    {"path": "/tmp/crown-ranking-clean-matrix.py", "sha256": "fe9b62bda41849cd23f9fdcf7bf431ed4b7206105ffd4ab2ef0ef2fe428dfe18"},
+    {"path": "/tmp/crown-c02-native-integrate.py", "sha256": "2b23eacd64b6d63725d619d6b6481cd74cabf9ea745778ec926f379a8a5f43d0"},
+    {"path": "/tmp/crown-c02-execution-freeze-bound.py", "sha256": "e1e535ca99c1fd3721d7f4d4ef2d20667ecd2e548fad769eeedc76f46886638a"}
+  ],
+  "resolved_review_findings": [
+    "Guide scope/lifecycle links and inactive score placeholders corrected before freeze",
+    "JSON probe transformation records all three noinline annotations and both labels without weakened assertions",
+    "Post-integration freeze binds publication FILEs and unmapped execution bytes to the accepted fresh baseline"
+  ],
+  "explicit_limits": [
+    "Reviewer authored independent fixture sources earlier; their published copies are checked for preservation, not presented as a second review of their own oracle",
+    "The Clang driver uses the held Clang18 Debug cache; actual native compiler/flags still require matrix audit",
+    "Guarded integration assumes exclusive paths and ordinary caught-error rollback, not crash/storage-failure atomicity",
+    "Full native compiler/sanitizer/clean-source matrix, generated command/numeric-row audit and final source/metadata acceptance remain pending",
+    "No automatic allocation-count waiver, calibrated cost, C03, S05 allocator bound, deployment or global-optimality acceptance"
+  ]
+}

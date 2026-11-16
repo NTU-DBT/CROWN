@@ -1,0 +1,78 @@
+{
+  "card": "C01",
+  "freeze": "build/verification/statistics-execution-freeze.json",
+  "expected_tests": 131,
+  "jobs": {
+    "debug": {
+      "build_directory": "build/debug",
+      "status": "terminal passed131/131; session closed",
+      "session_terminal_closed": 45216,
+      "ctest_seconds": 1493.12,
+      "summary": "build/verification/statistics-debug-summary.json"
+    },
+    "release": {
+      "build_directory": "build/release",
+      "status": "terminal passed131/131; session closed",
+      "session_terminal_closed": 16056,
+      "ctest_seconds": 274.9,
+      "summary": "build/verification/statistics-release-summary.json"
+    },
+    "sanitize": {
+      "session_id": 63700,
+      "build_directory": "build/sanitize",
+      "status": "build passed; full131 ASan/UBSan/leak tests active"
+    },
+    "clang": {
+      "build_directory": "build/clang-debug",
+      "status": "terminal passed131/131; session closed",
+      "session_terminal_closed": 83370,
+      "ctest_seconds": 1207.95,
+      "summary": "build/verification/statistics-clang-summary.json"
+    },
+    "clean-source": {
+      "status": "terminal passed131/131; temporary tree removed; session closed",
+      "session_terminal_closed": 70054,
+      "ctest_seconds": 276.48,
+      "summary": "build/verification/statistics-clean-source-summary.json"
+    }
+  },
+  "status": "Four configurations passed131/131; sanitizer63700 remains active",
+  "symbols": {
+    "debug": {
+      "path": "build/verification/statistics-debug-symbols.json",
+      "status": "audited_pass: all six archive roles, production/testing isolation and expected exports"
+    },
+    "release": {
+      "path": "build/verification/statistics-release-symbols.json",
+      "status": "audited_pass: all six archive roles, production/testing isolation and expected exports"
+    },
+    "sanitize": {
+      "path": "build/verification/statistics-sanitize-symbols.json",
+      "status": "captured; production C01 seed absent/testing seed present; full semantic audit pending"
+    },
+    "clang": {
+      "path": "build/verification/statistics-clang-symbols.json",
+      "status": "audited_pass: all six archive roles, production/testing isolation and expected exports"
+    },
+    "clean-source": {
+      "path": "build/verification/statistics-clean-source-symbols.json",
+      "status": "audited_pass: all six archive roles, production/testing isolation and expected exports"
+    }
+  },
+  "closed_symbol_sessions": [
+    59940,
+    32429,
+    90644
+  ],
+  "source_preliminary_audit": {
+    "path": "build/verification/statistics-source-preliminary-audit-attempt-3.json",
+    "status": "zero errors; pending complete matrix acceptance and final C01 metadata transition"
+  },
+  "independent_matrix_audit": {
+    "path": "build/verification/statistics-matrix-evidence-audit-attempt-2.json",
+    "authority": "build/verification/statistics-matrix-audit-authority.json",
+    "accepted": false,
+    "status": "four configurations audited_pass, zero errors, zero allocation differences; sanitizer result and semantic symbol gate pending",
+    "package_manifest_sha256": "4d9395cdcb9bf60e4365ed98ffec2c66ef3c4de7c27586061052a12615be93ec"
+  }
+}

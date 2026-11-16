@@ -1,0 +1,191 @@
+#pragma once
+
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <optional>
+#include <span>
+#include <string_view>
+#include <vector>
+
+namespace crown::runtime {
+// Optional observation never disables deterministic budget/accounting state.
+// One configuration lives in SupportOptions and is inherited by all wrappers.
+enum class ObservationMode { off, counters, timed, trace };
+struct ObservationOptions {
+  ObservationMode mode = ObservationMode::timed; // Retains legacy delta clocks.
+  std::size_t trace_capacity = 256;
+  std::uint64_t sample_period = 1, sample_offset = 0;
+  bool trace_timings = true;
+  bool operator==(const ObservationOptions&) const = default;
+};
+enum class ObservationLayer { support, physical, delta };
+enum class ObservationOutcome { pending, committed, aborted };
+enum class MetricAvailability { unavailable, disabled, available };
+enum class MetricKind { counter, high_water, timing };
+enum class MetricId {
+  support_work,
+  support_native_record_visits,
+  support_reverse_index_records_visited,
+  support_child_key_probes,
+  support_child_key_events,
+  support_survivor_transitions,
+  support_parent_key_transitions,
+  support_visible_key_transitions,
+  support_candidates_created,
+  support_candidates_reclaimed,
+  support_storage_changes,
+  support_metadata_changes,
+  support_saved_child_flags,
+  support_journal_records,
+  support_events_enqueued,
+  support_events_applied,
+  support_queue_peak,
+  support_copied_rows,
+  support_copied_index_memberships,
+  support_copied_metadata_entries,
+  support_copied_child_flags,
+  physical_work_inclusive,
+  physical_work_exclusive,
+  physical_source_changes,
+  physical_aliases_visited,
+  physical_aliases_filtered,
+  physical_derivation_changes,
+  physical_native_crossings,
+  physical_constraint_rows,
+  physical_constraint_validations,
+  delta_work,
+  delta_candidates,
+  delta_accepted,
+  delta_rejected,
+  delta_replay_preparation_work,
+  delta_replay_first_work,
+  delta_replay_results_work,
+  delta_replay_termination_work,
+  delta_finalization_work,
+  delta_spool_rows_prepared,
+  delta_spool_bytes_prepared,
+  delta_mapped_records,
+  delta_transferred_records,
+  delta_discarded_records,
+  delta_serialization_attempts,
+  delta_serialization_successes,
+  delta_serialization_failures,
+  delta_sink_attempts,
+  delta_sink_successes,
+  delta_sink_failures,
+  delta_acknowledged_records,
+  delta_propagation_ns,
+  delta_internal_delta_ns,
+  delta_output_mapping_ns,
+  delta_serialization_ns,
+  delta_sink_wait_ns,
+  delta_clock_reads,
+  count
+};
+inline constexpr std::size_t observation_metric_count = static_cast<std::size_t>(MetricId::count);
+struct MetricDescriptor {
+  MetricId id;
+  std::string_view name, unit, accounting, scope;
+  ObservationLayer layer;
+  MetricKind kind;
+  // An inclusive work total contains lower-level work; it must not be summed
+  // with that work again. Other phase subsets also overlap their layer total.
+  std::string_view includes;
+};
+[[nodiscard]] std::span<const MetricDescriptor> observation_registry() noexcept;
+struct MetricValue {
+  std::uint64_t value = 0;
+  MetricAvailability availability = MetricAvailability::unavailable;
+  bool saturated = false;
+};
+struct ObservationSummary {
+  std::uint64_t attempt = 0, sequence = 0;
+  ObservationLayer owner = ObservationLayer::support;
+  ObservationOutcome outcome = ObservationOutcome::pending;
+  std::array<MetricValue,observation_metric_count> values{};
+  [[nodiscard]] const MetricValue& metric(MetricId id) const noexcept {
+    const auto index=static_cast<std::size_t>(id);
+    static constexpr MetricValue unavailable{};
+    return index<values.size()?values[index]:unavailable;
+  }
+};
+enum class TraceDisposition { disabled, not_sampled, pending, committed, aborted, released };
+enum class TraceKind {
+  begin, source_change, alias, native_event, child_enqueued, child_applied,
+  journal, reverse_visit, core_result, mapped_record, prepared, drain,
+  commit, abort, transferred, discarded, serialization_attempt,
+  serialization_success, serialization_failure, sink_attempt, sink_success,
+  sink_failure, acknowledged
+};
+inline constexpr std::uint64_t observation_no_id = UINT64_MAX;
+// Numeric IDs only. No tuple pins, string pointers, borrowed rows or callbacks.
+struct TraceRecord {
+  TraceKind kind = TraceKind::begin;
+  std::uint64_t event = 0, cause = 0;
+  std::uint64_t node = observation_no_id, occurrence = observation_no_id, prefix = 0;
+  std::uint64_t before = 0, after = 0, role = observation_no_id, tuple = observation_no_id;
+};
+struct ObservationSnapshot {
+  ObservationOptions options;
+  bool mandatory_accounting = true;
+  std::uint64_t support_owner = 0;
+  std::optional<ObservationSummary> current, last;
+  std::uint64_t attempts = 0, commits = 0, aborts = 0;
+  bool lifetime_counts_saturated = false;
+  TraceDisposition trace = TraceDisposition::disabled;
+  std::uint64_t trace_attempt = 0, trace_sequence = 0;
+  std::size_t trace_records = 0;
+  std::uint64_t trace_dropped = 0;
+  bool trace_dropped_saturated = false;
+  bool trace_truncated = false;
+  // Session decoration is read-only, and does not assert durable acceptance.
+  bool session_attached = false;
+  std::uint64_t session_committed_sequence = 0;
+};
+struct ObservationTrace {
+  ObservationSnapshot snapshot;
+  std::vector<TraceRecord> records;
+};
+namespace detail {
+struct ObservationTicket { std::uint64_t attempt=0; bool owns=false; };
+class ObservationState {
+ public:
+  [[nodiscard]] static std::shared_ptr<ObservationState> create(ObservationOptions);
+  explicit ObservationState(ObservationOptions);
+  [[nodiscard]] ObservationTicket begin(ObservationLayer,std::uint64_t) noexcept;
+  void finish(ObservationTicket,ObservationOutcome) noexcept;
+  void bind_owner(std::uint64_t owner) noexcept { snapshot_.support_owner=owner; }
+  void route(std::uint64_t occurrence,std::uint64_t prefix) noexcept {
+    occurrence_=occurrence; prefix_=prefix;
+  }
+  void set(MetricId,std::uint64_t) noexcept;
+  void add(MetricId,std::uint64_t=1) noexcept;
+  void unavailable(MetricId) noexcept;
+  void event(TraceKind,std::uint64_t event=0,std::uint64_t cause=0,
+      std::uint64_t node=observation_no_id,std::uint64_t occurrence=observation_no_id,
+      std::uint64_t prefix=0,std::uint64_t before=0,std::uint64_t after=0,
+      std::uint64_t role=observation_no_id,std::uint64_t tuple=observation_no_id) noexcept;
+  [[nodiscard]] bool clocks_enabled() const noexcept;
+  [[nodiscard]] std::uint64_t now() noexcept;
+  [[nodiscard]] ObservationSnapshot snapshot() const noexcept;
+  // Explicit allocating diagnostic read; hooks never call this method.
+  [[nodiscard]] ObservationTrace trace() const;
+ private:
+  ObservationOptions options_;
+  ObservationSnapshot snapshot_;
+  std::vector<TraceRecord> buffer_; // Resized once at admission, never grown.
+  bool selected_=false;
+  std::uint64_t occurrence_=observation_no_id,prefix_=0;
+  [[nodiscard]] ObservationSummary* target() noexcept;
+};
+[[nodiscard]] ObservationSnapshot observation_snapshot(const std::shared_ptr<ObservationState>&,ObservationOptions) noexcept;
+[[nodiscard]] ObservationTrace observation_trace(const std::shared_ptr<ObservationState>&,ObservationOptions);
+#ifdef CROWN_RUNTIME_TESTING
+// Exclusive test ownership only; nullptr restores the real steady clock.
+using ObservationClock = std::uint64_t (*)() noexcept;
+void set_observation_clock_for_testing(ObservationClock) noexcept;
+#endif
+} // namespace detail
+} // namespace crown::runtime

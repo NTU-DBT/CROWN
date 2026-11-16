@@ -1,0 +1,71 @@
+--- prior/audit.py
++++ revision/audit.py
+@@ -1225,6 +1225,54 @@
+              "focused late-publication fault population/recovery contract differs")
+ 
+ 
++def vendor_diagnostic_format(diagnostics, log):
++    review_path = V/"selection-vendor-diagnostic-format-review-v1.json"
++    review_sha = "f422c9fcdf30b77ee749fbcdd05e16cfb1dc0023f33f1ded803cdf411a9c6d79"
++    need(digest(review_path) == review_sha, "vendor diagnostic format review FILE changed")
++    review = data(review_path)
++    need(review.get("reviewer") == "root" and review.get("decision") == "accepted_exact_diagnostic_quote_normalization" and
++         review.get("card") == "C05" and review.get("native") == NATIVE and review.get("execution") == EXECUTION and
++         review.get("freeze_sha256") == FREEZE_SHA, "vendor diagnostic format review has wrong authority/scope")
++    exact_pairs = [
++        {"current":"vendor/upb/upb.c:8245:8: warning: 'sv.data' may be used uninitialized [-Wmaybe-uninitialized]",
++         "accepted_historical":WARNINGS[1]},
++        {"current":"vendor/upb/upb.c:9206:6: warning: 'sv.size' may be used uninitialized [-Wmaybe-uninitialized]",
++         "accepted_historical":WARNINGS[2]},
++    ]
++    need(review.get("exact_quote_pairs") == exact_pairs and review.get("warning_count") == 3 and
++         review.get("unchanged_warning") == WARNINGS[0], "vendor diagnostic exact mapping/count changed")
++    need(log == V/"selection-clean-source.log" and
++         review.get("current_log") == {"path":label(log),"sha256":digest(log)},
++         "vendor diagnostic review does not bind this exact current log")
++    historical = review.get("accepted_historical_logs",[])
++    need([row.get("path") for row in historical] == ["build/verification/ranking-clean-source.log",
++         "build/verification/observability-clean-source.log"], "vendor diagnostic historical FILE population changed")
++    for pin in historical:
++        path = ROOT/pin["path"]
++        need(digest(path) == pin["sha256"], "vendor diagnostic historical log FILE changed")
++        observed = [line for line in read(path).splitlines() if re.search(r"\bwarning:\s",line)]
++        need(collections.Counter(observed) == collections.Counter(WARNINGS),
++             "historical exact three-warning multiset changed")
++    failure = review.get("first_audit_failure")
++    need(failure == {"path":"build/verification/selection-matrix-evidence-audit-preliminary-1.json",
++         "sha256":"80e88d36453b5b1df9c74d3de5ffe3003dc2354c2d39eb713842357e9beafc99"},
++         "vendor diagnostic first-failure lineage changed")
++    need(digest(ROOT/failure["path"]) == failure["sha256"], "preserved first audit failure FILE changed")
++    mapping = {row["current"]:row["accepted_historical"] for row in exact_pairs}
++    normalized = [mapping.get(line,line) for line in diagnostics]
++    need(all(diagnostics.count(line) == 1 for line in mapping) and
++         collections.Counter(normalized) == collections.Counter(WARNINGS),
++         "clean exact three-warning multiset differs after the two reviewed whole-line mappings")
++    review_pin = {"path":label(review_path),"sha256":review_sha}
++    changes = [{"kind":"vendor_diagnostic_format","evidence":label(log),"warning_index":index,
++                "raw":line,"comparison":mapping[line],"review":review_pin}
++               for index,line in enumerate(diagnostics) if line in mapping]
++    NORMALIZATIONS.extend(changes)
++    return {"exact_preserved_diagnostics":normalized,"raw_observed_diagnostics":diagnostics,
++            "format_review":review_pin,"diagnostic_normalizations":changes,
++            "not_waived":"Only the two reviewed whole-line quote formats change for comparison. All three warnings remain; none is called safe/fixed or suppressed."}
++
++
+ def audit_configuration(name, freeze, history, vendor):
+     summary_path = V/f"selection-{name}-summary.json"
+     summary = terminal(summary_path)
+@@ -1245,12 +1293,9 @@
+         folder,source,build = clean_artifacts(summary,text)
+         configure_text = build_text = text; last_path = folder/"Testing/Temporary/LastTest.log"
+         diagnostics = [line for line in text.splitlines() if re.search(r"\bwarning:\s",line)]
+-        old_diagnostics = [line for line in read(V/"observability-clean-source.log").splitlines() if re.search(r"\bwarning:\s",line)]
+-        need(collections.Counter(diagnostics) == collections.Counter(WARNINGS) == collections.Counter(old_diagnostics),
+-             "clean preserved three vendor diagnostics changed or grew")
++        warning_scope = vendor_diagnostic_format(diagnostics,log)
+         emitted = re.findall(r"^compiling (\S+\.c)\s*$",text,re.M)
+         need(collections.Counter(emitted) == collections.Counter(vendor[0]), "clean independent96C source recipe inventory differs")
+-        warning_scope = {"exact_preserved_diagnostics":diagnostics,"not_waived":"No new warning; historical diagnostics are retained, not called safe/fixed."}
+     else:
+         folder = ROOT/("build/clang-debug" if name == "clang" else "build/"+name)
+         source,build = ROOT,folder

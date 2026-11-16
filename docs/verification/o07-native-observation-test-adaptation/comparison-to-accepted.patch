@@ -1,0 +1,80 @@
+--- docs/verification/o07-observation-test-proposal/runtime_observation_test.cpp
++++ docs/verification/o07-native-observation-test-adaptation/runtime_observation_test.cpp
+@@ -1196,9 +1196,11 @@
+           "delta clock attempt summary differs");
+     const auto& summary = *snapshot.last;
+     const auto& reads = summary.metric(MetricId::delta_clock_reads);
++    const auto& nested_reads = summary.metric(MetricId::nested_cursor_clock_reads);
+     check(reads.availability == MetricAvailability::available &&
+-          reads.value == injected_clock_calls,
+-          "injected clock calls do not reconcile with the clock-read counter");
++          nested_reads.availability == MetricAvailability::available &&
++          reads.value + nested_reads.value == injected_clock_calls,
++          "injected clock calls do not reconcile with disjoint delta and nested-cursor reads");
+     if (mode == ObservationMode::counters) {
+       check(injected_clock_calls == 0,
+             "counters mode performed an optional clock read");
+--- docs/verification/o07-mode-binding-test-proposal/mode_binding_test.cpp
++++ docs/verification/o07-native-observation-test-adaptation/mode_binding_test.cpp
+@@ -114,8 +114,10 @@
+ using namespace crown::runtime;
+ 
+ static_assert(std::is_trivially_copyable_v<ObservationConfiguration>);
+-static_assert(std::is_trivially_copyable_v<ObservationSnapshot>);
+-static_assert(std::is_trivially_copyable_v<ObservationSummary>);
++static_assert(std::is_nothrow_copy_constructible_v<ObservationSnapshot>);
++static_assert(std::is_nothrow_copy_assignable_v<ObservationSnapshot>);
++static_assert(std::is_nothrow_copy_constructible_v<ObservationSummary>);
++static_assert(std::is_nothrow_copy_assignable_v<ObservationSummary>);
+ 
+ std::uint64_t clock_reads = 0;
+ std::uint64_t fake_clock() noexcept { return ++clock_reads; }
+--- docs/verification/o07-run-context-test-proposal/run_context_test.cpp
++++ docs/verification/o07-native-observation-test-adaptation/run_context_test.cpp
+@@ -1308,6 +1308,8 @@
+     allocation_probe::measure([&] {
+       epoch.emplace(runtime.apply(insert_s(1)));
+     }, allocation_probe::no_failure, apply_measurement);
++    const auto attempt_clock_reads = optional_clock_reads;
++    const auto attempt_before_current_results = runtime.observations();
+     check(epoch && epoch->remaining() == 1,
+           "matched mode update did not prepare the one literal Q output");
+     check(epoch->input().support.metrics.work == 40 &&
+@@ -1319,9 +1321,14 @@
+           signed_output->operation == SetOperation::insert &&
+           signed_output->tuple.values() == row(7) && !epoch->next(),
+           "matched mode update changed independent Q result or signed output");
++    check(optional_clock_reads == attempt_clock_reads,
++          "prepared output ownership transfer unexpectedly evaluated a clock");
++    const auto before_current_cursor_reads = optional_clock_reads;
+     check(runtime.snapshot().physical.tables == fixture.with_s().tables &&
+           drain(runtime.results()) == expected_result,
+           "matched mode update changed committed physical state or reference answer");
++    const auto after_current_cursor_reads = optional_clock_reads;
++    const auto current_cursor = runtime.last_cursor_observation();
+ 
+     const auto observed = runtime.observations();
+     if (mode == ObservationMode::off) {
+@@ -1346,9 +1353,20 @@
+       check_metric(*observed.last, MetricId::delta_work, epoch->metrics().work,
+                    "delta mandatory-work registry does not reconcile with epoch work");
+       const auto& clock_reads = observed.last->metric(MetricId::delta_clock_reads);
++      const auto& nested_reads = observed.last->metric(MetricId::nested_cursor_clock_reads);
+       check(clock_reads.availability == MetricAvailability::available &&
+-            clock_reads.value == optional_clock_reads,
+-            "fake optional clock count does not match the retained clock-read metric");
++            nested_reads.availability == MetricAvailability::available &&
++            clock_reads.value + nested_reads.value == attempt_clock_reads,
++            "fake clock attempt interval must equal disjoint delta and nested-cursor reads");
++      check(attempt_before_current_results.last &&
++            clock_reads.value == attempt_before_current_results.last->metric(MetricId::delta_clock_reads).value &&
++            nested_reads.value == attempt_before_current_results.last->metric(MetricId::nested_cursor_clock_reads).value,
++            "later committed cursor rewrote the previous delta attempt clock counts");
++      check(current_cursor &&
++            current_cursor->metric(CursorMetricId::clock_reads).availability == MetricAvailability::available &&
++            current_cursor->metric(CursorMetricId::clock_reads).value ==
++                after_current_cursor_reads - before_current_cursor_reads,
++            "later committed cursor interval does not match its own clock-read counter");
+       if (mode == ObservationMode::counters) {
+         check(optional_clock_reads == 0 &&
+               observed.trace == TraceDisposition::disabled,

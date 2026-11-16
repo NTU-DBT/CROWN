@@ -1,0 +1,1 @@
+SELECT EXISTS (SELECT DISTINCT a.id FROM A AS a WHERE a.id = 2) AS found;

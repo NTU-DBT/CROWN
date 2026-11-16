@@ -1,0 +1,1 @@
+SELECT DISTINCT "雪".x AS "头" FROM r AS "雪"

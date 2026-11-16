@@ -1,0 +1,17 @@
+--- README.md	2026-11-07 17:59:41.663795483 +0800
++++ docs/verification/c05-native-registration-proposal/overlay/README.md	2026-11-07 18:06:36.864660508 +0800
+@@ -22,6 +22,14 @@
+ [verified record](docs/verification/ranking-2026-11-07.md). It adds no CLI command,
+ deployment action, calibrated runtime-cost model or allocator-byte claim.
+ 
++C05's [selection API](docs/selection.md) returns an immutable physical plan from
++a typed, certified minimum-height candidate snapshot. It supports C02 baseline
++policies, an optional unitless tuple/index-slot constraint, and a bounded FIFO
++cache of whole plan artifacts. Every call performs fresh admission and complete
++retained-set assessments. The proposed 158-test native registration and its
++complete matrix are pending. Selection does not install or migrate a plan,
++advance a provider, enable C03 calibration, or predict allocator bytes.
++
+ P07 alternative-plan enumeration and caching is implemented and verified.
+ In the historical P07 snapshot, all 92 tests pass the GCC Debug, GCC Release, ASan+UBSan+leak-checking,
+ Clang Debug and fresh source-only Release matrix on one frozen revision. Its

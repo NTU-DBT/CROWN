@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.25)
+project(crown_meta_candidate_example LANGUAGES CXX)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+find_package(Crown 0.1 CONFIG REQUIRED)
+add_executable(crown_meta_candidate_example main.cpp)
+target_link_libraries(crown_meta_candidate_example PRIVATE CROWN::meta_candidates)
+target_compile_options(crown_meta_candidate_example PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror)

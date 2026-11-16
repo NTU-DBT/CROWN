@@ -1,0 +1,236 @@
+{
+  "schema_version": 1,
+  "semantics": "set",
+  "catalog": {
+    "version": 1,
+    "tables": [
+      {
+        "name": "Catalog_01",
+        "columns": [
+          {
+            "name": "c1",
+            "type": "string"
+          },
+          {
+            "name": "c0",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "Catalog_02",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "Catalog_03",
+        "columns": [
+          {
+            "name": "c1",
+            "type": "string"
+          },
+          {
+            "name": "c0",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "Catalog_04",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "Catalog_05",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "Catalog_06",
+        "columns": [
+          {
+            "name": "c3",
+            "type": "string"
+          },
+          {
+            "name": "c2",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          },
+          {
+            "name": "c0",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "Catalog_07",
+        "columns": [
+          {
+            "name": "c3",
+            "type": "string"
+          },
+          {
+            "name": "c2",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          },
+          {
+            "name": "c0",
+            "type": "string"
+          }
+        ]
+      }
+    ]
+  },
+  "query": {
+    "variables": [
+      {
+        "name": "var_01",
+        "type": "string"
+      },
+      {
+        "name": "var_02",
+        "type": "string"
+      },
+      {
+        "name": "var_03",
+        "type": "string"
+      },
+      {
+        "name": "var_04",
+        "type": "string"
+      },
+      {
+        "name": "var_05",
+        "type": "string"
+      },
+      {
+        "name": "var_06",
+        "type": "string"
+      },
+      {
+        "name": "var_07",
+        "type": "string"
+      }
+    ],
+    "atoms": [
+      {
+        "id": "atom_01",
+        "table": "Catalog_01",
+        "terms": [
+          {
+            "var": "var_04"
+          },
+          {
+            "var": "var_03"
+          }
+        ]
+      },
+      {
+        "id": "atom_02",
+        "table": "Catalog_02",
+        "terms": [
+          {
+            "var": "var_07"
+          }
+        ]
+      },
+      {
+        "id": "atom_03",
+        "table": "Catalog_03",
+        "terms": [
+          {
+            "var": "var_07"
+          },
+          {
+            "var": "var_02"
+          }
+        ]
+      },
+      {
+        "id": "atom_04",
+        "table": "Catalog_04",
+        "terms": [
+          {
+            "var": "var_05"
+          }
+        ]
+      },
+      {
+        "id": "atom_05",
+        "table": "Catalog_05",
+        "terms": [
+          {
+            "var": "var_06"
+          }
+        ]
+      },
+      {
+        "id": "atom_06",
+        "table": "Catalog_06",
+        "terms": [
+          {
+            "var": "var_05"
+          },
+          {
+            "var": "var_01"
+          },
+          {
+            "var": "var_02"
+          },
+          {
+            "var": "var_03"
+          }
+        ]
+      },
+      {
+        "id": "atom_07",
+        "table": "Catalog_07",
+        "terms": [
+          {
+            "var": "var_06"
+          },
+          {
+            "var": "var_01"
+          },
+          {
+            "var": "var_02"
+          },
+          {
+            "var": "var_03"
+          }
+        ]
+      }
+    ],
+    "head": [
+      {
+        "var": "var_04"
+      },
+      {
+        "var": "var_02"
+      },
+      {
+        "var": "var_03"
+      }
+    ]
+  }
+}

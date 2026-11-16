@@ -1,0 +1,152 @@
+{
+  "CMakeLists.txt": {
+    "resolved_source": "docs/verification/o07-native-integration-proposal/overlay/CMakeLists.txt",
+    "sha256": "8d4545863bb04675e14b605ebfbd7bfe3bf792309532c4dcf4d6125a814eb851",
+    "native_baseline_sha256": "54397cae5caa2766f34cc701a3a2f1ff63d6f8b08fca1677ee42988e404ae077"
+  },
+  "apps/crown/explain.cpp": {
+    "resolved_source": "docs/verification/o07-native-integration-proposal/overlay/apps/crown/explain.cpp",
+    "sha256": "7fc01d06f7dcc63f06da2556dd7d385e2310aea6811784318afc7c41c512bf68",
+    "native_baseline_sha256": null
+  },
+  "apps/crown/explain.hpp": {
+    "resolved_source": "docs/verification/o07-native-integration-proposal/overlay/apps/crown/explain.hpp",
+    "sha256": "29cf9661aac780e70332fc7a1e8d5df6407ac7bc9e20b51ab3f63b36dd4b9350",
+    "native_baseline_sha256": null
+  },
+  "apps/crown/main.cpp": {
+    "resolved_source": "docs/verification/o07-native-integration-proposal/overlay/apps/crown/main.cpp",
+    "sha256": "80e3c4592cfee63dc8991544e5366a0a2eb67939a57671fa09209023b27b0e1e",
+    "native_baseline_sha256": "b1144ff27697a93a97509314ea18d1df35d83fad80fa5a98478c9bbe44d54979"
+  },
+  "include/crown/io/cursor_observation.hpp": {
+    "resolved_source": "docs/verification/o07-cursor-observation-proposal/overlay/include/crown/io/cursor_observation.hpp",
+    "sha256": "44a6bda5bc97724335d1cd0930db0e9dc061381ba060a77ebc4a3a11989844bc",
+    "native_baseline_sha256": null
+  },
+  "include/crown/io/explain.hpp": {
+    "resolved_source": "docs/verification/o07-composed-explain-proposal/overlay/include/crown/io/explain.hpp",
+    "sha256": "857cb0979b024e193b1081c573458e856d9e91bb1f886a4d42e203255eef92ef",
+    "native_baseline_sha256": null
+  },
+  "include/crown/io/query_explain.hpp": {
+    "resolved_source": "docs/verification/o07-query-explain-proposal/overlay/include/crown/io/query_explain.hpp",
+    "sha256": "b21222a3b3c260aa1ab7b344aac9ba61458c980990c8557bc0c28dfc0829050a",
+    "native_baseline_sha256": null
+  },
+  "include/crown/io/run_context.hpp": {
+    "resolved_source": "docs/verification/o07-run-context-proposal/overlay/include/crown/io/run_context.hpp",
+    "sha256": "1d3a88ec600224454046a503edd81b9c09001127e320c6ef8b1678c3381848a0",
+    "native_baseline_sha256": null
+  },
+  "include/crown/observability/explain.hpp": {
+    "resolved_source": "docs/verification/o07-composed-explain-proposal/overlay/include/crown/observability/explain.hpp",
+    "sha256": "70f89d1fd8adaead4ec08165a8b25887f60814c2ac5b77daa74147ebfdf490f8",
+    "native_baseline_sha256": null
+  },
+  "include/crown/observability/query_explain.hpp": {
+    "resolved_source": "docs/verification/o07-query-explain-proposal/overlay/include/crown/observability/query_explain.hpp",
+    "sha256": "9d867ef6f21540e29a40a240c3fd59089169ddddd116830fca7636010cdab13b",
+    "native_baseline_sha256": null
+  },
+  "include/crown/runtime/delta.hpp": {
+    "resolved_source": "docs/verification/o07-cursor-observation-proposal/overlay/include/crown/runtime/delta.hpp",
+    "sha256": "ddd60c1583b03555943b0013a4dd6030e7e4222375b9660851e535f508f0f9c8",
+    "native_baseline_sha256": "a392d160a64a9c52b76a0296601575d4ff6a64538678d775449739e2fcd156fe"
+  },
+  "include/crown/runtime/observation.hpp": {
+    "resolved_source": "docs/verification/o07-cursor-observation-proposal/overlay/include/crown/runtime/observation.hpp",
+    "sha256": "8ff201a70fd960dba6609ee82c45aa76a3a8d23a8960bacec051fe864becde32",
+    "native_baseline_sha256": null
+  },
+  "include/crown/runtime/physical.hpp": {
+    "resolved_source": "docs/verification/o07-cursor-observation-proposal/overlay/include/crown/runtime/physical.hpp",
+    "sha256": "8c10eee6be58db515b57af67c7a46506e3bf7c01d58c3f09f6bc732979570594",
+    "native_baseline_sha256": "673bd95a1ce75363d22fe16593588ef85b1568ccf5d04cd0fb62db14e34916a6"
+  },
+  "include/crown/runtime/session.hpp": {
+    "resolved_source": "docs/verification/o07-composed-explain-proposal/overlay/include/crown/runtime/session.hpp",
+    "sha256": "590658d4ef804a916ba0f8004da2a5bf797a4c2e6a8a20d80e00993a081e9e67",
+    "native_baseline_sha256": "917068168aaf6c9cdb703fb582948c465bf0e913c4d1493f5226a0f84f586580"
+  },
+  "include/crown/runtime/support.hpp": {
+    "resolved_source": "docs/verification/o07-cursor-observation-proposal/overlay/include/crown/runtime/support.hpp",
+    "sha256": "54f27d7b62479c88415ad3c26416e7086ddcc1920212707bd987f669c569f160",
+    "native_baseline_sha256": "bec124a4db418f5f77351ebcd3149ac11384abde5a1c1e5214d674e1eb92fa88"
+  },
+  "schemas/explain-report-v2.schema.json": {
+    "resolved_source": "docs/verification/o07-native-integration-proposal/schemas/explain-report-v2.schema.json",
+    "sha256": "c4aa8c7c62e0608d7b035128a9bd9b561387c0c16491efa704d8b95b469c9f74",
+    "native_baseline_sha256": null
+  },
+  "schemas/explain-tree-v2.schema.json": {
+    "resolved_source": "docs/verification/o07-native-integration-proposal/schemas/explain-tree-v2.schema.json",
+    "sha256": "608154cd56f807a283d4a86e58b20af1cce6605b8a77a2727ff084d7a7967335",
+    "native_baseline_sha256": null
+  },
+  "schemas/query-explain-v1.schema.json": {
+    "resolved_source": "docs/verification/o07-native-integration-proposal/schemas/query-explain-v1.schema.json",
+    "sha256": "b843e905e9a2a5c201847c2db8cd93fed85a836b56d6faa8d4319c70cd02979d",
+    "native_baseline_sha256": null
+  },
+  "schemas/query-witness-v1.schema.json": {
+    "resolved_source": "docs/verification/o07-native-integration-proposal/schemas/query-witness-v1.schema.json",
+    "sha256": "1e2121a6c7ce98f8e68650cf1bf54733db6eec0b4a254695dbafa84c10688f7e",
+    "native_baseline_sha256": null
+  },
+  "src/io/cursor_observation.cpp": {
+    "resolved_source": "docs/verification/o07-cursor-observation-proposal/overlay/src/io/cursor_observation.cpp",
+    "sha256": "174b98b297a0217f22814cbc7b6ba68bb4c9cfccac6c640922d2a63bf8e8817a",
+    "native_baseline_sha256": null
+  },
+  "src/io/explain.cpp": {
+    "resolved_source": "docs/verification/o07-native-integration-proposal/overlay/src/io/explain.cpp",
+    "sha256": "31a3d3f13347dbd84f2c81b56f389891d71c8ccdace259c7d81c0fa4149ca8be",
+    "native_baseline_sha256": null
+  },
+  "src/io/query_explain.cpp": {
+    "resolved_source": "docs/verification/o07-query-explain-proposal/overlay/src/io/query_explain.cpp",
+    "sha256": "8c0ac1c1601cc51a38466f3cd6cd2d0d6a6f81011340bac647c24fd4e0fef1ae",
+    "native_baseline_sha256": null
+  },
+  "src/io/run_context.cpp": {
+    "resolved_source": "docs/verification/o07-run-context-proposal/overlay/src/io/run_context.cpp",
+    "sha256": "abf003f7966f36beb55cf831cc9481317514b3f682b5942c03e13680a0bf135b",
+    "native_baseline_sha256": null
+  },
+  "src/observability/explain.cpp": {
+    "resolved_source": "docs/verification/o07-composed-explain-proposal/overlay/src/observability/explain.cpp",
+    "sha256": "632e0248507f62d0d69585448f5457b53f14382cac3a8cb1b7c41426b76f2303",
+    "native_baseline_sha256": null
+  },
+  "src/observability/query_explain.cpp": {
+    "resolved_source": "docs/verification/o07-query-explain-proposal/overlay/src/observability/query_explain.cpp",
+    "sha256": "83a8e0e0c8e019708a7e0d8085562ce3de7f9433e3278073cfe192fdd20cf895",
+    "native_baseline_sha256": null
+  },
+  "src/runtime/delta.cpp": {
+    "resolved_source": "docs/verification/o07-cursor-observation-proposal/overlay/src/runtime/delta.cpp",
+    "sha256": "17bf227b5d2e6fe1abb1d1cc75a14065e03c8b953223f73c007bfdb6e721111f",
+    "native_baseline_sha256": "563208e6390b6660f7fe0300b9f17df0744270e13683ca407572c64259b34194"
+  },
+  "src/runtime/observation.cpp": {
+    "resolved_source": "docs/verification/o07-cursor-observation-proposal/overlay/src/runtime/observation.cpp",
+    "sha256": "0bf7cda74c132206de6b3194b5a8e319d2cfd840f5af175c19cdb1de20f8bc82",
+    "native_baseline_sha256": null
+  },
+  "src/runtime/physical.cpp": {
+    "resolved_source": "docs/verification/o07-cursor-observation-proposal/overlay/src/runtime/physical.cpp",
+    "sha256": "54222792d22afe8dce5dc496a7a18d5a8c4962f2258e4db24bdc293375be871b",
+    "native_baseline_sha256": "f4dfc93b8823e2e702ec097a5d55b49ecfec93e1fa12c6b918bcd73f1177883a"
+  },
+  "src/runtime/session.cpp": {
+    "resolved_source": "docs/verification/o07-composed-explain-proposal/overlay/src/runtime/session.cpp",
+    "sha256": "21912440bd3827aa9b8b92f86ad141291290c01bce4739255054ad3804645e95",
+    "native_baseline_sha256": "9d7d4a1c4dbde56fcec04463e69cfe510856a2fee075ab5977c7afa51207496d"
+  },
+  "src/runtime/support.cpp": {
+    "resolved_source": "docs/verification/o07-cursor-observation-proposal/overlay/src/runtime/support.cpp",
+    "sha256": "0f3b62a22bcabb2c24586852e886321f8b11e3d17faaba507dc897f4dbc45afe",
+    "native_baseline_sha256": "bed9c2665499faa919fca926df11cf933bc5d72ae9d1ade618f05bc666a145cd"
+  }
+}

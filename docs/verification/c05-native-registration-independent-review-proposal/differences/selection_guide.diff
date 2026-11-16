@@ -1,0 +1,41 @@
+--- docs/verification/c05-selection-implementation-proposal/GUIDE.md	2026-11-07 18:27:45.387866100 +0800
++++ docs/verification/c05-native-registration-proposal/overlay/docs/selection.md	2026-11-07 18:27:45.387866100 +0800
+@@ -1,17 +1,19 @@
+ # Choosing a physical plan from a checked candidate snapshot
+ 
+-This excluded C05 implementation accepts a typed P07 CandidateSnapshot and
+-returns an owning immutable selected PhysicalPlan. Its native publication and
+-matrix remain separate later gates. A selection does not install a plan in an
++This C05 library accepts a typed P07 CandidateSnapshot and returns an owning
++immutable selected PhysicalPlan. Native verification is pending the complete
++matrix and final source gates. A selection does not install a plan in an
+ owner, migrate state, advance a provider, reoptimize automatically, or create a
+ new minimum-height certificate.
+ 
+ The public declarations are in
+-[the pure selection header](overlay/include/crown/planner/selection.hpp) and
+-[the optional runtime bridge](overlay/include/crown/runtime/selection.hpp).
+-[The example](overlay/examples/selection_api.cpp) has production and matching
+-testing compile-only recipes. The pure library links without runtime/report;
+-the bridge uses the matching C02/runtime variant and never a report target.
++[the pure selection header](../include/crown/planner/selection.hpp) and
++[the optional runtime bridge](../include/crown/runtime/selection.hpp).
++[The example](../tests/examples/selection_usage.cpp) compiles as production and
++testing objects. Link `crown_selection` for pure calls or explicitly opt in to
++`crown_selection_runtime` for actual-owner calls. The testing bridge is
++`crown_selection_runtime_testing`; never mix runtime variants. The pure library
++links without runtime/report; neither bridge has a report dependency.
+ 
+ Choose the explicit source. `DirectCQ{options}` uses the exact Catalog/Query
+ from the snapshot's original proof. `PhysicalBasis{plan}` preserves an existing
+@@ -106,7 +108,9 @@
+ assessments share the original grant and charge evidence preparation once.
+ Default calls take no clocks. Optional timing is soft and exposes whether old
+ preparation was measured; unmeasured historical capture is not invented.
+-[Accounting](ACCOUNTING.md) specifies exact logical charges and exclusions.
++[Accounting](selection_accounting.md) specifies exact logical charges and
++exclusions. The [cache-key contract](selection_binding.md) defines complete
++framing, field order and the artifact-reuse authority boundary.
+ 
+ Inspect `Attempt.stop`, `stage`, `resource`, `component_stop`, `reasons` and
+ evaluated counts when no selection is returned. Unsupported features, unavailable

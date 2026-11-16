@@ -1,0 +1,1057 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "kind",
+    "status",
+    "started_utc",
+    "manifest_sha256",
+    "split_validation",
+    "split_contract",
+    "environment",
+    "build",
+    "configuration",
+    "correctness_gate",
+    "exports",
+    "verification",
+    "runs",
+    "summaries",
+    "analysis",
+    "extensions",
+    "limits"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "kind": {
+      "const": "c07_held_out_ranking_evaluation"
+    },
+    "status": {
+      "enum": [
+        "running",
+        "complete",
+        "failed"
+      ]
+    },
+    "started_utc": {
+      "type": "string"
+    },
+    "manifest_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "split_validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "queries",
+        "traces",
+        "physical_events",
+        "split_disjoint",
+        "independent_oracles",
+        "sha256"
+      ],
+      "properties": {
+        "queries": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "traces": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "physical_events": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "split_disjoint": {
+          "const": true
+        },
+        "independent_oracles": {
+          "const": "relational_and_SQLite"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "split_contract": {
+      "$ref": "ranking-trace-split-v1.schema.json#/$defs/split_contract"
+    },
+    "environment": {
+      "type": "object"
+    },
+    "build": {
+      "type": "object"
+    },
+    "configuration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "queries",
+        "modes",
+        "backends",
+        "candidate_limit",
+        "repetitions",
+        "warmups",
+        "native_memory_limit_bytes",
+        "command_timeout_seconds",
+        "max_total_raw_bytes",
+        "schedule_seed",
+        "cpu",
+        "codec",
+        "sink",
+        "observation",
+        "workload",
+        "slot_limit",
+        "require_exhausted_family"
+      ],
+      "properties": {
+        "queries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "modes": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "maintenance",
+              "snapshot",
+              "delta"
+            ]
+          }
+        },
+        "backends": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "reference_ordered_v1",
+              "indexed_chained_v1"
+            ]
+          }
+        },
+        "candidate_limit": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "repetitions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "warmups": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "native_memory_limit_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "command_timeout_seconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_total_raw_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "schedule_seed": {
+          "type": "integer"
+        },
+        "cpu": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "codec": {
+          "enum": [
+            "none",
+            "jsonl"
+          ]
+        },
+        "sink": {
+          "enum": [
+            "discard",
+            "file"
+          ]
+        },
+        "observation": {
+          "const": "counters"
+        },
+        "workload": {
+          "const": "counters"
+        },
+        "slot_limit": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "require_exhausted_family": {
+          "type": "boolean"
+        }
+      }
+    },
+    "correctness_gate": {
+      "enum": [
+        "pending",
+        "all_retained_candidates_and_all_splits_verified_before_warmup_or_measurement"
+      ]
+    },
+    "exports": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/export"
+      }
+    },
+    "verification": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "label",
+          "command",
+          "receipt_sha256",
+          "binding_sha256",
+          "passed"
+        ],
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "command": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "receipt_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "binding_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "passed": {
+            "const": true
+          }
+        }
+      }
+    },
+    "runs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/run"
+      }
+    },
+    "summaries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/summary"
+      }
+    },
+    "analysis": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/analysis"
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "C03",
+        "C04",
+        "C06"
+      ],
+      "properties": {
+        "C03": {
+          "const": "not_enabled_in_C05_baseline_evaluation"
+        },
+        "C04": {
+          "const": "not_enabled"
+        },
+        "C06": {
+          "const": "not_enabled"
+        }
+      }
+    },
+    "limits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "choices_frozen_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "calibration_frozen_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "calibration": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/calibration"
+      }
+    },
+    "completed_utc": {
+      "type": "string"
+    },
+    "commands_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "error": {
+      "type": "string"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "complete"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "choices_frozen_sha256",
+          "calibration_frozen_sha256",
+          "calibration",
+          "completed_utc",
+          "commands_sha256"
+        ],
+        "properties": {
+          "correctness_gate": {
+            "const": "all_retained_candidates_and_all_splits_verified_before_warmup_or_measurement"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "failed"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "error",
+          "completed_utc"
+        ]
+      }
+    }
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "C07 held-out baseline ranking evaluation packet v1",
+  "$defs": {
+    "ratio": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "numerator",
+        "denominator"
+      ],
+      "properties": {
+        "numerator": {
+          "type": "string",
+          "pattern": "^-?(0|[1-9][0-9]*)$"
+        },
+        "denominator": {
+          "type": "string",
+          "pattern": "^[1-9][0-9]*$"
+        }
+      }
+    },
+    "fit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "intercept",
+        "slope",
+        "design_rank",
+        "samples",
+        "status",
+        "calibration_squared_error",
+        "qualification"
+      ],
+      "properties": {
+        "algorithm": {
+          "const": "exact_nonnegative_affine_least_squares_v1"
+        },
+        "intercept": {
+          "$ref": "#/$defs/ratio"
+        },
+        "slope": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ratio"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "design_rank": {
+          "enum": [
+            1,
+            2
+          ]
+        },
+        "samples": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "status": {
+          "enum": [
+            "constant_proxy_intercept_only_slope_unidentified",
+            "nonnegative_affine_evaluation_assumption"
+          ]
+        },
+        "calibration_squared_error": {
+          "$ref": "#/$defs/ratio"
+        },
+        "qualification": {
+          "type": "string"
+        }
+      }
+    },
+    "costs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_active_ns_per_input",
+        "native_prepare_and_epoch_release_ns_per_input",
+        "native_peak_requested_bytes"
+      ],
+      "properties": {
+        "event_active_ns_per_input": {
+          "$ref": "#/$defs/ratio"
+        },
+        "native_prepare_and_epoch_release_ns_per_input": {
+          "$ref": "#/$defs/ratio"
+        },
+        "native_peak_requested_bytes": {
+          "$ref": "#/$defs/ratio"
+        }
+      }
+    },
+    "totals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_active_ns_total",
+        "native_prepare_and_epoch_release_ns_total",
+        "native_peak_requested_bytes"
+      ],
+      "properties": {
+        "event_active_ns_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "native_prepare_and_epoch_release_ns_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "native_peak_requested_bytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "regret": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "selected",
+        "selected_cost",
+        "best_measured_feasible_cost",
+        "best_measured_feasible",
+        "absolute_regret",
+        "relative_regret",
+        "relative_regret_availability",
+        "measured_feasible_candidates",
+        "scope"
+      ],
+      "properties": {
+        "selected": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "selected_cost": {
+          "$ref": "#/$defs/ratio"
+        },
+        "best_measured_feasible_cost": {
+          "$ref": "#/$defs/ratio"
+        },
+        "best_measured_feasible": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]*)$"
+          }
+        },
+        "absolute_regret": {
+          "$ref": "#/$defs/ratio"
+        },
+        "relative_regret": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ratio"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "relative_regret_availability": {
+          "enum": [
+            "available",
+            "zero_best_cost"
+          ]
+        },
+        "measured_feasible_candidates": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scope": {
+          "type": "string"
+        }
+      }
+    },
+    "errors": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mean_absolute_error",
+        "mean_signed_error",
+        "mean_squared_error",
+        "maximum_absolute_error",
+        "root_mean_squared_error",
+        "mean_absolute_relative_error",
+        "samples",
+        "relative_error_samples",
+        "zero_actual_excluded_from_relative_error"
+      ],
+      "properties": {
+        "mean_absolute_error": {
+          "$ref": "#/$defs/ratio"
+        },
+        "mean_signed_error": {
+          "$ref": "#/$defs/ratio"
+        },
+        "mean_squared_error": {
+          "$ref": "#/$defs/ratio"
+        },
+        "maximum_absolute_error": {
+          "$ref": "#/$defs/ratio"
+        },
+        "root_mean_squared_error": {
+          "type": "number",
+          "minimum": 0
+        },
+        "mean_absolute_relative_error": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ratio"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "samples": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "relative_error_samples": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "zero_actual_excluded_from_relative_error": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "ordering": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_pairs",
+        "concordant",
+        "discordant",
+        "proxy_ties",
+        "measured_cost_ties",
+        "concordance_among_non_ties",
+        "qualification"
+      ],
+      "properties": {
+        "candidate_pairs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "concordant": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "discordant": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "proxy_ties": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "measured_cost_ties": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "concordance_among_non_ties": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/ratio"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "qualification": {
+          "type": "string"
+        }
+      }
+    },
+    "objective": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "unit",
+        "runtime_regret",
+        "proxy_estimate_errors",
+        "proxy_ordering",
+        "held_out_predictions",
+        "calibration_fit",
+        "qualification"
+      ],
+      "properties": {
+        "unit": {
+          "enum": [
+            "nanoseconds_per_physical_input",
+            "native_query_account_requested_bytes"
+          ]
+        },
+        "runtime_regret": {
+          "$ref": "#/$defs/regret"
+        },
+        "proxy_estimate_errors": {
+          "$ref": "#/$defs/errors"
+        },
+        "proxy_ordering": {
+          "$ref": "#/$defs/ordering"
+        },
+        "held_out_predictions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "candidate",
+              "training_proxy",
+              "calibrated_prediction",
+              "actual_measured_cost"
+            ],
+            "properties": {
+              "candidate": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)$"
+              },
+              "training_proxy": {
+                "$ref": "#/$defs/ratio"
+              },
+              "calibrated_prediction": {
+                "$ref": "#/$defs/ratio"
+              },
+              "actual_measured_cost": {
+                "$ref": "#/$defs/ratio"
+              }
+            }
+          }
+        },
+        "calibration_fit": {
+          "$ref": "#/$defs/fit"
+        },
+        "qualification": {
+          "type": "string"
+        }
+      }
+    },
+    "analysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "query",
+        "backend",
+        "trace",
+        "scenario",
+        "mode",
+        "policy",
+        "native_choice_stop",
+        "search_quality",
+        "objectives",
+        "availability"
+      ],
+      "properties": {
+        "query": {
+          "type": "string"
+        },
+        "backend": {
+          "type": "string"
+        },
+        "trace": {
+          "type": "string"
+        },
+        "scenario": {
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "maintenance",
+            "snapshot",
+            "delta"
+          ]
+        },
+        "policy": {
+          "type": "string"
+        },
+        "native_choice_stop": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "search_quality": {
+          "$ref": "ranking-export-v1.schema.json#/$defs/search"
+        },
+        "objectives": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [],
+          "properties": {
+            "event_active_ns_per_input": {
+              "$ref": "#/$defs/objective"
+            },
+            "native_prepare_and_epoch_release_ns_per_input": {
+              "$ref": "#/$defs/objective"
+            },
+            "native_peak_requested_bytes": {
+              "$ref": "#/$defs/objective"
+            }
+          }
+        },
+        "availability": {
+          "enum": [
+            "measured",
+            "native_selection_unavailable"
+          ]
+        },
+        "selected_candidate": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)$"
+        },
+        "effective_policy": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "fallback_reasons": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "availability": {
+                "const": "measured"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "selected_candidate",
+              "effective_policy",
+              "fallback_reasons"
+            ],
+            "properties": {
+              "objectives": {
+                "required": [
+                  "event_active_ns_per_input",
+                  "native_prepare_and_epoch_release_ns_per_input",
+                  "native_peak_requested_bytes"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "calibration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "query",
+        "backend",
+        "mode",
+        "policy",
+        "objective",
+        "calibration_trace",
+        "fit",
+        "raw_pairs"
+      ],
+      "properties": {
+        "query": {
+          "type": "string"
+        },
+        "backend": {
+          "type": "string"
+        },
+        "mode": {
+          "type": "string"
+        },
+        "policy": {
+          "type": "string"
+        },
+        "objective": {
+          "enum": [
+            "event_active_ns_per_input",
+            "native_prepare_and_epoch_release_ns_per_input",
+            "native_peak_requested_bytes"
+          ]
+        },
+        "calibration_trace": {
+          "type": "string"
+        },
+        "fit": {
+          "$ref": "#/$defs/fit"
+        },
+        "raw_pairs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "candidate",
+              "training_proxy",
+              "calibration_cost"
+            ],
+            "properties": {
+              "candidate": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]*)$"
+              },
+              "training_proxy": {
+                "$ref": "#/$defs/ratio"
+              },
+              "calibration_cost": {
+                "$ref": "#/$defs/ratio"
+              }
+            }
+          }
+        }
+      }
+    },
+    "export": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "query",
+        "backend",
+        "command",
+        "raw_report",
+        "raw_report_sha256",
+        "search_quality",
+        "training",
+        "policies",
+        "setup_timings"
+      ],
+      "properties": {
+        "query": {
+          "type": "string"
+        },
+        "backend": {
+          "type": "string"
+        },
+        "command": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "raw_report": {
+          "type": "string"
+        },
+        "raw_report_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "search_quality": {
+          "$ref": "ranking-export-v1.schema.json#/$defs/search"
+        },
+        "training": {
+          "$ref": "ranking-export-v1.schema.json#/$defs/training"
+        },
+        "policies": {
+          "type": "array",
+          "items": {
+            "$ref": "ranking-export-v1.schema.json#/$defs/policy"
+          }
+        },
+        "setup_timings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "admission_ns",
+            "minimum_height_search_ns",
+            "candidate_enumeration_ns",
+            "basis_initialization_and_training_ns",
+            "evidence_and_selection_ns"
+          ],
+          "properties": {
+            "admission_ns": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "minimum_height_search_ns": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "candidate_enumeration_ns": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "basis_initialization_and_training_ns": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "evidence_and_selection_ns": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label",
+        "role",
+        "warmup",
+        "repetition",
+        "command",
+        "raw_report",
+        "raw_report_sha256",
+        "costs",
+        "totals"
+      ],
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "calibration",
+            "evaluation"
+          ]
+        },
+        "warmup": {
+          "type": "boolean"
+        },
+        "repetition": {
+          "type": "integer",
+          "minimum": -5,
+          "maximum": 29
+        },
+        "command": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "raw_report": {
+          "type": "string"
+        },
+        "raw_report_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "costs": {
+          "$ref": "#/$defs/costs"
+        },
+        "totals": {
+          "$ref": "#/$defs/totals"
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label",
+        "measured_runs",
+        "mean_costs",
+        "run_distributions"
+      ],
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "measured_runs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mean_costs": {
+          "$ref": "#/$defs/costs"
+        },
+        "run_distributions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "event_active_ns_total",
+            "native_prepare_and_epoch_release_ns_total",
+            "native_peak_requested_bytes"
+          ],
+          "properties": {
+            "event_active_ns_total": {
+              "$ref": "measurement-experiment-v1.schema.json#/$defs/distribution"
+            },
+            "native_prepare_and_epoch_release_ns_total": {
+              "$ref": "measurement-experiment-v1.schema.json#/$defs/distribution"
+            },
+            "native_peak_requested_bytes": {
+              "$ref": "measurement-experiment-v1.schema.json#/$defs/distribution"
+            }
+          }
+        }
+      }
+    }
+  }
+}

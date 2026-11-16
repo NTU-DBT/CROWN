@@ -1,0 +1,7 @@
+{"catalog_version":1,"operation":"insert","schema_version":1,"sequence":1,"source_position":{"offset":1,"source":"b02-repeated_variable-insert_only"},"source_schema_version":1,"table":"r0","values":[0,0]}
+{"catalog_version":1,"operation":"insert","schema_version":1,"sequence":2,"source_position":{"offset":2,"source":"b02-repeated_variable-insert_only"},"source_schema_version":1,"table":"r1","values":[0,7]}
+{"catalog_version":1,"operation":"insert","schema_version":1,"sequence":3,"source_position":{"offset":3,"source":"b02-repeated_variable-insert_only"},"source_schema_version":1,"table":"r0","values":[1,1]}
+{"catalog_version":1,"operation":"insert","schema_version":1,"sequence":4,"source_position":{"offset":4,"source":"b02-repeated_variable-insert_only"},"source_schema_version":1,"table":"r1","values":[1,8]}
+{"catalog_version":1,"operation":"insert","schema_version":1,"sequence":5,"source_position":{"offset":5,"source":"b02-repeated_variable-insert_only"},"source_schema_version":1,"table":"r0","values":[2,2]}
+{"catalog_version":1,"operation":"insert","schema_version":1,"sequence":6,"source_position":{"offset":6,"source":"b02-repeated_variable-insert_only"},"source_schema_version":1,"table":"r1","values":[2,9]}
+{"catalog_version":1,"operation":"insert","schema_version":1,"sequence":7,"source_position":{"offset":7,"source":"b02-repeated_variable-insert_only"},"source_schema_version":1,"table":"r0","values":[1001,1002]}

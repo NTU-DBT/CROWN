@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.25)
+project(crown_workload_measurement_example LANGUAGES CXX)
+find_package(Crown 0.1 CONFIG REQUIRED)
+add_executable(crown_measure_workload main.cpp)
+set_target_properties(crown_measure_workload PROPERTIES CXX_EXTENSIONS OFF)
+target_link_libraries(crown_measure_workload PRIVATE CROWN::runtime)
+target_compile_options(crown_measure_workload PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror)

@@ -1,0 +1,13 @@
+order_after_131	name	target_or_wrapper	runtime_variant	timeout_seconds
+1	ranking_binding	crown_ranking_binding_test	none	900
+2	ranking_pure_link	crown_ranking_pure_link_test	none	900
+3	ranking_contract	crown_ranking_contract_test	production_bridge	900
+4	ranking_empty	crown_ranking_empty_test	production_bridge	900
+5	ranking_payload_time	crown_ranking_payload_time_test	production_bridge	900
+6	ranking_census	crown_ranking_census_test	testing_bridge	900
+7	ranking_exceptions	crown_ranking_exceptions_test	production_bridge	3600
+8	ranking_normalized_exceptions	crown_ranking_normalized_exceptions_test	production_bridge	3600
+9	ranking_public_independent	crown_ranking_public_independent_test REPOSITORY_ROOT	production_bridge	900
+10	ranking_integer_independent	crown_ranking_integer_independent_test	none	900
+11	json_cleanup	crown_json_cleanup_test --cleanup	none	300
+12	json_patch_compatibility	tools/verify_json_cleanup.py --original upstream-control --patched patched-probe	none	300

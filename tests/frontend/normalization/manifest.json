@@ -1,0 +1,281 @@
+{
+  "schema_version": 1,
+  "catalog": "catalog.json",
+  "data": "data.json",
+  "success_cases": [
+    {
+      "name": "composite_on_equality",
+      "sql": "cases/composite_on.sql",
+      "expected": {
+        "occurrences": [{"table": "a", "alias": "a"}, {"table": "b", "alias": "b"}],
+        "core_atom_count": 2,
+        "output_names": ["id"],
+        "rows": [[1], [2], [4]],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "using_composite_expansion",
+      "sql": "cases/using_composite.sql",
+      "expected": {
+        "occurrences": [{"table": "a", "alias": "a"}, {"table": "b", "alias": "b"}],
+        "core_atom_count": 2,
+        "output_names": ["id", "group_id", "label", "payload", "day", "amount"],
+        "rows": [
+          [1, 10, "alpha", "one", {"date": "2024-01-02"}, {"decimal": "12.30"}],
+          [2, 10, "beta", "two", {"date": "2024-01-03"}, {"decimal": "5.00"}],
+          [4, 30, "gamma", "four", {"date": "2024-02-29"}, {"decimal": "7.25"}]
+        ],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "natural_join_expansion",
+      "sql": "cases/natural_composite.sql",
+      "expected": {
+        "occurrences": [{"table": "a", "alias": "a"}, {"table": "b", "alias": "b"}],
+        "core_atom_count": 2,
+        "output_names": ["id", "group_id", "label", "payload", "day", "amount"],
+        "rows": [
+          [1, 10, "alpha", "one", {"date": "2024-01-02"}, {"decimal": "12.30"}],
+          [2, 10, "beta", "two", {"date": "2024-01-03"}, {"decimal": "5.00"}],
+          [4, 30, "gamma", "four", {"date": "2024-02-29"}, {"decimal": "7.25"}]
+        ],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "repeated_local_equality_classes",
+      "sql": "cases/repeated_local_equality.sql",
+      "expected": {
+        "occurrences": [{"table": "triple", "alias": "t"}],
+        "core_atom_count": 1,
+        "equal_column_pairs": [[1, 2], [1, 3]],
+        "output_names": ["id"],
+        "rows": [[10], [12]],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "local_or_and_not_filters",
+      "sql": "cases/local_or_not.sql",
+      "expected": {
+        "occurrences": [{"table": "a", "alias": "a"}],
+        "core_atom_count": 1,
+        "output_names": ["id"],
+        "rows": [[1], [2], [3]],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "nullable_parameter_or_three_valued_logic",
+      "sql": "cases/null_parameter_or.sql",
+      "parameter_types": "parameters/int64_nullable.json",
+      "parameter_values": "parameters/values_null.json",
+      "parameter_values_raw": [null],
+      "expected_parameter_values": [null],
+      "expected": {
+        "occurrences": [{"table": "a", "alias": "a"}],
+        "core_atom_count": 1,
+        "output_names": ["id"],
+        "rows": [[2], [3]],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "nullable_parameter_not_unknown",
+      "sql": "cases/null_parameter_not.sql",
+      "parameter_types": "parameters/int64_nullable.json",
+      "parameter_values": "parameters/values_null.json",
+      "parameter_values_raw": [null],
+      "expected_parameter_values": [null],
+      "expected": {
+        "occurrences": [{"table": "a", "alias": "a"}],
+        "core_atom_count": 1,
+        "output_names": ["id"],
+        "rows": [],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "self_join_keeps_occurrence_routes",
+      "sql": "cases/self_join_routes.sql",
+      "expected": {
+        "occurrences": [{"table": "a", "alias": "l"}, {"table": "a", "alias": "r"}],
+        "core_atom_count": 2,
+        "output_names": ["id", "label"],
+        "rows": [[1, "beta"]],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "hidden_join_alias_can_be_reused_outside_scope",
+      "sql": "cases/hidden_join_alias_reuse.sql",
+      "expected": {
+        "occurrences": [
+          {"table": "a", "alias": "x"},
+          {"table": "b", "alias": "y"},
+          {"table": "a", "alias": "x"}
+        ],
+        "core_atom_count": 3,
+        "output_names": ["k", "label"],
+        "rows": [[1, "alpha"], [2, "beta"], [4, "gamma"]]
+      }
+    },
+    {
+      "name": "contained_and_repeated_mutable_scopes",
+      "sql": "cases/contained_repeated_scopes.sql",
+      "expected": {
+        "occurrences": [
+          {"table": "a", "alias": "a"},
+          {"table": "gateleft", "alias": "l"},
+          {"table": "gateright", "alias": "r"}
+        ],
+        "core_atom_count": 3,
+        "output_names": ["id"],
+        "rows": [[1], [2]],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "constant_contradiction",
+      "sql": "cases/constant_contradiction.sql",
+      "expected": {
+        "occurrences": [{"table": "a", "alias": "a"}],
+        "core_atom_count": 1,
+        "contradiction": true,
+        "output_names": ["id"],
+        "rows": [],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "constant_and_repeated_outputs",
+      "sql": "cases/constants_repeated_outputs.sql",
+      "expected": {
+        "occurrences": [{"table": "a", "alias": "a"}],
+        "core_atom_count": 1,
+        "output_names": ["marker", "first_id", "again_id"],
+        "rows": [[7, 1, 1], [7, 2, 2]],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "physical_rows_project_to_duplicate_core_tuples",
+      "sql": "cases/physical_projection_duplicates.sql",
+      "expected": {
+        "occurrences": [{"table": "versioned", "alias": "v"}],
+        "core_atom_count": 1,
+        "null_class_columns": [[1]],
+        "output_names": ["id"],
+        "rows": [[1], [2]],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "typed_date_and_decimal_parameters",
+      "sql": "cases/date_decimal_parameters.sql",
+      "parameter_types": "parameters/date_decimal.json",
+      "parameter_values": "parameters/values_date_decimal.json",
+      "parameter_values_raw": [{"date": "2024-01-03"}, {"decimal": "5.00"}],
+      "expected_parameter_values": [{"date": "2024-01-03"}, {"decimal": "5"}],
+      "expected": {
+        "occurrences": [{"table": "b", "alias": "b"}],
+        "core_atom_count": 1,
+        "output_names": ["id"],
+        "rows": [[2]],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "no_from_nullary_constant",
+      "sql": "cases/no_from_nullary.sql",
+      "expected": {
+        "occurrences": [],
+        "core_atom_count": 0,
+        "output_names": ["one"],
+        "rows": [[1]],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "exists_wrapper_over_nullary_core",
+      "sql": "cases/exists_true.sql",
+      "expected": {
+        "occurrences": [{"table": "a", "alias": "a"}],
+        "core_atom_count": 1,
+        "requested_semantics": "bag",
+        "output_names": ["found"],
+        "rows": [[true]],
+        "exists": true,
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "exists_false_for_empty_core",
+      "sql": "cases/exists_false.sql",
+      "expected": {
+        "occurrences": [{"table": "a", "alias": "a"}],
+        "core_atom_count": 1,
+        "requested_semantics": "bag",
+        "output_names": ["found"],
+        "rows": [[false]],
+        "exists": false,
+        "sqlite_oracle": true
+      }
+    }
+  ],
+  "failure_cases": [
+    {
+      "name": "plain_bag_select_is_rejected",
+      "sql": "cases/plain_bag_rejected.sql",
+      "phase": "normalization",
+      "code": "unsupported_semantics"
+    },
+    {
+      "name": "cross_relation_theta_predicate_is_rejected",
+      "sql": "cases/cross_relation_theta_rejected.sql",
+      "phase": "normalization",
+      "code": "unsupported_cross_relation_predicate"
+    },
+    {
+      "name": "cross_relation_or_predicate_is_rejected",
+      "sql": "cases/cross_relation_or_rejected.sql",
+      "phase": "normalization",
+      "code": "unsupported_cross_relation_predicate"
+    },
+    {
+      "name": "nullable_source_relation_is_rejected",
+      "sql": "cases/nullable_source_rejected.sql",
+      "phase": "normalization",
+      "code": "unsupported_nullable_input"
+    },
+    {
+      "name": "unbound_parameter_value_is_rejected",
+      "sql": "cases/unbound_parameter_rejected.sql",
+      "parameter_types": "parameters/int64.json",
+      "phase": "parameters",
+      "code": "unbound_parameter"
+    },
+    {
+      "name": "parameter_type_mismatch_is_rejected",
+      "sql": "cases/invalid_parameter_rejected.sql",
+      "parameter_types": "parameters/int64.json",
+      "parameter_values": "parameters/values_string.json",
+      "phase": "parameters",
+      "code": "invalid_parameter"
+    },
+    {
+      "name": "null_row_output_is_rejected",
+      "sql": "cases/null_output_rejected.sql",
+      "phase": "normalization",
+      "code": "unsupported_null_output"
+    }
+  ],
+  "cli_error_cases": [
+    {"name": "normalize_usage", "args": [], "code": "usage"},
+    {"name": "normalize_missing_sql", "args": ["MISSING_SQL", "CATALOG"], "code": "io_error"},
+    {"name": "normalize_missing_catalog", "args": ["cases/no_from_nullary.sql", "MISSING_CATALOG"], "code": "io_error"},
+    {"name": "normalize_malformed_values_document", "args": ["cases/date_decimal_parameters.sql", "CATALOG", "parameters/date_decimal.json", "parameters/invalid_values.json"], "code": "invalid_document"}
+  ]
+}

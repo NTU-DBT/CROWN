@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "catalog_version": 1,
+  "semantics": "set",
+  "root": "g",
+  "nodes": [
+    {"id": "g", "kind": "generalized", "scope": ["c"], "children": ["edge0_node", "edge1_node", "edge2_node"]},
+    {"id": "edge0_node", "kind": "native", "scope": ["c", "leaf0"], "children": [], "occurrence": "edge0"},
+    {"id": "edge1_node", "kind": "native", "scope": ["c", "leaf1"], "children": [], "occurrence": "edge1"},
+    {"id": "edge2_node", "kind": "native", "scope": ["c", "leaf2"], "children": [], "occurrence": "edge2"}
+  ]
+}

@@ -1,0 +1,510 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN residual trace, candidate and owned-search reports",
+  "description": "A residual trace is audit evidence for the frozen reduction only. A candidate is a checked upper bound only. Progress carries an original-query lower/upper interval; nested exact diagnostics are explicitly scope-qualified, and only a completed exact-original result carries a height certificate.",
+  "oneOf": [
+    { "$ref": "#/$defs/trace" },
+    { "$ref": "#/$defs/candidate" },
+    { "$ref": "#/$defs/progress" }
+  ],
+  "$defs": {
+    "uint64": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "index_array": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/uint64" },
+      "uniqueItems": true
+    },
+    "optional_index": {
+      "oneOf": [
+        { "$ref": "#/$defs/uint64" },
+        { "type": "null" }
+      ]
+    },
+    "query_binding": {
+      "oneOf": [
+        { "$ref": "cq-v1.schema.json" },
+        { "$ref": "cq-v2.schema.json" },
+        { "$ref": "cq-v3.schema.json" }
+      ]
+    },
+    "counters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attempted",
+        "committed_transitions",
+        "allocation_failures",
+        "active_nanoseconds",
+        "current_depth",
+        "peak_depth"
+      ],
+      "properties": {
+        "attempted": { "$ref": "#/$defs/uint64" },
+        "committed_transitions": { "$ref": "#/$defs/uint64" },
+        "allocation_failures": { "$ref": "#/$defs/uint64" },
+        "active_nanoseconds": { "$ref": "#/$defs/uint64" },
+        "current_depth": { "$ref": "#/$defs/uint64" },
+        "peak_depth": { "$ref": "#/$defs/uint64" }
+      }
+    },
+    "phase_limit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["work", "active_nanoseconds"],
+      "properties": {
+        "work": { "$ref": "#/$defs/optional_index" },
+        "active_nanoseconds": { "$ref": "#/$defs/optional_index" }
+      }
+    },
+    "scalar_type": {
+      "enum": ["int64", "string", "bool", "date", "decimal"]
+    },
+    "scalar_value": {
+      "oneOf": [
+        { "type": "integer", "minimum": -9223372036854775808, "maximum": 9223372036854775807 },
+        { "type": "string" },
+        { "type": "boolean" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["date"],
+          "properties": { "date": { "type": "string", "format": "date" } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["decimal"],
+          "properties": { "decimal": { "type": "string", "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$" } }
+        }
+      ]
+    },
+    "dense_query": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["variables", "atoms", "head", "contradiction"],
+      "properties": {
+        "variables": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "type"],
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "type": { "$ref": "#/$defs/scalar_type" }
+            }
+          }
+        },
+        "atoms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "table", "terms"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "table": { "type": "string", "minLength": 1 },
+              "terms": {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["var"],
+                      "properties": { "var": { "type": "string", "minLength": 1 } }
+                    },
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["const"],
+                      "properties": { "const": { "$ref": "#/$defs/scalar_value" } }
+                    },
+                    {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["ignore"],
+                      "properties": { "ignore": { "const": true }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "head": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["var", "alias"],
+            "properties": {
+              "var": { "type": "string", "minLength": 1 },
+              "alias": { "type": "string" }
+            }
+          }
+        },
+        "contradiction": { "type": "boolean" }
+      }
+    },
+    "trace_anchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["occurrence", "condition"],
+      "properties": {
+        "occurrence": { "$ref": "#/$defs/uint64" },
+        "condition": { "enum": ["first", "second", "both"] }
+      }
+    },
+    "ear": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["occurrence", "shared", "unique", "anchors"],
+      "properties": {
+        "occurrence": { "$ref": "#/$defs/uint64" },
+        "shared": { "$ref": "#/$defs/index_array" },
+        "unique": { "$ref": "#/$defs/index_array" },
+        "anchors": { "type": "array", "items": { "$ref": "#/$defs/trace_anchor" } }
+      }
+    },
+    "deletion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["occurrence", "anchor_occurrence"],
+      "properties": {
+        "occurrence": { "$ref": "#/$defs/uint64" },
+        "anchor_occurrence": { "$ref": "#/$defs/uint64" }
+      }
+    },
+    "layer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["members", "variables", "head", "unique", "ears", "deletions", "remaining", "residual_head"],
+      "properties": {
+        "members": { "$ref": "#/$defs/index_array" },
+        "variables": { "$ref": "#/$defs/index_array" },
+        "head": { "$ref": "#/$defs/index_array" },
+        "unique": { "$ref": "#/$defs/index_array" },
+        "ears": { "type": "array", "items": { "$ref": "#/$defs/ear" } },
+        "deletions": { "type": "array", "items": { "$ref": "#/$defs/deletion" } },
+        "remaining": { "$ref": "#/$defs/index_array" },
+        "residual_head": { "$ref": "#/$defs/index_array" }
+      }
+    },
+    "terminal_view": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["original_occurrences", "original_variables", "occurrence_to_local", "variable_to_local", "query"],
+      "properties": {
+        "original_occurrences": { "$ref": "#/$defs/index_array" },
+        "original_variables": { "$ref": "#/$defs/index_array" },
+        "occurrence_to_local": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/optional_index" }
+        },
+        "variable_to_local": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/optional_index" }
+        },
+        "query": { "$ref": "#/$defs/dense_query" }
+      }
+    },
+    "trace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version", "artifact", "accounting", "query_binding", "audit_scope", "trace_verified", "trace_version",
+        "original_scopes", "layers", "terminal_members", "terminal_head", "terminal", "terminal_view"
+      ],
+      "properties": {
+        "schema_version": { "type": "integer", "const": 1 },
+        "artifact": { "const": "residual_trace" },
+        "accounting": { "const": "continuation_v1" },
+        "query_binding": { "$ref": "#/$defs/query_binding" },
+        "audit_scope": { "const": "frozen_residual_trace_only" },
+        "trace_verified": { "const": true },
+        "trace_version": { "type": "integer", "const": 1 },
+        "original_scopes": { "type": "array", "items": { "$ref": "#/$defs/index_array" } },
+        "layers": { "type": "array", "items": { "$ref": "#/$defs/layer" } },
+        "terminal_members": { "$ref": "#/$defs/index_array" },
+        "terminal_head": { "$ref": "#/$defs/index_array" },
+        "terminal": { "enum": ["empty_body", "hierarchical", "stalled"] },
+        "terminal_view": { "$ref": "#/$defs/terminal_view" }
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version", "artifact", "accounting", "query_binding", "proof_status", "height_status",
+        "height_upper_bound", "origin", "tree", "certificate"
+      ],
+      "properties": {
+        "schema_version": { "type": "integer", "const": 1 },
+        "artifact": { "const": "residual_candidate" },
+        "accounting": { "const": "continuation_v1" },
+        "query_binding": { "$ref": "#/$defs/query_binding" },
+        "proof_status": { "const": "checked_upper_only" },
+        "height_status": { "const": "valid_upper_bound" },
+        "height_upper_bound": { "$ref": "#/$defs/uint64" },
+        "origin": {
+          "enum": ["hierarchy_seed", "native_leaf", "generalized_leaf", "generalized_graft", "exact_repair", "exact_original"]
+        },
+        "tree": { "$ref": "tree-v1.schema.json" },
+        "certificate": { "type": "null" }
+      }
+    },
+    "residual_statistics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hierarchy_tests", "rounds", "eligibility_pairs", "deletions", "restorations", "drafts",
+        "rejected_drafts", "generalized_grafts", "exact_repairs", "original_exact_runs", "candidate_publications", "admissions"
+      ],
+      "properties": {
+        "hierarchy_tests": { "$ref": "#/$defs/uint64" },
+        "rounds": { "$ref": "#/$defs/uint64" },
+        "eligibility_pairs": { "$ref": "#/$defs/uint64" },
+        "deletions": { "$ref": "#/$defs/uint64" },
+        "restorations": { "$ref": "#/$defs/uint64" },
+        "drafts": { "$ref": "#/$defs/uint64" },
+        "rejected_drafts": { "$ref": "#/$defs/uint64" },
+        "generalized_grafts": { "$ref": "#/$defs/uint64" },
+        "exact_repairs": { "$ref": "#/$defs/uint64" },
+        "original_exact_runs": { "$ref": "#/$defs/uint64" },
+        "candidate_publications": { "$ref": "#/$defs/uint64" },
+        "admissions": { "$ref": "#/$defs/uint64" }
+      }
+    },
+    "exact_statistics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "work", "states", "partitions", "candidates", "cache_hits", "certificate_work", "hierarchy_tests",
+        "hierarchy_hits", "singleton_hits", "empty_body_hits", "component_splits", "symmetry_skips", "bound_prunes"
+      ],
+      "properties": {
+        "work": { "$ref": "#/$defs/uint64" },
+        "states": { "$ref": "#/$defs/uint64" },
+        "partitions": { "$ref": "#/$defs/uint64" },
+        "candidates": { "$ref": "#/$defs/uint64" },
+        "cache_hits": { "$ref": "#/$defs/uint64" },
+        "certificate_work": { "$ref": "#/$defs/uint64" },
+        "hierarchy_tests": { "$ref": "#/$defs/uint64" },
+        "hierarchy_hits": { "$ref": "#/$defs/uint64" },
+        "singleton_hits": { "$ref": "#/$defs/uint64" },
+        "empty_body_hits": { "$ref": "#/$defs/uint64" },
+        "component_splits": { "$ref": "#/$defs/uint64" },
+        "symmetry_skips": { "$ref": "#/$defs/uint64" },
+        "bound_prunes": { "$ref": "#/$defs/uint64" }
+      }
+    },
+    "exact_diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope_original", "phase", "stop_reason", "result_kind", "height_lower_bound", "height_upper_bound",
+        "lower_evidence", "infeasible", "producer_complete", "proof_complete", "producer", "replay", "structural", "limit_revision"
+      ],
+      "properties": {
+        "scope_original": { "type": "boolean" },
+        "phase": {
+          "enum": ["admitted", "preprocess", "search", "build_incumbent", "validate_incumbent", "export_proof", "replay", "complete", "failed", "cancelled", "moved_from"]
+        },
+        "stop_reason": {
+          "enum": ["none", "quantum_work", "quantum_time", "total_work", "total_time", "depth_limit", "allocation_failure", "counter_overflow", "invalid_quantum", "invalid_certificate", "internal_failure", "complete", "cancelled", "moved_from"]
+        },
+        "result_kind": { "enum": ["unfinished", "verified_optimum", "verified_infeasible", "failed"] },
+        "height_lower_bound": { "$ref": "#/$defs/optional_index" },
+        "height_upper_bound": { "$ref": "#/$defs/optional_index" },
+        "lower_evidence": { "enum": ["universal", "independently_checked"] },
+        "infeasible": { "type": "boolean" },
+        "producer_complete": { "type": "boolean" },
+        "proof_complete": { "type": "boolean" },
+        "producer": { "$ref": "#/$defs/counters" },
+        "replay": { "$ref": "#/$defs/counters" },
+        "structural": { "$ref": "#/$defs/exact_statistics" },
+        "limit_revision": { "$ref": "#/$defs/uint64" }
+      }
+    },
+    "residual_limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["residual", "logical_depth", "record_limit", "cell_limit", "exact"],
+      "properties": {
+        "residual": { "$ref": "#/$defs/phase_limit" },
+        "logical_depth": { "$ref": "#/$defs/optional_index" },
+        "record_limit": { "$ref": "#/$defs/optional_index" },
+        "cell_limit": { "$ref": "#/$defs/optional_index" },
+        "exact": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["producer", "replay", "logical_depth"],
+          "properties": {
+            "producer": { "$ref": "#/$defs/phase_limit" },
+            "replay": { "$ref": "#/$defs/phase_limit" },
+            "logical_depth": { "$ref": "#/$defs/optional_index" }
+          }
+        }
+      }
+    },
+    "progress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version", "artifact", "accounting", "query_binding", "mode", "phase", "stop_reason", "exact_stop_reason",
+        "result", "proof_status", "height_lower_bound", "height_upper_bound", "lower_evidence", "infeasible", "trace_complete",
+        "trace_verified", "exact_scope_original", "work", "statistics", "records", "cells", "limit_revision", "limits",
+        "exact_diagnostic", "trace", "candidate", "certificate"
+      ],
+      "properties": {
+        "schema_version": { "type": "integer", "const": 1 },
+        "artifact": { "const": "residual_search_progress" },
+        "accounting": { "const": "continuation_v1" },
+        "query_binding": { "$ref": "#/$defs/query_binding" },
+        "mode": { "enum": ["candidates_with_exact_repair", "require_exact_original"] },
+        "phase": {
+          "enum": ["admitted", "scopes", "recognize", "eligibility", "delete_ears", "seal_layer", "trace_replay", "seed", "restore", "validate_candidate", "repair", "exact_original", "complete", "failed", "cancelled", "moved_from"]
+        },
+        "stop_reason": {
+          "enum": ["none", "quantum_work", "quantum_time", "total_work", "total_time", "depth_limit", "record_limit", "cell_limit", "exact_limit", "allocation_failure", "counter_overflow", "invalid_quantum", "invalid_trace", "internal_failure", "complete", "cancelled", "moved_from"]
+        },
+        "exact_stop_reason": {
+          "enum": ["none", "quantum_work", "quantum_time", "total_work", "total_time", "depth_limit", "allocation_failure", "counter_overflow", "invalid_quantum", "invalid_certificate", "internal_failure", "complete", "cancelled", "moved_from"]
+        },
+        "result": { "enum": ["unfinished", "checked_candidate", "verified_optimum", "verified_infeasible", "failed"] },
+        "proof_status": { "enum": ["none", "trace_verified", "checked_upper_only", "exact_original_verified"] },
+        "height_lower_bound": { "$ref": "#/$defs/optional_index" },
+        "height_upper_bound": { "$ref": "#/$defs/optional_index" },
+        "lower_evidence": { "enum": ["universal", "independently_checked"] },
+        "infeasible": { "type": "boolean" },
+        "trace_complete": { "type": "boolean" },
+        "trace_verified": { "type": "boolean" },
+        "exact_scope_original": { "type": "boolean" },
+        "work": { "$ref": "#/$defs/counters" },
+        "statistics": { "$ref": "#/$defs/residual_statistics" },
+        "records": { "$ref": "#/$defs/uint64" },
+        "cells": { "$ref": "#/$defs/uint64" },
+        "limit_revision": { "$ref": "#/$defs/uint64" },
+        "limits": { "$ref": "#/$defs/residual_limits" },
+        "exact_diagnostic": { "$ref": "#/$defs/exact_diagnostic" },
+        "trace": {
+          "oneOf": [
+            { "$ref": "#/$defs/trace" },
+            { "type": "null" }
+          ]
+        },
+        "candidate": {
+          "oneOf": [
+            { "$ref": "#/$defs/candidate" },
+            { "type": "null" }
+          ]
+        },
+        "certificate": {
+          "oneOf": [
+            { "$ref": "height-certificate-v1.schema.json" },
+            { "$ref": "height-certificate-v2.schema.json" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "trace_verified": { "const": true } }, "required": ["trace_verified"] },
+          "then": { "properties": { "trace": { "$ref": "#/$defs/trace" } } }
+        },
+        {
+          "if": { "properties": { "trace_verified": { "const": false } }, "required": ["trace_verified"] },
+          "then": { "properties": { "trace": { "type": "null" } } }
+        },
+        {
+          "if": { "properties": { "proof_status": { "const": "none" } }, "required": ["proof_status"] },
+          "then": {
+            "properties": {
+              "trace_verified": { "const": false },
+              "candidate": { "type": "null" },
+              "certificate": { "type": "null" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "proof_status": { "const": "trace_verified" } }, "required": ["proof_status"] },
+          "then": {
+            "properties": {
+              "trace_verified": { "const": true },
+              "candidate": { "type": "null" },
+              "certificate": { "type": "null" },
+              "lower_evidence": { "const": "universal" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "proof_status": { "const": "checked_upper_only" } }, "required": ["proof_status"] },
+          "then": {
+            "properties": {
+              "candidate": { "$ref": "#/$defs/candidate" },
+              "height_upper_bound": { "$ref": "#/$defs/uint64" },
+              "lower_evidence": { "const": "universal" },
+              "infeasible": { "const": false },
+              "certificate": { "type": "null" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "proof_status": { "const": "exact_original_verified" } }, "required": ["proof_status"] },
+          "then": {
+            "properties": {
+              "phase": { "const": "complete" },
+              "result": { "enum": ["verified_optimum", "verified_infeasible"] },
+              "exact_scope_original": { "const": true },
+              "exact_diagnostic": { "properties": { "scope_original": { "const": true } } },
+              "lower_evidence": { "const": "independently_checked" },
+              "certificate": {
+                "oneOf": [
+                  { "$ref": "height-certificate-v1.schema.json" },
+                  { "$ref": "height-certificate-v2.schema.json" }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "result": { "const": "verified_optimum" } }, "required": ["result"] },
+          "then": {
+            "properties": {
+              "proof_status": { "const": "exact_original_verified" },
+              "height_lower_bound": { "$ref": "#/$defs/uint64" },
+              "height_upper_bound": { "$ref": "#/$defs/uint64" },
+              "infeasible": { "const": false }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "result": { "const": "verified_infeasible" } }, "required": ["result"] },
+          "then": {
+            "properties": {
+              "proof_status": { "const": "exact_original_verified" },
+              "height_lower_bound": { "type": "null" },
+              "height_upper_bound": { "type": "null" },
+              "infeasible": { "const": true }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "result": { "const": "checked_candidate" } }, "required": ["result"] },
+          "then": {
+            "properties": {
+              "proof_status": { "const": "checked_upper_only" },
+              "phase": { "const": "complete" }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "catalog": {
+    "tables": [
+      {
+        "columns": [
+          {
+            "collation": "binary",
+            "name": "c0",
+            "nullable": false,
+            "type": "string"
+          },
+          {
+            "collation": "binary",
+            "name": "c1",
+            "nullable": false,
+            "type": "string"
+          },
+          {
+            "collation": "binary",
+            "name": "c2",
+            "nullable": false,
+            "type": "string"
+          }
+        ],
+        "constraints": [],
+        "key_hints": [],
+        "name": "r0",
+        "source_schema_version": 1,
+        "statistics": {
+          "distinct_counts": []
+        }
+      }
+    ],
+    "version": 1
+  },
+  "schema_version": 1
+}

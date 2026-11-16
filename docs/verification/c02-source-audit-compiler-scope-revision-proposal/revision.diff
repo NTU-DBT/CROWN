@@ -1,0 +1,58 @@
+--- frozen-source-auditor
++++ compiler-scope-revision
+@@ -138,9 +138,11 @@
+     closing=m.get('closing_source_guard',{});need(closing.get('status')=='audited_pass' and closing.get('native')==NATIVE and closing.get('execution')==EXECUTION and closing.get('metadata')==f.get('metadata'),'matrix final source guard absent or wrong')
+     expected_units={(x['target'],x['source']) for x in freeze['expected_compile_units']};need(len(expected_units)==214,'freeze compile unit identities are not unique214')
+     need(f.get('expected_compile_units')==freeze['expected_compile_units'],'matrix freeze compile identities differ')
+-    mandatory={}
++    mandatory={};mandatory_aliases={}
+     def mandatory_pin(path,digest):
+-        key=Path(path).resolve();need(key not in mandatory or mandatory[key]==digest,'mandatory external pin collision');mandatory[key]=digest
++        key=resolve(path).resolve()
++        require(key not in mandatory or mandatory[key]==digest,'mandatory tool pin alias collision: '+str(key))
++        mandatory[key]=digest;mandatory_aliases.setdefault(key,set()).add(str(path))
+     for p,h in freeze['root_execution_helpers'].items():mandatory_pin(p,h)
+     for cache in freeze['predecessor_toolchain_caches'].values():
+         for p,h in cache['compiler_files'].items():mandatory_pin(p,h)
+@@ -151,18 +153,28 @@
+     for p,h in declared.items():
+         key=Path(p);require(key.is_absolute() and key.resolve()==key and not key.is_relative_to(ROOT),'external whitelist path is not canonical/external')
+         require(re.fullmatch(r'[0-9a-f]{64}',h) is not None,'external whitelist hash malformed');allowed[key]=h
+-    for p,h in mandatory.items():need(allowed.get(p)==h,'mandatory external pin missing or overridden: '+str(p))
+-    raw=m.get('read_evidence_sha256',{});need(isinstance(raw,dict) and bool(raw),'matrix raw evidence pins absent')
+-    external={};bad=[]
++    for p,h in mandatory.items():
++        if not p.is_relative_to(ROOT):need(allowed.get(p)==h,'mandatory external pin missing or overridden: '+str(p))
++    raw=m.get('read_evidence_sha256',{});require(isinstance(raw,dict) and bool(raw),'matrix raw evidence pins absent')
++    canonical_raw={};raw_aliases={};external={};bad=[]
+     for rel,h in raw.items():
+         p=resolve(rel).resolve()
++        require(p not in canonical_raw or canonical_raw[p]==h,'canonical raw pin alias collision: '+str(p))
++        canonical_raw[p]=h;raw_aliases.setdefault(p,set()).add(rel)
+         if not p.is_relative_to(ROOT):
+-            need(str(p) not in external or external[str(p)]==h,'external raw pin alias collision')
+             external[str(p)]=h
+             if allowed.get(p)!=h:bad.append(rel);continue
+         if not p.is_file() or sha(p)!=h:bad.append(rel)
+     need(not bad,'matrix raw evidence changed/unscoped: '+str(bad))
+     need(external=={str(p):h for p,h in allowed.items()},'external whitelist is not the exact observed canonical pin inventory')
++    mandatory_tools=[]
++    for p,h in sorted(mandatory.items(),key=lambda item:str(item[0])):
++        scope='repository_internal' if p.is_relative_to(ROOT) else 'external'
++        need(canonical_raw.get(p)==h,'mandatory '+scope+' tool absent or overridden in canonical raw pins: '+str(p))
++        need(p.is_file() and sha(p)==h,'mandatory '+scope+' tool FILE changed: '+str(p))
++        mandatory_tools.append({'path':str(p),'sha256':h,'scope':scope,
++          'mandatory_spellings':sorted(mandatory_aliases[p]),
++          'observed_raw_spellings':sorted(raw_aliases.get(p,set()))})
+     def bound_raw(evidence_path,expected=None):
+         p=resolve(evidence_path);key=p.relative_to(ROOT).as_posix() if p.is_relative_to(ROOT) else str(p)
+         require(key in raw,'matrix required raw pin omitted: '+key)
+@@ -224,7 +236,7 @@
+             need(item.get('exit_code')==0 and item.get('archive_stable') is True,name+' symbol capture failed or archive drifted')
+             bound_raw(item['dump'],item['dump_sha256']);bound_raw(item['stderr'],item['stderr_sha256'])
+         summaries[name]={'test_count':143,'ctest_seconds':s.get('ctest_seconds'),'numeric_rows_observed':value.get('numeric_rows_observed')}
+-    return {'status':'audited_pass' if not ERRORS else 'audit_error','identity':pin(path),'authority':pin(authority_path),'raw_pin_count':len(raw),'external_file_pins':external,'configurations':summaries}
++    return {'status':'audited_pass' if not ERRORS else 'audit_error','identity':pin(path),'authority':pin(authority_path),'raw_pin_count':len(raw),'external_file_pins':external,'mandatory_tool_file_pins':mandatory_tools,'configurations':summaries}
+ 
+ 
+ def audit(args):

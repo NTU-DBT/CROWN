@@ -1,0 +1,29 @@
+--- docs/verification/c01-statistics-native-benchmark-proposal/native_benchmark.cpp	2026-11-07 10:52:27.087395054 +0800
++++ docs/verification/c01-statistics-native-benchmark-oracle-revision-proposal/native_benchmark.cpp	2026-11-07 11:10:41.939147586 +0800
+@@ -382,10 +382,13 @@
+   return result;
+ }
+ 
+-KeyCountMap expected_child_parent_counts(const Relation& answer) {
++KeyCountMap expected_child_parent_counts(const Relation& child_survivors) {
+   KeyCountMap result;
+-  for (const auto& row : answer) {
+-    ++result[Row{row.at(1)}];
++  for (const auto& row : child_survivors) {
++    // The admitted S(y) leaf has local scope {y} and separator {y}; its P
++    // population therefore comes from every local S survivor, including keys
++    // that do not join to any R row.
++    ++result[Row{row.at(0)}];
+   }
+   return result;
+ }
+@@ -557,7 +560,8 @@
+   const Relation found_root_survivors = actual_survivors(root);
+   const Relation found_child_survivors = actual_survivors(child);
+   const KeyCountMap expected_root_parent = expected_root_parent_counts(expected_answer);
+-  const KeyCountMap expected_child_parent = expected_child_parent_counts(expected_answer);
++  const KeyCountMap expected_child_parent =
++      expected_child_parent_counts(expected_child_survivors);
+   const KeyCountMap expected_root_visible = expected_root_visible_counts(expected_answer);
+   const KeyCountMap found_root_parent = expected_key_counts(root.parent_keys);
+   const KeyCountMap found_child_parent = expected_key_counts(child.parent_keys);

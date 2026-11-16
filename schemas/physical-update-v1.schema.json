@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN physical set input event v1",
+  "description": "One JSONL object for a full physical source row. Native readers additionally reject floating integer tokens, verify the complete catalog SHA-256 and table schema version, enforce exact row types/arity/decimal domain, UTF-8 and host limits, and validate sequence/source-position order. This is neither a logical alias trace nor an atomic net-batch format.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "catalog_version", "source_schema_version", "catalog_sha256", "sequence", "table", "operation", "values"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "catalog_version": {"$ref": "#/$defs/positive_uint64"},
+    "source_schema_version": {"$ref": "#/$defs/positive_uint64"},
+    "catalog_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "sequence": {"$ref": "#/$defs/positive_uint64"},
+    "table": {"type": "string", "minLength": 1},
+    "operation": {"enum": ["insert", "delete"]},
+    "values": {"type": "array", "items": {"$ref": "cq-v2.schema.json#/$defs/value"}},
+    "source_position": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "offset"],
+      "properties": {
+        "source": {"type": "string", "minLength": 1, "pattern": "^[^\u0000]+$"},
+        "offset": {"$ref": "#/$defs/uint64"}
+      }
+    }
+  },
+  "$defs": {
+    "uint64": {"type": "integer", "minimum": 0, "maximum": 18446744073709551615},
+    "positive_uint64": {"type": "integer", "minimum": 1, "maximum": 18446744073709551615}
+  }
+}

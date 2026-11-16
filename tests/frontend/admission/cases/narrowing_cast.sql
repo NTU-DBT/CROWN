@@ -1,0 +1,1 @@
+SELECT DISTINCT x::integer FROM r

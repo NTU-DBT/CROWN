@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "backend": "reference_recompute",
+  "semantics": "set",
+  "initial": [["u", "w"], ["u", "x"], ["v", "x"]],
+  "epochs": [
+    {
+      "sequence": 1,
+      "input_changed": true,
+      "current": [["u", "w"], ["u", "x"], ["v", "x"], ["v", "y"]],
+      "delta": {"added": [["v", "y"]], "removed": []}
+    },
+    {
+      "sequence": 2,
+      "input_changed": true,
+      "current": [["u", "w"], ["u", "x"], ["v", "x"], ["v", "y"], ["w", "z"], ["y", "x"]],
+      "delta": {"added": [["w", "z"], ["y", "x"]], "removed": []}
+    },
+    {
+      "sequence": 3,
+      "input_changed": true,
+      "current": [["u", "x"], ["w", "z"], ["y", "x"]],
+      "delta": {"added": [], "removed": [["u", "w"], ["v", "x"], ["v", "y"]]}
+    }
+  ]
+}

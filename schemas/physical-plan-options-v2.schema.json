@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN indexed physical lowering options v2",
+  "description": "Opt-in indexed backend with finite per-table counts including undo-owned nodes and one aggregate work allowance per operation; not allocator-byte or peak bounds.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "policy",
+    "limits",
+    "indexed_storage"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 2
+    },
+    "policy": {
+      "$ref": "#/$defs/policy"
+    },
+    "limits": {
+      "$ref": "#/$defs/limits"
+    },
+    "indexed_storage": {
+      "$ref": "#/$defs/indexed_storage"
+    }
+  },
+  "$defs": {
+    "uint64": {
+      "$ref": "sql-normalization-v2.schema.json#/$defs/uint64"
+    },
+    "nullable_uint64": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/uint64"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "arithmetic",
+        "planner",
+        "optimization",
+        "cost_model"
+      ],
+      "properties": {
+        "arithmetic": {
+          "type": "string",
+          "const": "exact-nonnull-v1"
+        },
+        "planner": {
+          "type": "string",
+          "minLength": 1,
+          "default": "crown-tree-v1"
+        },
+        "optimization": {
+          "type": "string",
+          "minLength": 1,
+          "default": "structural-height-v1"
+        },
+        "cost_model": {
+          "type": "string",
+          "minLength": 1,
+          "default": "no-cost-v1"
+        }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "work",
+        "identity_work"
+      ],
+      "properties": {
+        "work": {
+          "$ref": "#/$defs/nullable_uint64",
+          "default": 1000000
+        },
+        "identity_work": {
+          "$ref": "#/$defs/nullable_uint64",
+          "default": 1000000
+        }
+      }
+    },
+    "indexed_storage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "traversal",
+        "component_scope",
+        "work_scope",
+        "limits",
+        "work"
+      ],
+      "properties": {
+        "algorithm": {
+          "const": "indexed_chained_v1"
+        },
+        "traversal": {
+          "const": "insertion_first_live_key_v1"
+        },
+        "component_scope": {
+          "const": "per_table_including_undo"
+        },
+        "work_scope": {
+          "const": "operation_aggregate"
+        },
+        "limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "rows",
+            "indices",
+            "keys",
+            "memberships",
+            "nodes",
+            "directory_slots",
+            "arena_slots",
+            "arena_pins",
+            "journal_entries"
+          ],
+          "properties": {
+            "rows": {
+              "$ref": "#/$defs/uint64"
+            },
+            "indices": {
+              "$ref": "#/$defs/uint64"
+            },
+            "keys": {
+              "$ref": "#/$defs/uint64"
+            },
+            "memberships": {
+              "$ref": "#/$defs/uint64"
+            },
+            "nodes": {
+              "$ref": "#/$defs/uint64"
+            },
+            "directory_slots": {
+              "$ref": "#/$defs/uint64"
+            },
+            "arena_slots": {
+              "$ref": "#/$defs/uint64"
+            },
+            "arena_pins": {
+              "$ref": "#/$defs/uint64"
+            },
+            "journal_entries": {
+              "$ref": "#/$defs/uint64"
+            }
+          }
+        },
+        "work": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "structural_steps",
+            "scalar_fields",
+            "scalar_bytes",
+            "pointer_slots",
+            "link_actions"
+          ],
+          "properties": {
+            "structural_steps": {
+              "$ref": "#/$defs/uint64"
+            },
+            "scalar_fields": {
+              "$ref": "#/$defs/uint64"
+            },
+            "scalar_bytes": {
+              "$ref": "#/$defs/uint64"
+            },
+            "pointer_slots": {
+              "$ref": "#/$defs/uint64"
+            },
+            "link_actions": {
+              "$ref": "#/$defs/uint64"
+            }
+          }
+        }
+      }
+    }
+  }
+}

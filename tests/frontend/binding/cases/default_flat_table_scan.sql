@@ -1,0 +1,1 @@
+SELECT a.id FROM A AS a;

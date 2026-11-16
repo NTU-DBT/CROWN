@@ -1,0 +1,170 @@
+{
+  "flags": 0,
+  "format": "CROWNGR1",
+  "hashes": {
+    "body_sha256": "648b6308bde8e26397a0cba090c885b068a009980c66ca86a9e67cc5832a6626",
+    "covered_prefix_sha256": "2ab98096f7482d04b99a5ff87cb23089401538f75ce92797902920512ba3987d",
+    "record_sha256": "86e8d4ea2d5df4d1a60935790146d34751a475801e89f14f908866d972d6dee5"
+  },
+  "layout": {
+    "body_length": {
+      "encoding": "u64le",
+      "span": {
+        "end_exclusive": 20,
+        "length": 8,
+        "offset": 12
+      },
+      "value": 240
+    },
+    "checksum": {
+      "covers": {
+        "end_exclusive": 260,
+        "length": 260,
+        "offset": 0
+      },
+      "encoding": "ASCII64 lowercase SHA256",
+      "span": {
+        "end_exclusive": 324,
+        "length": 64,
+        "offset": 260
+      },
+      "value": "2ab98096f7482d04b99a5ff87cb23089401538f75ce92797902920512ba3987d"
+    },
+    "delivery.bytes": {
+      "encoding": "u64le",
+      "span": {
+        "end_exclusive": 196,
+        "length": 8,
+        "offset": 188
+      },
+      "value": 1234
+    },
+    "delivery.content_sha256": {
+      "encoding": "ASCII64 lowercase SHA256",
+      "span": {
+        "end_exclusive": 260,
+        "length": 64,
+        "offset": 196
+      },
+      "value": "a43bf82c36f2fc42e48ae2c731a493b9cc3aa3fa9ae6c507cf40135d4a6471ac"
+    },
+    "delivery.sequence": {
+      "encoding": "u64le",
+      "span": {
+        "end_exclusive": 188,
+        "length": 8,
+        "offset": 180
+      },
+      "value": 11
+    },
+    "delivery.sink_id": {
+      "encoding": "ASCII32",
+      "span": {
+        "end_exclusive": 180,
+        "length": 32,
+        "offset": 148
+      },
+      "value": "fedcba9876543210fedcba9876543210"
+    },
+    "flags": {
+      "encoding": "u16le",
+      "span": {
+        "end_exclusive": 12,
+        "length": 2,
+        "offset": 10
+      },
+      "value": 0
+    },
+    "magic": {
+      "ascii": "CROWNGR1",
+      "span": {
+        "end_exclusive": 8,
+        "length": 8,
+        "offset": 0
+      }
+    },
+    "old_root.checkpoint_sha256": {
+      "encoding": "ASCII64 lowercase SHA256",
+      "span": {
+        "end_exclusive": 132,
+        "length": 64,
+        "offset": 68
+      },
+      "value": "8d1a75dd2d7ffc51ab7b9552cb7d9d04e0e215b29d23f468f3b65d8c8872a03f"
+    },
+    "old_root.command_sequence": {
+      "encoding": "u64le",
+      "span": {
+        "end_exclusive": 148,
+        "length": 8,
+        "offset": 140
+      },
+      "value": 13
+    },
+    "old_root.first_generation": {
+      "encoding": "u64le",
+      "span": {
+        "end_exclusive": 68,
+        "length": 8,
+        "offset": 60
+      },
+      "value": 3
+    },
+    "old_root.generation": {
+      "encoding": "u64le",
+      "span": {
+        "end_exclusive": 60,
+        "length": 8,
+        "offset": 52
+      },
+      "value": 7
+    },
+    "old_root.physical_sequence": {
+      "encoding": "u64le",
+      "span": {
+        "end_exclusive": 140,
+        "length": 8,
+        "offset": 132
+      },
+      "value": 11
+    },
+    "old_root.query_id": {
+      "encoding": "ASCII32",
+      "span": {
+        "end_exclusive": 52,
+        "length": 32,
+        "offset": 20
+      },
+      "value": "0123456789abcdef0123456789abcdef"
+    },
+    "version": {
+      "encoding": "u16le",
+      "span": {
+        "end_exclusive": 10,
+        "length": 2,
+        "offset": 8
+      },
+      "value": 2
+    }
+  },
+  "lengths": {
+    "body": 240,
+    "checksum": 64,
+    "covered": 260,
+    "prefix": 20,
+    "record": 324
+  },
+  "values": {
+    "checkpoint_sha256": "8d1a75dd2d7ffc51ab7b9552cb7d9d04e0e215b29d23f468f3b65d8c8872a03f",
+    "command_sequence": 13,
+    "delivery_bytes": 1234,
+    "delivery_content_sha256": "a43bf82c36f2fc42e48ae2c731a493b9cc3aa3fa9ae6c507cf40135d4a6471ac",
+    "delivery_sequence": 11,
+    "delivery_sink_id": "fedcba9876543210fedcba9876543210",
+    "first_generation": 3,
+    "generation": 7,
+    "physical_sequence": 11,
+    "query_id": "0123456789abcdef0123456789abcdef"
+  },
+  "version": 2
+}

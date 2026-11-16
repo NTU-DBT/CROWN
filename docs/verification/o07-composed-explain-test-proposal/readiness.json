@@ -1,0 +1,52 @@
+{
+  "status": "excluded compiler/linker-only acceptance proposal; no binary or checker execution; O07 not_started",
+  "package_sha256": "43d0cfd99fc93769d996b3e284e66bfaeb02d40d5aa12cd9223850b54a8d26e7",
+  "subject_package_sha256": "a4e759965fea2efcb3578080f0445d80579bb6f0daf1a5c36ea4149c6310f30a",
+  "files": {
+    "README.md": "748bac6cfac56f6071385fe7a5458f3c417b93cb5c418e920f18fdceaeb97885",
+    "build_test.py": "6cd15f5c80fd4c201f81e6c5597668da4393f239f0274e5b1ac9d84499c655c6",
+    "check_reports.py": "b71210f898727b738c322be76f430db80518b818a341c58c7348f149853777cf",
+    "compile-evidence-o0.json": "4d7d66253e5344ff1310da433ca2491216f30543070bb9ec9e6f567bad2f5d5b",
+    "compile-evidence-o3.json": "d2c62b8acdd5cd4b6f73fb1426951b1d0b3e42abbcb90b39f212ee0d690df872",
+    "composed_test.cpp": "69db70044a2938c70e9af319293604df7cb88ffb7d0c623b3d99e199c0bd3275"
+  },
+  "source_sha256": "69db70044a2938c70e9af319293604df7cb88ffb7d0c623b3d99e199c0bd3275",
+  "frozen_pin_count": 206,
+  "compiler_dependency_count": 36,
+  "link_input_count": 12,
+  "artifacts": [
+    {
+      "optimization": "0",
+      "binary": "/tmp/crown-o07-composed-tests-o0/composed-test",
+      "binary_sha256": "199c21c9c5f08e2b16c2920ee7eb042944d700f4e2b8ec1b2e55d78d3ddb9343"
+    },
+    {
+      "optimization": "3",
+      "binary": "/tmp/crown-o07-composed-tests-o3/composed-test",
+      "binary_sha256": "b7a8824359b5f5af9b680c8b479a8da9fda24d4e71f90cc7af655e6c133114f5"
+    }
+  ],
+  "groups": [
+    "lifecycle",
+    "sessions",
+    "caps",
+    "authority",
+    "faults"
+  ],
+  "required_native_test_files": [
+    "composed_test.cpp",
+    "check_reports.py",
+    "tests/reference/tree_oracle.hpp"
+  ],
+  "schema_files": [
+    "explain-report-v2.schema.json",
+    "explain-tree-v2.schema.json"
+  ],
+  "limitations": [
+    "both test optimization levels use pinned full testing runtime/report closure",
+    "no runtime or checker acceptance claimed",
+    "earlier layer suites and complete query corpus remain separate gates",
+    "generation saturation uses existing new-owner testing hook; no fabricated report or live snapshot",
+    "trace drop numeric saturation is not forced through 2^64 events"
+  ]
+}

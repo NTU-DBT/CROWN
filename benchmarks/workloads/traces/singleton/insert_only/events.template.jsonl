@@ -1,0 +1,3 @@
+{"catalog_version":1,"operation":"insert","schema_version":1,"sequence":1,"source_position":{"offset":1,"source":"b02-singleton-insert_only"},"source_schema_version":1,"table":"r0","values":[0]}
+{"catalog_version":1,"operation":"insert","schema_version":1,"sequence":2,"source_position":{"offset":2,"source":"b02-singleton-insert_only"},"source_schema_version":1,"table":"r0","values":[1]}
+{"catalog_version":1,"operation":"insert","schema_version":1,"sequence":3,"source_position":{"offset":3,"source":"b02-singleton-insert_only"},"source_schema_version":1,"table":"r0","values":[2]}

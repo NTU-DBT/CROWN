@@ -1,0 +1,295 @@
+{
+  "oracle": "Python sqlite3 executes query.sql against full-row UNIQUE set tables; exact before/after set differences",
+  "sqlite_version": "3.45.1",
+  "events": [
+    {
+      "sequence": 1,
+      "physical_changed": true,
+      "current_rows": [],
+      "insert": [],
+      "delete": [],
+      "source_positions": {
+        "route-labels-input": 100
+      }
+    },
+    {
+      "sequence": 2,
+      "physical_changed": true,
+      "current_rows": [],
+      "insert": [],
+      "delete": [],
+      "source_positions": {
+        "route-labels-input": 200
+      }
+    },
+    {
+      "sequence": 3,
+      "physical_changed": true,
+      "current_rows": [
+        [
+          3,
+          "blue"
+        ]
+      ],
+      "insert": [
+        [
+          3,
+          "blue"
+        ]
+      ],
+      "delete": [],
+      "source_positions": {
+        "route-labels-input": 300
+      }
+    },
+    {
+      "sequence": 4,
+      "physical_changed": true,
+      "current_rows": [
+        [
+          3,
+          "blue"
+        ]
+      ],
+      "insert": [],
+      "delete": [],
+      "source_positions": {
+        "route-labels-input": 400
+      }
+    },
+    {
+      "sequence": 5,
+      "physical_changed": true,
+      "current_rows": [
+        [
+          3,
+          "blue"
+        ]
+      ],
+      "insert": [],
+      "delete": [],
+      "source_positions": {
+        "route-labels-input": 500
+      }
+    },
+    {
+      "sequence": 6,
+      "physical_changed": true,
+      "current_rows": [],
+      "insert": [],
+      "delete": [
+        [
+          3,
+          "blue"
+        ]
+      ],
+      "source_positions": {
+        "route-labels-input": 600
+      }
+    },
+    {
+      "sequence": 7,
+      "physical_changed": true,
+      "current_rows": [
+        [
+          3,
+          "blue"
+        ]
+      ],
+      "insert": [
+        [
+          3,
+          "blue"
+        ]
+      ],
+      "delete": [],
+      "source_positions": {
+        "route-labels-input": 700
+      }
+    },
+    {
+      "sequence": 8,
+      "physical_changed": true,
+      "current_rows": [],
+      "insert": [],
+      "delete": [
+        [
+          3,
+          "blue"
+        ]
+      ],
+      "source_positions": {
+        "route-labels-input": 800
+      }
+    },
+    {
+      "sequence": 9,
+      "physical_changed": true,
+      "current_rows": [
+        [
+          3,
+          "green"
+        ]
+      ],
+      "insert": [
+        [
+          3,
+          "green"
+        ]
+      ],
+      "delete": [],
+      "source_positions": {
+        "route-labels-input": 900
+      }
+    },
+    {
+      "sequence": 10,
+      "physical_changed": false,
+      "current_rows": [
+        [
+          3,
+          "green"
+        ]
+      ],
+      "insert": [],
+      "delete": [],
+      "source_positions": {
+        "route-labels-input": 1000
+      }
+    },
+    {
+      "sequence": 11,
+      "physical_changed": false,
+      "current_rows": [
+        [
+          3,
+          "green"
+        ]
+      ],
+      "insert": [],
+      "delete": [],
+      "source_positions": {
+        "route-labels-input": 1100
+      }
+    },
+    {
+      "sequence": 12,
+      "physical_changed": true,
+      "current_rows": [],
+      "insert": [],
+      "delete": [
+        [
+          3,
+          "green"
+        ]
+      ],
+      "source_positions": {
+        "route-labels-input": 1200
+      }
+    },
+    {
+      "sequence": 13,
+      "physical_changed": true,
+      "current_rows": [],
+      "insert": [],
+      "delete": [],
+      "source_positions": {
+        "route-labels-input": 1300
+      }
+    },
+    {
+      "sequence": 14,
+      "physical_changed": true,
+      "current_rows": [
+        [
+          4,
+          "amber"
+        ]
+      ],
+      "insert": [
+        [
+          4,
+          "amber"
+        ]
+      ],
+      "delete": [],
+      "source_positions": {
+        "route-labels-input": 1400
+      }
+    },
+    {
+      "sequence": 15,
+      "physical_changed": false,
+      "current_rows": [
+        [
+          4,
+          "amber"
+        ]
+      ],
+      "insert": [],
+      "delete": [],
+      "source_positions": {
+        "route-labels-input": 1500
+      }
+    },
+    {
+      "sequence": 16,
+      "physical_changed": true,
+      "current_rows": [
+        [
+          4,
+          "amber"
+        ],
+        [
+          4,
+          "bronze"
+        ]
+      ],
+      "insert": [
+        [
+          4,
+          "bronze"
+        ]
+      ],
+      "delete": [],
+      "source_positions": {
+        "route-labels-input": 1600
+      }
+    },
+    {
+      "sequence": 17,
+      "physical_changed": true,
+      "current_rows": [
+        [
+          4,
+          "bronze"
+        ]
+      ],
+      "insert": [],
+      "delete": [
+        [
+          4,
+          "amber"
+        ]
+      ],
+      "source_positions": {
+        "route-labels-input": 1700
+      }
+    },
+    {
+      "sequence": 18,
+      "physical_changed": true,
+      "current_rows": [],
+      "insert": [],
+      "delete": [
+        [
+          4,
+          "bronze"
+        ]
+      ],
+      "source_positions": {
+        "route-labels-input": 1800
+      }
+    }
+  ]
+}

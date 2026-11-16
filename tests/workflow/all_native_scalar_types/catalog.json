@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "catalog": {
+    "version": 1,
+    "tables": [
+      {
+        "name": "scalar_values",
+        "source_schema_version": 1,
+        "columns": [
+          {
+            "name": "id",
+            "nullable": false,
+            "type": "int64"
+          },
+          {
+            "name": "txt",
+            "nullable": false,
+            "type": "string",
+            "collation": "binary"
+          },
+          {
+            "name": "truth",
+            "nullable": false,
+            "type": "bool"
+          },
+          {
+            "name": "event_day",
+            "nullable": false,
+            "type": "date"
+          },
+          {
+            "name": "amount",
+            "nullable": false,
+            "type": "decimal"
+          }
+        ],
+        "constraints": [],
+        "statistics": {
+          "distinct_counts": []
+        },
+        "key_hints": []
+      }
+    ]
+  }
+}

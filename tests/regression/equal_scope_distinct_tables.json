@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "semantics": "set",
+  "catalog": {"version": 1, "tables": [
+    {"name": "R", "columns": [{"name": "x", "type": "string"}]},
+    {"name": "S", "columns": [{"name": "x", "type": "string"}]}
+  ]},
+  "query": {
+    "variables": [{"name": "x", "type": "string"}],
+    "atoms": [
+      {"id": "r", "table": "R", "terms": [{"var": "x"}]},
+      {"id": "s", "table": "S", "terms": [{"var": "x"}]}
+    ],
+    "head": [{"var": "x"}]
+  },
+  "initial": [{"table": "R", "rows": [["a"]]}],
+  "updates": [
+    {"schema_version": 1, "sequence": 1, "table": "S", "op": "insert", "values": ["a"]},
+    {"schema_version": 1, "sequence": 2, "table": "R", "op": "delete", "values": ["a"]},
+    {"schema_version": 1, "sequence": 3, "table": "S", "op": "insert", "values": ["a"]}
+  ]
+}

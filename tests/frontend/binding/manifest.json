@@ -1,0 +1,359 @@
+{
+  "schema_version": 1,
+  "catalog": "catalog.json",
+  "data": "data.json",
+  "success_cases": [
+    {
+      "name": "using_composite_star",
+      "sql": "cases/using_composite_star.sql",
+      "expected": {
+        "requested_semantics": "bag",
+        "inner_semantics": null,
+        "result_wrapper": "rows",
+        "occurrences": [{"table": "a", "alias": "l"}, {"table": "b", "alias": "r"}],
+        "output_names": ["id", "shard", "shared", "left_only", "flag", "note", "amount", "day", "shared", "right_only", "flag"],
+        "operators": ["equal", "using_value"],
+        "row_count": 7,
+        "expected_rows": [
+          [1, 10, "s", "left-a", true, null, {"decimal": "12.3"}, {"date": "2024-01-02"}, "s", "right-a", true],
+          [1, 10, "s", "left-a", true, null, {"decimal": "12.3"}, {"date": "2024-01-02"}, "s", "right-a", true],
+          [1, 10, "s", "left-a", true, null, {"decimal": "12.3"}, {"date": "2024-01-02"}, "s", "right-a", true],
+          [1, 10, "s", "left-a", true, null, {"decimal": "12.3"}, {"date": "2024-01-02"}, "s", "right-a", true],
+          [2, 20, "u", "left-b", null, "hit", {"decimal": "2.5"}, {"date": "2024-02-29"}, "u", "right-b", null],
+          [3, 30, null, "left-c", false, null, {"decimal": "0"}, {"date": "2024-03-01"}, null, "right-c", false],
+          [4, 40, "v", "left-d", false, null, {"decimal": "1.25"}, {"date": "2024-04-01"}, "v", "right-d", false]
+        ],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "natural_star",
+      "sql": "cases/natural_star.sql",
+      "expected": {
+        "requested_semantics": "bag",
+        "inner_semantics": null,
+        "result_wrapper": "rows",
+        "occurrences": [{"table": "a", "alias": "l"}, {"table": "b", "alias": "r"}],
+        "output_names": ["id", "shard", "shared", "flag", "left_only", "note", "amount", "day", "right_only"],
+        "operators": ["equal", "using_value"],
+        "row_count": 5,
+        "expected_rows": [
+          [1, 10, "s", true, "left-a", null, {"decimal": "12.3"}, {"date": "2024-01-02"}, "right-a"],
+          [1, 10, "s", true, "left-a", null, {"decimal": "12.3"}, {"date": "2024-01-02"}, "right-a"],
+          [1, 10, "s", true, "left-a", null, {"decimal": "12.3"}, {"date": "2024-01-02"}, "right-a"],
+          [1, 10, "s", true, "left-a", null, {"decimal": "12.3"}, {"date": "2024-01-02"}, "right-a"],
+          [4, 40, "v", false, "left-d", null, {"decimal": "1.25"}, {"date": "2024-04-01"}, "right-d"]
+        ],
+        "sqlite_oracle": false
+      }
+    },
+    {
+      "name": "qualified_self_join_stars",
+      "sql": "cases/qualified_self_join_stars.sql",
+      "expected": {
+        "requested_semantics": "bag",
+        "inner_semantics": null,
+        "result_wrapper": "rows",
+        "occurrences": [{"table": "a", "alias": "l"}, {"table": "a", "alias": "r"}],
+        "output_names": ["id", "shard", "shared", "left_only", "flag", "note", "amount", "day", "id", "shard", "shared", "left_only", "flag", "note", "amount", "day"],
+        "operators": ["equal"],
+        "row_count": 7,
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "partial_join_alias_columns",
+      "sql": "cases/partial_join_alias.sql",
+      "expected": {
+        "requested_semantics": "bag",
+        "inner_semantics": null,
+        "result_wrapper": "rows",
+        "occurrences": [{"table": "a", "alias": "l"}, {"table": "b", "alias": "r"}],
+        "output_names": ["join_id", "left_only", "right_only"],
+        "operators": ["equal", "using_value"],
+        "row_count": 4,
+        "expected_rows": [[1, "left-a", "right-a"], [1, "left-a", "right-a"], [1, "left-a", "right-a"], [1, "left-a", "right-a"]]
+      }
+    },
+    {
+      "name": "natural_join_without_common_columns_is_cross_join",
+      "sql": "cases/natural_no_common.sql",
+      "expected": {
+        "requested_semantics": "bag",
+        "inner_semantics": null,
+        "result_wrapper": "rows",
+        "occurrences": [{"table": "a", "alias": "a"}, {"table": "nocommon", "alias": "n"}],
+        "output_names": ["id", "shard", "shared", "left_only", "flag", "note", "amount", "day", "code", "status"],
+        "operators": [],
+        "row_count": 10,
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "repeated_head_aliases",
+      "sql": "cases/repeated_head_aliases.sql",
+      "expected": {
+        "requested_semantics": "bag",
+        "inner_semantics": null,
+        "result_wrapper": "rows",
+        "occurrences": [{"table": "a", "alias": "a"}],
+        "output_names": ["duplicate_name", "duplicate_name"],
+        "row_count": 5,
+        "expected_rows": [[1, 10], [1, 10], [2, 20], [3, 30], [4, 40]],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "only_scan_preserves_flat_catalog_policy",
+      "sql": "cases/only_flat_table_scan.sql",
+      "expected": {
+        "requested_semantics": "bag",
+        "inner_semantics": null,
+        "result_wrapper": "rows",
+        "occurrences": [{"table": "a", "alias": "a", "include_descendants": false}],
+        "output_names": ["id"],
+        "row_count": 5,
+        "expected_rows": [[1], [1], [2], [3], [4]],
+        "same_rows_as": "default_flat_table_scan"
+      }
+    },
+    {
+      "name": "default_flat_table_scan",
+      "sql": "cases/default_flat_table_scan.sql",
+      "expected": {
+        "requested_semantics": "bag",
+        "inner_semantics": null,
+        "result_wrapper": "rows",
+        "occurrences": [{"table": "a", "alias": "a"}],
+        "output_names": ["id"],
+        "row_count": 5,
+        "expected_rows": [[1], [1], [2], [3], [4]]
+      }
+    },
+    {
+      "name": "plain_select_preserves_bag_duplicates",
+      "sql": "cases/plain_bag_duplicates.sql",
+      "expected": {
+        "requested_semantics": "bag",
+        "inner_semantics": null,
+        "result_wrapper": "rows",
+        "occurrences": [{"table": "a", "alias": "a"}],
+        "output_names": ["item"],
+        "operators": ["is_null"],
+        "row_count": 4,
+        "expected_rows": [[1], [1], [3], [4]],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "distinct_select_uses_set_projection",
+      "sql": "cases/distinct_set.sql",
+      "expected": {
+        "requested_semantics": "set",
+        "inner_semantics": null,
+        "result_wrapper": "rows",
+        "occurrences": [{"table": "a", "alias": "a"}],
+        "output_names": ["item"],
+        "operators": ["is_null"],
+        "row_count": 3,
+        "expected_rows": [[1], [3], [4]],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "typed_string_parameter",
+      "sql": "cases/parameter_filter.sql",
+      "parameters": "parameters/string_nullable.json",
+      "parameter_values": ["hit"],
+      "expected": {
+        "requested_semantics": "bag",
+        "inner_semantics": null,
+        "result_wrapper": "rows",
+        "parameters": [{"kind": "string", "nullable": true}],
+        "occurrences": [{"table": "a", "alias": "a"}],
+        "output_names": ["item"],
+        "operators": ["equal"],
+        "row_count": 1,
+        "expected_rows": [[2]],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "null_parameter_comparison_is_unknown",
+      "sql": "cases/null_parameter.sql",
+      "parameters": "parameters/string_nullable.json",
+      "parameter_values": [null],
+      "expected": {
+        "requested_semantics": "bag",
+        "inner_semantics": null,
+        "result_wrapper": "rows",
+        "parameters": [{"kind": "string", "nullable": true}],
+        "occurrences": [{"table": "a", "alias": "a"}],
+        "output_names": ["item"],
+        "operators": ["equal"],
+        "row_count": 0,
+        "expected_rows": [],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "boolean_three_valued_tests",
+      "sql": "cases/boolean_three_valued.sql",
+      "expected": {
+        "requested_semantics": "bag",
+        "inner_semantics": null,
+        "result_wrapper": "rows",
+        "occurrences": [{"table": "a", "alias": "a"}],
+        "output_names": ["yes", "not_false", "unknown"],
+        "operators": ["is_true", "is_not_false", "is_unknown"],
+        "row_count": 5,
+        "expected_rows": [[true, true, false], [true, true, false], [false, true, true], [false, false, false], [false, false, false]]
+      }
+    },
+    {
+      "name": "boolean_predicates_and_integer_parameter",
+      "sql": "cases/boolean_predicates.sql",
+      "parameters": "parameters/int64.json",
+      "parameter_values": [1],
+      "expected": {
+        "requested_semantics": "bag",
+        "inner_semantics": null,
+        "result_wrapper": "rows",
+        "parameters": [{"kind": "int64", "nullable": false}],
+        "occurrences": [{"table": "a", "alias": "a"}],
+        "output_names": ["item"],
+        "operators": ["is_not_true", "is_null", "disjunction", "equal", "conjunction"],
+        "row_count": 2,
+        "expected_rows": [[1], [1]]
+      }
+    },
+    {
+      "name": "identity_literal_cast_and_int32_widening",
+      "sql": "cases/casts_and_integer_width.sql",
+      "expected": {
+        "requested_semantics": "bag",
+        "inner_semantics": null,
+        "result_wrapper": "rows",
+        "occurrences": [{"table": "a", "alias": "a"}],
+        "output_names": ["identity_id", "cast_literal"],
+        "operators": ["identity_cast", "literal_cast", "widen_integer", "equal"],
+        "type_kinds": ["int64", "int64"],
+        "row_count": 2,
+        "expected_rows": [[1, 1], [1, 1]],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "exists_wrapper_is_not_nullary_cq",
+      "sql": "cases/exists_wrapper.sql",
+      "expected": {
+        "requested_semantics": "bag",
+        "inner_semantics": "bag",
+        "result_wrapper": "exists",
+        "wrapper_alias": "found",
+        "occurrences": [{"table": "a", "alias": "a"}],
+        "output_names": ["?column?"],
+        "operators": ["equal"],
+        "exists_result": false,
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "wide_wildcard_70_columns",
+      "sql": "cases/wide_star_70.sql",
+      "expected": {
+        "requested_semantics": "bag",
+        "inner_semantics": null,
+        "result_wrapper": "rows",
+        "occurrences": [{"table": "wide", "alias": "w"}],
+        "output_names_from_table": "wide",
+        "row_count": 1,
+        "expected_rows": [[
+          0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+          20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+          40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+          60, 61, 62, 63, 64, 65, 66, 67, 68, 69
+        ]],
+        "sqlite_oracle": true
+      }
+    },
+    {
+      "name": "n_way_star_expansion_and_zero_arity_factor",
+      "sql": "cases/n_way_stars.sql",
+      "expected": {
+        "requested_semantics": "bag",
+        "inner_semantics": null,
+        "result_wrapper": "rows",
+        "occurrences": [{"table": "a", "alias": "a"}, {"table": "c", "alias": "c"}, {"table": "unit", "alias": "u"}],
+        "output_names": ["id", "shard", "shared", "left_only", "flag", "note", "amount", "day", "code", "extra", "truth"],
+        "row_count": 10,
+        "sqlite_oracle": false
+      }
+    },
+    {
+      "name": "zero_arity_wildcard",
+      "sql": "cases/zero_arity_star.sql",
+      "expected": {
+        "requested_semantics": "bag",
+        "inner_semantics": null,
+        "result_wrapper": "rows",
+        "occurrences": [{"table": "unit", "alias": "u"}],
+        "output_names": [],
+        "row_count": 1,
+        "expected_rows": [[]]
+      }
+    },
+    {
+      "name": "typed_null_literal",
+      "sql": "cases/null_literal.sql",
+      "expected": {
+        "requested_semantics": "bag",
+        "inner_semantics": null,
+        "result_wrapper": "rows",
+        "occurrences": [],
+        "output_names": ["null_value"],
+        "row_count": 1,
+        "expected_rows": [[null]]
+      }
+    },
+    {
+      "name": "unquoted_folding_and_quoted_alias",
+      "sql": "cases/quoted_identifier_folding.sql",
+      "expected": {
+        "requested_semantics": "bag",
+        "inner_semantics": null,
+        "result_wrapper": "rows",
+        "occurrences": [{"table": "a", "alias": "a"}],
+        "output_names": ["id", "MixedName"],
+        "row_count": 5,
+        "sqlite_oracle": true
+      }
+    }
+  ],
+  "failure_cases": [
+    {"name": "distinct_on_is_not_distinct", "sql": "cases/unsupported_distinct_on.sql", "phase": "binding", "code": "unsupported_distinct_on"},
+    {"name": "order_and_limit_are_rejected", "sql": "cases/unsupported_order_limit.sql", "phase": "binding", "code": "unsupported_sql"},
+    {"name": "aggregate_and_grouping_are_rejected", "sql": "cases/unsupported_aggregate.sql", "phase": "binding", "code": "unsupported_sql"},
+    {"name": "outer_join_is_rejected", "sql": "cases/unsupported_outer_join.sql", "phase": "binding", "code": "unsupported_join"},
+    {"name": "cte_is_rejected", "sql": "cases/unsupported_cte.sql", "phase": "binding", "code": "unsupported_sql"},
+    {"name": "arithmetic_is_rejected", "sql": "cases/unsupported_arithmetic.sql", "phase": "binding", "code": "unsupported_operator"},
+    {"name": "schema_qualified_relation_is_rejected", "sql": "cases/unsupported_schema_qualified_table.sql", "phase": "binding", "code": "unsupported_namespace"},
+    {"name": "ambiguous_unqualified_column", "sql": "cases/ambiguous_column.sql", "phase": "binding", "code": "ambiguous_column", "location_marker": "id FROM"},
+    {"name": "quoted_identifier_is_case_sensitive", "sql": "cases/quoted_identifier_case_error.sql", "phase": "binding", "code": "unknown_column", "location_marker": "a.\"ID\""},
+    {"name": "missing_column", "sql": "cases/missing_column.sql", "phase": "binding", "code": "unknown_column", "location_marker": "a.not_a_column"},
+    {"name": "missing_table", "sql": "cases/missing_table.sql", "phase": "binding", "code": "unknown_table", "location_marker": "NotInCatalog"},
+    {"name": "join_alias_hides_inner_qualifiers", "sql": "cases/join_alias_hides_inner.sql", "phase": "binding", "code": "unknown_qualifier", "location_marker": "l.id"},
+    {"name": "join_on_does_not_see_earlier_comma_item", "sql": "cases/on_scope_excludes_comma_item.sql", "phase": "binding", "code": "unknown_qualifier", "location_marker": "a.id", "minimum_occurrences": 2},
+    {"name": "unbound_parameter", "sql": "cases/unbound_parameter.sql", "phase": "binding", "code": "unbound_parameter", "location_marker": "$1"},
+    {"name": "unicode_location_counts_bytes_and_characters", "sql": "cases/unicode_missing_column.sql", "phase": "binding", "code": "unknown_column", "location_marker": "a.not_a_column"},
+    {"name": "non_exists_subquery_is_rejected", "sql": "cases/unsupported_nested_subquery.sql", "phase": "binding", "code": "unsupported_from"},
+    {"name": "malformed_sql", "sql": "cases/syntax_error.sql", "phase": "syntax", "code": "sql_syntax_error"},
+    {"name": "multiple_statements", "sql": "cases/multiple_statements.sql", "phase": "syntax", "code": "multiple_statements", "location_marker": "SELECT 2"}
+  ],
+  "cli_error_cases": [
+    {"name": "missing_sql_file", "args": ["bind-sql", "MISSING_SQL", "CATALOG"], "replace": {"CATALOG": "catalog.json"}, "stderr_code": "io_error"},
+    {"name": "missing_catalog_file", "args": ["bind-sql", "SQL", "MISSING_CATALOG"], "replace": {"SQL": "cases/plain_bag_duplicates.sql"}, "stderr_code": "io_error"},
+    {"name": "invalid_parameter_options", "args": ["bind-sql", "SQL", "CATALOG", "PARAMETERS"], "replace": {"SQL": "cases/parameter_filter.sql", "CATALOG": "catalog.json", "PARAMETERS": "parameters/invalid_named.json"}, "stderr_code": "invalid_document"},
+    {"name": "usage", "args": ["bind-sql"], "stderr_code": "usage"}
+  ]
+}

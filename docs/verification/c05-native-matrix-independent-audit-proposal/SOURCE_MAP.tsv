@@ -1,0 +1,2 @@
+source_file	origin	origin_sha256	purpose
+audit.py	docs/verification/c02-matrix-audit-alias-revision-proposal/audit.py	d4a757ce320fe8ec97783b0f49f4d660e6afe0cc93d519fb7f8ceeac0102204c	New C05 evidence-only auditor; actual158/238/12 roles; direct clean input maps; retained214 object/project provenance; distinct SHA-bound execution/allocation authorities

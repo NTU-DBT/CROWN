@@ -1,0 +1,1 @@
+SELECT COUNT(*) FROM "r0" AS "a0";

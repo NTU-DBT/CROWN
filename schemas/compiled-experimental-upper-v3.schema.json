@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN experimental independently checked original-lower/actual-upper workflow v3",
+  "description": "Cold experimental collector input only. The unchanged original certificate proves h* for the exact source and retains its original witness. The supplied physical artifact is rebuilt and its actual tree independently checked; its actual native height must be at least h*. This is checked-upper-only admission, not a minimum-height candidate or a global cost guarantee. V1/V2 minimum gates and ordinary CLI compiled-workflow reader remain unchanged.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "physical",
+    "height_certificate",
+    "height_binding"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 3
+    },
+    "height_binding": {
+      "const": "independently_checked_original_lower_actual_upper_v1"
+    },
+    "physical": {
+      "allOf": [
+        {
+          "oneOf": [
+            {
+              "$ref": "physical-plan-v1.schema.json"
+            },
+            {
+              "$ref": "physical-plan-v2.schema.json"
+            }
+          ]
+        },
+        {
+          "properties": {
+            "route": {
+              "not": {
+                "const": "constant_false"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "height_certificate": {
+      "allOf": [
+        {
+          "oneOf": [
+            {
+              "$ref": "height-certificate-v1.schema.json"
+            },
+            {
+              "$ref": "height-certificate-v2.schema.json"
+            }
+          ]
+        },
+        {
+          "properties": {
+            "minimum_height": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "tree": {
+              "type": "object"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

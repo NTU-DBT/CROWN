@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN version-1 structural tree plan",
+  "description": "The CLI reader additionally checks duplicate object keys, cross-document references, complete native scopes, and catalog compatibility.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "catalog_version", "semantics", "root", "nodes"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "catalog_version": {"$ref": "#/$defs/positive_uint64"},
+    "semantics": {"const": "set"},
+    "root": {"oneOf": [{"$ref": "#/$defs/node_id"}, {"type": "null"}]},
+    "nodes": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/node"}
+    },
+    "connex": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/node_id"},
+      "uniqueItems": true,
+      "description": "Optional claimed root-connected output subtree; the verifier checks it independently."
+    },
+    "native_height": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Optional claimed maximum number of native nodes on a root-to-leaf path."
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"root": {"type": "null"}}, "required": ["root"]},
+      "then": {"properties": {"nodes": {"maxItems": 0}}}
+    },
+    {
+      "if": {"properties": {"root": {"$ref": "#/$defs/node_id"}}, "required": ["root"]},
+      "then": {"properties": {"nodes": {"minItems": 1}}}
+    }
+  ],
+  "$defs": {
+    "node_id": {"type": "string", "minLength": 1},
+    "positive_uint64": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 18446744073709551615
+    },
+    "scope": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "scope", "children"],
+      "properties": {
+        "id": {"$ref": "#/$defs/node_id"},
+        "kind": {"enum": ["native", "generalized"]},
+        "scope": {"$ref": "#/$defs/scope"},
+        "children": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/node_id"},
+          "uniqueItems": true
+        },
+        "occurrence": {"$ref": "#/$defs/node_id"},
+        "separator": {
+          "$ref": "#/$defs/scope",
+          "description": "Optional claimed intersection of this node's scope with its parent scope; omitted for a root unless explicitly claiming the empty set."
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"kind": {"const": "native"}}, "required": ["kind"]},
+          "then": {"required": ["occurrence"]},
+          "else": {"not": {"required": ["occurrence"]}}
+        }
+      ]
+    }
+  }
+}

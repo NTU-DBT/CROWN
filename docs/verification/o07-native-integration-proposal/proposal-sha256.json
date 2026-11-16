@@ -1,0 +1,11 @@
+{
+  "overlay/CMakeLists.txt": "8d4545863bb04675e14b605ebfbd7bfe3bf792309532c4dcf4d6125a814eb851",
+  "overlay/apps/crown/explain.cpp": "7fc01d06f7dcc63f06da2556dd7d385e2310aea6811784318afc7c41c512bf68",
+  "overlay/apps/crown/explain.hpp": "29cf9661aac780e70332fc7a1e8d5df6407ac7bc9e20b51ab3f63b36dd4b9350",
+  "overlay/apps/crown/main.cpp": "80e3c4592cfee63dc8991544e5366a0a2eb67939a57671fa09209023b27b0e1e",
+  "overlay/src/io/explain.cpp": "31a3d3f13347dbd84f2c81b56f389891d71c8ccdace259c7d81c0fa4149ca8be",
+  "schemas/explain-report-v2.schema.json": "c4aa8c7c62e0608d7b035128a9bd9b561387c0c16491efa704d8b95b469c9f74",
+  "schemas/explain-tree-v2.schema.json": "608154cd56f807a283d4a86e58b20af1cce6605b8a77a2727ff084d7a7967335",
+  "schemas/query-explain-v1.schema.json": "b843e905e9a2a5c201847c2db8cd93fed85a836b56d6faa8d4319c70cd02979d",
+  "schemas/query-witness-v1.schema.json": "1e2121a6c7ce98f8e68650cf1bf54733db6eec0b4a254695dbafa84c10688f7e"
+}

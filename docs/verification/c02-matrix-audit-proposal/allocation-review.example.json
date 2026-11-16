@@ -1,0 +1,13 @@
+{
+  "reviewer": "root",
+  "decision": "EXAMPLE_NOT_AN_APPROVAL",
+  "native": {
+    "count": 648,
+    "sha256": "726b6ac99057cab64b3b2ee37e437641554bc9165bd832c0cb86ff16d27e705a"
+  },
+  "execution": {
+    "count": 705,
+    "sha256": "87455c8e07579b7d3689e90c4a5989a63ec438ea21bedc72b63bb959a4c9a2e5"
+  },
+  "entries": []
+}

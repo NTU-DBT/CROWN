@@ -1,0 +1,39 @@
+{
+  "status": "excluded independent acceptance proposal; strict O0/O3 compile/link only; NO C++ or Python test execution; O07 not_started",
+  "package_sha256": "8fb33b288b4abd58fd0955a8a7e8319de875e4b59cd19e77684fae6f4f4ac98d",
+  "files": {
+    "README.md": "3d7d92474f0418d17576d7c68cd6b6dff9dac9fe3e92f5c02c1a35f8136cdf95",
+    "build_test.py": "ed7bb7f3f1223ec7fa481d8bf2221712574da54d9194f3ca68e8f1f294dc1722",
+    "check_corpus.py": "ac2d417ea159d15c79cec79c6bcb47cda3ad340d5a2bd1456bf31e77ba7f4e96",
+    "compile-evidence-o0.json": "1a59df917b323ca0630c7e030ff0c472f2decdd2128cfb5cbb2ebf0bf3e12ce3",
+    "compile-evidence-o3.json": "aab58def649a97c1404d4a8b0a86804eff25e8844c42559b7adf4d374f24688d",
+    "query_explain_test.cpp": "72173e819f1f256fc8388dfe104a090d7b14dff7cf9b7cb2a5c7451231556229"
+  },
+  "subject_package_sha256": "1ee51f89955602fc2ff2a0aecce1c1728a4ba10d0981f0a4fb4b66ea58049802",
+  "source_sha256": "72173e819f1f256fc8388dfe104a090d7b14dff7cf9b7cb2a5c7451231556229",
+  "binary_o0": "/tmp/crown-o07-query-explain-tests-o0/query-explain-test",
+  "binary_o0_sha256": "843edd13a232150627a252f8868f6d84400bcfd66311dcf896ff75e920d91dbd",
+  "binary_o3": "/tmp/crown-o07-query-explain-tests-o3/query-explain-test",
+  "binary_o3_sha256": "c29bf5beb73b3d97bac396c491c6da98ccf29b5a481952a105877a92d83e2f83",
+  "linked_archives": {
+    "/tmp/crown-o07-query-explain-o0/libcrown_query_explain_proposal.a": "889e42c051bfb75413f1a8cb1bc7cde3c09a96d84341558dfbeef747250624fb",
+    "/home/userroot/Codex/CROWN/build/release/libcrown_reference.a": "035a204d7e00355b7f14e94255f8d77688f43a5688aabba898f6cedfd43f39f5",
+    "/home/userroot/Codex/CROWN/build/release/libcrown_core.a": "784b820ff9284ad75033552056fd2a81113f7eb54be5db56959f31ce778bcf9d"
+  },
+  "runtime_archives_linked": false,
+  "finite_family": {
+    "systematic_inputs": 426,
+    "anchors": 11,
+    "policies_per_input": 2,
+    "oracle": "separate frozen reference::exhaustive_minimum_tree literal topology/native power sets",
+    "resource_outcomes": "fail, never skip",
+    "scope": "finite inputs only; no arbitrary-query completeness claim"
+  },
+  "remaining_gates": [
+    "root execution of states/metadata/faults/full family",
+    "root offline schema+semantic checker --require-all",
+    "diagnose any dynamic post-upper-depth or clock-state reachability failure without forging progress",
+    "native counter-overflow injection lacks public seam and is not covered",
+    "O07 native integration, CLI and final acceptance matrix remain open"
+  ]
+}

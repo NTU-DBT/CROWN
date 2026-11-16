@@ -1,0 +1,54 @@
+{
+  "status": "excluded compiler/linker-only detached-sidecar revision; no binary/checker execution; O07 not_started",
+  "package_sha256": "016bd6c285fac3a43f796272b79f7976c2277b69b64cd3ffb8f88e40c7598d18",
+  "subject_package_sha256": "a4e759965fea2efcb3578080f0445d80579bb6f0daf1a5c36ea4149c6310f30a",
+  "original_test_package_sha256": "43d0cfd99fc93769d996b3e284e66bfaeb02d40d5aa12cd9223850b54a8d26e7",
+  "files": {
+    "README.md": "54a703910b113de3a0fdc2780a312269f1ed73202b7fe3f0271500fe8732b64e",
+    "build_test.py": "8e12106186b30b16e2556732b1be14bf32161b05720d2b0e543db3eaa969aaa9",
+    "check_reports.py": "01e035204e6621f2e51ecd71eea7899507f888fdc55c683834e8abed0e01a8a5",
+    "compile-evidence-o0.json": "e16ed300ea85a9b7459b7a4cc921c9743e4487924a9a14dccd38f4d530d62bbe",
+    "compile-evidence-o3.json": "44394bcf6d85cce7607b46a9871f17fbc5319a041c9af41f6ce56e397d70c946",
+    "composed_test.cpp": "3b1fdd7d897561f457cce5e5cce74fdea46beb3d7a77d6bfacffa887a70f3b17"
+  },
+  "source_sha256": "3b1fdd7d897561f457cce5e5cce74fdea46beb3d7a77d6bfacffa887a70f3b17",
+  "frozen_pin_count": 213,
+  "compiler_dependency_count": 36,
+  "link_input_count": 12,
+  "artifacts": [
+    {
+      "optimization": "0",
+      "binary": "/tmp/crown-o07-composed-detached-tests-o0/composed-test",
+      "binary_sha256": "8661997cbf8592d3389754b498eb8b9e817ebc5ab537e83ac4ce1788f5e579d7"
+    },
+    {
+      "optimization": "3",
+      "binary": "/tmp/crown-o07-composed-detached-tests-o3/composed-test",
+      "binary_sha256": "eb69e3adb89ddf8c7acc5898abeafb7c7014dc01c259aa73a9fe926680496702"
+    }
+  ],
+  "groups": [
+    "lifecycle",
+    "sessions",
+    "caps",
+    "authority",
+    "faults"
+  ],
+  "required_native_test_files": [
+    "composed_test.cpp",
+    "check_reports.py",
+    "tests/reference/tree_oracle.hpp"
+  ],
+  "schema_files": [
+    "explain-report-v2.schema.json",
+    "explain-tree-v2.schema.json"
+  ],
+  "limitations": [
+    "both test optimization levels use pinned full testing runtime/report closure",
+    "no runtime or checker acceptance claimed",
+    "earlier layer suites and complete query corpus remain separate gates",
+    "generation saturation uses existing new-owner testing hook; no fabricated report or live snapshot",
+    "trace drop numeric saturation is not forced through 2^64 events"
+  ],
+  "revision": "Full independent native detached-owner sidecar captured before report capture and owner teardown; no expected facts from report. Checker adds filename failure context only."
+}

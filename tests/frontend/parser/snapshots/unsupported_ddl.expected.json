@@ -1,0 +1,90 @@
+{
+  "statement": {
+    "begin": 0,
+    "end": 69
+  },
+  "ast": {
+    "version": 180006,
+    "stmts": [
+      {
+        "stmt": {
+          "CreateStmt": {
+            "relation": {
+              "relname": "example",
+              "inh": true,
+              "relpersistence": "p",
+              "location": 13
+            },
+            "tableElts": [
+              {
+                "ColumnDef": {
+                  "colname": "id",
+                  "typeName": {
+                    "names": [
+                      {
+                        "String": {
+                          "sval": "pg_catalog"
+                        }
+                      },
+                      {
+                        "String": {
+                          "sval": "int8"
+                        }
+                      }
+                    ],
+                    "typemod": -1,
+                    "location": 25
+                  },
+                  "is_local": true,
+                  "constraints": [
+                    {
+                      "Constraint": {
+                        "contype": "CONSTR_PRIMARY",
+                        "location": 32
+                      }
+                    }
+                  ],
+                  "location": 22
+                }
+              },
+              {
+                "ColumnDef": {
+                  "colname": "label",
+                  "typeName": {
+                    "names": [
+                      {
+                        "String": {
+                          "sval": "text"
+                        }
+                      }
+                    ],
+                    "typemod": -1,
+                    "location": 51
+                  },
+                  "is_local": true,
+                  "constraints": [
+                    {
+                      "Constraint": {
+                        "contype": "CONSTR_DEFAULT",
+                        "raw_expr": {
+                          "A_Const": {
+                            "isnull": true,
+                            "location": 64
+                          }
+                        },
+                        "location": 56
+                      }
+                    }
+                  ],
+                  "location": 45
+                }
+              }
+            ],
+            "oncommit": "ONCOMMIT_NOOP"
+          }
+        },
+        "stmt_len": 69
+      }
+    ]
+  }
+}

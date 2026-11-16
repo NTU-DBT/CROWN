@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "catalog_version": 1,
+  "semantics": "set",
+  "root": "renamed_root",
+  "nodes": [
+    {
+      "id": "renamed_third",
+      "kind": "native",
+      "scope": ["y", "x"],
+      "children": [],
+      "occurrence": "third"
+    },
+    {
+      "id": "renamed_pair",
+      "kind": "generalized",
+      "scope": ["y", "x"],
+      "children": ["renamed_third", "renamed_right"]
+    },
+    {
+      "id": "renamed_right",
+      "kind": "native",
+      "scope": ["y", "x"],
+      "children": [],
+      "occurrence": "right"
+    },
+    {
+      "id": "renamed_left",
+      "kind": "native",
+      "scope": ["y", "x"],
+      "children": [],
+      "occurrence": "left"
+    },
+    {
+      "id": "renamed_root",
+      "kind": "generalized",
+      "scope": ["y", "x"],
+      "children": ["renamed_pair", "renamed_left"]
+    }
+  ]
+}
+

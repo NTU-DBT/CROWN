@@ -1,0 +1,38 @@
+[
+  {
+    "bytes": 5830,
+    "original_path": "build/verification/human-inspection-v72-progress-v1.json",
+    "publication_path": "publication/evidence/human-inspection-v72-progress-v1.json",
+    "sha256": "b6ce34f9d269ffc83a6b639317fbed3b7e507e9b74a84765f039e74eb47aec5b"
+  },
+  {
+    "bytes": 100439,
+    "original_path": "build/verification/v72-difference-root-v1/source-lineage.json",
+    "publication_path": "publication/evidence/v72-difference-root-v1/source-lineage.json",
+    "sha256": "b025d90bf6cfc4d2ac9792ca297c1c2fce7ed013ff6f15f116a01d2d33485344"
+  },
+  {
+    "bytes": 643899,
+    "original_path": "build/verification/v73-completion-frontend-planner-v1/requirements.json",
+    "publication_path": "publication/evidence/v73-completion-frontend-planner-v1/requirements.json",
+    "sha256": "96f3f2023b0dc8719d02395255a6238a90158e8641b2f3a06b535054992b739f"
+  },
+  {
+    "bytes": 6681,
+    "original_path": "build/verification/v73-completion-frontend-planner-v1/review.md",
+    "publication_path": "publication/evidence/v73-completion-frontend-planner-v1/review.md",
+    "sha256": "ff45807fc21243e3663079d1f829d59b1ecd08f8eaef7156b75804f7625aeb1f"
+  },
+  {
+    "bytes": 973,
+    "original_path": "build/verification/v73-completion-frontend-planner-v1/receiving.json",
+    "publication_path": "publication/evidence/v73-completion-frontend-planner-v1/receiving.json",
+    "sha256": "92d94f2f59cbe63f9f6faddfd6bc8bf80053c6033938106cd8c060d2c3baf9a9"
+  },
+  {
+    "bytes": 1050,
+    "original_path": "build/verification/v73-completion-frontend-planner-v1/manifest.json",
+    "publication_path": "publication/evidence/v73-completion-frontend-planner-v1/manifest.json",
+    "sha256": "358c2513d798fa0e5590ca7296d5f961f515402e028a7f9cd7f1eae5bc044dbb"
+  }
+]

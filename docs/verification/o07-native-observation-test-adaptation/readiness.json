@@ -1,0 +1,16 @@
+{
+  "status": "frozen; root standalone+whole-runtime sanitizer all20groups passed; native O07 not_started",
+  "package_sha256": "9d9d43df7bfcb9a8e047b9da104554e7596f3b206545932ab1e69c9fd0985ce5",
+  "package_algorithm": "SHA256(canonical sorted-key JSON of files, separators comma/colon, UTF8)",
+  "files": {
+    "README.md": "d1234f2da7a1fb88dfd00a47d9c49b9e15b9be04b06512a30c649fa40316a262",
+    "baseline-sha256.json": "21cbe49441bdf063f50c812d0c49a1396eb16eb8293236818abab92d02c83752",
+    "comparison-to-accepted.patch": "856257b43ade9742a12a87547f35d1d99711c537aca537166b98aa2bbdd19b57",
+    "mode_binding_test.cpp": "90fa841bd1e70d3b4af4018913cb26ceba7249237d36c0301ae4172c93d757d2",
+    "root-results.json": "c704fb2d2323403b2bee42b1f89d1737b6b3aa543e70db8af0e3a238a0e6e29b",
+    "run_context_test.cpp": "ef53c842d0e2f2778fb90a02a0f4e0fff5b53c5c11f5f17e7993847594c75d05",
+    "runtime_observation_test.cpp": "72272eea5bc8adb2da33eac9b01605e1791fd774075430a025aced1b29549a27"
+  },
+  "source_changes": "only noexcept owning-copy contract and disjoint actual clock intervals; every prior result/work/fault/zero-clock assertion preserved",
+  "native_changes": false
+}

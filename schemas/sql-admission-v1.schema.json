@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN SQL frontend and structural admission v1",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "admission_scope", "admission_status", "phase", "execution_status", "route", "diagnostic", "program", "structure", "work", "limits"],
+  "properties": {
+    "schema_version": {"const": 1}, "admission_scope": {"const": "frontend_and_structure"},
+    "admission_status": {"enum": ["admitted", "syntax_error", "semantic_error", "unsupported_semantics", "cyclic_body", "non_free_connex", "resource_limit"]},
+    "phase": {"enum": ["complete", "syntax", "catalog", "parameters", "binding", "normalization", "recognition", "artifact"]},
+    "execution_status": {"const": "not_lowered"},
+    "route": {"enum": ["free_connex", "constant_empty", null]},
+    "diagnostic": {"oneOf": [{"$ref": "sql-binding-v1.schema.json#/$defs/binding_diagnostic"}, {"type": "null"}]},
+    "program": {"oneOf": [{"$ref": "sql-normalization-v2.schema.json"}, {"type": "null"}]},
+    "structure": {"oneOf": [{"$ref": "#/$defs/structure"}, {"type": "null"}]},
+    "work": {
+      "type": "object", "additionalProperties": false, "required": ["binding", "normalization", "recognition"],
+      "properties": {"binding": {"$ref": "#/$defs/work"}, "normalization": {"$ref": "#/$defs/work"}, "recognition": {"$ref": "#/$defs/work"}}
+    },
+    "limits": {
+      "type": "object", "additionalProperties": false, "required": ["binding", "normalization", "recognition"],
+      "properties": {"binding": {"$ref": "sql-binding-v1.schema.json#/$defs/limits"},
+        "normalization": {"$ref": "sql-normalization-v1.schema.json#/$defs/limits"}, "recognition": {"$ref": "sql-normalization-v1.schema.json#/$defs/limits"}}
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"admission_status": {"const": "admitted"}}},
+      "then": {"properties": {"phase": {"const": "complete"}, "diagnostic": {"type": "null"}, "program": {"type": "object"}, "structure": {"type": "object"}, "route": {"type": "string"}}},
+      "else": {"properties": {"phase": {"not": {"const": "complete"}}, "diagnostic": {"type": "object"}, "route": {"type": "null"}}}
+    },
+    {"if": {"properties": {"route": {"const": "free_connex"}}}, "then": {"properties": {"structure": {"properties": {"query_class": {"const": "free_connex"}}}, "program": {"properties": {"core": {"properties": {"query": {"properties": {"contradiction": {"const": false}}}}}}}}}},
+    {"if": {"properties": {"route": {"const": "constant_empty"}}}, "then": {"properties": {"program": {"properties": {"core": {"properties": {"query": {"properties": {"contradiction": {"const": true}}}}}}}}}},
+    {"if": {"properties": {"admission_status": {"const": "cyclic_body"}}}, "then": {"properties": {"phase": {"const": "recognition"}, "program": {"type": "object"}, "structure": {"type": "object", "properties": {"query_class": {"const": "cyclic"}}}}}},
+    {"if": {"properties": {"admission_status": {"const": "non_free_connex"}}}, "then": {"properties": {"phase": {"const": "recognition"}, "program": {"type": "object"}, "structure": {"type": "object", "properties": {"query_class": {"const": "acyclic_non_free_connex"}}}}}},
+    {"if": {"properties": {"admission_status": {"const": "syntax_error"}}}, "then": {"properties": {"phase": {"const": "syntax"}, "program": {"type": "null"}, "structure": {"type": "null"}}}},
+    {"if": {"properties": {"admission_status": {"enum": ["semantic_error", "unsupported_semantics", "resource_limit"]}}}, "then": {"properties": {"structure": {"type": "null"}}}}
+  ],
+  "$defs": {
+    "id": {"$ref": "sql-normalization-v1.schema.json#/$defs/uint64"},
+    "work": {"oneOf": [{"$ref": "#/$defs/id"}, {"type": "null"}]},
+    "step": {"oneOf": [
+      {"type": "object", "additionalProperties": false, "required": ["kind", "edge", "variable"], "properties": {"kind": {"const": "remove_private_variable"}, "edge": {"$ref": "#/$defs/id"}, "variable": {"type": "string", "minLength": 1}}},
+      {"type": "object", "additionalProperties": false, "required": ["kind", "edge", "anchor"], "properties": {"kind": {"const": "remove_contained_edge"}, "edge": {"$ref": "#/$defs/id"}, "anchor": {"$ref": "#/$defs/id"}}},
+      {"type": "object", "additionalProperties": false, "required": ["kind", "edge"], "properties": {"kind": {"const": "remove_empty_edge"}, "edge": {"$ref": "#/$defs/id"}}}
+    ]},
+    "reduction": {
+      "type": "object", "additionalProperties": false, "required": ["acyclic", "witness", "failed_core"],
+      "properties": {
+        "acyclic": {"type": "boolean"}, "witness": {"type": "array", "items": {"$ref": "#/$defs/step"}},
+        "failed_core": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["edge", "scope"], "properties": {"edge": {"$ref": "#/$defs/id"}, "scope": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}}}}
+      },
+      "if": {"properties": {"acyclic": {"const": true}}}, "then": {"properties": {"failed_core": {"maxItems": 0}}}, "else": {"properties": {"failed_core": {"minItems": 1}}}
+    },
+    "structure": {
+      "type": "object", "additionalProperties": false, "required": ["schema_version", "query_class", "body", "augmented", "synthetic_head_edge", "height_status"],
+      "properties": {"schema_version": {"const": 1}, "query_class": {"enum": ["free_connex", "acyclic_non_free_connex", "cyclic"]},
+        "body": {"$ref": "#/$defs/reduction"}, "augmented": {"$ref": "#/$defs/reduction"}, "synthetic_head_edge": {"$ref": "#/$defs/id"}, "height_status": {"const": "not_checked"}}
+    },
+    "optional_work": {
+      "type": "object", "additionalProperties": false, "properties": {"work_limit": {"$ref": "#/$defs/work"}}
+    },
+    "options_document": {
+      "type": "object", "additionalProperties": false, "required": ["schema_version"],
+      "properties": {
+        "schema_version": {"const": 1},
+        "parameter_types": {"type": "array", "items": {"$ref": "sql-binding-v1.schema.json#/$defs/parameter_declaration"}},
+        "parameter_values": {"type": "array", "items": {"$ref": "sql-normalization-v1.schema.json#/$defs/sql_value"}},
+        "limits": {"type": "object", "additionalProperties": false, "properties": {
+          "binding": {"type": "object", "additionalProperties": false, "properties": {"work_limit": {"$ref": "#/$defs/work"}, "expression_limit": {"$ref": "#/$defs/id"}, "recursion_limit": {"$ref": "#/$defs/id"}}},
+          "normalization": {"$ref": "#/$defs/optional_work"}, "recognition": {"$ref": "#/$defs/optional_work"}
+        }}
+      }
+    }
+  }
+}

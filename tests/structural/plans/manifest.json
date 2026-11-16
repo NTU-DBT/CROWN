@@ -1,0 +1,231 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "name": "singleton",
+      "query": "queries/singleton.cq.json",
+      "plan": "trees/singleton.tree.json",
+      "valid": true,
+      "expected_native_height": 1,
+      "expected_violations": []
+    },
+    {
+      "name": "projected_singleton",
+      "query": "queries/projected_singleton.cq.json",
+      "plan": "trees/projected_singleton.tree.json",
+      "valid": true,
+      "expected_native_height": 1,
+      "expected_violations": []
+    },
+    {
+      "name": "boolean_query",
+      "query": "queries/boolean_query.cq.json",
+      "plan": "trees/boolean_query.tree.json",
+      "valid": true,
+      "expected_native_height": 1,
+      "expected_violations": []
+    },
+    {
+      "name": "two_edge_generalized_root",
+      "query": "queries/two_edge.cq.json",
+      "plan": "trees/two_edge_generalized_root.tree.json",
+      "valid": true,
+      "expected_native_height": 1,
+      "expected_violations": []
+    },
+    {
+      "name": "projected_two_edge_native_root",
+      "query": "queries/two_edge_projected.cq.json",
+      "plan": "trees/projected_two_edge_native_root.tree.json",
+      "valid": true,
+      "expected_native_height": 2,
+      "expected_violations": []
+    },
+    {
+      "name": "disconnected_empty_scope_root",
+      "query": "queries/disconnected.cq.json",
+      "plan": "trees/disconnected_empty_scope_root.tree.json",
+      "valid": true,
+      "expected_native_height": 1,
+      "expected_violations": []
+    },
+    {
+      "name": "duplicate_scopes_distinct_occurrences",
+      "query": "queries/duplicate_scopes.cq.json",
+      "plan": "trees/duplicate_scopes_distinct_occurrences.tree.json",
+      "valid": true,
+      "expected_native_height": 1,
+      "expected_violations": []
+    },
+    {
+      "name": "empty_body",
+      "query": "queries/empty_body.cq.json",
+      "plan": "trees/empty_body.tree.json",
+      "valid": true,
+      "expected_native_height": 0,
+      "expected_violations": []
+    },
+    {
+      "name": "residual_height_three_7_atom",
+      "query": "queries/residual_counterexample_7.cq.json",
+      "plan": "trees/residual_height_three_7_atom.tree.json",
+      "valid": true,
+      "expected_native_height": 3,
+      "expected_violations": []
+    },
+    {
+      "name": "residual_height_three_9_atom",
+      "query": "queries/residual_counterexample_9.cq.json",
+      "plan": "trees/residual_height_three_9_atom.tree.json",
+      "valid": true,
+      "expected_native_height": 3,
+      "expected_violations": []
+    },
+    {
+      "name": "invalid_cover",
+      "query": "queries/cover.cq.json",
+      "plan": "trees/invalid_cover.tree.json",
+      "valid": false,
+      "expected_native_height": null,
+      "expected_violations": [
+        "cover"
+      ],
+      "expected_witnesses": [
+        {
+          "rule": "cover",
+          "occurrence": "s"
+        }
+      ]
+    },
+    {
+      "name": "invalid_connect",
+      "query": "queries/connect.cq.json",
+      "plan": "trees/invalid_connect.tree.json",
+      "valid": false,
+      "expected_native_height": null,
+      "expected_violations": [
+        "connect"
+      ],
+      "expected_witnesses": [
+        {
+          "rule": "connect",
+          "variable": "x"
+        }
+      ]
+    },
+    {
+      "name": "invalid_guard",
+      "query": "queries/guard.cq.json",
+      "plan": "trees/invalid_guard.tree.json",
+      "valid": false,
+      "expected_native_height": null,
+      "expected_violations": [
+        "guard"
+      ],
+      "expected_witnesses": [
+        {
+          "rule": "guard",
+          "node": "g",
+          "variable": "y",
+          "related_node": "r_node"
+        }
+      ]
+    },
+    {
+      "name": "invalid_above",
+      "query": "queries/above.cq.json",
+      "plan": "trees/invalid_above.tree.json",
+      "valid": false,
+      "expected_native_height": null,
+      "expected_violations": [
+        "above"
+      ],
+      "expected_witnesses": [
+        {
+          "rule": "above",
+          "node": "g"
+        }
+      ]
+    },
+    {
+      "name": "invalid_connex",
+      "query": "queries/connex.cq.json",
+      "plan": "trees/invalid_connex.tree.json",
+      "valid": false,
+      "expected_native_height": null,
+      "expected_violations": [
+        "connex"
+      ],
+      "expected_witnesses": [
+        {
+          "rule": "connex",
+          "variable": "z"
+        }
+      ],
+      "expected_maximal_connex": [
+        "r_node"
+      ]
+    },
+    {
+      "name": "invalid_separator_claim",
+      "query": "queries/separator_claim.cq.json",
+      "plan": "trees/invalid_separator_claim.tree.json",
+      "valid": false,
+      "expected_native_height": null,
+      "expected_violations": [
+        "separator"
+      ],
+      "expected_witnesses": [
+        {
+          "rule": "separator",
+          "node": "s_node"
+        }
+      ]
+    },
+    {
+      "name": "invalid_height_claim",
+      "query": "queries/height_claim.cq.json",
+      "plan": "trees/invalid_height_claim.tree.json",
+      "valid": false,
+      "expected_native_height": null,
+      "expected_violations": [
+        "height"
+      ],
+      "expected_witnesses": [
+        {
+          "rule": "height"
+        }
+      ]
+    },
+    {
+      "name": "invalid_connex_certificate",
+      "query": "queries/connex_certificate.cq.json",
+      "plan": "trees/invalid_connex_certificate.tree.json",
+      "valid": false,
+      "expected_native_height": null,
+      "expected_violations": [
+        "connex_certificate"
+      ],
+      "expected_witnesses": [
+        {
+          "rule": "connex_certificate"
+        }
+      ]
+    },
+    {
+      "name": "invalid_height_overclaim",
+      "query": "queries/height_claim.cq.json",
+      "plan": "trees/invalid_height_overclaim.tree.json",
+      "valid": false,
+      "expected_native_height": null,
+      "expected_violations": [
+        "height"
+      ],
+      "expected_witnesses": [
+        {
+          "rule": "height"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "catalog": {
+    "version": 1,
+    "tables": [
+      {
+        "name": "flags",
+        "source_schema_version": 1,
+        "columns": [
+          {
+            "name": "active",
+            "nullable": false,
+            "type": "bool"
+          }
+        ],
+        "constraints": [],
+        "statistics": {
+          "distinct_counts": []
+        },
+        "key_hints": []
+      }
+    ]
+  }
+}

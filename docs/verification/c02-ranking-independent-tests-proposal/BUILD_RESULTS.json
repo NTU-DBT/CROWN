@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-07",
+  "scope": "excluded independent C02 tests; production ABI",
+  "native_modified": false,
+  "task_status_claim": "not_started",
+  "author_test_execution": false,
+  "current_build": {
+    "state": "strict_compile_and_link_passed",
+    "directory": "/tmp/crown-c02-independent-current-3",
+    "recipe": "reproduce-build.sh strict /tmp/crown-c02-independent-current-3 /tmp/crown-c02-baseline-coherent-strict-1",
+    "cxx_standard": "c++23",
+    "flags": ["-O2", "-g", "-UNDEBUG", "-Wall", "-Wextra", "-Wpedantic", "-Wconversion", "-Wsign-conversion", "-Werror", "-pthread"],
+    "runtime_testing_macro": false,
+    "producer_archive_units": {"core": 31, "sql": 10, "plan": 3, "ranking": 3, "runtime": 15, "reference": 5},
+    "coherent_repaired_json_sha256": "f763c58b102e65242d09275aec4b2f343268280ab4587b15587ad143b2e2a406",
+    "cached_native_cpp_archives_used": false,
+    "native_parser_c_archive_reused": true,
+    "before_after_overlay_tests_and_link_inputs_equal": true,
+    "consumers": [
+      {
+        "name": "ranking_integer_independent_test",
+        "compile_exit": 0,
+        "link_exit": 0,
+        "compile_log_bytes": 0,
+        "link_log_bytes": 0,
+        "binary_sha256": "8f491047df0ac160e48cbf6e2cd1d2cfdeb1997444ad3eef2daf2e81e3b5004e",
+        "current_execution": "pending_root"
+      },
+      {
+        "name": "ranking_public_independent_test",
+        "compile_exit": 0,
+        "link_exit": 0,
+        "compile_log_bytes": 0,
+        "link_log_bytes": 0,
+        "binary_sha256": "89b2fbae1a126c634e5f239f9a9c3b8363c05fbcfad4451f327437f325c96f19",
+        "current_execution": "pending_root"
+      }
+    ]
+  },
+  "historical_integer_checkpoint": {
+    "state": "root_accepted_before_active_time_abi_revision",
+    "summary": "build/verification/c02-ranking-integer-root-attempt-1.json",
+    "summary_sha256": "b49b93fae34b94ab14db1918588b8b37a7e8a62a97f674524079141834ed55e4",
+    "checkpoint_manifest_file_sha256": "2912fdb8b9ddbb4e4ea4518e2585bcb2dd9aa52c4d92cd1be5e038e3c603e127",
+    "observed_groups": 3,
+    "observed_operands": 54,
+    "observed_ordered_pairs": 2916,
+    "observed_boundaries": 16,
+    "recheck_old_live_manifest_entries": false
+  },
+  "earlier_author_builds": [
+    {"directory": "/tmp/crown-c02-independent-strict", "state": "preserved initial warning and ADL failures, followed by successful revised compiles; not full current closure"},
+    {"directory": "/tmp/crown-c02-independent-current-1", "state": "compile_only_before_payload_and_json_repair; never_linked"},
+    {"directory": "/tmp/crown-c02-independent-current-2", "state": "objects_and_empty_logs_present; completion_record_lost_during_context_transition; superseded_by_current_3"}
+  ],
+  "remaining_gates": [
+    "root execution of both current strict consumers",
+    "matching full coherent sanitizer build and execution",
+    "producer ordinary/fault and JSON cleanup/control suites",
+    "native integration and complete native matrix",
+    "no ranking-overhead, allocator-total, transient-peak or global-cost-optimality claim"
+  ]
+}

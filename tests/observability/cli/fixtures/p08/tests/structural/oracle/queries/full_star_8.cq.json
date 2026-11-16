@@ -1,0 +1,280 @@
+{
+  "schema_version": 1,
+  "semantics": "set",
+  "catalog": {
+    "version": 1,
+    "tables": [
+      {
+        "name": "T_edge0",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "T_edge1",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "T_edge2",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "T_edge3",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "T_edge4",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "T_edge5",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "T_edge6",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "T_edge7",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          }
+        ]
+      }
+    ]
+  },
+  "query": {
+    "variables": [
+      {
+        "name": "c",
+        "type": "string"
+      },
+      {
+        "name": "leaf0",
+        "type": "string"
+      },
+      {
+        "name": "leaf1",
+        "type": "string"
+      },
+      {
+        "name": "leaf2",
+        "type": "string"
+      },
+      {
+        "name": "leaf3",
+        "type": "string"
+      },
+      {
+        "name": "leaf4",
+        "type": "string"
+      },
+      {
+        "name": "leaf5",
+        "type": "string"
+      },
+      {
+        "name": "leaf6",
+        "type": "string"
+      },
+      {
+        "name": "leaf7",
+        "type": "string"
+      }
+    ],
+    "atoms": [
+      {
+        "id": "edge0",
+        "table": "T_edge0",
+        "terms": [
+          {
+            "var": "c"
+          },
+          {
+            "var": "leaf0"
+          }
+        ]
+      },
+      {
+        "id": "edge1",
+        "table": "T_edge1",
+        "terms": [
+          {
+            "var": "c"
+          },
+          {
+            "var": "leaf1"
+          }
+        ]
+      },
+      {
+        "id": "edge2",
+        "table": "T_edge2",
+        "terms": [
+          {
+            "var": "c"
+          },
+          {
+            "var": "leaf2"
+          }
+        ]
+      },
+      {
+        "id": "edge3",
+        "table": "T_edge3",
+        "terms": [
+          {
+            "var": "c"
+          },
+          {
+            "var": "leaf3"
+          }
+        ]
+      },
+      {
+        "id": "edge4",
+        "table": "T_edge4",
+        "terms": [
+          {
+            "var": "c"
+          },
+          {
+            "var": "leaf4"
+          }
+        ]
+      },
+      {
+        "id": "edge5",
+        "table": "T_edge5",
+        "terms": [
+          {
+            "var": "c"
+          },
+          {
+            "var": "leaf5"
+          }
+        ]
+      },
+      {
+        "id": "edge6",
+        "table": "T_edge6",
+        "terms": [
+          {
+            "var": "c"
+          },
+          {
+            "var": "leaf6"
+          }
+        ]
+      },
+      {
+        "id": "edge7",
+        "table": "T_edge7",
+        "terms": [
+          {
+            "var": "c"
+          },
+          {
+            "var": "leaf7"
+          }
+        ]
+      }
+    ],
+    "head": [
+      {
+        "var": "c"
+      },
+      {
+        "var": "leaf0"
+      },
+      {
+        "var": "leaf1"
+      },
+      {
+        "var": "leaf2"
+      },
+      {
+        "var": "leaf3"
+      },
+      {
+        "var": "leaf4"
+      },
+      {
+        "var": "leaf5"
+      },
+      {
+        "var": "leaf6"
+      },
+      {
+        "var": "leaf7"
+      }
+    ]
+  }
+}

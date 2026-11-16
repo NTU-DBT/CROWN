@@ -1,0 +1,9 @@
+2fea5eecdea8c3272a1ca975e4c64996e3ee24f8e54e030bf1676bf28328f690  docs/verification/c01-matrix-audit-trace-revision-proposal/INPUT_SHA256SUMS
+260e776d8c2e347614f784c5114a82324c5c47b31a4b9ad49d6e21d273e8cc8d  docs/verification/c01-matrix-audit-trace-revision-proposal/PINNED_INPUTS.json
+593ccce97701a92788826ad929db41f8bee6c3e577dc8267991e44ff3b9f01b3  docs/verification/c01-matrix-audit-trace-revision-proposal/README.md
+1a74c0e6412a4bfb5e755ab8f486fccdd226e2d6915b80f61922afc596e7a55d  docs/verification/c01-matrix-audit-trace-revision-proposal/ROOT_REPRODUCTION.md
+52c31079d7a81d70c528df3f1160b4067aac65b55cf6acbfe1ccde5401b4cae9  docs/verification/c01-matrix-audit-trace-revision-proposal/allocation-review.example.json
+eb91f634048909491196ebeba96534597f7df4f3731213c2d50cf08844c06e82  docs/verification/c01-matrix-audit-trace-revision-proposal/audit.py
+57476bb0a4d538083924cb918dbea5ead122b28271c8db6d9a1dc93f5a4c88fd  docs/verification/c01-matrix-audit-trace-revision-proposal/source-files.sha256
+f01631f17ddf94a354c1254172a1c8524a7e4cd1b6c96f1f6964cb1cb72031c9  docs/verification/c01-matrix-audit-trace-revision-proposal/source-map.md
+2513c9d9cf1584ead26e74ef7b0a16d714790e7ad6262d03a28c7696a5cc6f8c  docs/verification/c01-matrix-audit-trace-revision-proposal/trace-grammar.diff

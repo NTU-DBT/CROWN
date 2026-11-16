@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "semantics": "set",
+  "catalog": {
+    "version": 1,
+    "tables": [
+      {
+        "name": "T_r",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "T_s",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "T_t",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          }
+        ]
+      }
+    ]
+  },
+  "query": {
+    "variables": [
+      {
+        "name": "x",
+        "type": "string"
+      },
+      {
+        "name": "y",
+        "type": "string"
+      },
+      {
+        "name": "z",
+        "type": "string"
+      }
+    ],
+    "atoms": [
+      {
+        "id": "r",
+        "table": "T_r",
+        "terms": [
+          {
+            "var": "x"
+          },
+          {
+            "var": "y"
+          }
+        ]
+      },
+      {
+        "id": "s",
+        "table": "T_s",
+        "terms": [
+          {
+            "var": "y"
+          },
+          {
+            "var": "z"
+          }
+        ]
+      },
+      {
+        "id": "t",
+        "table": "T_t",
+        "terms": [
+          {
+            "var": "x"
+          },
+          {
+            "var": "z"
+          }
+        ]
+      }
+    ],
+    "head": []
+  }
+}

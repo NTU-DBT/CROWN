@@ -1,0 +1,472 @@
+{
+  "adapters": [
+    {
+      "base": 0,
+      "column_classes": [
+        0,
+        1
+      ],
+      "equal_columns": [],
+      "non_null_columns": [
+        0,
+        1
+      ],
+      "occurrence": 0,
+      "predicates": [
+        10
+      ],
+      "program": [
+        0,
+        1,
+        7,
+        10
+      ],
+      "projection": [
+        {
+          "expression": 0,
+          "variable": 0
+        },
+        {
+          "expression": 1,
+          "variable": 1
+        }
+      ]
+    },
+    {
+      "base": 1,
+      "column_classes": [
+        1,
+        2
+      ],
+      "equal_columns": [],
+      "non_null_columns": [
+        0
+      ],
+      "occurrence": 1,
+      "predicates": [],
+      "program": [
+        2,
+        3
+      ],
+      "projection": [
+        {
+          "expression": 2,
+          "variable": 1
+        },
+        {
+          "expression": 3,
+          "variable": 2
+        }
+      ]
+    }
+  ],
+  "admission_status": "not_checked",
+  "base_routes": [
+    [
+      0
+    ],
+    [
+      1
+    ]
+  ],
+  "binding": {
+    "admission_status": "not_checked",
+    "binding_valid": true,
+    "catalog_binding": {
+      "catalog": {
+        "tables": [
+          {
+            "columns": [
+              {
+                "name": "a",
+                "nullable": false,
+                "type": "int64"
+              },
+              {
+                "name": "b",
+                "nullable": false,
+                "type": "int64"
+              }
+            ],
+            "constraints": [],
+            "key_hints": [],
+            "name": "r",
+            "source_schema_version": 1,
+            "statistics": {
+              "distinct_counts": []
+            }
+          },
+          {
+            "columns": [
+              {
+                "name": "b",
+                "nullable": false,
+                "type": "int64"
+              },
+              {
+                "name": "c",
+                "nullable": false,
+                "type": "int64"
+              }
+            ],
+            "constraints": [],
+            "key_hints": [],
+            "name": "s",
+            "source_schema_version": 1,
+            "statistics": {
+              "distinct_counts": []
+            }
+          }
+        ],
+        "version": 1
+      },
+      "schema_version": 1
+    },
+    "catalog_inheritance": "none",
+    "expressions": [
+      {
+        "column": 0,
+        "id": 0,
+        "kind": "column",
+        "location": 29,
+        "occurrence": 0,
+        "type": {
+          "kind": "int64",
+          "nullable": false
+        }
+      },
+      {
+        "column": 1,
+        "id": 1,
+        "kind": "column",
+        "location": 29,
+        "occurrence": 0,
+        "type": {
+          "kind": "int64",
+          "nullable": false
+        }
+      },
+      {
+        "column": 0,
+        "id": 2,
+        "kind": "column",
+        "location": 36,
+        "occurrence": 1,
+        "type": {
+          "kind": "int64",
+          "nullable": false
+        }
+      },
+      {
+        "column": 1,
+        "id": 3,
+        "kind": "column",
+        "location": 36,
+        "occurrence": 1,
+        "type": {
+          "kind": "int64",
+          "nullable": false
+        }
+      },
+      {
+        "column": 1,
+        "id": 4,
+        "kind": "column",
+        "location": 41,
+        "occurrence": 0,
+        "type": {
+          "kind": "int64",
+          "nullable": false
+        }
+      },
+      {
+        "column": 0,
+        "id": 5,
+        "kind": "column",
+        "location": 45,
+        "occurrence": 1,
+        "type": {
+          "kind": "int64",
+          "nullable": false
+        }
+      },
+      {
+        "arguments": [
+          4,
+          5
+        ],
+        "id": 6,
+        "kind": "operation",
+        "location": 44,
+        "operator": "equal",
+        "type": {
+          "kind": "bool",
+          "nullable": false
+        }
+      },
+      {
+        "column": 0,
+        "id": 7,
+        "kind": "column",
+        "location": 55,
+        "occurrence": 0,
+        "type": {
+          "kind": "int64",
+          "nullable": false
+        }
+      },
+      {
+        "id": 8,
+        "kind": "literal",
+        "location": 59,
+        "type": {
+          "kind": "int32",
+          "nullable": false
+        },
+        "value": 1
+      },
+      {
+        "arguments": [
+          8
+        ],
+        "id": 9,
+        "kind": "operation",
+        "location": 58,
+        "operator": "widen_integer",
+        "type": {
+          "kind": "int64",
+          "nullable": false
+        }
+      },
+      {
+        "arguments": [
+          7,
+          9
+        ],
+        "id": 10,
+        "kind": "operation",
+        "location": 58,
+        "operator": "equal",
+        "type": {
+          "kind": "bool",
+          "nullable": false
+        }
+      },
+      {
+        "column": 0,
+        "id": 11,
+        "kind": "column",
+        "location": 16,
+        "occurrence": 0,
+        "type": {
+          "kind": "int64",
+          "nullable": false
+        }
+      },
+      {
+        "column": 1,
+        "id": 12,
+        "kind": "column",
+        "location": 20,
+        "occurrence": 1,
+        "type": {
+          "kind": "int64",
+          "nullable": false
+        }
+      }
+    ],
+    "inner_semantics": null,
+    "limits": {
+      "expression_limit": 100000,
+      "recursion_limit": 128,
+      "work_limit": 1000000
+    },
+    "occurrences": [
+      {
+        "alias": "r",
+        "column_names": [
+          "a",
+          "b"
+        ],
+        "include_descendants": true,
+        "location": 29,
+        "table": "r",
+        "table_id": 0
+      },
+      {
+        "alias": "s",
+        "column_names": [
+          "b",
+          "c"
+        ],
+        "include_descendants": true,
+        "location": 36,
+        "table": "s",
+        "table_id": 1
+      }
+    ],
+    "outputs": [
+      {
+        "expression": 11,
+        "name": "a"
+      },
+      {
+        "expression": 12,
+        "name": "c"
+      }
+    ],
+    "parameters": [],
+    "predicates": [
+      6,
+      10
+    ],
+    "requested_semantics": "set",
+    "result_wrapper": "rows",
+    "schema_version": 1,
+    "source": "SELECT DISTINCT r.a,s.c FROM r JOIN s ON r.b=s.b WHERE r.a=1\n",
+    "work": 53,
+    "wrapper_alias": "exists"
+  },
+  "core": {
+    "catalog": {
+      "tables": [
+        {
+          "columns": [
+            {
+              "name": "v0",
+              "nullable": false,
+              "type": "int64"
+            },
+            {
+              "name": "v1",
+              "nullable": false,
+              "type": "int64"
+            }
+          ],
+          "constraints": [],
+          "key_hints": [],
+          "name": "occurrence_0",
+          "source_schema_version": 1,
+          "statistics": {
+            "distinct_counts": []
+          }
+        },
+        {
+          "columns": [
+            {
+              "name": "v1",
+              "nullable": false,
+              "type": "int64"
+            },
+            {
+              "name": "v2",
+              "nullable": false,
+              "type": "int64"
+            }
+          ],
+          "constraints": [],
+          "key_hints": [],
+          "name": "occurrence_1",
+          "source_schema_version": 1,
+          "statistics": {
+            "distinct_counts": []
+          }
+        }
+      ],
+      "version": 1
+    },
+    "initial": [
+      {
+        "rows": [],
+        "table": "occurrence_0"
+      },
+      {
+        "rows": [],
+        "table": "occurrence_1"
+      }
+    ],
+    "query": {
+      "atoms": [
+        {
+          "id": "occurrence_0",
+          "table": "occurrence_0",
+          "terms": [
+            {
+              "var": "v0"
+            },
+            {
+              "var": "v1"
+            }
+          ]
+        },
+        {
+          "id": "occurrence_1",
+          "table": "occurrence_1",
+          "terms": [
+            {
+              "var": "v1"
+            },
+            {
+              "var": "v2"
+            }
+          ]
+        }
+      ],
+      "contradiction": false,
+      "head": [
+        {
+          "alias": "a",
+          "var": "v0"
+        },
+        {
+          "alias": "c",
+          "var": "v2"
+        }
+      ],
+      "variables": [
+        {
+          "name": "v0",
+          "type": "int64"
+        },
+        {
+          "name": "v1",
+          "type": "int64"
+        },
+        {
+          "name": "v2",
+          "type": "int64"
+        }
+      ]
+    },
+    "schema_version": 3,
+    "semantics": "set",
+    "updates": []
+  },
+  "limits": {
+    "work_limit": 1000000
+  },
+  "normalization_valid": true,
+  "outputs": [
+    {
+      "column": 0,
+      "kind": "core",
+      "name": "a",
+      "type": {
+        "kind": "int64",
+        "nullable": false
+      }
+    },
+    {
+      "column": 1,
+      "kind": "core",
+      "name": "c",
+      "type": {
+        "kind": "int64",
+        "nullable": false
+      }
+    }
+  ],
+  "parameter_values": [],
+  "schema_version": 1,
+  "work": 71
+}

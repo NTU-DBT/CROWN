@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "semantics": "set",
+  "catalog": {
+    "version": 1,
+    "tables": [
+      {
+        "name": "T_unit",
+        "columns": []
+      }
+    ]
+  },
+  "query": {
+    "variables": [],
+    "atoms": [
+      {
+        "id": "unit",
+        "table": "T_unit",
+        "terms": []
+      }
+    ],
+    "head": []
+  }
+}

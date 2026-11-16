@@ -1,0 +1,478 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN workflow CLI reports v1",
+  "description": "Closed command transport shapes. Reports and schema validation do not create durable receipts or authorize state changes. Native readers and owners establish the underlying bindings.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/snapshot"
+    },
+    {
+      "$ref": "#/$defs/results"
+    },
+    {
+      "$ref": "#/$defs/verification"
+    },
+    {
+      "$ref": "#/$defs/validation"
+    },
+    {
+      "$ref": "#/$defs/benchmark"
+    },
+    {
+      "$ref": "#/$defs/error"
+    }
+  ],
+  "$defs": {
+    "snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "committed_sequence",
+        "source_positions",
+        "rows",
+        "verified_output_sequence",
+        "selected_generation",
+        "first_generation",
+        "delivery_work",
+        "sink_bytes",
+        "memory_requested_bytes"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "committed_sequence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "source_positions": {
+          "type": "object",
+          "propertyNames": {
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 18446744073709551615
+          }
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "cq-v2.schema.json#/$defs/value"
+            }
+          }
+        },
+        "verified_output_sequence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "selected_generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 18446744073709551615
+        },
+        "first_generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 18446744073709551615
+        },
+        "delivery_work": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "sink_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "memory_requested_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        }
+      }
+    },
+    "results": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "generation",
+        "epoch",
+        "query_id",
+        "sink_id",
+        "physical_sha256",
+        "rows"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 18446744073709551615
+        },
+        "epoch": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 18446744073709551615
+        },
+        "query_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{32}$"
+        },
+        "sink_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{32}$"
+        },
+        "physical_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "op",
+              "values"
+            ],
+            "properties": {
+              "op": {
+                "enum": [
+                  "insert",
+                  "delete"
+                ]
+              },
+              "values": {
+                "type": "array",
+                "items": {
+                  "$ref": "cq-v2.schema.json#/$defs/value"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "trace_verified",
+        "records",
+        "source_positions",
+        "physical_sha256",
+        "verifier",
+        "reference_estimated_work",
+        "reference_estimated_bytes_limit",
+        "input_bytes"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "trace_verified": {
+          "const": true
+        },
+        "records": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "source_positions": {
+          "type": "object",
+          "propertyNames": {
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 18446744073709551615
+          }
+        },
+        "physical_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "verifier": {
+          "const": "relational_reference_with_validated_sql_adapters"
+        },
+        "reference_estimated_work": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "reference_estimated_bytes_limit": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "input_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "physical_valid",
+        "physical_sha256",
+        "source_sha256",
+        "selected_native_height",
+        "height_status"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "physical_valid": {
+          "const": true
+        },
+        "physical_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "selected_native_height": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "height_status": {
+          "enum": [
+            "proven_minimum",
+            "checked_constant_operator"
+          ]
+        }
+      }
+    },
+    "benchmark": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "benchmark_scope",
+        "records",
+        "delivered_rows",
+        "initialization_ns",
+        "processing_ns",
+        "timing_scope",
+        "final",
+        "input_begin_ns",
+        "native_prepare_commit_ns",
+        "delivery_ns",
+        "runtime",
+        "backend",
+        "identity",
+        "height_evidence",
+        "metrics",
+        "run_context",
+        "cursor",
+        "committed_gauges",
+        "delivery"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "benchmark_scope": {
+          "const": "single_process_native_durable_file_run"
+        },
+        "records": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "delivered_rows": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "initialization_ns": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "processing_ns": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "timing_scope": {
+          "type": "string"
+        },
+        "final": {
+          "$ref": "#/$defs/snapshot"
+        },
+        "input_begin_ns": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "native_prepare_commit_ns": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "delivery_ns": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        "runtime": {
+          "$ref": "explain-report-v2.schema.json#/$defs/p_mode/properties/runtime"
+        },
+        "backend": {
+          "$ref": "explain-report-v2.schema.json#/$defs/p_mode/properties/backend"
+        },
+        "identity": {
+          "$ref": "explain-report-v2.schema.json#/$defs/physical_report/properties/identity"
+        },
+        "height_evidence": {
+          "$ref": "explain-report-v2.schema.json#/$defs/physical_report/properties/height_evidence"
+        },
+        "metrics": {
+          "$ref": "explain-report-v2.schema.json#/$defs/physical_report/properties/observations"
+        },
+        "run_context": {
+          "$ref": "explain-report-v2.schema.json#/$defs/physical_report/properties/run_context"
+        },
+        "cursor": {
+          "$ref": "explain-report-v2.schema.json#/$defs/physical_report/properties/cursor"
+        },
+        "committed_gauges": {
+          "$ref": "explain-report-v2.schema.json#/$defs/physical_report/properties/committed_gauges"
+        },
+        "delivery": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "verified_sequence",
+            "generation",
+            "bytes",
+            "prefix_sha256"
+          ],
+          "properties": {
+            "kind": {
+              "const": "durable_local_file"
+            },
+            "verified_sequence": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "generation": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 18446744073709551615
+            },
+            "bytes": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "prefix_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "error",
+        "message"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "error": {
+          "type": "string",
+          "minLength": 1
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "fault",
+            "stage",
+            "native_error",
+            "cleanup_failed"
+          ],
+          "properties": {
+            "fault": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "stage": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 18446744073709551615
+            },
+            "native_error": {
+              "type": "integer"
+            },
+            "cleanup_failed": {
+              "type": "boolean"
+            },
+            "outcome": {
+              "enum": [
+                "unchanged",
+                "unknown",
+                "durable"
+              ]
+            },
+            "publication": {
+              "enum": [
+                "not_published",
+                "unknown",
+                "published_unsynced",
+                "durable"
+              ]
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "outcome"
+              ]
+            },
+            {
+              "required": [
+                "publication"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  }
+}

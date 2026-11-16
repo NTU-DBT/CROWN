@@ -1,0 +1,18 @@
+target	sources	public_dependencies	private_dependencies	definitions	private_includes	purpose
+crown_ranking	src/planner/ranking.cpp;src/planner/ranking_integer.cpp;src/planner/ranking_payload.cpp	crown_plan	crown_options	none	none	pure typed ranker; public include
+crown_ranking_runtime	src/runtime/ranking_evidence.cpp	crown_ranking;crown_runtime	crown_options	none	none	opt-in production actual-owner bridge; public include
+crown_ranking_runtime_testing	src/runtime/ranking_evidence.cpp	crown_ranking;crown_runtime_testing	crown_options	CROWN_RUNTIME_TESTING inherited publicly	none	opt-in testing bridge; BUILD_TESTING only
+crown_ranking_binding_test	tests/unit/ranking_binding_test.cpp	none	crown_ranking;crown_options	none	tests/support;src/planner	P07 bytes/prefix profile; finite binding admission
+crown_ranking_pure_link_test	tests/unit/ranking_pure_link_test.cpp	none	crown_ranking;crown_options	none	tests/support;src/planner	pure ranking has no runtime/report linkage
+crown_ranking_contract_test	tests/unit/ranking_contract_test.cpp	none	crown_ranking_runtime;crown_options	none	tests/support;src/planner	typed policies; freshness; full retained set
+crown_ranking_empty_test	tests/unit/ranking_empty_test.cpp	none	crown_ranking_runtime;crown_options	none	tests/support;src/planner	zero/nullary/unary bounds; unavailable versus resource
+crown_ranking_payload_time_test	tests/unit/ranking_payload_time_test.cpp	none	crown_ranking_runtime;crown_options	none	tests/support;src/planner	logical payload, repeated normalized SQL, Decimal, time carry
+crown_ranking_census_test	tests/unit/ranking_census_test.cpp	none	crown_ranking_runtime_testing;crown_options	CROWN_RUNTIME_TESTING inherited	tests/support;src/planner;src/runtime	isolated boundary injection; actual Delta saturation
+crown_ranking_exceptions_test	tests/unit/ranking_exception_test.cpp	none	crown_ranking_runtime;crown_options	none	tests/support;src/planner	persistent failures: capture and all three policies
+crown_ranking_normalized_exceptions_test	tests/unit/ranking_normalized_exception_test.cpp	none	crown_ranking_runtime;crown_options	none	tests/support;src/planner	normalized binding/replay/lowering persistent failures
+crown_ranking_public_independent_test	tests/unit/ranking_public_independent_test.cpp	none	crown_ranking_runtime;crown_options	none	tests/support;src/planner	eight independent literal semantic groups; repository-root argument
+crown_ranking_integer_independent_test	tests/unit/ranking_integer_independent_test.cpp	none	crown_ranking;crown_options	none	tests/support;src/planner	independent decimal-digit oracle; no runtime/report
+crown_ranking_usage_production	tests/examples/ranking_usage.cpp	none	crown_ranking_runtime;crown_options	none	none	compile-only documented functions
+crown_ranking_usage_testing	tests/examples/ranking_usage.cpp	none	crown_ranking_runtime_testing;crown_options	CROWN_RUNTIME_TESTING inherited	none	compile-only documented functions under matching ABI
+crown_json_cleanup_test	tests/unit/json_cleanup_test.cpp	none	crown_json;crown_options	none	none	patched header only; no CROWN archives
+crown_json_upstream_control_test	tests/unit/json_cleanup_test.cpp	none	crown_options	none	SYSTEM third_party/nlohmann/upstream	isolated original header; no crown_json or CROWN archives

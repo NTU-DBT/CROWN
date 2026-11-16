@@ -1,0 +1,537 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN owned search and replay progress / validated upper witness",
+  "description": "A progress or upper-bound artifact is not a minimum-height certificate. Only immutable completed authority can export a standalone independently verified height-certificate v1/v2. Serialization is allocating IO outside advance quanta.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/search"
+    },
+    {
+      "$ref": "#/$defs/replay"
+    },
+    {
+      "$ref": "#/$defs/incumbent"
+    }
+  ],
+  "$defs": {
+    "counters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attempted",
+        "committed_transitions",
+        "allocation_failures",
+        "active_nanoseconds",
+        "current_depth",
+        "peak_depth"
+      ],
+      "properties": {
+        "attempted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "committed_transitions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "allocation_failures": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "active_nanoseconds": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "current_depth": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "peak_depth": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "phase_limit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "work",
+        "active_nanoseconds"
+      ],
+      "properties": {
+        "work": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "active_nanoseconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        }
+      }
+    },
+    "incumbent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "artifact",
+        "accounting",
+        "query_binding",
+        "height_status",
+        "height_upper_bound",
+        "tree",
+        "certificate"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "integer",
+          "const": 1
+        },
+        "artifact": {
+          "const": "validated_incumbent"
+        },
+        "accounting": {
+          "const": "continuation_v1"
+        },
+        "query_binding": {
+          "oneOf": [
+            {
+              "$ref": "cq-v1.schema.json"
+            },
+            {
+              "$ref": "cq-v2.schema.json"
+            },
+            {
+              "$ref": "cq-v3.schema.json"
+            }
+          ]
+        },
+        "height_status": {
+          "const": "valid_upper_bound"
+        },
+        "height_upper_bound": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tree": {
+          "$ref": "tree-v1.schema.json"
+        },
+        "certificate": {
+          "type": "null"
+        }
+      }
+    },
+    "search": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "artifact",
+        "accounting",
+        "query_binding",
+        "policy",
+        "phase",
+        "stop_reason",
+        "result_kind",
+        "height_lower_bound",
+        "height_upper_bound",
+        "lower_evidence",
+        "infeasible",
+        "producer_complete",
+        "proof_complete",
+        "producer",
+        "replay",
+        "limit_revision",
+        "limits",
+        "incumbent",
+        "certificate"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "integer",
+          "const": 1
+        },
+        "artifact": {
+          "const": "search_progress"
+        },
+        "accounting": {
+          "const": "continuation_v1"
+        },
+        "query_binding": {
+          "oneOf": [
+            {
+              "$ref": "cq-v1.schema.json"
+            },
+            {
+              "$ref": "cq-v2.schema.json"
+            },
+            {
+              "$ref": "cq-v3.schema.json"
+            }
+          ]
+        },
+        "policy": {
+          "enum": [
+            "strict",
+            "best_found"
+          ]
+        },
+        "phase": {
+          "enum": [
+            "admitted",
+            "preprocess",
+            "search",
+            "build_incumbent",
+            "validate_incumbent",
+            "export_proof",
+            "replay",
+            "complete",
+            "failed",
+            "cancelled",
+            "moved_from"
+          ]
+        },
+        "stop_reason": {
+          "enum": [
+            "none",
+            "quantum_work",
+            "quantum_time",
+            "total_work",
+            "total_time",
+            "depth_limit",
+            "allocation_failure",
+            "counter_overflow",
+            "invalid_quantum",
+            "invalid_certificate",
+            "internal_failure",
+            "complete",
+            "cancelled",
+            "moved_from"
+          ]
+        },
+        "result_kind": {
+          "enum": [
+            "unfinished",
+            "verified_optimum",
+            "verified_infeasible",
+            "failed"
+          ]
+        },
+        "height_lower_bound": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "height_upper_bound": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "lower_evidence": {
+          "enum": [
+            "universal",
+            "independently_checked"
+          ]
+        },
+        "infeasible": {
+          "type": "boolean"
+        },
+        "producer_complete": {
+          "type": "boolean"
+        },
+        "proof_complete": {
+          "type": "boolean"
+        },
+        "producer": {
+          "$ref": "#/$defs/counters"
+        },
+        "replay": {
+          "$ref": "#/$defs/counters"
+        },
+        "limit_revision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "producer",
+            "replay",
+            "logical_depth"
+          ],
+          "properties": {
+            "producer": {
+              "$ref": "#/$defs/phase_limit"
+            },
+            "replay": {
+              "$ref": "#/$defs/phase_limit"
+            },
+            "logical_depth": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            }
+          }
+        },
+        "incumbent": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/incumbent"
+            }
+          ]
+        },
+        "certificate": {
+          "type": "null"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "policy": {
+                "const": "strict"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "incumbent": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "result_kind": {
+                "const": "verified_optimum"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "phase": {
+                "const": "complete"
+              },
+              "proof_complete": {
+                "const": true
+              },
+              "producer_complete": {
+                "const": true
+              },
+              "infeasible": {
+                "const": false
+              },
+              "height_lower_bound": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "height_upper_bound": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "lower_evidence": {
+                "const": "independently_checked"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "result_kind": {
+                "const": "verified_infeasible"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "phase": {
+                "const": "complete"
+              },
+              "proof_complete": {
+                "const": true
+              },
+              "producer_complete": {
+                "const": true
+              },
+              "infeasible": {
+                "const": true
+              },
+              "height_lower_bound": {
+                "type": "null"
+              },
+              "height_upper_bound": {
+                "type": "null"
+              },
+              "incumbent": {
+                "type": "null"
+              },
+              "lower_evidence": {
+                "const": "independently_checked"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "replay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "artifact",
+        "accounting",
+        "query_binding",
+        "phase",
+        "stop_reason",
+        "complete",
+        "valid",
+        "checked_claims",
+        "work",
+        "limit_revision",
+        "limits",
+        "certificate"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "integer",
+          "const": 1
+        },
+        "artifact": {
+          "const": "certificate_replay_progress"
+        },
+        "accounting": {
+          "const": "continuation_v1"
+        },
+        "query_binding": {
+          "oneOf": [
+            {
+              "$ref": "cq-v1.schema.json"
+            },
+            {
+              "$ref": "cq-v2.schema.json"
+            },
+            {
+              "$ref": "cq-v3.schema.json"
+            }
+          ]
+        },
+        "phase": {
+          "enum": [
+            "admitted",
+            "dispatch",
+            "validate_upper",
+            "build_scopes",
+            "classify_scope_orbits",
+            "index_claims",
+            "order_claims",
+            "prove_claim",
+            "match_root",
+            "complete",
+            "failed",
+            "cancelled",
+            "moved_from"
+          ]
+        },
+        "stop_reason": {
+          "enum": [
+            "none",
+            "quantum_work",
+            "quantum_time",
+            "total_work",
+            "total_time",
+            "depth_limit",
+            "allocation_failure",
+            "counter_overflow",
+            "invalid_quantum",
+            "invalid_certificate",
+            "internal_failure",
+            "complete",
+            "cancelled",
+            "moved_from"
+          ]
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "valid": {
+          "type": "boolean"
+        },
+        "checked_claims": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "work": {
+          "$ref": "#/$defs/counters"
+        },
+        "limit_revision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "phase",
+            "logical_depth"
+          ],
+          "properties": {
+            "phase": {
+              "$ref": "#/$defs/phase_limit"
+            },
+            "logical_depth": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            }
+          }
+        },
+        "certificate": {
+          "type": "null"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "valid": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "phase": {
+                "const": "complete"
+              },
+              "complete": {
+                "const": true
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

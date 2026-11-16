@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "catalog_version": 1,
+  "semantics": "set",
+  "root": "g_y",
+  "nodes": [
+    {
+      "id": "g_y",
+      "kind": "generalized",
+      "scope": [
+        "y"
+      ],
+      "children": [
+        "r_node",
+        "g_ya"
+      ]
+    },
+    {
+      "id": "r_node",
+      "kind": "native",
+      "scope": [
+        "x",
+        "y",
+        "z",
+        "r_private"
+      ],
+      "children": [
+        "s_node",
+        "l_node",
+        "e_node"
+      ],
+      "occurrence": "r"
+    },
+    {
+      "id": "s_node",
+      "kind": "native",
+      "scope": [
+        "x",
+        "y",
+        "z",
+        "s_private"
+      ],
+      "children": [
+        "v_node"
+      ],
+      "occurrence": "s"
+    },
+    {
+      "id": "l_node",
+      "kind": "native",
+      "scope": [
+        "r_private"
+      ],
+      "children": [],
+      "occurrence": "l"
+    },
+    {
+      "id": "v_node",
+      "kind": "native",
+      "scope": [
+        "s_private"
+      ],
+      "children": [],
+      "occurrence": "v"
+    },
+    {
+      "id": "e_node",
+      "kind": "native",
+      "scope": [
+        "x",
+        "w"
+      ],
+      "children": [],
+      "occurrence": "e"
+    },
+    {
+      "id": "g_ya",
+      "kind": "generalized",
+      "scope": [
+        "y",
+        "a"
+      ],
+      "children": [
+        "t_node",
+        "u_node"
+      ]
+    },
+    {
+      "id": "t_node",
+      "kind": "native",
+      "scope": [
+        "y",
+        "a",
+        "b"
+      ],
+      "children": [
+        "b_node"
+      ],
+      "occurrence": "t"
+    },
+    {
+      "id": "u_node",
+      "kind": "native",
+      "scope": [
+        "y",
+        "a",
+        "c"
+      ],
+      "children": [
+        "c_node"
+      ],
+      "occurrence": "u"
+    },
+    {
+      "id": "b_node",
+      "kind": "native",
+      "scope": [
+        "b"
+      ],
+      "children": [],
+      "occurrence": "b"
+    },
+    {
+      "id": "c_node",
+      "kind": "native",
+      "scope": [
+        "c"
+      ],
+      "children": [],
+      "occurrence": "c"
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+src/catalog/catalog.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_catalog_catalog.cpp.o
+src/io/batch.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_io_batch.cpp.o
+src/io/candidates.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_io_candidates.cpp.o
+src/io/catalog.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_io_catalog.cpp.o
+src/io/document.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_io_document.cpp.o
+src/io/ingest.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_io_ingest.cpp.o
+src/io/ingest_text.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_io_ingest_text.cpp.o
+src/io/layout.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_io_layout.cpp.o
+src/io/recognition.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_io_recognition.cpp.o
+src/io/residual.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_io_residual.cpp.o
+src/io/search.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_io_search.cpp.o
+src/ir/digest.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_ir_digest.cpp.o
+src/ir/model.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_ir_model.cpp.o
+src/ir/scalar.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_ir_scalar.cpp.o
+src/planner/candidate_generator.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_planner_candidate_generator.cpp.o
+src/planner/candidate_key.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_planner_candidate_key.cpp.o
+docs/verification/c02-baseline-ranking-proposal/overlay/src/planner/candidates.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_planner_candidates.cpp.o
+src/planner/certificate.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_planner_certificate.cpp.o
+src/planner/exact.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_planner_exact.cpp.o
+src/planner/fast_paths.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_planner_fast_paths.cpp.o
+src/planner/recognize.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_planner_recognize.cpp.o
+src/planner/residual.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_planner_residual.cpp.o
+src/planner/residual_reconstruct.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_planner_residual_reconstruct.cpp.o
+src/planner/residual_reduce.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_planner_residual_reduce.cpp.o
+src/planner/residual_trace.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_planner_residual_trace.cpp.o
+src/planner/residual_view.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_planner_residual_view.cpp.o
+src/planner/search_session.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_planner_search_session.cpp.o
+src/planner/verify.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_planner_verify.cpp.o
+src/storage/arena.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_storage_arena.cpp.o
+src/storage/layout.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_storage_layout.cpp.o
+src/storage/reference.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/core/src_storage_reference.cpp.o
+src/io/physical.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/plan/src_io_physical.cpp.o
+src/planner/lower.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/plan/src_planner_lower.cpp.o
+src/storage/physical.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/plan/src_storage_physical.cpp.o
+docs/verification/c02-baseline-ranking-proposal/overlay/src/planner/ranking.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/ranking/src_planner_ranking.cpp.o
+docs/verification/c02-baseline-ranking-proposal/overlay/src/planner/ranking_integer.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/ranking/src_planner_ranking_integer.cpp.o
+docs/verification/c02-baseline-ranking-proposal/overlay/src/planner/ranking_payload.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/ranking/src_planner_ranking_payload.cpp.o
+tests/reference/candidate_set.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/reference/tests_reference_candidate_set.cpp.o
+tests/reference/delta_model.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/reference/tests_reference_delta_model.cpp.o
+tests/reference/evaluator.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/reference/tests_reference_evaluator.cpp.o
+tests/reference/residual_oracle.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/reference/tests_reference_residual_oracle.cpp.o
+tests/reference/tree_oracle.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/reference/tests_reference_tree_oracle.cpp.o
+src/io/inspection.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime/src_io_inspection.cpp.o
+src/io/support.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime/src_io_support.cpp.o
+src/runtime/combined_statistics.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime/src_runtime_combined_statistics.cpp.o
+src/runtime/delta.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime/src_runtime_delta.cpp.o
+src/runtime/observation.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime/src_runtime_observation.cpp.o
+src/runtime/owner_statistics.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime/src_runtime_owner_statistics.cpp.o
+src/runtime/physical.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime/src_runtime_physical.cpp.o
+docs/verification/c02-baseline-ranking-proposal/overlay/src/runtime/ranking_evidence.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime/src_runtime_ranking_evidence.cpp.o
+src/runtime/replay.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime/src_runtime_replay.cpp.o
+src/runtime/session.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime/src_runtime_session.cpp.o
+src/runtime/statistics.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime/src_runtime_statistics.cpp.o
+src/runtime/statistics_collection.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime/src_runtime_statistics_collection.cpp.o
+src/runtime/support.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime/src_runtime_support.cpp.o
+src/runtime/window.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime/src_runtime_window.cpp.o
+src/runtime/workload_statistics.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime/src_runtime_workload_statistics.cpp.o
+src/io/inspection.cpp	CROWN_RUNTIME_TESTING	/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime_testing/src_io_inspection.cpp.o
+src/io/support.cpp	CROWN_RUNTIME_TESTING	/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime_testing/src_io_support.cpp.o
+src/runtime/combined_statistics.cpp	CROWN_RUNTIME_TESTING	/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime_testing/src_runtime_combined_statistics.cpp.o
+src/runtime/delta.cpp	CROWN_RUNTIME_TESTING	/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime_testing/src_runtime_delta.cpp.o
+src/runtime/observation.cpp	CROWN_RUNTIME_TESTING	/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime_testing/src_runtime_observation.cpp.o
+src/runtime/owner_statistics.cpp	CROWN_RUNTIME_TESTING	/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime_testing/src_runtime_owner_statistics.cpp.o
+src/runtime/physical.cpp	CROWN_RUNTIME_TESTING	/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime_testing/src_runtime_physical.cpp.o
+docs/verification/c02-baseline-ranking-proposal/overlay/src/runtime/ranking_evidence.cpp	CROWN_RUNTIME_TESTING	/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime_testing/src_runtime_ranking_evidence.cpp.o
+src/runtime/replay.cpp	CROWN_RUNTIME_TESTING	/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime_testing/src_runtime_replay.cpp.o
+src/runtime/session.cpp	CROWN_RUNTIME_TESTING	/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime_testing/src_runtime_session.cpp.o
+src/runtime/statistics.cpp	CROWN_RUNTIME_TESTING	/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime_testing/src_runtime_statistics.cpp.o
+src/runtime/statistics_collection.cpp	CROWN_RUNTIME_TESTING	/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime_testing/src_runtime_statistics_collection.cpp.o
+src/runtime/support.cpp	CROWN_RUNTIME_TESTING	/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime_testing/src_runtime_support.cpp.o
+src/runtime/window.cpp	CROWN_RUNTIME_TESTING	/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime_testing/src_runtime_window.cpp.o
+src/runtime/workload_statistics.cpp	CROWN_RUNTIME_TESTING	/tmp/crown-c02-baseline-coherent-strict-1/objects/runtime_testing/src_runtime_workload_statistics.cpp.o
+src/frontend/adapter.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/sql/src_frontend_adapter.cpp.o
+src/frontend/admission.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/sql/src_frontend_admission.cpp.o
+src/frontend/bind.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/sql/src_frontend_bind.cpp.o
+src/frontend/normalize.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/sql/src_frontend_normalize.cpp.o
+src/frontend/parser.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/sql/src_frontend_parser.cpp.o
+src/io/admission.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/sql/src_io_admission.cpp.o
+src/io/binding.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/sql/src_io_binding.cpp.o
+src/io/identity.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/sql/src_io_identity.cpp.o
+src/io/normalization.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/sql/src_io_normalization.cpp.o
+src/io/sql.cpp		/tmp/crown-c02-baseline-coherent-strict-1/objects/sql/src_io_sql.cpp.o

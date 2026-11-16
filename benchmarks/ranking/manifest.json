@@ -1,0 +1,809 @@
+{
+  "generator": {
+    "path": "tools/generate_ranking_evaluation.py",
+    "query_ids": [
+      "boolean_path",
+      "full_star_3",
+      "composite_separator"
+    ],
+    "seed": 20261111,
+    "sha256": "e31d230f09395d47f088c93e19799b1be0958561369103f6819d4d1ad921cedf"
+  },
+  "kind": "c07_ranking_trace_split",
+  "license": {
+    "origin": "new_local_synthetic_data",
+    "project_license": "A02_undecided_local_development_only",
+    "redistribution": "not_authorized_by_this_manifest"
+  },
+  "limits": [
+    "finite_synthetic_traces_not_all_query_or_scale_coverage",
+    "one_deterministic_trace_per_scenario_not_independent_statistical_replicates",
+    "high_fanout_is_an_explicit_bounded_stress_not_B05_scalability_evidence",
+    "candidate_counts_and_family_completion_must_be_observed_from_native_exporter",
+    "all_loading_is_charged_from_empty"
+  ],
+  "oracle_implementation": {
+    "algorithm": "independent_assignment_and_SQLite_after_every_physical_event",
+    "path": "tools/generate_workloads.py",
+    "sha256": "b3a7dcc0df3a5ec44a6e88cacbfa41379e77e63315a64e969c48a8d17a5cc598"
+  },
+  "queries": [
+    {
+      "atoms": [
+        {
+          "alias": "a0",
+          "table": "r0",
+          "variables": [
+            "x0",
+            "x1"
+          ]
+        },
+        {
+          "alias": "a1",
+          "table": "r1",
+          "variables": [
+            "x1",
+            "x2"
+          ]
+        },
+        {
+          "alias": "a2",
+          "table": "r2",
+          "variables": [
+            "x2",
+            "x3"
+          ]
+        }
+      ],
+      "catalog": {
+        "bytes": 1417,
+        "path": "queries/boolean_path/catalog.json",
+        "sha256": "fae443abd6c533c4a955c0ba888ebd1a6a9417623aa5660139e90bb3810e3ebd"
+      },
+      "head": [],
+      "id": "boolean_path",
+      "origin": "B02_SQL_and_catalog_with_new_disjoint_C07_data",
+      "semantics": "exact_physical_set_and_SQL_DISTINCT_or_EXISTS",
+      "sql": {
+        "bytes": 145,
+        "path": "queries/boolean_path/query.sql",
+        "sha256": "3dbb2c3402fbfeb6929f6fbe8cac9e8c29948424bb187eb14538dca3aa8d5222"
+      },
+      "structure_tags": [
+        "boolean",
+        "path"
+      ]
+    },
+    {
+      "atoms": [
+        {
+          "alias": "a0",
+          "table": "r0",
+          "variables": [
+            "hub",
+            "leaf0"
+          ]
+        },
+        {
+          "alias": "a1",
+          "table": "r1",
+          "variables": [
+            "hub",
+            "leaf1"
+          ]
+        },
+        {
+          "alias": "a2",
+          "table": "r2",
+          "variables": [
+            "hub",
+            "leaf2"
+          ]
+        }
+      ],
+      "catalog": {
+        "bytes": 1417,
+        "path": "queries/full_star_3/catalog.json",
+        "sha256": "fae443abd6c533c4a955c0ba888ebd1a6a9417623aa5660139e90bb3810e3ebd"
+      },
+      "head": [
+        "hub",
+        "leaf0",
+        "leaf1",
+        "leaf2"
+      ],
+      "id": "full_star_3",
+      "origin": "B02_SQL_and_catalog_with_new_disjoint_C07_data",
+      "semantics": "exact_physical_set_and_SQL_DISTINCT_or_EXISTS",
+      "sql": {
+        "bytes": 222,
+        "path": "queries/full_star_3/query.sql",
+        "sha256": "c0d68ccbe2b4da18f4e74f4b571667ad393615f66cd52805f29907426bdb7f5e"
+      },
+      "structure_tags": [
+        "star",
+        "high_fanout",
+        "output_large",
+        "query_size_axis"
+      ]
+    },
+    {
+      "atoms": [
+        {
+          "alias": "a0",
+          "table": "r0",
+          "variables": [
+            "a",
+            "b",
+            "c"
+          ]
+        },
+        {
+          "alias": "a1",
+          "table": "r1",
+          "variables": [
+            "a",
+            "b",
+            "d"
+          ]
+        }
+      ],
+      "catalog": {
+        "bytes": 1193,
+        "path": "queries/composite_separator/catalog.json",
+        "sha256": "fdb5b8e709bcfb5538f43fe90df5705cda8bf6e4144a73593437bae07dfecdfb"
+      },
+      "head": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "id": "composite_separator",
+      "origin": "B02_SQL_and_catalog_with_new_disjoint_C07_data",
+      "semantics": "exact_physical_set_and_SQL_DISTINCT_or_EXISTS",
+      "sql": {
+        "bytes": 184,
+        "path": "queries/composite_separator/query.sql",
+        "sha256": "30fde68feee134592a6a7342dbf401a203a57b518857d2c2701e75b88635f549"
+      },
+      "structure_tags": [
+        "composite_key",
+        "arity_above_two"
+      ]
+    }
+  ],
+  "schema_version": 1,
+  "split_contract": {
+    "calibration": "separate_rows_and_trace_for_explicit_evaluation_layer_proxy_to_cost_mapping_only",
+    "evaluation": "three_disjoint_traces_never_used_for_choice_or_coefficient_fitting",
+    "physical_tuple_overlap_allowed": false,
+    "query_family_holdout": false,
+    "semantic_trace_duplicates_allowed": false,
+    "shared_SQL": "same_query_family_to_test_statistical_transfer_across_fresh_data_and_update_mix",
+    "training": "only_train_trace_is_visible_to_C05_choices_and_proxy_features",
+    "unit": "physical_trace"
+  },
+  "traces": [
+    {
+      "charged_load_events": 9,
+      "configured_fanout": 3,
+      "events": {
+        "bytes": 12750,
+        "path": "traces/boolean_path/train/events.template.jsonl",
+        "sha256": "9347186c0329d6d1036da763da26548b753a6ec04b1936acd57547b917f5f42b"
+      },
+      "events_count": 57,
+      "hot_table": "r0",
+      "id": "boolean_path/train",
+      "initial_state": "empty_all_tables",
+      "input_attempts_by_table": {
+        "r0": 43,
+        "r1": 9,
+        "r2": 5
+      },
+      "max_result_rows": 1,
+      "oracle": {
+        "bytes": 13098,
+        "path": "traces/boolean_path/train/expected.json",
+        "sha256": "7a567ca5c225b8bd4b438d6d41d2245b27cdc5dea549b6cb8009959328b588f5"
+      },
+      "phase_labels": [
+        "charged_load",
+        "hot_relation",
+        "within_trace_shift",
+        "duplicate_insert"
+      ],
+      "physical_rows_by_table": {
+        "r0": 3,
+        "r1": 1,
+        "r2": 5
+      },
+      "query": "boolean_path",
+      "role": "train",
+      "scenario": "train",
+      "semantic_events_sha256": "7913737a107a97718b51a8622d353351b609adaa04681583859381eca67af4a1",
+      "shift_scope": "relation_update_mix_and_data_degree_not_wall_clock_arrival_Hz",
+      "source_id": "c07-323ea77bc85620c74dcf547e",
+      "update_contract": "ordered_atomic_physical_set_insert_delete_with_committed_noops"
+    },
+    {
+      "charged_load_events": 11,
+      "configured_fanout": 4,
+      "events": {
+        "bytes": 13198,
+        "path": "traces/boolean_path/calibration/events.template.jsonl",
+        "sha256": "32bd059d1fb95b496673a218a3f75752c3222c8a031456617be34476e32cae90"
+      },
+      "events_count": 59,
+      "hot_table": "r0",
+      "id": "boolean_path/calibration",
+      "initial_state": "empty_all_tables",
+      "input_attempts_by_table": {
+        "r0": 44,
+        "r1": 9,
+        "r2": 6
+      },
+      "max_result_rows": 1,
+      "oracle": {
+        "bytes": 13476,
+        "path": "traces/boolean_path/calibration/expected.json",
+        "sha256": "7dbbba55b8ab34c56acd55cde0d22a0697915d98b6759946a9893e3a65a18912"
+      },
+      "phase_labels": [
+        "charged_load",
+        "hot_relation",
+        "within_trace_shift",
+        "duplicate_insert"
+      ],
+      "physical_rows_by_table": {
+        "r0": 4,
+        "r1": 1,
+        "r2": 6
+      },
+      "query": "boolean_path",
+      "role": "calibration",
+      "scenario": "calibration",
+      "semantic_events_sha256": "8bae0eafad467451b058cec1080554fe86b000936bd642feedf23bc03c1458f0",
+      "shift_scope": "relation_update_mix_and_data_degree_not_wall_clock_arrival_Hz",
+      "source_id": "c07-1ba1fadbedfb6a9a43484554",
+      "update_contract": "ordered_atomic_physical_set_insert_delete_with_committed_noops"
+    },
+    {
+      "charged_load_events": 11,
+      "configured_fanout": 4,
+      "events": {
+        "bytes": 13198,
+        "path": "traces/boolean_path/evaluation_in_distribution/events.template.jsonl",
+        "sha256": "9753ec04325823ae0dac6c16972bba865c933083675f062342e755e096892c03"
+      },
+      "events_count": 59,
+      "hot_table": "r0",
+      "id": "boolean_path/evaluation_in_distribution",
+      "initial_state": "empty_all_tables",
+      "input_attempts_by_table": {
+        "r0": 44,
+        "r1": 9,
+        "r2": 6
+      },
+      "max_result_rows": 1,
+      "oracle": {
+        "bytes": 13477,
+        "path": "traces/boolean_path/evaluation_in_distribution/expected.json",
+        "sha256": "d12064d9bff7223cc98e5156430245ad58f6b85e1393e741cf97255fac06592f"
+      },
+      "phase_labels": [
+        "charged_load",
+        "hot_relation",
+        "within_trace_shift",
+        "duplicate_insert"
+      ],
+      "physical_rows_by_table": {
+        "r0": 4,
+        "r1": 1,
+        "r2": 6
+      },
+      "query": "boolean_path",
+      "role": "evaluation",
+      "scenario": "evaluation_in_distribution",
+      "semantic_events_sha256": "d20976657467932809498efa7e8f508b81ca0af5b3f8ce2b5c6ac1405d4d5d31",
+      "shift_scope": "relation_update_mix_and_data_degree_not_wall_clock_arrival_Hz",
+      "source_id": "c07-d061b187e43907fdf5d4a670",
+      "update_contract": "ordered_atomic_physical_set_insert_delete_with_committed_noops"
+    },
+    {
+      "charged_load_events": 11,
+      "configured_fanout": 4,
+      "events": {
+        "bytes": 13198,
+        "path": "traces/boolean_path/evaluation_rate_shift/events.template.jsonl",
+        "sha256": "9beeefe5bfd7ecbc25c05f63e98a4e1236518e538654a5f7d7ef0618de865fe6"
+      },
+      "events_count": 59,
+      "hot_table": "r2",
+      "id": "boolean_path/evaluation_rate_shift",
+      "initial_state": "empty_all_tables",
+      "input_attempts_by_table": {
+        "r0": 12,
+        "r1": 1,
+        "r2": 46
+      },
+      "max_result_rows": 1,
+      "oracle": {
+        "bytes": 11743,
+        "path": "traces/boolean_path/evaluation_rate_shift/expected.json",
+        "sha256": "4a7c9c4511ba516288b672568e721922def48d54ae27d624b5a3eff94e27638a"
+      },
+      "phase_labels": [
+        "charged_load",
+        "hot_relation",
+        "within_trace_shift",
+        "duplicate_insert"
+      ],
+      "physical_rows_by_table": {
+        "r0": 4,
+        "r1": 1,
+        "r2": 6
+      },
+      "query": "boolean_path",
+      "role": "evaluation",
+      "scenario": "evaluation_rate_shift",
+      "semantic_events_sha256": "e0be0578bcfb2f46593ea0669c82b817160bb9f97c3553997b9936fcdd1251bb",
+      "shift_scope": "relation_update_mix_and_data_degree_not_wall_clock_arrival_Hz",
+      "source_id": "c07-da684a0764942fc6732c0f64",
+      "update_contract": "ordered_atomic_physical_set_insert_delete_with_committed_noops"
+    },
+    {
+      "charged_load_events": 19,
+      "configured_fanout": 8,
+      "events": {
+        "bytes": 14990,
+        "path": "traces/boolean_path/evaluation_fanout_shift/events.template.jsonl",
+        "sha256": "e64c1a533ef4a89f213c87815d12e60b0994ae0f1e5f82408fda3ed19fe9385e"
+      },
+      "events_count": 67,
+      "hot_table": "r2",
+      "id": "boolean_path/evaluation_fanout_shift",
+      "initial_state": "empty_all_tables",
+      "input_attempts_by_table": {
+        "r0": 16,
+        "r1": 1,
+        "r2": 50
+      },
+      "max_result_rows": 1,
+      "oracle": {
+        "bytes": 13280,
+        "path": "traces/boolean_path/evaluation_fanout_shift/expected.json",
+        "sha256": "0ac807fd2661fe2b1014f98cef0d4f3256e47929780313029a9e5bda7f9b888d"
+      },
+      "phase_labels": [
+        "charged_load",
+        "hot_relation",
+        "within_trace_shift",
+        "duplicate_insert"
+      ],
+      "physical_rows_by_table": {
+        "r0": 8,
+        "r1": 1,
+        "r2": 10
+      },
+      "query": "boolean_path",
+      "role": "evaluation",
+      "scenario": "evaluation_fanout_shift",
+      "semantic_events_sha256": "81bd8bbc79401964fc7129a542fe0e4efe42b159dba132e2c873b567a8fe0d3d",
+      "shift_scope": "relation_update_mix_and_data_degree_not_wall_clock_arrival_Hz",
+      "source_id": "c07-e264805b448d6ef575d59e76",
+      "update_contract": "ordered_atomic_physical_set_insert_delete_with_committed_noops"
+    },
+    {
+      "charged_load_events": 12,
+      "configured_fanout": 3,
+      "events": {
+        "bytes": 13422,
+        "path": "traces/full_star_3/train/events.template.jsonl",
+        "sha256": "5df555ab7025b93a6a021887555f0f23a8c8482b5aa3150037bd5fb46c099962"
+      },
+      "events_count": 60,
+      "hot_table": "r0",
+      "id": "full_star_3/train",
+      "initial_state": "empty_all_tables",
+      "input_attempts_by_table": {
+        "r0": 43,
+        "r1": 12,
+        "r2": 5
+      },
+      "max_result_rows": 60,
+      "oracle": {
+        "bytes": 477876,
+        "path": "traces/full_star_3/train/expected.json",
+        "sha256": "0992c7f56088bb329b9b8227116af603cc4b9ff82a68f4ede5f31a06468fd895"
+      },
+      "phase_labels": [
+        "charged_load",
+        "hot_relation",
+        "within_trace_shift",
+        "duplicate_insert"
+      ],
+      "physical_rows_by_table": {
+        "r0": 3,
+        "r1": 4,
+        "r2": 5
+      },
+      "query": "full_star_3",
+      "role": "train",
+      "scenario": "train",
+      "semantic_events_sha256": "4ccd4d82ad15c2b0dbe52e6ab78f763cd9bc18293bb4802a3c39d6b2116cd3e1",
+      "shift_scope": "relation_update_mix_and_data_degree_not_wall_clock_arrival_Hz",
+      "source_id": "c07-fc539413a48cd2e76391f768",
+      "update_contract": "ordered_atomic_physical_set_insert_delete_with_committed_noops"
+    },
+    {
+      "charged_load_events": 15,
+      "configured_fanout": 4,
+      "events": {
+        "bytes": 14094,
+        "path": "traces/full_star_3/calibration/events.template.jsonl",
+        "sha256": "3a7a9ad1d2142edcff903f6e84aa42d88b4852addb2f3993dffcdcf70398d384"
+      },
+      "events_count": 63,
+      "hot_table": "r0",
+      "id": "full_star_3/calibration",
+      "initial_state": "empty_all_tables",
+      "input_attempts_by_table": {
+        "r0": 44,
+        "r1": 13,
+        "r2": 6
+      },
+      "max_result_rows": 120,
+      "oracle": {
+        "bytes": 911879,
+        "path": "traces/full_star_3/calibration/expected.json",
+        "sha256": "eb02fa6152b94debfc68ede566cb73bbb391165c2cdc592dd655a9c99f417b1a"
+      },
+      "phase_labels": [
+        "charged_load",
+        "hot_relation",
+        "within_trace_shift",
+        "duplicate_insert"
+      ],
+      "physical_rows_by_table": {
+        "r0": 4,
+        "r1": 5,
+        "r2": 6
+      },
+      "query": "full_star_3",
+      "role": "calibration",
+      "scenario": "calibration",
+      "semantic_events_sha256": "d6a191e0e3856ff6b3ad71d3620978a790b98a4c676ed295e1db980e09a3b13b",
+      "shift_scope": "relation_update_mix_and_data_degree_not_wall_clock_arrival_Hz",
+      "source_id": "c07-60ce4defa1e53a5008334033",
+      "update_contract": "ordered_atomic_physical_set_insert_delete_with_committed_noops"
+    },
+    {
+      "charged_load_events": 15,
+      "configured_fanout": 4,
+      "events": {
+        "bytes": 14094,
+        "path": "traces/full_star_3/evaluation_in_distribution/events.template.jsonl",
+        "sha256": "4507d75f80132b274eb656bbd15f9cd2f726b29783f66caaed526b33ba199f3d"
+      },
+      "events_count": 63,
+      "hot_table": "r0",
+      "id": "full_star_3/evaluation_in_distribution",
+      "initial_state": "empty_all_tables",
+      "input_attempts_by_table": {
+        "r0": 44,
+        "r1": 13,
+        "r2": 6
+      },
+      "max_result_rows": 120,
+      "oracle": {
+        "bytes": 911183,
+        "path": "traces/full_star_3/evaluation_in_distribution/expected.json",
+        "sha256": "44c986e598523915540f95d5e0f61c93416fca99af7cd177e07e253b875d978c"
+      },
+      "phase_labels": [
+        "charged_load",
+        "hot_relation",
+        "within_trace_shift",
+        "duplicate_insert"
+      ],
+      "physical_rows_by_table": {
+        "r0": 4,
+        "r1": 5,
+        "r2": 6
+      },
+      "query": "full_star_3",
+      "role": "evaluation",
+      "scenario": "evaluation_in_distribution",
+      "semantic_events_sha256": "8150d83d8818f7ed9a96202515964cd500af3abc1e968c8dfc19589ab8fcbec0",
+      "shift_scope": "relation_update_mix_and_data_degree_not_wall_clock_arrival_Hz",
+      "source_id": "c07-4249a540fc5900d434e64950",
+      "update_contract": "ordered_atomic_physical_set_insert_delete_with_committed_noops"
+    },
+    {
+      "charged_load_events": 15,
+      "configured_fanout": 4,
+      "events": {
+        "bytes": 14094,
+        "path": "traces/full_star_3/evaluation_rate_shift/events.template.jsonl",
+        "sha256": "7eed65d8abc4f2fb79c134e95f26cbf7c8b1254471ed90831255281a2587419b"
+      },
+      "events_count": 63,
+      "hot_table": "r2",
+      "id": "full_star_3/evaluation_rate_shift",
+      "initial_state": "empty_all_tables",
+      "input_attempts_by_table": {
+        "r0": 12,
+        "r1": 5,
+        "r2": 46
+      },
+      "max_result_rows": 120,
+      "oracle": {
+        "bytes": 871619,
+        "path": "traces/full_star_3/evaluation_rate_shift/expected.json",
+        "sha256": "1d7deacf1d1460197599b01e89a9c23d3cb116ac311671b9701a9e46ee04bf24"
+      },
+      "phase_labels": [
+        "charged_load",
+        "hot_relation",
+        "within_trace_shift",
+        "duplicate_insert"
+      ],
+      "physical_rows_by_table": {
+        "r0": 4,
+        "r1": 5,
+        "r2": 6
+      },
+      "query": "full_star_3",
+      "role": "evaluation",
+      "scenario": "evaluation_rate_shift",
+      "semantic_events_sha256": "0b2948462af5e820410f3eb420c1da20ff8f37ed0695d825d224acf11ffcb25f",
+      "shift_scope": "relation_update_mix_and_data_degree_not_wall_clock_arrival_Hz",
+      "source_id": "c07-964b72c9b6d1edf1f7c3b8da",
+      "update_contract": "ordered_atomic_physical_set_insert_delete_with_committed_noops"
+    },
+    {
+      "charged_load_events": 27,
+      "configured_fanout": 8,
+      "events": {
+        "bytes": 16782,
+        "path": "traces/full_star_3/evaluation_fanout_shift/events.template.jsonl",
+        "sha256": "35af0798f5724c13261599071ad91c51b2a681b08f633cda1214e3b057aa46e2"
+      },
+      "events_count": 75,
+      "hot_table": "r2",
+      "id": "full_star_3/evaluation_fanout_shift",
+      "initial_state": "empty_all_tables",
+      "input_attempts_by_table": {
+        "r0": 16,
+        "r1": 9,
+        "r2": 50
+      },
+      "max_result_rows": 720,
+      "oracle": {
+        "bytes": 5111651,
+        "path": "traces/full_star_3/evaluation_fanout_shift/expected.json",
+        "sha256": "3282508af922f476547fcb0821b660f930ce286a0883d2bba1bff36ced3851a9"
+      },
+      "phase_labels": [
+        "charged_load",
+        "hot_relation",
+        "within_trace_shift",
+        "duplicate_insert"
+      ],
+      "physical_rows_by_table": {
+        "r0": 8,
+        "r1": 9,
+        "r2": 10
+      },
+      "query": "full_star_3",
+      "role": "evaluation",
+      "scenario": "evaluation_fanout_shift",
+      "semantic_events_sha256": "085bd45f01c2e54e4a1fd3a1fd0225bbb73f87b28466b5a55445fcaf9da1e7f5",
+      "shift_scope": "relation_update_mix_and_data_degree_not_wall_clock_arrival_Hz",
+      "source_id": "c07-b0ac6d8ea3f524a8a8d9af6d",
+      "update_contract": "ordered_atomic_physical_set_insert_delete_with_committed_noops"
+    },
+    {
+      "charged_load_events": 7,
+      "configured_fanout": 3,
+      "events": {
+        "bytes": 13017,
+        "path": "traces/composite_separator/train/events.template.jsonl",
+        "sha256": "909ec27062f0605ac9d9abe25d630c54c2370c7e3fa491fe8f9b73003ae117b0"
+      },
+      "events_count": 55,
+      "hot_table": "r0",
+      "id": "composite_separator/train",
+      "initial_state": "empty_all_tables",
+      "input_attempts_by_table": {
+        "r0": 43,
+        "r1": 12
+      },
+      "max_result_rows": 3,
+      "oracle": {
+        "bytes": 32124,
+        "path": "traces/composite_separator/train/expected.json",
+        "sha256": "902fd652b55e31cf49c4328711ab6d3b54f804aa770f85b86c80624da72284fb"
+      },
+      "phase_labels": [
+        "charged_load",
+        "hot_relation",
+        "within_trace_shift",
+        "duplicate_insert"
+      ],
+      "physical_rows_by_table": {
+        "r0": 3,
+        "r1": 4
+      },
+      "query": "composite_separator",
+      "role": "train",
+      "scenario": "train",
+      "semantic_events_sha256": "16bde69b701fa6d40557021dcd23714ec722dff59c370b9d2dfa04f3143a457d",
+      "shift_scope": "relation_update_mix_and_data_degree_not_wall_clock_arrival_Hz",
+      "source_id": "c07-1e14da589fe8a75f446542ff",
+      "update_contract": "ordered_atomic_physical_set_insert_delete_with_committed_noops"
+    },
+    {
+      "charged_load_events": 9,
+      "configured_fanout": 4,
+      "events": {
+        "bytes": 13491,
+        "path": "traces/composite_separator/calibration/events.template.jsonl",
+        "sha256": "7f96ec8458c29f6f560237d02b108182f65fbbb2636ab5a3241d8d7c2a446336"
+      },
+      "events_count": 57,
+      "hot_table": "r0",
+      "id": "composite_separator/calibration",
+      "initial_state": "empty_all_tables",
+      "input_attempts_by_table": {
+        "r0": 44,
+        "r1": 13
+      },
+      "max_result_rows": 4,
+      "oracle": {
+        "bytes": 38935,
+        "path": "traces/composite_separator/calibration/expected.json",
+        "sha256": "4037ddd62089b82e5de9a280d73328e048ecf33e64964748b3d685c6be509d9f"
+      },
+      "phase_labels": [
+        "charged_load",
+        "hot_relation",
+        "within_trace_shift",
+        "duplicate_insert"
+      ],
+      "physical_rows_by_table": {
+        "r0": 4,
+        "r1": 5
+      },
+      "query": "composite_separator",
+      "role": "calibration",
+      "scenario": "calibration",
+      "semantic_events_sha256": "11af64c54c5f2c622c9020f9387be079b093526923242c66106280c587d75944",
+      "shift_scope": "relation_update_mix_and_data_degree_not_wall_clock_arrival_Hz",
+      "source_id": "c07-ebf9156d4b3c564eaa8bee66",
+      "update_contract": "ordered_atomic_physical_set_insert_delete_with_committed_noops"
+    },
+    {
+      "charged_load_events": 9,
+      "configured_fanout": 4,
+      "events": {
+        "bytes": 13491,
+        "path": "traces/composite_separator/evaluation_in_distribution/events.template.jsonl",
+        "sha256": "091656204641c001bef4eebedf117c8df9d7f58e775b41fdba30c7cebe01265e"
+      },
+      "events_count": 57,
+      "hot_table": "r0",
+      "id": "composite_separator/evaluation_in_distribution",
+      "initial_state": "empty_all_tables",
+      "input_attempts_by_table": {
+        "r0": 44,
+        "r1": 13
+      },
+      "max_result_rows": 4,
+      "oracle": {
+        "bytes": 39011,
+        "path": "traces/composite_separator/evaluation_in_distribution/expected.json",
+        "sha256": "7e8030899952d737c76ba1c1723ca77e43133112918ac5ab291da51279de3b96"
+      },
+      "phase_labels": [
+        "charged_load",
+        "hot_relation",
+        "within_trace_shift",
+        "duplicate_insert"
+      ],
+      "physical_rows_by_table": {
+        "r0": 4,
+        "r1": 5
+      },
+      "query": "composite_separator",
+      "role": "evaluation",
+      "scenario": "evaluation_in_distribution",
+      "semantic_events_sha256": "c7d62c71efcaefc70cc91860c36b67f9a4dd5bae293e93419de7e4cbc13b471d",
+      "shift_scope": "relation_update_mix_and_data_degree_not_wall_clock_arrival_Hz",
+      "source_id": "c07-8e4da779267a1fcbce362bbd",
+      "update_contract": "ordered_atomic_physical_set_insert_delete_with_committed_noops"
+    },
+    {
+      "charged_load_events": 9,
+      "configured_fanout": 4,
+      "events": {
+        "bytes": 13491,
+        "path": "traces/composite_separator/evaluation_rate_shift/events.template.jsonl",
+        "sha256": "dd0c54c3a711dcd1518a72ee1733060565dcc538457fb58a0736ef4674322616"
+      },
+      "events_count": 57,
+      "hot_table": "r1",
+      "id": "composite_separator/evaluation_rate_shift",
+      "initial_state": "empty_all_tables",
+      "input_attempts_by_table": {
+        "r0": 12,
+        "r1": 45
+      },
+      "max_result_rows": 4,
+      "oracle": {
+        "bytes": 38571,
+        "path": "traces/composite_separator/evaluation_rate_shift/expected.json",
+        "sha256": "281b0eab46297fb988efd43c42dd563916f353fb24911ad06fb99c8a1d9a7f5d"
+      },
+      "phase_labels": [
+        "charged_load",
+        "hot_relation",
+        "within_trace_shift",
+        "duplicate_insert"
+      ],
+      "physical_rows_by_table": {
+        "r0": 4,
+        "r1": 5
+      },
+      "query": "composite_separator",
+      "role": "evaluation",
+      "scenario": "evaluation_rate_shift",
+      "semantic_events_sha256": "8d4d80ce1a5606280ba1ade2f7646ea387a8b36dbc7d76522944f2e1dc5140b2",
+      "shift_scope": "relation_update_mix_and_data_degree_not_wall_clock_arrival_Hz",
+      "source_id": "c07-cc745878fa36dd227787d021",
+      "update_contract": "ordered_atomic_physical_set_insert_delete_with_committed_noops"
+    },
+    {
+      "charged_load_events": 17,
+      "configured_fanout": 8,
+      "events": {
+        "bytes": 15387,
+        "path": "traces/composite_separator/evaluation_fanout_shift/events.template.jsonl",
+        "sha256": "8c2d3bc5c2dc8dc5985ae10dd806c3caa27a722d42fe7ec5384b34bedff09aa1"
+      },
+      "events_count": 65,
+      "hot_table": "r1",
+      "id": "composite_separator/evaluation_fanout_shift",
+      "initial_state": "empty_all_tables",
+      "input_attempts_by_table": {
+        "r0": 16,
+        "r1": 49
+      },
+      "max_result_rows": 8,
+      "oracle": {
+        "bytes": 66855,
+        "path": "traces/composite_separator/evaluation_fanout_shift/expected.json",
+        "sha256": "f09b025e3c691dff079934b9177b679230f1b5b4be58b0473c21f5f67fdbabe9"
+      },
+      "phase_labels": [
+        "charged_load",
+        "hot_relation",
+        "within_trace_shift",
+        "duplicate_insert"
+      ],
+      "physical_rows_by_table": {
+        "r0": 8,
+        "r1": 9
+      },
+      "query": "composite_separator",
+      "role": "evaluation",
+      "scenario": "evaluation_fanout_shift",
+      "semantic_events_sha256": "d30d2bf27b579f40894d486d1cd2b9d17b4bc22e9983f3db00ff10a8dd57cd30",
+      "shift_scope": "relation_update_mix_and_data_degree_not_wall_clock_arrival_Hz",
+      "source_id": "c07-c1ff47a1dd884a17e166c202",
+      "update_contract": "ordered_atomic_physical_set_insert_delete_with_committed_noops"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN compiled numeric field projection descriptor v1",
+  "description": "Native import binds explicit source/target runtime layouts, checks complete descriptors, exact scalar-domain inclusion, variable identities and repeated-variable guarantees.",
+  "type": "object", "additionalProperties": false,
+  "required": ["schema_version", "source", "target", "fields"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "source": {"$ref": "tuple-layout-v1.schema.json"},
+    "target": {"$ref": "tuple-layout-v1.schema.json"},
+    "fields": {"type": "array", "items": {"$ref": "tuple-layout-v1.schema.json#/$defs/id"}}
+  }
+}

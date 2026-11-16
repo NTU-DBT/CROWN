@@ -1,0 +1,67 @@
+{
+  "status": "excluded independent depth-fixture revision; strict O0/O3 compile/link only; NO C++ or Python test execution by author; O07 not_started",
+  "package_sha256": "fdea5062f1c63a2e448750ade44b85b4d9e32b6297669560e4022942aee23273",
+  "files": {
+    "README.md": "d9cb4f721c67d1fbea2bfcfabe54560c7099f418fa170cbaf461999f18e600ed",
+    "build_test.py": "ed7bb7f3f1223ec7fa481d8bf2221712574da54d9194f3ca68e8f1f294dc1722",
+    "check_corpus.py": "b67f7d772a56a37e17f7d01013b18240fb5d48895e9eac9448feffa3889f9d4f",
+    "compile-evidence-o0.json": "1a724b16c47ffd5155263557fa339cca723b10494c2935dff1fe2eaa734b1682",
+    "compile-evidence-o3.json": "51d965a4faa3f8d30248fed6957f7821f9727b12bfde2520ebfd1f0b703d32ba",
+    "original-package-preservation.json": "8ba3eb11a0418faa09ff477225204043aebf828ee422aea534a0ac259a59b01b",
+    "query_explain_test.cpp": "19c119906a3cd2abf59fcc06ede79868a85f584654033e5c2f7aaf41ba5dd4a2"
+  },
+  "previous_package_sha256": "8fb33b288b4abd58fd0955a8a7e8319de875e4b59cd19e77684fae6f4f4ac98d",
+  "previous_package_unchanged": true,
+  "subject_package_sha256": "1ee51f89955602fc2ff2a0aecce1c1728a4ba10d0981f0a4fb4b66ea58049802",
+  "source_sha256": "19c119906a3cd2abf59fcc06ede79868a85f584654033e5c2f7aaf41ba5dd4a2",
+  "binary_o0": "/tmp/crown-o07-query-explain-depth-tests-o0/query-explain-test",
+  "binary_o0_sha256": "a1ba40b5da8f38e4b2f0d0fca1a89633732166bf52a3220f60ddf299da422743",
+  "binary_o3": "/tmp/crown-o07-query-explain-depth-tests-o3/query-explain-test",
+  "binary_o3_sha256": "90aefd53fcef148485d50ec74f796bfc15f766e822fac576d1e885e2498e11ea",
+  "linked_archives": {
+    "/tmp/crown-o07-query-explain-o0/libcrown_query_explain_proposal.a": "889e42c051bfb75413f1a8cb1bc7cde3c09a96d84341558dfbeef747250624fb",
+    "/home/userroot/Codex/CROWN/build/release/libcrown_reference.a": "035a204d7e00355b7f14e94255f8d77688f43a5688aabba898f6cedfd43f39f5",
+    "/home/userroot/Codex/CROWN/build/release/libcrown_core.a": "784b820ff9284ad75033552056fd2a81113f7eb54be5db56959f31ce778bcf9d"
+  },
+  "runtime_archives_linked": false,
+  "finite_family": {
+    "systematic_inputs": 426,
+    "anchors": 11,
+    "policies_per_input": 2,
+    "oracle": "separate frozen reference::exhaustive_minimum_tree literal topology/native power sets",
+    "resource_outcomes": "fail, never skip",
+    "scope": "finite inputs only; no arbitrary-query completeness claim"
+  },
+  "additional_lifecycle_fixture": {
+    "ordered_body": [
+      "S(y,z)",
+      "R(x,y)",
+      "T(z,w)"
+    ],
+    "ordered_head": [
+      "x",
+      "y",
+      "z",
+      "w"
+    ],
+    "independent_literal_oracle_required_height": 2,
+    "ceiling": "measured actual producer peak at first checked upper; new owners both policies; no live ceiling lowering",
+    "required_stop": "depth_limit in SearchPhase::search with checked upper 2 and no final proof",
+    "root_diagnostic_observed": {
+      "first_upper_depth": 11,
+      "final_producer_peak": 14,
+      "replay_peak": 8,
+      "strict_and_best_found_raise_resume": "passed"
+    },
+    "root_diagnostic_evidence": {
+      "build/verification/o07-query-depth-diagnostic-attempt-1.json": "f30b8c9598558f490db003d60c25c22eccb223b36a7161d60e36dd31622eccd9",
+      "build/verification/o07-query-depth-diagnostic-attempt-1.log": "e9c1afd1f8d67bc01bf79f8bbdf56f3de3a095eef53ca463bc42aa07d049c0c6"
+    }
+  },
+  "remaining_gates": [
+    "root execution of revised states/metadata/faults/full 437 family",
+    "root offline revised schema+semantic checker --require-all",
+    "native counter-overflow injection lacks public seam and is not covered",
+    "native O07 integration and final acceptance remain open"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "scope": "matching sanitizer checkpoint plus supplemental strict/SAN normalized replay; no native/card acceptance",
+  "cwd": "/home/userroot/Codex/CROWN",
+  "sanitizer_environment": {"ASAN_OPTIONS": "detect_leaks=1:halt_on_error=1", "UBSAN_OPTIONS": "halt_on_error=1:print_stacktrace=1"},
+  "commands": [
+    {"name": "binding_san", "argv": ["/tmp/crown-c02-baseline-coherent-sanitize-1/executables/ranking_binding_test"], "timeout_seconds": 900},
+    {"name": "pure_link_san", "argv": ["/tmp/crown-c02-baseline-coherent-sanitize-1/executables/ranking_pure_link_test"], "timeout_seconds": 900},
+    {"name": "contract_san", "argv": ["/tmp/crown-c02-baseline-coherent-sanitize-1/executables/ranking_contract_test"], "timeout_seconds": 900},
+    {"name": "empty_san", "argv": ["/tmp/crown-c02-baseline-coherent-sanitize-1/executables/ranking_empty_test"], "timeout_seconds": 900},
+    {"name": "payload_time_san", "argv": ["/tmp/crown-c02-baseline-coherent-sanitize-1/executables/ranking_payload_time_test"], "timeout_seconds": 900},
+    {"name": "census_san", "argv": ["/tmp/crown-c02-baseline-coherent-sanitize-1/executables/ranking_census_test"], "timeout_seconds": 900},
+    {"name": "persistent_faults_san", "argv": ["/tmp/crown-c02-baseline-coherent-sanitize-1/executables/ranking_exception_test"], "timeout_seconds": 3600},
+    {"name": "inherited_candidates_san", "argv": ["/tmp/crown-c02-baseline-coherent-sanitize-1/executables/candidates_test", "/home/userroot/Codex/CROWN/tests/candidates"], "timeout_seconds": 900},
+    {"name": "inherited_candidate_faults_san", "argv": ["/tmp/crown-c02-baseline-coherent-sanitize-1/executables/candidates_exception_test"], "timeout_seconds": 3600},
+    {"name": "inherited_candidate_reports_san", "argv": ["python3", "tools/verify_candidate_reports.py", "/tmp/crown-c02-baseline-coherent-sanitize-1/executables/candidates_io_test", "/home/userroot/Codex/CROWN"], "timeout_seconds": 900},
+    {"name": "normalized_replay_faults_strict", "argv": ["/tmp/crown-c02-baseline-normalized-fault-strict-1/ranking_normalized_exception_test"], "timeout_seconds": 3600},
+    {"name": "normalized_replay_faults_san", "argv": ["/tmp/crown-c02-baseline-normalized-fault-sanitize-1/ranking_normalized_exception_test"], "timeout_seconds": 3600}
+  ]
+}

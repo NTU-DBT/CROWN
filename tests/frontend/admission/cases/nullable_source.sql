@@ -1,0 +1,1 @@
+SELECT DISTINCT f FROM nullable

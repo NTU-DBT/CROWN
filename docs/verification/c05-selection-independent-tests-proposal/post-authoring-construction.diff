@@ -1,0 +1,15 @@
+--- authored-independent-byte-fixture
++++ in-place-construction-only
+@@ -163,8 +163,10 @@
+     [](auto& x){x.first.tables[0].key_hints[0].reason="different";},
+     [](auto& x){x.second.variables[0].name="other";},[](auto& x){x.second.variables[0].type=ScalarType::date;},
+     [](auto& x){x.second.atoms[0].occurrence="alias";},[](auto& x){x.second.atoms[0].table=TableId{1};},
+-    [](auto& x){x.second.atoms[0].terms[0]=VariableId{1};},[](auto& x){x.second.atoms[0].terms[1]=Value{std::string{"\xff\0",2}};},
+-    [](auto& x){x.second.atoms[0].terms[2]=Value{Decimal::parse("1.21")};},[](auto& x){x.second.atoms[0].terms[3]=Value{true};},
++    [](auto& x){x.second.atoms[0].terms[0]=VariableId{1};},
++    [](auto& x){auto& v=x.second.atoms[0].terms[1].template emplace<Value>(std::in_place_type<std::string>);std::get<std::string>(v).assign("\xff\0",2);},
++    [](auto& x){x.second.atoms[0].terms[2].template emplace<Value>(std::in_place_type<Decimal>,Decimal::parse("1.21"));},
++    [](auto& x){x.second.atoms[0].terms[3].template emplace<Value>(std::in_place_type<bool>,true);},
+     [](auto& x){x.second.head[0].variable=VariableId{1};},[](auto& x){x.second.head[0].alias="different";},
+     [](auto& x){std::reverse(x.second.head.begin(),x.second.head.end());},[](auto& x){x.second.head.clear();},
+     [](auto& x){x.second.contradiction=true;}};

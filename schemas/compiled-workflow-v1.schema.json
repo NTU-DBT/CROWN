@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN compiled SQL workflow artifact v1",
+  "description": "The native reader rebuilds the physical artifact, checks its exact source binding, independently replays the height certificate, and matches its witness. It additionally requires an integer JSON representation for schema_version. A constant-false execution route carries no structural minimum-height claim.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "physical", "height_certificate"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "physical": {
+      "oneOf": [
+        {"$ref": "physical-plan-v1.schema.json"},
+        {"$ref": "physical-plan-v2.schema.json"}
+      ]
+    },
+    "height_certificate": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "height-certificate-v1.schema.json"},
+        {"$ref": "height-certificate-v2.schema.json"}
+      ]
+    }
+  },
+  "allOf": [{
+    "if": {"properties": {"physical": {"properties": {"route": {"const": "constant_false"}}}}},
+    "then": {"properties": {"height_certificate": {"type": "null"}}},
+    "else": {"properties": {"height_certificate": {"type": "object"}}}
+  }]
+}

@@ -1,0 +1,23 @@
+{
+  "files": {
+    "README.md": "0202904952feaf92117277aea9ce6434c6780cab56be78269bbfb5f2c70be849",
+    "baseline-sha256.json": "01623cc47c99b71ae87beb4f2aff7c700c580c3005e6ddb874c3dcb8018ac0b3",
+    "overlay/README.md": "7fd792aff1f5de5779f13f32ea43ccee751cc512b6658efe76e9b5f515b378e2",
+    "overlay/docs/native_build.md": "7079fc6f6e3b58d744744181f7c1fc8df460bbbd5123c8fc0b7065643fa93dac",
+    "overlay/docs/observability.md": "70cc91680021cfde085f4797c11069483e739a98e8b59c28af59be0e1e6dc43e"
+  },
+  "native_document_baselines": {
+    "README.md": "3b5f0c1b85a0ebc9c1ca64946f774aa08749244205d59752f5388022b4642402",
+    "docs/native_build.md": "c57b584855fabd8181317570f1b4be529c858d6751831802618706679156da58"
+  },
+  "package_sha256": "4918b3f1754508e0ec85f6ab1777d682c9ba0ff476b37dffdba64de2065e35b5",
+  "package_sha256_method": "SHA-256 of sorted UTF-8 lines: relative path, NUL, file SHA-256, newline; readiness.json excluded.",
+  "proposal_edits_native_sources_or_docs": false,
+  "remaining_gates": "Root owns integration after actual CLI acceptance; native CMake/CTest/runtime behavior and O07 acceptance remain outside this proposal.",
+  "reviewed_source_packages": {
+    "composed_explain": "a4e759965fea2efcb3578080f0445d80579bb6f0daf1a5c36ea4149c6310f30a",
+    "native_integration": "ae3aee4c94e185e96bef3755556ac0c8528927583463a1a5ae5e44096104ee78"
+  },
+  "status": "unapplied documentation proposal; no O07 verification claim",
+  "this_task_ran_cmake_ctest_tests_binaries_or_python_checkers": false
+}

@@ -1,0 +1,12 @@
+{
+  "original_package_sha256": "8fb33b288b4abd58fd0955a8a7e8319de875e4b59cd19e77684fae6f4f4ac98d",
+  "files_match": {
+    "README.md": true,
+    "build_test.py": true,
+    "check_corpus.py": true,
+    "compile-evidence-o0.json": true,
+    "compile-evidence-o3.json": true,
+    "query_explain_test.cpp": true
+  },
+  "original_readiness_sha256": "26903da73dd627da64965b045501f057baafa4b7931eba03f9ab367c5e75e1ac"
+}

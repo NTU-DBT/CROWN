@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:crown:sql-aggregate-input:v1",
+  "title": "One original-SQL aggregate atomic input command",
+  "description": "Structural JSON shape only. The decoder and Session additionally enforce integer lexical forms, genuine SQL binding, physical source schema/types, UTF8/date/decimal domains, resource/work limits and logged sequence/source continuity. A schema-valid value does not authorize a native decision.",
+  "type": "object",
+  "required": ["schema_version", "binding_sha256", "sequence", "replacements"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": 1},
+    "binding_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "sequence": {"type": "integer", "minimum": 1, "maximum": 18446744073709551615},
+    "replacements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["table", "source_schema_version", "values", "before", "after"],
+        "additionalProperties": false,
+        "properties": {
+          "table": {"type": "string", "minLength": 1},
+          "source_schema_version": {"$ref": "#/$defs/uint64"},
+          "values": {"type": "array", "items": {"$ref": "#/$defs/cell"}},
+          "before": {"$ref": "#/$defs/uint64"},
+          "after": {"$ref": "#/$defs/uint64"}
+        }
+      }
+    },
+    "source_position": {
+      "type": "object",
+      "required": ["source", "offset"],
+      "additionalProperties": false,
+      "properties": {
+        "source": {"type": "string", "minLength": 1},
+        "offset": {"$ref": "#/$defs/uint64"}
+      }
+    }
+  },
+  "$defs": {
+    "uint64": {"type": "integer", "minimum": 0, "maximum": 18446744073709551615},
+    "cell": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "boolean"},
+        {"type": "string"},
+        {"type": "integer", "minimum": -9223372036854775808, "maximum": 9223372036854775807},
+        {"type": "object", "required": ["date"], "additionalProperties": false,
+         "properties": {"date": {"type": "string"}}},
+        {"type": "object", "required": ["decimal"], "additionalProperties": false,
+         "properties": {"decimal": {"type": "string"}}}
+      ]
+    }
+  }
+}

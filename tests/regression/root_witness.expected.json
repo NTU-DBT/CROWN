@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "backend": "reference_recompute",
+  "semantics": "set",
+  "initial": [["a"]],
+  "epochs": [{"sequence": 1, "input_changed": true, "current": [["a"], ["b"]], "delta": {"added": [["b"]], "removed": []}}]
+}

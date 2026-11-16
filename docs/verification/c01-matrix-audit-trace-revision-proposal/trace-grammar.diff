@@ -1,0 +1,58 @@
+--- frozen/audit.py
++++ trace-revision/audit.py
+@@ -56,6 +56,13 @@
+     for _fixture in ("delta_runtime", "delta_replay", "window"):
+         CONSUMERS[f"crown_statistics_{_fixture}_{_order}_test"] = (_fixture + "_test", "production")
+ POLICY_TARGETS = {name for name in CONSUMERS if name.endswith(("_fifo_test", "_lifo_test"))}
++SIGNED_TRACE_TESTS = {
++    "delta_runtime", "delta_runtime_eager", "delta_runtime_incremental",
++    "delta_runtime_root_first", "delta_runtime_anchored",
++}
++for _trace_order in ("fifo", "lifo"):
++    for _trace_policy in ("", "_eager", "_incremental", "_root_first", "_anchored"):
++        SIGNED_TRACE_TESTS.add("statistics_delta_" + _trace_order + _trace_policy)
+ PROBES = {
+     "set_satisfied", "set_projection", "seed_window_sequence", "seed_session_physical_sequence",
+     "seed_delta_sequence", "physical", "set_live_bucket", "set_live_total",
+@@ -202,11 +209,12 @@
+ 
+ 
+ def output_rows(text, test, source, build, evidence):
+-    """Keep all digit-bearing and boolean-assignment output rows, including traces."""
++    """Keep numeric/boolean rows and every trace, with source-bound trace grammar."""
+     raw, comparable = [], []
+     for line in text.splitlines():
+-        line = line.rstrip()
+-        if not (re.search(r"\d", line) or re.search(r"=\s*(?:yes|no|true|false)\b", line)):
++        if not line.startswith("trace "):
++            line = line.rstrip()
++        if not (line.startswith("trace ") or re.search(r"\d", line) or re.search(r"=\s*(?:yes|no|true|false)\b", line)):
+             continue
+         raw.append(line)
+         changed = normalized(line, source, build)
+@@ -216,12 +224,19 @@
+             changed = match[1] + '"$CLI_ARTIFACT_DIRECTORY",'
+         if line.startswith("trace "):
+             match = re.fullmatch(r"(trace .+ seq=\d+ outputs=)(.*)", changed)
+-            need(match is not None, "unrecognized signed trace row")
+-            items = re.findall(r"[+-]\([^()]*\)", match[2])
+-            need(",".join(items) == match[2], "signed trace tokenization loses bytes")
+-            # D04 fixture checks signed-key sets; enumeration order is not its contract.
+-            # Preserve multiplicity, signs, row fields and sequence; never deduplicate.
+-            changed = match[1] + ",".join(sorted(items))
++            if match is not None:
++                need(test in SIGNED_TRACE_TESTS, "signed trace outside its source-supported producer")
++                items = re.findall(r"[+-]\([^()]*\)", match[2])
++                need(items and ",".join(items) == match[2], "signed trace tokenization loses bytes or has no records")
++                # D04 fixture checks signed-key sets; enumeration order is not its contract.
++                # Preserve multiplicity, signs, row fields and sequence; never deduplicate.
++                changed = match[1] + ",".join(sorted(items))
++            else:
++                need(test not in SIGNED_TRACE_TESTS and
++                     re.search(r"\b(?:seq|outputs)\b", changed) is None,
++                     "malformed signed-output trace row")
++                # Other numeric traces, including delta_spec's owner_factor/key/output
++                # row, retain their complete bytes after directory normalization.
+         if changed != line:
+             NORMALIZATIONS.append({"evidence": evidence, "test": test, "row": len(raw) - 1,
+                                    "raw": line, "comparison": changed})

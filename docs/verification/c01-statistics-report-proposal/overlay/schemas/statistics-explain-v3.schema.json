@@ -1,0 +1,2633 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN owner statistics report v3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "scope",
+    "capabilities",
+    "plan",
+    "boundary",
+    "mode",
+    "session",
+    "o07",
+    "c01",
+    "comparison",
+    "accounting"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 3
+    },
+    "scope": {
+      "const": "owner_statistics_with_current_and_begin_bound_mode_context"
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cost_selection",
+        "estimated_total_state_bytes",
+        "global_cost_optimality",
+        "structural_proof",
+        "c01_project_gate"
+      ],
+      "properties": {
+        "cost_selection": {
+          "const": "not_implemented"
+        },
+        "estimated_total_state_bytes": {
+          "type": "null"
+        },
+        "global_cost_optimality": {
+          "const": false
+        },
+        "structural_proof": {
+          "const": "not_added_by_statistics"
+        },
+        "c01_project_gate": {
+          "const": "open"
+        }
+      }
+    },
+    "plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "physical_sha256",
+        "checked_native_height",
+        "route",
+        "authority"
+      ],
+      "properties": {
+        "physical_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "checked_native_height": {
+          "$ref": "#/$defs/u64"
+        },
+        "route": {
+          "enum": [
+            "tree",
+            "constant_true",
+            "constant_false"
+          ]
+        },
+        "authority": {
+          "const": "native_admitted_plan; identity_is_not_import_or_proof_authority"
+        }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "presence",
+        "owner",
+        "committed_sequence",
+        "delta_state",
+        "pending",
+        "scope"
+      ],
+      "properties": {
+        "presence": {
+          "enum": [
+            "compile_only",
+            "live",
+            "stopped_retained",
+            "released"
+          ]
+        },
+        "owner": {
+          "$ref": "#/$defs/u64"
+        },
+        "committed_sequence": {
+          "$ref": "#/$defs/u64"
+        },
+        "delta_state": {
+          "anyOf": [
+            {
+              "enum": [
+                "ready",
+                "pending_delta",
+                "paused",
+                "draining",
+                "epoch_prepared",
+                "committed_output",
+                "committed",
+                "aborted"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pending": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "scope": {
+          "enum": [
+            "last_owner_metadata_runtime_released",
+            "actual_owner_as_of_capture"
+          ]
+        }
+      }
+    },
+    "mode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requested",
+        "resolved_mode",
+        "resolved_completion",
+        "live_maintenance",
+        "view"
+      ],
+      "properties": {
+        "requested": {
+          "$ref": "#/$defs/deltaOptions"
+        },
+        "resolved_mode": {
+          "enum": [
+            "maintenance",
+            "delta"
+          ]
+        },
+        "resolved_completion": {
+          "enum": [
+            "automatic",
+            "ordered_replay",
+            "anchored",
+            "root_first"
+          ]
+        },
+        "live_maintenance": {
+          "enum": [
+            "on_output",
+            "incremental",
+            "eager"
+          ]
+        },
+        "view": {
+          "enum": [
+            "core",
+            "sql"
+          ]
+        }
+      }
+    },
+    "session": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "phase",
+            "committed_sequence",
+            "pending_sequence",
+            "pending_work",
+            "output_remaining",
+            "input_failed",
+            "end_of_input",
+            "pending_command_sequence"
+          ],
+          "properties": {
+            "state": {
+              "enum": [
+                "created",
+                "running",
+                "paused",
+                "stopped",
+                "dropped"
+              ]
+            },
+            "phase": {
+              "enum": [
+                "ready",
+                "pending",
+                "paused_pending",
+                "draining",
+                "prepared",
+                "output"
+              ]
+            },
+            "committed_sequence": {
+              "$ref": "#/$defs/u64"
+            },
+            "pending_sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/u64"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "pending_work": {
+              "$ref": "#/$defs/u64"
+            },
+            "output_remaining": {
+              "$ref": "#/$defs/u64"
+            },
+            "input_failed": {
+              "type": "boolean"
+            },
+            "end_of_input": {
+              "type": "boolean"
+            },
+            "pending_command_sequence": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/u64"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "o07": {
+      "$ref": "#/$defs/o07"
+    },
+    "c01": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "options",
+        "options_scope",
+        "state",
+        "workload"
+      ],
+      "properties": {
+        "options": {
+          "$ref": "#/$defs/workloadOptions"
+        },
+        "options_scope": {
+          "enum": [
+            "actual_owner_configuration",
+            "retained_last_configuration_runtime_released"
+          ]
+        },
+        "state": {
+          "$ref": "#/$defs/state"
+        },
+        "workload": {
+          "$ref": "#/$defs/workload"
+        }
+      }
+    },
+    "comparison": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/comparison"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "accounting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "workload",
+        "joint",
+        "export"
+      ],
+      "properties": {
+        "state": {
+          "const": "cumulative_accounted_component_payload; request_construction_allocator_cursor_plan_and_retention_excluded"
+        },
+        "workload": {
+          "const": "retained_vector_capacity_components; allocator_snapshot_configure_overlap_and_engine_storage_excluded"
+        },
+        "joint": {
+          "const": "numeric_snapshot_copies_and_fixed_joint_control_outside_state_limits"
+        },
+        "export": {
+          "const": "independent_complete_artifact_item_and_encoded_byte_caps; string_capacity_and_allocator_overhead_excluded"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "u64": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "hex": {
+      "type": "string",
+      "pattern": "^(?:[0-9a-f]{2})*$"
+    },
+    "fact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "reason"
+      ],
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/u64"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "enum": [
+                "budget_exhausted",
+                "pending_private_state",
+                "unavailable",
+                "not_applicable",
+                "not_requested",
+                "runtime_released",
+                "saturated",
+                "disabled",
+                "empty_population"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "value": {
+              "$ref": "#/$defs/u64"
+            },
+            "reason": {
+              "type": "null"
+            }
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "type": "null"
+            },
+            "reason": {
+              "enum": [
+                "budget_exhausted",
+                "pending_private_state",
+                "unavailable",
+                "not_applicable",
+                "not_requested",
+                "runtime_released",
+                "saturated",
+                "disabled",
+                "empty_population"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "scalar": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "value",
+            "encoding"
+          ],
+          "properties": {
+            "type": {
+              "const": "int64"
+            },
+            "value": {
+              "type": "integer",
+              "minimum": -9223372036854775808,
+              "maximum": 9223372036854775807
+            },
+            "encoding": {
+              "const": "native_canonical"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "value",
+            "encoding"
+          ],
+          "properties": {
+            "type": {
+              "const": "string"
+            },
+            "value": {
+              "$ref": "#/$defs/hex"
+            },
+            "encoding": {
+              "const": "hex_bytes"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "value",
+            "encoding"
+          ],
+          "properties": {
+            "type": {
+              "const": "bool"
+            },
+            "value": {
+              "type": "boolean"
+            },
+            "encoding": {
+              "const": "native_canonical"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "value",
+            "encoding"
+          ],
+          "properties": {
+            "type": {
+              "const": "date"
+            },
+            "value": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+            },
+            "encoding": {
+              "const": "native_canonical"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "value",
+            "encoding"
+          ],
+          "properties": {
+            "type": {
+              "const": "decimal"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]*[1-9])?$",
+              "not": {
+                "const": "-0"
+              },
+              "maxLength": 80
+            },
+            "encoding": {
+              "const": "native_canonical"
+            }
+          }
+        }
+      ]
+    },
+    "row": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/scalar"
+      }
+    },
+    "o07Options": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "trace_capacity",
+        "sample_period",
+        "sample_offset",
+        "trace_timings"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "off",
+            "counters",
+            "timed",
+            "trace"
+          ]
+        },
+        "trace_capacity": {
+          "$ref": "#/$defs/u64"
+        },
+        "sample_period": {
+          "$ref": "#/$defs/u64",
+          "minimum": 1
+        },
+        "sample_offset": {
+          "$ref": "#/$defs/u64"
+        },
+        "trace_timings": {
+          "type": "boolean"
+        }
+      }
+    },
+    "deltaOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "completion",
+        "live_maintenance",
+        "view",
+        "propagation",
+        "capture_transitions",
+        "delta_work",
+        "physical_work",
+        "support_work",
+        "cursor_work",
+        "view_work",
+        "support_count",
+        "derivation_count",
+        "spool_rows",
+        "spool_accounted_bytes",
+        "o07"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "maintenance",
+            "delta"
+          ]
+        },
+        "completion": {
+          "enum": [
+            "automatic",
+            "ordered_replay",
+            "anchored",
+            "root_first"
+          ]
+        },
+        "live_maintenance": {
+          "enum": [
+            "on_output",
+            "incremental",
+            "eager"
+          ]
+        },
+        "view": {
+          "enum": [
+            "core",
+            "sql"
+          ]
+        },
+        "propagation": {
+          "enum": [
+            "fifo",
+            "lifo"
+          ]
+        },
+        "capture_transitions": {
+          "type": "boolean"
+        },
+        "delta_work": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/u64"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "physical_work": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/u64"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "support_work": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/u64"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cursor_work": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/u64"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "view_work": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/u64"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "support_count": {
+          "$ref": "#/$defs/u64"
+        },
+        "derivation_count": {
+          "$ref": "#/$defs/u64"
+        },
+        "spool_rows": {
+          "$ref": "#/$defs/u64"
+        },
+        "spool_accounted_bytes": {
+          "$ref": "#/$defs/u64"
+        },
+        "o07": {
+          "$ref": "#/$defs/o07Options"
+        }
+      }
+    },
+    "modeFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "delta_owner",
+        "requested_mode",
+        "resolved_mode",
+        "requested_completion",
+        "resolved_completion",
+        "live_maintenance",
+        "view"
+      ],
+      "properties": {
+        "delta_owner": {
+          "type": "boolean"
+        },
+        "requested_mode": {
+          "enum": [
+            "maintenance",
+            "delta"
+          ]
+        },
+        "resolved_mode": {
+          "enum": [
+            "maintenance",
+            "delta"
+          ]
+        },
+        "requested_completion": {
+          "enum": [
+            "automatic",
+            "ordered_replay",
+            "anchored",
+            "root_first"
+          ]
+        },
+        "resolved_completion": {
+          "enum": [
+            "automatic",
+            "ordered_replay",
+            "anchored",
+            "root_first"
+          ]
+        },
+        "live_maintenance": {
+          "enum": [
+            "on_output",
+            "incremental",
+            "eager"
+          ]
+        },
+        "view": {
+          "enum": [
+            "core",
+            "sql"
+          ]
+        }
+      }
+    },
+    "configuration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner",
+        "generation",
+        "generation_saturated",
+        "resolved_mode",
+        "resolved_completion",
+        "live_maintenance",
+        "view",
+        "query_factors",
+        "requested"
+      ],
+      "properties": {
+        "owner": {
+          "$ref": "#/$defs/u64"
+        },
+        "generation": {
+          "$ref": "#/$defs/u64"
+        },
+        "generation_saturated": {
+          "type": "boolean"
+        },
+        "resolved_mode": {
+          "enum": [
+            "maintenance",
+            "delta"
+          ]
+        },
+        "resolved_completion": {
+          "enum": [
+            "automatic",
+            "ordered_replay",
+            "anchored",
+            "root_first"
+          ]
+        },
+        "live_maintenance": {
+          "enum": [
+            "on_output",
+            "incremental",
+            "eager"
+          ]
+        },
+        "view": {
+          "enum": [
+            "core",
+            "sql"
+          ]
+        },
+        "query_factors": {
+          "$ref": "#/$defs/u64"
+        },
+        "requested": {
+          "$ref": "#/$defs/deltaOptions"
+        }
+      }
+    },
+    "labels": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authority",
+        "run_hex",
+        "input_adapter_hex",
+        "output_codec_hex",
+        "sink_hex"
+      ],
+      "properties": {
+        "authority": {
+          "const": "caller_declared_unmeasured"
+        },
+        "run_hex": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/hex"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "input_adapter_hex": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/hex"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "output_codec_hex": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/hex"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sink_hex": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/hex"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "unit",
+        "kind",
+        "availability",
+        "raw",
+        "saturated",
+        "raw_status",
+        "fact"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "counter",
+            "high_water",
+            "timing"
+          ]
+        },
+        "availability": {
+          "enum": [
+            "unavailable",
+            "disabled",
+            "available"
+          ]
+        },
+        "raw": {
+          "$ref": "#/$defs/u64"
+        },
+        "saturated": {
+          "type": "boolean"
+        },
+        "raw_status": {
+          "enum": [
+            "lower_bound",
+            "disabled",
+            "exact"
+          ]
+        },
+        "fact": {
+          "$ref": "#/$defs/fact"
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attempt",
+        "sequence",
+        "layer",
+        "outcome",
+        "begin_configuration",
+        "declared_labels",
+        "metrics"
+      ],
+      "properties": {
+        "attempt": {
+          "$ref": "#/$defs/u64"
+        },
+        "sequence": {
+          "$ref": "#/$defs/u64"
+        },
+        "layer": {
+          "enum": [
+            "support",
+            "physical",
+            "delta"
+          ]
+        },
+        "outcome": {
+          "enum": [
+            "pending",
+            "committed",
+            "aborted"
+          ]
+        },
+        "begin_configuration": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/configuration"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "declared_labels": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/labels"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/metric"
+          }
+        }
+      }
+    },
+    "o07": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "options",
+        "recorded_owner",
+        "current_configuration",
+        "current_declared_labels",
+        "counts_status",
+        "attempts",
+        "commits",
+        "aborts",
+        "current",
+        "last",
+        "trace_disposition",
+        "trace_retained",
+        "trace_dropped",
+        "trace_dropped_saturated",
+        "trace_truncated",
+        "export_scope"
+      ],
+      "properties": {
+        "options": {
+          "$ref": "#/$defs/o07Options"
+        },
+        "recorded_owner": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/u64"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "current_configuration": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/configuration"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "current_declared_labels": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/labels"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "counts_status": {
+          "enum": [
+            "disabled",
+            "lower_bound",
+            "exact"
+          ]
+        },
+        "attempts": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/u64"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "commits": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/u64"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "aborts": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/u64"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "current": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/summary"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "last": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/summary"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "trace_disposition": {
+          "enum": [
+            "disabled",
+            "not_sampled",
+            "pending",
+            "committed",
+            "aborted",
+            "released"
+          ]
+        },
+        "trace_retained": {
+          "$ref": "#/$defs/u64"
+        },
+        "trace_dropped": {
+          "$ref": "#/$defs/u64"
+        },
+        "trace_dropped_saturated": {
+          "type": "boolean"
+        },
+        "trace_truncated": {
+          "type": "boolean"
+        },
+        "export_scope": {
+          "const": "options_current_and_begin_mode_bound_summaries; trace_records_and_cursor_details_not_exported"
+        }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "work",
+        "rows",
+        "distinct_keys",
+        "accounted_bytes",
+        "projection_width",
+        "heavy_keys"
+      ],
+      "properties": {
+        "work": {
+          "$ref": "#/$defs/u64"
+        },
+        "rows": {
+          "$ref": "#/$defs/u64"
+        },
+        "distinct_keys": {
+          "$ref": "#/$defs/u64"
+        },
+        "accounted_bytes": {
+          "$ref": "#/$defs/u64"
+        },
+        "projection_width": {
+          "$ref": "#/$defs/u64"
+        },
+        "heavy_keys": {
+          "$ref": "#/$defs/u64"
+        }
+      }
+    },
+    "usage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "work",
+        "rows",
+        "distinct_keys",
+        "accounted_bytes",
+        "max_row_capacity",
+        "max_histogram_capacity",
+        "max_heavy_capacity"
+      ],
+      "properties": {
+        "work": {
+          "$ref": "#/$defs/u64"
+        },
+        "rows": {
+          "$ref": "#/$defs/u64"
+        },
+        "distinct_keys": {
+          "$ref": "#/$defs/u64"
+        },
+        "accounted_bytes": {
+          "$ref": "#/$defs/u64"
+        },
+        "max_row_capacity": {
+          "$ref": "#/$defs/u64"
+        },
+        "max_histogram_capacity": {
+          "$ref": "#/$defs/u64"
+        },
+        "max_heavy_capacity": {
+          "$ref": "#/$defs/u64"
+        }
+      }
+    },
+    "layout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "catalog_version",
+        "binding_hex",
+        "origin",
+        "fields"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/u64"
+        },
+        "catalog_version": {
+          "$ref": "#/$defs/u64"
+        },
+        "binding_hex": {
+          "$ref": "#/$defs/hex"
+        },
+        "origin": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "table",
+                "source_schema_version"
+              ],
+              "properties": {
+                "table": {
+                  "$ref": "#/$defs/u64"
+                },
+                "source_schema_version": {
+                  "$ref": "#/$defs/u64"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "type",
+              "variable",
+              "decimal"
+            ],
+            "properties": {
+              "type": {
+                "enum": [
+                  "int64",
+                  "string",
+                  "bool",
+                  "date",
+                  "decimal"
+                ]
+              },
+              "variable": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/u64"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "decimal": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "precision",
+                      "scale"
+                    ],
+                    "properties": {
+                      "precision": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 38
+                      },
+                      "scale": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 38
+                      }
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "selection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "id",
+        "role",
+        "projection_fields"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "source",
+            "node",
+            "occurrence",
+            "index"
+          ]
+        },
+        "id": {
+          "$ref": "#/$defs/u64"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "enum": [
+                "records",
+                "survivors",
+                "parent_support",
+                "visible"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "projection_fields": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/u64"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "distribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "completion",
+        "visited",
+        "ndv",
+        "histogram",
+        "top_k",
+        "unknown_reason"
+      ],
+      "properties": {
+        "completion": {
+          "enum": [
+            "exact",
+            "budget_exhausted"
+          ]
+        },
+        "visited": {
+          "$ref": "#/$defs/u64"
+        },
+        "ndv": {
+          "$ref": "#/$defs/fact"
+        },
+        "histogram": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "multiplicity",
+                  "positive_keys"
+                ],
+                "properties": {
+                  "multiplicity": {
+                    "$ref": "#/$defs/u64",
+                    "minimum": 1
+                  },
+                  "positive_keys": {
+                    "$ref": "#/$defs/u64",
+                    "minimum": 1
+                  }
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "top_k": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "key",
+                  "multiplicity"
+                ],
+                "properties": {
+                  "key": {
+                    "$ref": "#/$defs/row"
+                  },
+                  "multiplicity": {
+                    "$ref": "#/$defs/u64",
+                    "minimum": 1
+                  }
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unknown_reason": {
+          "anyOf": [
+            {
+              "const": "budget_exhausted"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "completion": {
+                "const": "exact"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "histogram": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "multiplicity",
+                    "positive_keys"
+                  ],
+                  "properties": {
+                    "multiplicity": {
+                      "$ref": "#/$defs/u64",
+                      "minimum": 1
+                    },
+                    "positive_keys": {
+                      "$ref": "#/$defs/u64",
+                      "minimum": 1
+                    }
+                  }
+                }
+              },
+              "top_k": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "key",
+                    "multiplicity"
+                  ],
+                  "properties": {
+                    "key": {
+                      "$ref": "#/$defs/row"
+                    },
+                    "multiplicity": {
+                      "$ref": "#/$defs/u64",
+                      "minimum": 1
+                    }
+                  }
+                }
+              },
+              "unknown_reason": {
+                "type": "null"
+              },
+              "ndv": {
+                "properties": {
+                  "value": {
+                    "$ref": "#/$defs/u64"
+                  },
+                  "reason": {
+                    "type": "null"
+                  }
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "histogram": {
+                "type": "null"
+              },
+              "top_k": {
+                "type": "null"
+              },
+              "unknown_reason": {
+                "const": "budget_exhausted"
+              },
+              "ndv": {
+                "properties": {
+                  "value": {
+                    "type": "null"
+                  },
+                  "reason": {
+                    "const": "budget_exhausted"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "selection",
+        "availability",
+        "node_kind",
+        "layout",
+        "cardinality",
+        "distribution",
+        "distribution_absence_reason",
+        "storage_invalidation"
+      ],
+      "properties": {
+        "selection": {
+          "$ref": "#/$defs/selection"
+        },
+        "availability": {
+          "enum": [
+            "available",
+            "budget_exhausted",
+            "pending_private_state",
+            "unavailable",
+            "not_applicable"
+          ]
+        },
+        "node_kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "native",
+                "generalized"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "layout": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/layout"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cardinality": {
+          "$ref": "#/$defs/fact"
+        },
+        "distribution": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/distribution"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "distribution_absence_reason": {
+          "enum": [
+            "present",
+            "not_requested",
+            "budget_exhausted",
+            "pending_private_state",
+            "unavailable",
+            "not_applicable"
+          ]
+        },
+        "storage_invalidation": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "owner",
+                "relation",
+                "revision",
+                "scope"
+              ],
+              "properties": {
+                "owner": {
+                  "$ref": "#/$defs/u64"
+                },
+                "relation": {
+                  "$ref": "#/$defs/u64"
+                },
+                "revision": {
+                  "$ref": "#/$defs/u64"
+                },
+                "scope": {
+                  "const": "invalidation_not_committed_freshness"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "stateValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner",
+        "sequence",
+        "layer",
+        "requested_components",
+        "physical_source_scope",
+        "limits",
+        "usage",
+        "components"
+      ],
+      "properties": {
+        "owner": {
+          "$ref": "#/$defs/u64"
+        },
+        "sequence": {
+          "$ref": "#/$defs/u64"
+        },
+        "layer": {
+          "enum": [
+            "physical",
+            "support"
+          ]
+        },
+        "requested_components": {
+          "$ref": "#/$defs/u64"
+        },
+        "physical_source_scope": {
+          "enum": [
+            "available",
+            "budget_exhausted",
+            "pending_private_state",
+            "unavailable",
+            "not_applicable"
+          ]
+        },
+        "limits": {
+          "$ref": "#/$defs/limits"
+        },
+        "usage": {
+          "$ref": "#/$defs/usage"
+        },
+        "components": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/component"
+          }
+        }
+      }
+    },
+    "state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requested",
+        "availability",
+        "value"
+      ],
+      "properties": {
+        "requested": {
+          "type": "boolean"
+        },
+        "availability": {
+          "enum": [
+            "runtime_released",
+            "not_requested",
+            "available",
+            "budget_exhausted",
+            "pending_private_state",
+            "unavailable",
+            "not_applicable"
+          ]
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/stateValue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "availability": {
+                "enum": [
+                  "runtime_released",
+                  "not_requested"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "value": {
+                "$ref": "#/$defs/stateValue"
+              },
+              "requested": {
+                "const": true
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "availability": {
+                "const": "pending_private_state"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "properties": {
+                  "components": {
+                    "maxItems": 0
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "workloadOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "max_cells",
+        "period",
+        "offset",
+        "detail_budget"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "off",
+            "counters"
+          ]
+        },
+        "max_cells": {
+          "$ref": "#/$defs/u64"
+        },
+        "period": {
+          "$ref": "#/$defs/u64",
+          "minimum": 1
+        },
+        "offset": {
+          "$ref": "#/$defs/u64"
+        },
+        "detail_budget": {
+          "$ref": "#/$defs/u64"
+        }
+      }
+    },
+    "stamp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner",
+        "committed_epoch",
+        "interval_start_epoch",
+        "reset_generation",
+        "configuration_generation",
+        "segment",
+        "format_version",
+        "reset_saturated",
+        "configuration_saturated",
+        "segment_saturated"
+      ],
+      "properties": {
+        "owner": {
+          "$ref": "#/$defs/u64"
+        },
+        "committed_epoch": {
+          "$ref": "#/$defs/u64"
+        },
+        "interval_start_epoch": {
+          "$ref": "#/$defs/u64"
+        },
+        "reset_generation": {
+          "$ref": "#/$defs/u64"
+        },
+        "configuration_generation": {
+          "$ref": "#/$defs/u64"
+        },
+        "segment": {
+          "$ref": "#/$defs/u64"
+        },
+        "format_version": {
+          "const": 1
+        },
+        "reset_saturated": {
+          "type": "boolean"
+        },
+        "configuration_saturated": {
+          "type": "boolean"
+        },
+        "segment_saturated": {
+          "type": "boolean"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attempts",
+        "committed",
+        "aborted",
+        "selected",
+        "complete",
+        "aborted_selected",
+        "truncated",
+        "committed_truncated",
+        "guards",
+        "detail_actions",
+        "cleared_cells",
+        "merged_cells",
+        "numeric_status",
+        "saturated",
+        "invalid_descriptor",
+        "protocol_error",
+        "ordinal_exhausted"
+      ],
+      "properties": {
+        "attempts": {
+          "$ref": "#/$defs/u64"
+        },
+        "committed": {
+          "$ref": "#/$defs/u64"
+        },
+        "aborted": {
+          "$ref": "#/$defs/u64"
+        },
+        "selected": {
+          "$ref": "#/$defs/u64"
+        },
+        "complete": {
+          "$ref": "#/$defs/u64"
+        },
+        "aborted_selected": {
+          "$ref": "#/$defs/u64"
+        },
+        "truncated": {
+          "$ref": "#/$defs/u64"
+        },
+        "committed_truncated": {
+          "$ref": "#/$defs/u64"
+        },
+        "guards": {
+          "$ref": "#/$defs/u64"
+        },
+        "detail_actions": {
+          "$ref": "#/$defs/u64"
+        },
+        "cleared_cells": {
+          "$ref": "#/$defs/u64"
+        },
+        "merged_cells": {
+          "$ref": "#/$defs/u64"
+        },
+        "numeric_status": {
+          "enum": [
+            "lower_bound",
+            "exact"
+          ]
+        },
+        "saturated": {
+          "type": "boolean"
+        },
+        "invalid_descriptor": {
+          "type": "boolean"
+        },
+        "protocol_error": {
+          "type": "boolean"
+        },
+        "ordinal_exhausted": {
+          "type": "boolean"
+        }
+      }
+    },
+    "descriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "input_scope",
+        "initiating_table",
+        "scope",
+        "operation",
+        "role",
+        "node",
+        "occurrence",
+        "edge",
+        "index",
+        "event_operation"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "physical",
+            "occurrence",
+            "support",
+            "degree",
+            "logical"
+          ]
+        },
+        "input_scope": {
+          "enum": [
+            "physical_table",
+            "logical_epoch"
+          ]
+        },
+        "initiating_table": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/u64"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "scope": {
+          "$ref": "#/$defs/u64"
+        },
+        "operation": {
+          "enum": [
+            "insert",
+            "erase"
+          ]
+        },
+        "role": {
+          "enum": [
+            "input",
+            "adapter",
+            "derivation",
+            "survivor",
+            "parent_support",
+            "visible_support",
+            "native_touched_degree",
+            "generalized_probe"
+          ]
+        },
+        "node": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/u64"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "occurrence": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/u64"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "edge": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/u64"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "index": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/u64"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "event_operation": {
+          "anyOf": [
+            {
+              "enum": [
+                "insert",
+                "erase"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "fraction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "availability",
+        "denominator_scope",
+        "numerator",
+        "denominator",
+        "reason"
+      ],
+      "properties": {
+        "availability": {
+          "enum": [
+            "disabled",
+            "unavailable",
+            "exact",
+            "sampled",
+            "incomplete",
+            "lower_bound"
+          ]
+        },
+        "denominator_scope": {
+          "enum": [
+            "unavailable",
+            "all_committed_physical_inputs",
+            "committed_physical_stratum",
+            "complete_detail_sample_physical_stratum",
+            "observed_support_count_changes",
+            "observed_visited_routes"
+          ]
+        },
+        "numerator": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/u64"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "denominator": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/u64"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "enum": [
+                "disabled",
+                "unavailable",
+                "exact",
+                "sampled",
+                "incomplete",
+                "lower_bound"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "availability": {
+                "enum": [
+                  "exact",
+                  "sampled"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "numerator": {
+                "$ref": "#/$defs/u64"
+              },
+              "denominator": {
+                "$ref": "#/$defs/u64",
+                "minimum": 1
+              },
+              "reason": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "numerator": {
+                "type": "null"
+              },
+              "denominator": {
+                "type": "null"
+              },
+              "reason": {
+                "enum": [
+                  "disabled",
+                  "unavailable",
+                  "incomplete",
+                  "lower_bound"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "cell": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "numeric_status",
+        "saturated",
+        "population",
+        "inputs",
+        "changed",
+        "noop",
+        "visited",
+        "accepted",
+        "rejected",
+        "complete_detail_inputs",
+        "changes",
+        "zero_to_positive",
+        "positive_to_zero",
+        "count",
+        "sum",
+        "minimum",
+        "maximum",
+        "bins"
+      ],
+      "properties": {
+        "numeric_status": {
+          "enum": [
+            "lower_bound",
+            "exact"
+          ]
+        },
+        "saturated": {
+          "type": "boolean"
+        },
+        "population": {
+          "enum": [
+            "unequal_support_event_after_values",
+          "generalized_pre_probe_presence",
+            "directed_child_event_degrees",
+            "adapter_route_visits",
+            "committed_input_census"
+          ]
+        },
+        "inputs": {
+          "$ref": "#/$defs/u64"
+        },
+        "changed": {
+          "$ref": "#/$defs/u64"
+        },
+        "noop": {
+          "$ref": "#/$defs/u64"
+        },
+        "visited": {
+          "$ref": "#/$defs/u64"
+        },
+        "accepted": {
+          "$ref": "#/$defs/u64"
+        },
+        "rejected": {
+          "$ref": "#/$defs/u64"
+        },
+        "complete_detail_inputs": {
+          "$ref": "#/$defs/u64"
+        },
+        "changes": {
+          "$ref": "#/$defs/u64"
+        },
+        "zero_to_positive": {
+          "$ref": "#/$defs/u64"
+        },
+        "positive_to_zero": {
+          "$ref": "#/$defs/u64"
+        },
+        "count": {
+          "$ref": "#/$defs/u64"
+        },
+        "sum": {
+          "$ref": "#/$defs/u64"
+        },
+        "minimum": {
+          "$ref": "#/$defs/fact"
+        },
+        "maximum": {
+          "$ref": "#/$defs/fact"
+        },
+        "bins": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/u64"
+          },
+          "minItems": 65,
+          "maxItems": 65
+        }
+      }
+    },
+    "cellRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "descriptor",
+        "observations",
+        "input_share",
+        "events_per_input",
+        "crossing_fraction",
+        "adapter_selectivity"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/u64"
+        },
+        "descriptor": {
+          "$ref": "#/$defs/descriptor"
+        },
+        "observations": {
+          "$ref": "#/$defs/cell"
+        },
+        "input_share": {
+          "$ref": "#/$defs/fraction"
+        },
+        "events_per_input": {
+          "$ref": "#/$defs/fraction"
+        },
+        "crossing_fraction": {
+          "$ref": "#/$defs/fraction"
+        },
+        "adapter_selectivity": {
+          "$ref": "#/$defs/fraction"
+        }
+      }
+    },
+    "previous": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start_epoch",
+        "end_epoch",
+        "modes",
+        "metadata",
+        "scope",
+        "cells"
+      ],
+      "properties": {
+        "start_epoch": {
+          "$ref": "#/$defs/u64"
+        },
+        "end_epoch": {
+          "$ref": "#/$defs/u64"
+        },
+        "modes": {
+          "$ref": "#/$defs/modeFacts"
+        },
+        "metadata": {
+          "$ref": "#/$defs/metadata"
+        },
+        "scope": {
+          "const": "previous_segment_raw_observations_no_derived_ratios"
+        },
+        "cells": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/cell"
+          }
+        }
+      }
+    },
+    "memory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "object_bytes",
+        "descriptors_bytes",
+        "routes_bytes",
+        "committed_bytes",
+        "attempt_bytes",
+        "previous_bytes",
+        "retained_payload_bytes"
+      ],
+      "properties": {
+        "object_bytes": {
+          "$ref": "#/$defs/u64"
+        },
+        "descriptors_bytes": {
+          "$ref": "#/$defs/u64"
+        },
+        "routes_bytes": {
+          "$ref": "#/$defs/u64"
+        },
+        "committed_bytes": {
+          "$ref": "#/$defs/u64"
+        },
+        "attempt_bytes": {
+          "$ref": "#/$defs/u64"
+        },
+        "previous_bytes": {
+          "$ref": "#/$defs/u64"
+        },
+        "retained_payload_bytes": {
+          "$ref": "#/$defs/u64"
+        }
+      }
+    },
+    "workloadValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "modes",
+        "metadata",
+        "histogram_bins",
+        "sampling",
+        "cells",
+        "replaced_history",
+        "previous",
+        "memory",
+        "arrival_per_second",
+        "arrival_reason"
+      ],
+      "properties": {
+        "modes": {
+          "$ref": "#/$defs/modeFacts"
+        },
+        "metadata": {
+          "$ref": "#/$defs/metadata"
+        },
+        "histogram_bins": {
+          "const": "0=zero; b=1..64 covers [2^(b-1),2^b-1]"
+        },
+        "sampling": {
+          "const": "deterministic_complete_samples_no_population_extrapolation"
+        },
+        "cells": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/cellRecord"
+          }
+        },
+        "replaced_history": {
+          "type": "boolean"
+        },
+        "previous": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/previous"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "memory": {
+          "$ref": "#/$defs/memory"
+        },
+        "arrival_per_second": {
+          "type": "null"
+        },
+        "arrival_reason": {
+          "const": "no_clock_measurement"
+        }
+      }
+    },
+    "workload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "availability",
+        "stamp",
+        "pending",
+        "value"
+      ],
+      "properties": {
+        "availability": {
+          "enum": [
+            "runtime_released",
+            "disabled",
+            "unavailable",
+            "exact",
+            "sampled",
+            "incomplete",
+            "lower_bound"
+          ]
+        },
+        "stamp": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/stamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pending": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/workloadValue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "availability": {
+                "const": "runtime_released"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "stamp": {
+                "type": "null"
+              },
+              "pending": {
+                "type": "null"
+              },
+              "value": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "stamp": {
+                "$ref": "#/$defs/stamp"
+              },
+              "pending": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "availability": {
+                "const": "disabled"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "availability": {
+                "enum": [
+                  "exact",
+                  "sampled",
+                  "incomplete",
+                  "lower_bound"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "$ref": "#/$defs/workloadValue"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "previous_owner",
+        "previous_sequence",
+        "actual_owner",
+        "actual_sequence",
+        "max_event_lag",
+        "data",
+        "data_reason",
+        "workload_configuration",
+        "workload_reset",
+        "workload_segment"
+      ],
+      "properties": {
+        "previous_owner": {
+          "$ref": "#/$defs/u64"
+        },
+        "previous_sequence": {
+          "$ref": "#/$defs/u64"
+        },
+        "actual_owner": {
+          "$ref": "#/$defs/u64"
+        },
+        "actual_sequence": {
+          "$ref": "#/$defs/u64"
+        },
+        "max_event_lag": {
+          "$ref": "#/$defs/u64"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "enum": [
+                "current",
+                "within_lag",
+                "stale",
+                "foreign_owner",
+                "future_sequence",
+                "scope_mismatch"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data_reason": {
+          "anyOf": [
+            {
+              "const": "runtime_released_or_previous_unavailable"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "workload_configuration": {
+          "enum": [
+            "same",
+            "changed",
+            "foreign_owner",
+            "saturated",
+            "unavailable"
+          ]
+        },
+        "workload_reset": {
+          "enum": [
+            "same",
+            "changed",
+            "foreign_owner",
+            "saturated",
+            "unavailable"
+          ]
+        },
+        "workload_segment": {
+          "enum": [
+            "same",
+            "changed",
+            "foreign_owner",
+            "saturated",
+            "unavailable"
+          ]
+        }
+      }
+    }
+  }
+}
+

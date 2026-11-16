@@ -1,0 +1,78 @@
+--- CMakeLists.txt	2026-11-07 14:47:00.233077482 +0800
++++ docs/verification/c05-native-registration-proposal/overlay/CMakeLists.txt	2026-11-07 17:06:30.257452169 +0800
+@@ -69,6 +69,14 @@
+ target_include_directories(crown_ranking PUBLIC include)
+ target_link_libraries(crown_ranking PUBLIC crown_plan PRIVATE crown_options)
+ 
++# Pure selection retains typed proof/ranking authority and whole plan artifacts.
++# It has no runtime or report dependency; actual-owner selection is opt-in below.
++add_library(crown_selection src/planner/selection.cpp src/planner/selection_budget.cpp
++  src/planner/selection_binding.cpp src/planner/selection_payload.cpp
++  src/planner/selection_cache.cpp)
++target_include_directories(crown_selection PUBLIC include)
++target_link_libraries(crown_selection PUBLIC crown_ranking PRIVATE crown_options)
++
+ set(CROWN_RUNTIME_SOURCES src/runtime/support.cpp src/runtime/physical.cpp src/runtime/delta.cpp
+   src/io/support.cpp src/io/inspection.cpp src/runtime/replay.cpp src/runtime/session.cpp src/runtime/window.cpp src/runtime/observation.cpp
+   src/runtime/statistics.cpp src/runtime/owner_statistics.cpp src/runtime/statistics_collection.cpp
+@@ -84,6 +92,10 @@
+ target_include_directories(crown_ranking_runtime PUBLIC include)
+ target_link_libraries(crown_ranking_runtime PUBLIC crown_ranking crown_runtime PRIVATE crown_options)
+ 
++add_library(crown_selection_runtime src/runtime/selection.cpp)
++target_include_directories(crown_selection_runtime PUBLIC include)
++target_link_libraries(crown_selection_runtime PUBLIC crown_selection crown_ranking_runtime PRIVATE crown_options)
++
+ # Final report layer: runtime never depends on observability or report IO.
+ set(CROWN_EXPLAIN_SOURCES src/observability/explain.cpp src/io/explain.cpp
+   src/io/run_context.cpp src/io/cursor_observation.cpp
+@@ -552,6 +564,49 @@
+       --patched $<TARGET_FILE:crown_json_cleanup_test>)
+   set_tests_properties(json_cleanup json_patch_compatibility PROPERTIES TIMEOUT 300 LABELS C02)
+ 
++  # Append C05 after the complete 143-test prefix. Keep each bridge on exactly
++  # one runtime ABI, and register before the shared sanitizer environment pass.
++  add_library(crown_selection_runtime_testing STATIC src/runtime/selection.cpp)
++  target_include_directories(crown_selection_runtime_testing PUBLIC include)
++  target_link_libraries(crown_selection_runtime_testing PUBLIC crown_selection crown_ranking_runtime_testing PRIVATE crown_options)
++
++  function(crown_add_selection_test name source library)
++    add_executable(crown_${name}_test tests/unit/${source}.cpp)
++    target_include_directories(crown_${name}_test PRIVATE tests/support src/planner)
++    target_compile_options(crown_${name}_test PRIVATE -UNDEBUG)
++    target_link_libraries(crown_${name}_test PRIVATE ${library} crown_options)
++    add_test(NAME ${name} COMMAND crown_${name}_test ${ARGN})
++    set_tests_properties(${name} PROPERTIES TIMEOUT 900 LABELS C05)
++  endfunction()
++
++  crown_add_selection_test(selection_pure_link selection_pure_link_test crown_selection)
++  crown_add_selection_test(selection_contract selection_contract_test crown_selection_runtime)
++  crown_add_selection_test(selection_cache selection_cache_test crown_selection_runtime)
++  crown_add_selection_test(selection_source selection_source_test crown_selection_runtime)
++  crown_add_selection_test(selection_current selection_current_test crown_selection_runtime)
++  crown_add_selection_test(selection_binding selection_binding_test crown_selection_runtime)
++  crown_add_selection_test(selection_resources selection_resources_test crown_selection_runtime)
++  crown_add_selection_test(selection_census selection_census_test crown_selection_runtime_testing)
++  crown_add_selection_test(selection_exception selection_exception_test crown_selection_runtime)
++  crown_add_selection_test(selection_normalized_exception selection_normalized_exception_test crown_selection_runtime)
++  crown_add_selection_test(selection_public_independent selection_public_independent_test crown_selection_runtime "${CMAKE_CURRENT_SOURCE_DIR}")
++  crown_add_selection_test(selection_cache_independent selection_cache_independent_test crown_selection_runtime "${CMAKE_CURRENT_SOURCE_DIR}")
++  crown_add_selection_test(selection_resources_independent selection_resources_independent_test crown_selection_runtime "${CMAKE_CURRENT_SOURCE_DIR}")
++  crown_add_selection_test(selection_binding_independent selection_binding_independent_test crown_selection)
++  crown_add_selection_test(selection_publication_fault_independent selection_publication_fault_independent_test crown_selection_runtime "${CMAKE_CURRENT_SOURCE_DIR}")
++  set_tests_properties(selection_exception selection_normalized_exception
++    selection_publication_fault_independent PROPERTIES TIMEOUT 7200)
++
++  foreach(c05_variant IN ITEMS production testing)
++    add_library(crown_selection_usage_${c05_variant} OBJECT tests/examples/selection_usage.cpp)
++    if(c05_variant STREQUAL "production")
++      set(c05_bridge crown_selection_runtime)
++    else()
++      set(c05_bridge crown_selection_runtime_testing)
++    endif()
++    target_link_libraries(crown_selection_usage_${c05_variant} PRIVATE ${c05_bridge} crown_options)
++  endforeach()
++
+   if(CROWN_SANITIZERS)
+     set_tests_properties(planner_residual_exceptions PROPERTIES TIMEOUT 7200)
+     get_property(crown_test_names DIRECTORY PROPERTY TESTS)

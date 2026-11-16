@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "semantics": "set",
+  "catalog": {
+    "version": 1,
+    "tables": []
+  },
+  "query": {
+    "variables": [],
+    "atoms": [],
+    "head": []
+  }
+}

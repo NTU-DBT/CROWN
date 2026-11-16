@@ -1,0 +1,11 @@
+--- frozen-binding-consumer
++++ corrected-initializer-brace
+@@ -189,7 +189,7 @@
+   x.parameters={std::nullopt,Value{Decimal::parse("1.2")}};x.constants={Value{std::string{"\0",1}},std::nullopt};
+   x.core_catalog=catalog;x.core=query;
+   x.adapters={{OccurrenceId{0},TableId{0},{{3}},{{0}},{{ColumnId{0},ColumnId{1}}},
+-      {VariableId{0},std::nullopt},{{VariableId{0},{0}}},{{0},{1},{3}},{{ColumnId{1},Value{std::string{"\xff",1}}}}};
++      {VariableId{0},std::nullopt},{{VariableId{0},{0}}},{{0},{1},{3}},{{ColumnId{1},Value{std::string{"\xff",1}}}}}};
+   x.base_routes={{OccurrenceId{0},OccurrenceId{1}},{}};
+   x.outputs={{"core",{frontend::SqlKind::int64,false,{}},frontend::CoreOutput{0}},
+       {"constant",{frontend::SqlKind::decimal,false,DecimalSpec{9,3}},frontend::ConstantOutput{Value{Decimal::parse("1.2")}}}};

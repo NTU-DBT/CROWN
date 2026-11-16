@@ -1,0 +1,1 @@
+SELECT DISTINCT r.x FROM r,s WHERE r.x<s.z

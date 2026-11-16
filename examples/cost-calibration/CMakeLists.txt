@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.25)
+project(crown_cost_calibration LANGUAGES CXX)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+find_package(Crown 0.1 CONFIG REQUIRED)
+add_executable(crown_cost_calibrate main.cpp)
+target_link_libraries(crown_cost_calibrate PRIVATE CROWN::ranking_runtime)
+target_compile_options(crown_cost_calibrate PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Werror)

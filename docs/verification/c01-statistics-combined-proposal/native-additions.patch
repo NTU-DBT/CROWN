@@ -1,0 +1,527 @@
+--- include/crown/runtime/support.hpp	2026-11-07 07:53:15.453686323 +0800
++++ docs/verification/c01-statistics-combined-proposal/overlay/include/crown/runtime/support.hpp	2026-11-07 09:49:25.054974621 +0800
+@@ -1,4 +1,5 @@
+ #pragma once
++#include "crown/runtime/statistics.hpp"
+ 
+ #include "crown/ir/physical.hpp"
+ #include "crown/storage/reference.hpp"
+@@ -9,6 +10,8 @@
+ #include <memory>
+ 
+ namespace crown::runtime {
++namespace workload { struct Options; class Snapshot; namespace detail { class State; } }
++namespace statistics { struct OwnerRequest; class OwnerCapture; class CombinedCapture; struct Selection; enum class Freshness; namespace detail { class OwnerBuilder; } }
+ class PhysicalRuntime;
+ struct SatisfiedChildCount { std::size_t value = 0; auto operator<=>(const SatisfiedChildCount&) const = default; };
+ struct ProjectionSupportCount { std::uint64_t value = 0; auto operator<=>(const ProjectionSupportCount&) const = default; };
+@@ -352,10 +355,16 @@
+   SupportRuntime& operator=(SupportRuntime&& other) noexcept;
+   [[nodiscard]] const PhysicalPlan& plan() const;
+   [[nodiscard]] ObservationSnapshot observations() const;
++  void configure_workload_statistics(const workload::Options&);
++  void reset_workload_statistics();
++  [[nodiscard]] workload::Snapshot workload_statistics() const;
+   // Latest enabled cursor lifecycle publication; not an aggregate or update metric.
+   [[nodiscard]] std::optional<CursorObservation> last_cursor_observation() const;
+   // Explicit allocating read of committed relation cardinalities, even when off.
+   [[nodiscard]] CommittedStateGauges committed_state_gauges() const;
++  [[nodiscard]] statistics::OwnerCapture capture_statistics(const statistics::OwnerRequest&,statistics::Limits limits={}) const;
++  [[nodiscard]] statistics::Freshness statistics_freshness(const statistics::OwnerCapture&,std::uint64_t max_event_lag=0) const;
++  [[nodiscard]] statistics::CombinedCapture capture_combined_statistics(const statistics::OwnerRequest&,statistics::Limits limits={}) const;
+   [[nodiscard]] ObservationTrace observation_trace() const;
+   [[nodiscard]] const SupportOptions& options() const;
+   [[nodiscard]] SupportOwnerId owner() const;
+@@ -382,9 +391,11 @@
+   friend class RuntimeTestProbe;
+ #endif
+   void initialize_native(std::span<const detail::NativeSeed> seeds,BuildOptions options,BuildMetrics& metrics);
++  void append_statistics(statistics::detail::OwnerBuilder&,const statistics::Selection&) const;
+   void seed_sequence(std::uint64_t sequence) noexcept;
+   [[nodiscard]] Relation record_rows(NodeId node) const;
+   [[nodiscard]] std::shared_ptr<detail::ObservationState> observation_state() const;
++  [[nodiscard]] workload::detail::State& workload_state() const;
+   [[nodiscard]] Impl& impl() const;
+   std::shared_ptr<Impl> impl_;
+ };
+--- include/crown/runtime/physical.hpp	2026-11-07 07:53:15.453403258 +0800
++++ docs/verification/c01-statistics-combined-proposal/overlay/include/crown/runtime/physical.hpp	2026-11-07 09:49:25.055974602 +0800
+@@ -108,8 +108,14 @@
+   PhysicalRuntime& operator=(PhysicalRuntime&& other) noexcept;
+   [[nodiscard]] const PhysicalPlan& plan() const;
+   [[nodiscard]] ObservationSnapshot observations() const;
++  void configure_workload_statistics(const workload::Options&);
++  void reset_workload_statistics();
++  [[nodiscard]] workload::Snapshot workload_statistics() const;
+   [[nodiscard]] std::optional<CursorObservation> last_cursor_observation() const;
+   [[nodiscard]] CommittedStateGauges committed_state_gauges() const;
++  [[nodiscard]] statistics::OwnerCapture capture_statistics(const statistics::OwnerRequest&,statistics::Limits limits={}) const;
++  [[nodiscard]] statistics::Freshness statistics_freshness(const statistics::OwnerCapture&,std::uint64_t max_event_lag=0) const;
++  [[nodiscard]] statistics::CombinedCapture capture_combined_statistics(const statistics::OwnerRequest&,statistics::Limits limits={}) const;
+   [[nodiscard]] ObservationTrace observation_trace() const;
+   [[nodiscard]] const PhysicalRuntimeOptions& options() const;
+   [[nodiscard]] SupportOwnerId owner() const;
+@@ -152,6 +158,7 @@
+       const RouteObserver& observer, EpochViewOptions options);
+   [[nodiscard]] PendingUpdate begin_staged(const PhysicalSetUpdate& update);
+   [[nodiscard]] std::shared_ptr<detail::ObservationState> observation_state() const;
++  [[nodiscard]] workload::detail::State& workload_state() const;
+   [[nodiscard]] Impl& impl() const;
+   std::shared_ptr<Impl> impl_;
+ };
+--- include/crown/runtime/delta.hpp	2026-11-07 07:53:15.453109184 +0800
++++ docs/verification/c01-statistics-combined-proposal/overlay/include/crown/runtime/delta.hpp	2026-11-07 09:49:25.055974602 +0800
+@@ -197,8 +197,14 @@
+   DeltaRuntime& operator=(DeltaRuntime&&) noexcept;
+   [[nodiscard]] const PhysicalPlan& plan() const;
+   [[nodiscard]] ObservationSnapshot observations() const;
++  void configure_workload_statistics(const workload::Options&);
++  void reset_workload_statistics();
++  [[nodiscard]] workload::Snapshot workload_statistics() const;
+   [[nodiscard]] std::optional<CursorObservation> last_cursor_observation() const;
+   [[nodiscard]] CommittedStateGauges committed_state_gauges() const;
++  [[nodiscard]] statistics::OwnerCapture capture_statistics(const statistics::OwnerRequest&,statistics::Limits limits={}) const;
++  [[nodiscard]] statistics::Freshness statistics_freshness(const statistics::OwnerCapture&,std::uint64_t max_event_lag=0) const;
++  [[nodiscard]] statistics::CombinedCapture capture_combined_statistics(const statistics::OwnerRequest&,statistics::Limits limits={}) const;
+   // Explicit diagnostic declaration; affects only future attempt bindings.
+   // Caller constructs immutable labels before mutation. No parsing or clocks.
+   void declare_benchmark_context(std::shared_ptr<const DeclaredBenchmarkContext>);
+--- include/crown/runtime/session.hpp	2026-11-07 07:53:15.453546983 +0800
++++ docs/verification/c01-statistics-combined-proposal/overlay/include/crown/runtime/session.hpp	2026-11-07 09:49:25.056974582 +0800
+@@ -1,8 +1,10 @@
+ #pragma once
++#include "crown/runtime/combined_statistics.hpp"
+ 
+ #include "crown/io/batch.hpp"
+ #include "crown/runtime/window.hpp"
+ #include "crown/runtime/delta.hpp"
++#include "crown/runtime/workload_statistics.hpp"
+ 
+ namespace crown::runtime {
+ enum class SessionBegin { pending, would_block, end };
+@@ -112,8 +114,14 @@
+   // Null while private session work exists or after runtime release. This
+   // explicit allocating committed read never advances/drains the session.
+   [[nodiscard]] std::optional<CommittedStateGauges> report_gauges() const;
++  [[nodiscard]] std::optional<statistics::OwnerCapture> capture_statistics(const statistics::OwnerRequest&,statistics::Limits limits={}) const;
++  [[nodiscard]] std::optional<statistics::Freshness> statistics_freshness(const statistics::OwnerCapture&,std::uint64_t max_event_lag=0) const;
++  [[nodiscard]] std::optional<statistics::CombinedCapture> capture_combined_statistics(const statistics::OwnerRequest&,statistics::Limits limits={}) const;
+   [[nodiscard]] std::shared_ptr<const SessionRunContext> run_context() const;
+   [[nodiscard]] ObservationSnapshot observations() const;
++  void configure_workload_statistics(const workload::Options&);
++  void reset_workload_statistics();
++  [[nodiscard]] std::optional<workload::Snapshot> workload_statistics() const;
+   [[nodiscard]] std::optional<CursorObservation> last_cursor_observation() const;
+   [[nodiscard]] ObservationTrace observation_trace() const;
+   [[nodiscard]] io::InputProgress progress() const;
+--- src/runtime/support.cpp	2026-11-07 07:53:15.459843105 +0800
++++ docs/verification/c01-statistics-combined-proposal/overlay/src/runtime/support.cpp	2026-11-07 09:48:22.396173773 +0800
+@@ -3,6 +3,7 @@
+ #include "crown/api/error.hpp"
+ #include "crown/storage/physical.hpp"
+ #include "inspection_detail.hpp"
++#include "workload_statistics_detail.hpp"
+ #ifdef CROWN_RUNTIME_TESTING
+ #include "runtime_probe.hpp"
+ #endif
+@@ -117,6 +118,7 @@
+   PhysicalPlan plan;
+   SupportOptions options;
+   std::shared_ptr<detail::ObservationState> observation;
++  workload::detail::State workload;
+   std::optional<CursorObservation> last_cursor;
+   std::uint64_t next_cursor_id=0;
+   bool cursor_id_saturated=false;
+@@ -267,6 +269,10 @@
+     void note(const PhysicalNode& node,SupportRole role,TupleHandle handle,SupportValueState before,SupportValueState after) {
+       metric(output.metrics.journal_records);
+       auto pin=state.storage.table(relation(node,role)).pin(handle);
++      if (role==SupportRole::survivors)
++        runtime.workload.support(node.id,role,static_cast<std::uint64_t>(before.member),static_cast<std::uint64_t>(after.member));
++      else if (role==SupportRole::parent_support || role==SupportRole::visible)
++        runtime.workload.support(node.id,role,before.support?before.support->value:0,after.support?after.support->value:0);
+       journal->records.push_back({output.metrics.journal_records,cause,runtime.handle(node.id,role,handle),
+           std::move(before),std::move(after),std::move(pin)});
+       if (runtime.observation) {
+@@ -416,6 +422,7 @@
+       const auto& table=state.storage.table(parent.records); auto& metadata=state.nodes[parent.id.value].records;
+       if (parent.kind==NodeKind::native) {
+         const auto matching=table.bucket(state.storage.index(*edge.reverse_index),event.key);
++        runtime.workload.touched(event.edge,event.appeared,static_cast<std::uint64_t>(matching.size()));
+         for (const auto handle : matching) {
+           metric(output.metrics.native_record_visits);
+           if (runtime.observation) {
+@@ -429,6 +436,7 @@
+         }
+       } else {
+         auto found=table.find(event.key);
++        runtime.workload.touched(event.edge,event.appeared,static_cast<std::uint64_t>(found.has_value()));
+         if (!found) {
+           require(event.appeared,"runtime_contract","child removal has no generalized candidate");
+           found=insert(parent.records,event.key);
+@@ -1170,8 +1178,10 @@
+     journal->sequence=sequence;
+     transaction=std::make_unique<Impl::Transaction>(*owner,*owner->state,output,journal);
+     if (owner->observation) observation_ticket=owner->observation->begin(ObservationLayer::support,sequence);
++    workload_ticket=owner->workload.logical(sign);
+   }
+   detail::ObservationTicket observation_ticket;
++  workload::detail::Ticket workload_ticket;
+   ~Data() { rollback(); }
+   Impl& active() const {
+     require(bool(owner) && bool(transaction),"invalid_epoch","prepared epoch is closed"); return *owner;
+@@ -1183,6 +1193,7 @@
+     transaction.reset();
+     output.journal.reset(); output.transitions.clear(); journal.reset();
+     if (owner->observation) owner->observation->finish(observation_ticket,ObservationOutcome::aborted);
++    owner->workload.finish(workload_ticket,false);
+     owner->updating=false; owner.reset();
+   }
+   bool stage_tuple(const PhysicalNode& node,const storage::Tuple& tuple) {
+@@ -1274,6 +1285,8 @@
+   data_->transaction.reset(); data_->journal.reset();
+   if (data_->views) { data_->views->phase=EpochView::Group::Phase::committed; data_->views.reset(); }
+   d.sequence=result.sequence; d.updating=false;
++  d.workload.logical_fact(data_->workload_ticket,result.native_changed);
++  d.workload.finish(data_->workload_ticket,true);
+   if (d.observation) d.observation->finish(data_->observation_ticket,ObservationOutcome::committed);
+   data_->owner.reset();
+   return result;
+@@ -1730,3 +1743,62 @@
+   const auto& d=impl(); return detail::observation_trace(d.observation,d.options.observation);
+ }
+ }  // namespace crown::runtime
++
++namespace crown::runtime {
++void SupportRuntime::configure_workload_statistics(const workload::Options& options) {
++  auto& d=impl(); d.writable(); d.workload.configure(d.plan,false,options,d.sequence);
++}
++void SupportRuntime::reset_workload_statistics() {
++  auto& d=impl(); d.writable(); d.workload.reset(d.sequence);
++}
++workload::Snapshot SupportRuntime::workload_statistics() const {
++  const auto& d=impl(); return d.workload.snapshot(d.plan,d.owner,d.sequence,d.updating);
++}
++workload::detail::State& SupportRuntime::workload_state() const { return impl().workload; }
++} // namespace crown::runtime
++#include "owner_statistics_detail.hpp"
++namespace crown::runtime {
++void SupportRuntime::append_statistics(statistics::detail::OwnerBuilder& builder,const statistics::Selection& selection) const {
++  using namespace statistics;
++  auto* component=builder.append(selection);if(!component)return;
++  const auto& d=impl();
++  if(const auto* requested=std::get_if<NodeScope>(&selection.scope)) {
++    const auto& node=d.node(requested->node);component->node_kind=node.kind;
++    if(requested->role==SupportRole::visible && !node.visible_relation){component->availability=Availability::not_applicable;return;}
++    const auto id=relation(node,requested->role);const auto& table=d.state->storage.table(id);
++    if(requested->role==SupportRole::records || requested->role==SupportRole::survivors){builder.table(*component,table);return;}
++    require(!selection.fields,"invalid_statistics_request","support distribution uses complete stored support keys");
++    component->layout=table.layout();component->cardinality=table.size();
++    component->storage_invalidation=Stamp{table.owner(),table.relation(),table.revision()};
++    const auto& counts=requested->role==SupportRole::parent_support?d.state->nodes[node.id.value].parent:d.state->nodes[node.id.value].visible;
++    try {
++      statistics::detail::WeightedBuilder weighted{builder.budget()};
++      try {
++        for(const auto& [tuple,count]:counts){
++          builder.budget().work();const auto* key=table.get({table.owner(),id,tuple});
++          if(!key)throw Error("statistics_contract","support counter lacks its stored key");
++          if(!weighted.add(key->values(),count.value))break;
++        }
++      }catch(const statistics::detail::Exhausted&){weighted.stop();}
++      component->distribution=weighted.finish();
++      if(component->distribution->completion!=Completion::exact)component->availability=Availability::budget_exhausted;
++    }catch(const statistics::detail::Exhausted&){component->availability=Availability::budget_exhausted;component->distribution=Distribution{};}
++    return;
++  }
++  if(const auto* requested=std::get_if<IndexScope>(&selection.scope)) {
++    require(requested->requirement.value<d.plan.indexes().size(),"invalid_statistics_request","index requirement outside plan");
++    require(!selection.fields,"invalid_statistics_request","index distribution does not accept another projection");
++    const auto& index=d.plan.indexes()[requested->requirement.value];
++    builder.index(*component,d.state->storage.table(index.relation),d.state->storage.index(index.id));return;
++  }
++  component->availability=Availability::unavailable;
++}
++statistics::OwnerCapture SupportRuntime::capture_statistics(const statistics::OwnerRequest& request,statistics::Limits limits) const {
++  const auto& d=impl();statistics::detail::OwnerBuilder builder{{d.owner,d.sequence,statistics::OwnerLayer::support},d.plan,request,limits,d.updating};
++  if(builder.active())for(const auto& selection:request.selections){if(!builder.active())break;append_statistics(builder,selection);}
++  return builder.finish();
++}
++statistics::Freshness SupportRuntime::statistics_freshness(const statistics::OwnerCapture& captured,std::uint64_t max_event_lag) const {
++  const auto& d=impl();return statistics::compare_freshness(captured.stamp(),{d.owner,d.sequence,statistics::OwnerLayer::support},max_event_lag);
++}
++}
+--- src/runtime/physical.cpp	2026-11-07 07:53:15.456658293 +0800
++++ docs/verification/c01-statistics-combined-proposal/overlay/src/runtime/physical.cpp	2026-11-07 09:48:22.398173735 +0800
+@@ -3,6 +3,7 @@
+ #include "crown/api/error.hpp"
+ #include "inspection_detail.hpp"
+ #include "validation_work.hpp"
++#include "workload_statistics_detail.hpp"
+ #ifdef CROWN_RUNTIME_TESTING
+ #include "runtime_probe.hpp"
+ #endif
+@@ -32,13 +33,14 @@
+   PhysicalRuntimeOptions options;
+   SupportRuntime kernel;
+   std::shared_ptr<detail::ObservationState> observation;
++  workload::detail::State* workload;
+   std::vector<storage::ReferenceTable> sources;
+   std::vector<Counts> counts;
+   std::uint64_t sequence=0;
+   BuildMetrics build_metrics;
+   InitializationContext initialization_context;
+   bool updating=false, enforced_constraints=false;
+-  Impl(PhysicalPlan plan,PhysicalRuntimeOptions value):options(value),kernel(std::move(plan),value.support),observation(kernel.observation_state()),counts(kernel.plan().inputs().size()) {
++  Impl(PhysicalPlan plan,PhysicalRuntimeOptions value):options(value),kernel(std::move(plan),value.support),observation(kernel.observation_state()),workload(&kernel.workload_state()),counts(kernel.plan().inputs().size()) {
+     require(options.derivation_limit>0,"invalid_options","physical derivation limit must be positive");
+     const auto& compiled=kernel.plan(); const auto& catalog=compiled.source_catalog();
+     const auto tables=catalog.tables.size();
+@@ -102,6 +104,7 @@
+   std::size_t next_route=0;
+   bool routes_complete=false;
+   detail::ObservationTicket observation_ticket;
++  workload::detail::Ticket workload_ticket;
+   // Optional bookkeeping records successful nested charges, never an inference
+   // from coordinator/support counter magnitudes. Failed stage/charge is sticky
+   // until this pending update closes.
+@@ -110,6 +113,7 @@
+   Data(std::shared_ptr<Impl> value,const PhysicalSetUpdate& update)
+       :owner(std::move(value)),output{update.sequence,update.table,update.operation,false,{}, {},{}} {
+     if (owner->observation) observation_ticket=owner->observation->begin(ObservationLayer::physical,update.sequence);
++    workload_ticket=owner->workload->physical(update.table,update.operation);
+   }
+   ~Data() { rollback(); }
+   Impl& active() const {
+@@ -167,6 +171,7 @@
+     undo.clear(); source.reset(); logical.reset();
+     output.source.reset(); output.derivations.clear();
+     if (owner->observation) owner->observation->finish(observation_ticket,ObservationOutcome::aborted);
++    owner->workload->finish(workload_ticket,false);
+     owner->updating=false; owner.reset();
+   }
+   void validate_constraints() {
+@@ -189,6 +194,7 @@
+     }
+     const auto& input=owner->input(occurrence);
+     auto tuple=owner->kernel.plan().adapt_input(occurrence,row);
++    owner->workload->occurrence(occurrence,tuple.has_value());
+     if (!tuple) { metric(output.metrics.aliases_filtered); return; }
+     auto& counts=owner->counts[occurrence.value]; const auto found=counts.find(tuple->values());
+     const auto before=found==counts.end()?std::uint64_t{0}:found->second;
+@@ -196,6 +202,7 @@
+     if (add) require(before<owner->options.derivation_limit,"derivation_overflow","native tuple derivation count exceeds its exact limit");
+     else require(before>0,"runtime_contract","physical erase has no alias derivation");
+     const auto after=add?before+1:before-1;
++    owner->workload->derivation(occurrence,before,after);
+     const bool crossing=(before==0 || after==0);
+     metric(output.metrics.derivation_changes);
+     output.derivations.push_back({occurrence,input.node,std::move(*tuple),before,after,crossing});
+@@ -234,6 +241,7 @@
+     try {
+       logical.emplace(owner->kernel.begin_epoch(output.sequence,output.operation));
+       const bool add=output.operation==SetOperation::insert;
++      owner->workload->physical_fact(existing.has_value()!=add);
+       if (existing.has_value()==add) { routes_complete=true; return; }
+       output.physical_changed=true; metric(output.metrics.source_changes);
+       if (owner->observation) owner->observation->event(TraceKind::source_change,0,0,
+@@ -300,6 +308,7 @@
+   data_->source.reset(); data_->undo.clear(); data_->logical.reset();
+   PhysicalEpoch result{std::move(data_->output),std::move(support)};
+   d.sequence=result.input.sequence; d.updating=false;
++  d.workload->finish(data_->workload_ticket,true);
+   if (d.observation) d.observation->finish(data_->observation_ticket,ObservationOutcome::committed);
+   data_->owner.reset();
+   return result;
+@@ -605,3 +614,47 @@
+   auto result=impl().kernel.observation_trace(); result.snapshot.initialization=impl().initialization_context; return result;
+ }
+ }  // namespace crown::runtime
++
++namespace crown::runtime {
++void PhysicalRuntime::configure_workload_statistics(const workload::Options& options) {
++  auto& d=impl(); d.writable(); d.workload->configure(d.kernel.plan(),true,options,d.sequence);
++}
++void PhysicalRuntime::reset_workload_statistics() {
++  auto& d=impl(); d.writable(); d.workload->reset(d.sequence);
++}
++workload::Snapshot PhysicalRuntime::workload_statistics() const {
++  const auto& d=impl(); return d.workload->snapshot(d.kernel.plan(),d.kernel.owner(),d.sequence,d.updating);
++}
++workload::detail::State& PhysicalRuntime::workload_state() const { return *impl().workload; }
++} // namespace crown::runtime
++#include "owner_statistics_detail.hpp"
++namespace crown::runtime {
++statistics::OwnerCapture PhysicalRuntime::capture_statistics(const statistics::OwnerRequest& request,statistics::Limits limits) const {
++  using namespace statistics;
++  const auto& d=impl();statistics::detail::OwnerBuilder builder{{d.kernel.owner(),d.sequence,OwnerLayer::physical},d.kernel.plan(),request,limits,d.updating};
++  if(builder.active())for(const auto& selection:request.selections) {
++    if(!builder.active())break;
++    if(const auto* scope=std::get_if<SourceScope>(&selection.scope)) {
++      require(scope->table.value<d.sources.size(),"invalid_statistics_request","source outside catalog");
++      auto* component=builder.append(selection);if(!component)break;
++      builder.table(*component,d.sources[scope->table.value]);
++    }else if(const auto* occurrence=std::get_if<OccurrenceScope>(&selection.scope)) {
++      const auto& input=d.input(occurrence->occurrence);
++      require(!selection.fields,"invalid_statistics_request","derivation distribution uses complete native keys");
++      auto* component=builder.append(selection);if(!component)break;
++      const auto& node=d.kernel.plan().nodes()[input.node.value];component->layout=node.layout;component->node_kind=node.kind;
++      const auto& counts=d.counts[occurrence->occurrence.value];component->cardinality=counts.size();
++      try {
++        statistics::detail::WeightedBuilder weighted{builder.budget()};
++        for(const auto& [key,count]:counts)if(!weighted.add(key,count))break;
++        component->distribution=weighted.finish();
++        if(component->distribution->completion!=Completion::exact)component->availability=Availability::budget_exhausted;
++      }catch(const statistics::detail::Exhausted&){component->availability=Availability::budget_exhausted;component->distribution=Distribution{};}
++    }else d.kernel.append_statistics(builder,selection);
++  }
++  return builder.finish();
++}
++statistics::Freshness PhysicalRuntime::statistics_freshness(const statistics::OwnerCapture& captured,std::uint64_t max_event_lag) const {
++  const auto& d=impl();return statistics::compare_freshness(captured.stamp(),{d.kernel.owner(),d.sequence,statistics::OwnerLayer::physical},max_event_lag);
++}
++}
+--- src/runtime/delta.cpp	2026-11-07 07:53:15.456098785 +0800
++++ docs/verification/c01-statistics-combined-proposal/overlay/src/runtime/delta.cpp	2026-11-07 09:48:22.400173697 +0800
+@@ -1,4 +1,5 @@
+ #include "crown/runtime/delta.hpp"
++#include "workload_statistics_detail.hpp"
+ 
+ #include "crown/api/error.hpp"
+ #include "inspection_detail.hpp"
+@@ -79,6 +80,7 @@
+   DeltaCompletion selected_completion=DeltaCompletion::anchored;
+   PhysicalRuntime physical;
+   std::shared_ptr<detail::ObservationState> observation;
++  workload::detail::State* workload;
+   storage::TupleLayout output_layout;
+   storage::TupleLayout core_layout;
+   std::vector<Factor> factors;
+@@ -95,7 +97,7 @@
+   Impl(PhysicalPlan plan,DeltaOptions value)
+       :Impl(PhysicalRuntime(std::move(plan),value.physical),value) {}
+   Impl(PhysicalRuntime owner,DeltaOptions value)
+-      :options(value),physical(std::move(owner)),observation(physical.observation_state()),output_layout(physical.result_layout(value.view)),
++      :options(value),physical(std::move(owner)),observation(physical.observation_state()),workload(&physical.workload_state()),output_layout(physical.result_layout(value.view)),
+        core_layout(physical.result_layout(ResultView::core)),
+        ranks(physical.plan().nodes().size()) {
+     require(options.mode==DeltaMode::maintenance || options.mode==DeltaMode::delta,"invalid_options","unknown initial delta mode");
+@@ -139,6 +141,8 @@
+   // Bootstrap runs before initial binding, with temporarily adjusted build
+   // budgets; those temporary budgets must never become the retained identity.
+   void observe_configuration(bool initial=false) noexcept {
++    workload->modes({true,options.mode,mode,options.completion,selected_completion,options.live_maintenance,options.view},
++        physical.sequence(),initial);
+     if (!observation) return;
+     const auto& previous=observation->configuration();
+     if (!initial && !previous) return; // Unpublished constructor bootstrap.
+@@ -988,6 +992,7 @@
+   bool before_answer;
+   DeltaState phase=DeltaState::pending_delta;
+   detail::ObservationTicket observation_ticket;
++  workload::detail::Ticket workload_ticket;
+ 
+   Data(std::shared_ptr<Impl> runtime,const PhysicalSetUpdate& update)
+       :owner(std::move(runtime)),output(std::make_shared<Epoch::Data>(owner)),working(owner->live),
+@@ -999,6 +1004,7 @@
+       output->observation_ticket=observation_ticket;
+     }
+     owner->processing=true; owner->lifecycle=phase;
++    workload_ticket=owner->workload->physical(update.table,update.operation);
+     try {
+       PhaseTimer timing(output->timings.propagation_ns,output->observation,&output->timings.internal_delta_ns);
+       physical.emplace(owner->physical.begin_staged(update));
+@@ -1024,6 +1030,7 @@
+     }
+     output->observe();
+     if (output->observation) output->observation->finish(observation_ticket,ObservationOutcome::aborted);
++    owner->workload->finish(workload_ticket,false);
+     phase=DeltaState::aborted; owner.reset();
+   }
+   void finalize() {
+@@ -1171,6 +1178,7 @@
+   if (data_->output->observation)
+     data_->output->observation->finish(data_->observation_ticket,ObservationOutcome::committed);
+   auto output=std::move(data_->output);
++  d.workload->finish(data_->workload_ticket,true);
+   output->leased=!output->rows.empty(); d.output_active=output->leased; d.processing=false; d.lifecycle=DeltaState::ready;
+   data_->physical.reset(); data_->transaction.reset(); data_->phase=DeltaState::committed; data_->owner.reset();
+   if (!output->leased) output->owner.reset();
+@@ -1610,3 +1618,26 @@
+   auto result=impl().physical.observation_trace(); result.snapshot=observations(); return result;
+ }
+ }  // namespace crown::runtime
++
++namespace crown::runtime {
++void DeltaRuntime::configure_workload_statistics(const workload::Options& options) {
++  auto& d=impl(); d.writable(); d.physical.configure_workload_statistics(options);
++}
++void DeltaRuntime::reset_workload_statistics() {
++  auto& d=impl(); d.writable(); d.physical.reset_workload_statistics();
++}
++workload::Snapshot DeltaRuntime::workload_statistics() const {
++  const auto& d=impl(); return d.workload->snapshot(d.physical.plan(),d.physical.owner(),d.physical.sequence(),d.processing);
++}
++} // namespace crown::runtime
++#include "owner_statistics_detail.hpp"
++namespace crown::runtime {
++statistics::OwnerCapture DeltaRuntime::capture_statistics(const statistics::OwnerRequest& request,statistics::Limits limits) const {
++  const auto& d=impl();
++  if(d.processing){statistics::detail::OwnerBuilder pending{{d.physical.owner(),d.physical.sequence(),statistics::OwnerLayer::physical},d.physical.plan(),request,limits,true};return pending.finish();}
++  return d.physical.capture_statistics(request,limits);
++}
++statistics::Freshness DeltaRuntime::statistics_freshness(const statistics::OwnerCapture& captured,std::uint64_t max_event_lag) const {
++  return impl().physical.statistics_freshness(captured,max_event_lag);
++}
++}
+--- src/runtime/session.cpp	2026-11-07 07:53:15.456871536 +0800
++++ docs/verification/c01-statistics-combined-proposal/overlay/src/runtime/session.cpp	2026-11-07 09:49:25.057974563 +0800
+@@ -1,4 +1,5 @@
+ #include "crown/runtime/session.hpp"
++#include "owner_statistics_detail.hpp"
+ 
+ #include "crown/api/error.hpp"
+ #ifdef CROWN_RUNTIME_TESTING
+@@ -441,3 +442,43 @@
+   return result;
+ }
+ }  // namespace crown::runtime
++
++namespace crown::runtime {
++void QuerySession::configure_workload_statistics(const workload::Options& options) {
++  auto& d=*data_; Impl::Guard guard(d);
++  require(d.runtime.has_value(),"session_dropped","statistics owner has been released");
++  require(!d.has_private(),"session_pending_epoch","statistics configuration requires a quiescent session");
++  d.runtime->configure_workload_statistics(options);
++}
++void QuerySession::reset_workload_statistics() {
++  auto& d=*data_; Impl::Guard guard(d);
++  require(d.runtime.has_value(),"session_dropped","statistics owner has been released");
++  require(!d.has_private(),"session_pending_epoch","statistics reset requires a quiescent session");
++  d.runtime->reset_workload_statistics();
++}
++std::optional<workload::Snapshot> QuerySession::workload_statistics() const {
++  auto& d=*data_; Impl::Guard guard(d);
++  if (!d.runtime) return {};
++  auto result=d.runtime->workload_statistics();
++  return d.has_private()?result.with_pending():std::move(result);
++}
++} // namespace crown::runtime
++
++namespace crown::runtime {
++std::optional<statistics::OwnerCapture> QuerySession::capture_statistics(const statistics::OwnerRequest& request,statistics::Limits limits) const {
++  auto& d=*data_;Impl::Guard guard(d);if(!d.runtime)return {};
++  if(d.has_private()){statistics::detail::OwnerBuilder pending{{d.runtime->owner(),d.runtime->sequence(),statistics::OwnerLayer::physical},d.runtime->plan(),request,limits,true};return pending.finish();}
++  return d.runtime->capture_statistics(request,limits);
++}
++std::optional<statistics::Freshness> QuerySession::statistics_freshness(const statistics::OwnerCapture& captured,std::uint64_t max_event_lag) const {
++  auto& d=*data_;Impl::Guard guard(d);if(!d.runtime)return {};
++  return d.runtime->statistics_freshness(captured,max_event_lag);
++}
++std::optional<statistics::CombinedCapture> QuerySession::capture_combined_statistics(const statistics::OwnerRequest& request,statistics::Limits limits) const {
++  auto& d=*data_;Impl::Guard guard(d);if(!d.runtime)return {};
++  if(!d.has_private())return d.runtime->capture_combined_statistics(request,limits);
++  statistics::detail::OwnerBuilder pending{{d.runtime->owner(),d.runtime->sequence(),statistics::OwnerLayer::physical},d.runtime->plan(),request,limits,true};
++  auto events=d.runtime->workload_statistics().with_pending();
++  return statistics::CombinedCapture(pending.finish(),std::move(events));
++}
++}

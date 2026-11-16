@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "semantics": "set",
+  "catalog": {
+    "version": 1,
+    "tables": [
+      {
+        "name": "T_e0",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "T_e1",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "T_e2",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "T_e3",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          }
+        ]
+      }
+    ]
+  },
+  "query": {
+    "variables": [
+      {
+        "name": "v0",
+        "type": "string"
+      },
+      {
+        "name": "v1",
+        "type": "string"
+      },
+      {
+        "name": "v2",
+        "type": "string"
+      },
+      {
+        "name": "v3",
+        "type": "string"
+      },
+      {
+        "name": "v4",
+        "type": "string"
+      }
+    ],
+    "atoms": [
+      {
+        "id": "e0",
+        "table": "T_e0",
+        "terms": [
+          {
+            "var": "v0"
+          },
+          {
+            "var": "v1"
+          }
+        ]
+      },
+      {
+        "id": "e1",
+        "table": "T_e1",
+        "terms": [
+          {
+            "var": "v1"
+          },
+          {
+            "var": "v2"
+          }
+        ]
+      },
+      {
+        "id": "e2",
+        "table": "T_e2",
+        "terms": [
+          {
+            "var": "v2"
+          },
+          {
+            "var": "v3"
+          }
+        ]
+      },
+      {
+        "id": "e3",
+        "table": "T_e3",
+        "terms": [
+          {
+            "var": "v3"
+          },
+          {
+            "var": "v4"
+          }
+        ]
+      }
+    ],
+    "head": [
+      {
+        "var": "v0"
+      },
+      {
+        "var": "v1"
+      },
+      {
+        "var": "v2"
+      },
+      {
+        "var": "v3"
+      },
+      {
+        "var": "v4"
+      }
+    ]
+  }
+}

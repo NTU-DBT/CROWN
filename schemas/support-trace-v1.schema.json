@@ -1,0 +1,307 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CROWN logical native support trace input v1",
+  "description": "Strict input shape for the diagnostic C++ support-trace command. This trace/report format is not a runtime checkpoint or state importer. Native readers additionally bind node labels and row layouts to the supplied physical plan, enforce contiguous sequences, and apply updates. The $defs/report definition describes command output; this schema's root accepts input traces only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "updates"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "options": {"$ref": "#/$defs/trace_options"},
+    "updates": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/update"}
+    }
+  },
+  "$defs": {
+    "uint64": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 18446744073709551615
+    },
+    "positive_uint64": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 18446744073709551615
+    },
+    "nullable_uint64": {
+      "oneOf": [
+        {"$ref": "#/$defs/uint64"},
+        {"type": "null"}
+      ]
+    },
+    "row": {
+      "type": "array",
+      "items": {"$ref": "cq-v2.schema.json#/$defs/value"}
+    },
+    "trace_options": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "memory_limit_bytes": {"type": "integer", "minimum": 0, "maximum": 18446744073709551615},
+        "work_limit": {
+          "$ref": "#/$defs/nullable_uint64",
+          "default": 1000000
+        },
+        "support_limit": {
+          "$ref": "#/$defs/positive_uint64",
+          "default": 18446744073709551615
+        },
+        "order": {
+          "type": "string",
+          "enum": ["fifo", "lifo"],
+          "default": "fifo"
+        },
+        "capture_transitions": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "update": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "node", "operation", "values"],
+      "properties": {
+        "sequence": {"$ref": "#/$defs/positive_uint64"},
+        "node": {"type": "string", "minLength": 1},
+        "operation": {"type": "string", "enum": ["insert", "erase"]},
+        "values": {"$ref": "#/$defs/row"}
+      }
+    },
+    "support_handle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owner", "node", "role", "tuple"],
+      "properties": {
+        "owner": {"$ref": "#/$defs/positive_uint64"},
+        "node": {"$ref": "#/$defs/uint64"},
+        "role": {
+          "type": "string",
+          "enum": ["records", "survivors", "parent_support", "visible"]
+        },
+        "tuple": {"$ref": "#/$defs/positive_uint64"}
+      }
+    },
+    "projection_key": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "handle", "support"],
+      "properties": {
+        "key": {"$ref": "#/$defs/row"},
+        "handle": {"$ref": "#/$defs/support_handle"},
+        "support": {"$ref": "#/$defs/positive_uint64"}
+      }
+    },
+    "record_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["values", "handle", "satisfied_children", "child_present", "survives"],
+      "properties": {
+        "values": {"$ref": "#/$defs/row"},
+        "handle": {"$ref": "#/$defs/support_handle"},
+        "satisfied_children": {"$ref": "#/$defs/uint64"},
+        "child_present": {
+          "type": "array",
+          "items": {"type": "boolean"}
+        },
+        "survives": {"type": "boolean"}
+      }
+    },
+    "node_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "node", "kind", "records", "survivors", "parent_keys", "visible_keys"],
+      "properties": {
+        "id": {"$ref": "#/$defs/uint64"},
+        "node": {"type": "string", "minLength": 1},
+        "kind": {"type": "string", "enum": ["native", "generalized"]},
+        "records": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/record_snapshot"}
+        },
+        "survivors": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/row"}
+        },
+        "parent_keys": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/projection_key"}
+        },
+        "visible_keys": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {"$ref": "#/$defs/projection_key"}
+            },
+            {"type": "null"}
+          ]
+        }
+      }
+    },
+    "snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "has_answer", "nodes"],
+      "properties": {
+        "sequence": {"$ref": "#/$defs/uint64"},
+        "has_answer": {"type": "boolean"},
+        "nodes": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/node_snapshot"}
+        }
+      }
+    },
+    "initial_snapshot": {
+      "allOf": [
+        {"$ref": "#/$defs/snapshot"},
+        {
+          "type": "object",
+          "properties": {"sequence": {"const": 0}}
+        }
+      ]
+    },
+    "transition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["handle", "operation", "values"],
+      "properties": {
+        "handle": {"$ref": "#/$defs/support_handle"},
+        "operation": {"type": "string", "enum": ["insert", "erase"]},
+        "values": {"$ref": "#/$defs/row"}
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "work", "copied_rows", "copied_index_memberships", "copied_metadata_entries",
+        "copied_child_flags", "native_record_visits", "child_key_probes", "child_key_events",
+        "survivor_transitions", "parent_key_transitions", "visible_key_transitions",
+        "candidates_created", "candidates_reclaimed"
+      ],
+      "properties": {
+        "work": {"$ref": "#/$defs/uint64"},
+        "copied_rows": {"$ref": "#/$defs/uint64"},
+        "copied_index_memberships": {"$ref": "#/$defs/uint64"},
+        "copied_metadata_entries": {"$ref": "#/$defs/uint64"},
+        "copied_child_flags": {"$ref": "#/$defs/uint64"},
+        "native_record_visits": {"$ref": "#/$defs/uint64"},
+        "child_key_probes": {"$ref": "#/$defs/uint64"},
+        "child_key_events": {"$ref": "#/$defs/uint64"},
+        "survivor_transitions": {"$ref": "#/$defs/uint64"},
+        "parent_key_transitions": {"$ref": "#/$defs/uint64"},
+        "visible_key_transitions": {"$ref": "#/$defs/uint64"},
+        "candidates_created": {"$ref": "#/$defs/uint64"},
+        "candidates_reclaimed": {"$ref": "#/$defs/uint64"}
+      }
+    },
+    "effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "native_changed", "has_answer", "transitions", "metrics"],
+      "properties": {
+        "sequence": {"$ref": "#/$defs/positive_uint64"},
+        "native_changed": {"type": "boolean"},
+        "has_answer": {"type": "boolean"},
+        "transitions": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/transition"}
+        },
+        "metrics": {"$ref": "#/$defs/metrics"}
+      }
+    },
+    "epoch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["effect", "state"],
+      "properties": {
+        "effect": {"$ref": "#/$defs/effect"},
+        "state": {"$ref": "#/$defs/snapshot"}
+      }
+    },
+    "diagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message"],
+      "properties": {
+        "code": {"type": "string", "enum": ["resource_limit", "support_overflow"]},
+        "message": {"type": "string"}
+      }
+    },
+    "report_options": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["work_limit", "support_limit", "order", "capture_transitions"],
+      "properties": {
+        "memory_limit_bytes": {"type": "integer", "minimum": 0, "maximum": 18446744073709551615},
+        "work_limit": {"$ref": "#/$defs/nullable_uint64"},
+        "support_limit": {"$ref": "#/$defs/positive_uint64"},
+        "order": {"type": "string", "enum": ["fifo", "lifo"]},
+        "capture_transitions": {"type": "boolean"}
+      }
+    },
+    "report": {
+      "title": "CROWN logical native support trace report v1",
+      "description": "Diagnostic update effects and owning snapshots; not a resumable runtime checkpoint or state importer.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version", "backend", "update_contract", "physical_sha256", "options",
+        "status", "diagnostic", "rejected_sequence", "initial", "epochs", "final"
+      ],
+      "properties": {
+        "schema_version": {"type": "integer", "const": 1},
+        "backend": {"type": "string", "const": "reference_incremental_working_copy"},
+        "update_contract": {"type": "string", "const": "logical_native_set"},
+        "physical_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "options": {"$ref": "#/$defs/report_options"},
+        "status": {"type": "string", "enum": ["complete", "update_rejected"]},
+        "diagnostic": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/$defs/diagnostic"}
+          ]
+        },
+        "rejected_sequence": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/$defs/positive_uint64"}
+          ]
+        },
+        "initial": {"$ref": "#/$defs/initial_snapshot"},
+        "epochs": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/epoch"}
+        },
+        "final": {"$ref": "#/$defs/snapshot"}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"status": {"const": "complete"}},
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "diagnostic": {"type": "null"},
+              "rejected_sequence": {"type": "null"}
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {"status": {"const": "update_rejected"}},
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "diagnostic": {"$ref": "#/$defs/diagnostic"},
+              "rejected_sequence": {"$ref": "#/$defs/positive_uint64"}
+            }
+          }
+        }
+      ]
+    }
+  }
+}

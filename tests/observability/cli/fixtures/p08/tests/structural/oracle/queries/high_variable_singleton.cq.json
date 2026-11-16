@@ -1,0 +1,938 @@
+{
+  "schema_version": 1,
+  "semantics": "set",
+  "catalog": {
+    "version": 1,
+    "tables": [
+      {
+        "name": "T_wide",
+        "columns": [
+          {
+            "name": "c0",
+            "type": "string"
+          },
+          {
+            "name": "c1",
+            "type": "string"
+          },
+          {
+            "name": "c2",
+            "type": "string"
+          },
+          {
+            "name": "c3",
+            "type": "string"
+          },
+          {
+            "name": "c4",
+            "type": "string"
+          },
+          {
+            "name": "c5",
+            "type": "string"
+          },
+          {
+            "name": "c6",
+            "type": "string"
+          },
+          {
+            "name": "c7",
+            "type": "string"
+          },
+          {
+            "name": "c8",
+            "type": "string"
+          },
+          {
+            "name": "c9",
+            "type": "string"
+          },
+          {
+            "name": "c10",
+            "type": "string"
+          },
+          {
+            "name": "c11",
+            "type": "string"
+          },
+          {
+            "name": "c12",
+            "type": "string"
+          },
+          {
+            "name": "c13",
+            "type": "string"
+          },
+          {
+            "name": "c14",
+            "type": "string"
+          },
+          {
+            "name": "c15",
+            "type": "string"
+          },
+          {
+            "name": "c16",
+            "type": "string"
+          },
+          {
+            "name": "c17",
+            "type": "string"
+          },
+          {
+            "name": "c18",
+            "type": "string"
+          },
+          {
+            "name": "c19",
+            "type": "string"
+          },
+          {
+            "name": "c20",
+            "type": "string"
+          },
+          {
+            "name": "c21",
+            "type": "string"
+          },
+          {
+            "name": "c22",
+            "type": "string"
+          },
+          {
+            "name": "c23",
+            "type": "string"
+          },
+          {
+            "name": "c24",
+            "type": "string"
+          },
+          {
+            "name": "c25",
+            "type": "string"
+          },
+          {
+            "name": "c26",
+            "type": "string"
+          },
+          {
+            "name": "c27",
+            "type": "string"
+          },
+          {
+            "name": "c28",
+            "type": "string"
+          },
+          {
+            "name": "c29",
+            "type": "string"
+          },
+          {
+            "name": "c30",
+            "type": "string"
+          },
+          {
+            "name": "c31",
+            "type": "string"
+          },
+          {
+            "name": "c32",
+            "type": "string"
+          },
+          {
+            "name": "c33",
+            "type": "string"
+          },
+          {
+            "name": "c34",
+            "type": "string"
+          },
+          {
+            "name": "c35",
+            "type": "string"
+          },
+          {
+            "name": "c36",
+            "type": "string"
+          },
+          {
+            "name": "c37",
+            "type": "string"
+          },
+          {
+            "name": "c38",
+            "type": "string"
+          },
+          {
+            "name": "c39",
+            "type": "string"
+          },
+          {
+            "name": "c40",
+            "type": "string"
+          },
+          {
+            "name": "c41",
+            "type": "string"
+          },
+          {
+            "name": "c42",
+            "type": "string"
+          },
+          {
+            "name": "c43",
+            "type": "string"
+          },
+          {
+            "name": "c44",
+            "type": "string"
+          },
+          {
+            "name": "c45",
+            "type": "string"
+          },
+          {
+            "name": "c46",
+            "type": "string"
+          },
+          {
+            "name": "c47",
+            "type": "string"
+          },
+          {
+            "name": "c48",
+            "type": "string"
+          },
+          {
+            "name": "c49",
+            "type": "string"
+          },
+          {
+            "name": "c50",
+            "type": "string"
+          },
+          {
+            "name": "c51",
+            "type": "string"
+          },
+          {
+            "name": "c52",
+            "type": "string"
+          },
+          {
+            "name": "c53",
+            "type": "string"
+          },
+          {
+            "name": "c54",
+            "type": "string"
+          },
+          {
+            "name": "c55",
+            "type": "string"
+          },
+          {
+            "name": "c56",
+            "type": "string"
+          },
+          {
+            "name": "c57",
+            "type": "string"
+          },
+          {
+            "name": "c58",
+            "type": "string"
+          },
+          {
+            "name": "c59",
+            "type": "string"
+          },
+          {
+            "name": "c60",
+            "type": "string"
+          },
+          {
+            "name": "c61",
+            "type": "string"
+          },
+          {
+            "name": "c62",
+            "type": "string"
+          },
+          {
+            "name": "c63",
+            "type": "string"
+          },
+          {
+            "name": "c64",
+            "type": "string"
+          }
+        ]
+      }
+    ]
+  },
+  "query": {
+    "variables": [
+      {
+        "name": "v00",
+        "type": "string"
+      },
+      {
+        "name": "v01",
+        "type": "string"
+      },
+      {
+        "name": "v02",
+        "type": "string"
+      },
+      {
+        "name": "v03",
+        "type": "string"
+      },
+      {
+        "name": "v04",
+        "type": "string"
+      },
+      {
+        "name": "v05",
+        "type": "string"
+      },
+      {
+        "name": "v06",
+        "type": "string"
+      },
+      {
+        "name": "v07",
+        "type": "string"
+      },
+      {
+        "name": "v08",
+        "type": "string"
+      },
+      {
+        "name": "v09",
+        "type": "string"
+      },
+      {
+        "name": "v10",
+        "type": "string"
+      },
+      {
+        "name": "v11",
+        "type": "string"
+      },
+      {
+        "name": "v12",
+        "type": "string"
+      },
+      {
+        "name": "v13",
+        "type": "string"
+      },
+      {
+        "name": "v14",
+        "type": "string"
+      },
+      {
+        "name": "v15",
+        "type": "string"
+      },
+      {
+        "name": "v16",
+        "type": "string"
+      },
+      {
+        "name": "v17",
+        "type": "string"
+      },
+      {
+        "name": "v18",
+        "type": "string"
+      },
+      {
+        "name": "v19",
+        "type": "string"
+      },
+      {
+        "name": "v20",
+        "type": "string"
+      },
+      {
+        "name": "v21",
+        "type": "string"
+      },
+      {
+        "name": "v22",
+        "type": "string"
+      },
+      {
+        "name": "v23",
+        "type": "string"
+      },
+      {
+        "name": "v24",
+        "type": "string"
+      },
+      {
+        "name": "v25",
+        "type": "string"
+      },
+      {
+        "name": "v26",
+        "type": "string"
+      },
+      {
+        "name": "v27",
+        "type": "string"
+      },
+      {
+        "name": "v28",
+        "type": "string"
+      },
+      {
+        "name": "v29",
+        "type": "string"
+      },
+      {
+        "name": "v30",
+        "type": "string"
+      },
+      {
+        "name": "v31",
+        "type": "string"
+      },
+      {
+        "name": "v32",
+        "type": "string"
+      },
+      {
+        "name": "v33",
+        "type": "string"
+      },
+      {
+        "name": "v34",
+        "type": "string"
+      },
+      {
+        "name": "v35",
+        "type": "string"
+      },
+      {
+        "name": "v36",
+        "type": "string"
+      },
+      {
+        "name": "v37",
+        "type": "string"
+      },
+      {
+        "name": "v38",
+        "type": "string"
+      },
+      {
+        "name": "v39",
+        "type": "string"
+      },
+      {
+        "name": "v40",
+        "type": "string"
+      },
+      {
+        "name": "v41",
+        "type": "string"
+      },
+      {
+        "name": "v42",
+        "type": "string"
+      },
+      {
+        "name": "v43",
+        "type": "string"
+      },
+      {
+        "name": "v44",
+        "type": "string"
+      },
+      {
+        "name": "v45",
+        "type": "string"
+      },
+      {
+        "name": "v46",
+        "type": "string"
+      },
+      {
+        "name": "v47",
+        "type": "string"
+      },
+      {
+        "name": "v48",
+        "type": "string"
+      },
+      {
+        "name": "v49",
+        "type": "string"
+      },
+      {
+        "name": "v50",
+        "type": "string"
+      },
+      {
+        "name": "v51",
+        "type": "string"
+      },
+      {
+        "name": "v52",
+        "type": "string"
+      },
+      {
+        "name": "v53",
+        "type": "string"
+      },
+      {
+        "name": "v54",
+        "type": "string"
+      },
+      {
+        "name": "v55",
+        "type": "string"
+      },
+      {
+        "name": "v56",
+        "type": "string"
+      },
+      {
+        "name": "v57",
+        "type": "string"
+      },
+      {
+        "name": "v58",
+        "type": "string"
+      },
+      {
+        "name": "v59",
+        "type": "string"
+      },
+      {
+        "name": "v60",
+        "type": "string"
+      },
+      {
+        "name": "v61",
+        "type": "string"
+      },
+      {
+        "name": "v62",
+        "type": "string"
+      },
+      {
+        "name": "v63",
+        "type": "string"
+      },
+      {
+        "name": "v64",
+        "type": "string"
+      }
+    ],
+    "atoms": [
+      {
+        "id": "wide",
+        "table": "T_wide",
+        "terms": [
+          {
+            "var": "v00"
+          },
+          {
+            "var": "v01"
+          },
+          {
+            "var": "v02"
+          },
+          {
+            "var": "v03"
+          },
+          {
+            "var": "v04"
+          },
+          {
+            "var": "v05"
+          },
+          {
+            "var": "v06"
+          },
+          {
+            "var": "v07"
+          },
+          {
+            "var": "v08"
+          },
+          {
+            "var": "v09"
+          },
+          {
+            "var": "v10"
+          },
+          {
+            "var": "v11"
+          },
+          {
+            "var": "v12"
+          },
+          {
+            "var": "v13"
+          },
+          {
+            "var": "v14"
+          },
+          {
+            "var": "v15"
+          },
+          {
+            "var": "v16"
+          },
+          {
+            "var": "v17"
+          },
+          {
+            "var": "v18"
+          },
+          {
+            "var": "v19"
+          },
+          {
+            "var": "v20"
+          },
+          {
+            "var": "v21"
+          },
+          {
+            "var": "v22"
+          },
+          {
+            "var": "v23"
+          },
+          {
+            "var": "v24"
+          },
+          {
+            "var": "v25"
+          },
+          {
+            "var": "v26"
+          },
+          {
+            "var": "v27"
+          },
+          {
+            "var": "v28"
+          },
+          {
+            "var": "v29"
+          },
+          {
+            "var": "v30"
+          },
+          {
+            "var": "v31"
+          },
+          {
+            "var": "v32"
+          },
+          {
+            "var": "v33"
+          },
+          {
+            "var": "v34"
+          },
+          {
+            "var": "v35"
+          },
+          {
+            "var": "v36"
+          },
+          {
+            "var": "v37"
+          },
+          {
+            "var": "v38"
+          },
+          {
+            "var": "v39"
+          },
+          {
+            "var": "v40"
+          },
+          {
+            "var": "v41"
+          },
+          {
+            "var": "v42"
+          },
+          {
+            "var": "v43"
+          },
+          {
+            "var": "v44"
+          },
+          {
+            "var": "v45"
+          },
+          {
+            "var": "v46"
+          },
+          {
+            "var": "v47"
+          },
+          {
+            "var": "v48"
+          },
+          {
+            "var": "v49"
+          },
+          {
+            "var": "v50"
+          },
+          {
+            "var": "v51"
+          },
+          {
+            "var": "v52"
+          },
+          {
+            "var": "v53"
+          },
+          {
+            "var": "v54"
+          },
+          {
+            "var": "v55"
+          },
+          {
+            "var": "v56"
+          },
+          {
+            "var": "v57"
+          },
+          {
+            "var": "v58"
+          },
+          {
+            "var": "v59"
+          },
+          {
+            "var": "v60"
+          },
+          {
+            "var": "v61"
+          },
+          {
+            "var": "v62"
+          },
+          {
+            "var": "v63"
+          },
+          {
+            "var": "v64"
+          }
+        ]
+      }
+    ],
+    "head": [
+      {
+        "var": "v00"
+      },
+      {
+        "var": "v01"
+      },
+      {
+        "var": "v02"
+      },
+      {
+        "var": "v03"
+      },
+      {
+        "var": "v04"
+      },
+      {
+        "var": "v05"
+      },
+      {
+        "var": "v06"
+      },
+      {
+        "var": "v07"
+      },
+      {
+        "var": "v08"
+      },
+      {
+        "var": "v09"
+      },
+      {
+        "var": "v10"
+      },
+      {
+        "var": "v11"
+      },
+      {
+        "var": "v12"
+      },
+      {
+        "var": "v13"
+      },
+      {
+        "var": "v14"
+      },
+      {
+        "var": "v15"
+      },
+      {
+        "var": "v16"
+      },
+      {
+        "var": "v17"
+      },
+      {
+        "var": "v18"
+      },
+      {
+        "var": "v19"
+      },
+      {
+        "var": "v20"
+      },
+      {
+        "var": "v21"
+      },
+      {
+        "var": "v22"
+      },
+      {
+        "var": "v23"
+      },
+      {
+        "var": "v24"
+      },
+      {
+        "var": "v25"
+      },
+      {
+        "var": "v26"
+      },
+      {
+        "var": "v27"
+      },
+      {
+        "var": "v28"
+      },
+      {
+        "var": "v29"
+      },
+      {
+        "var": "v30"
+      },
+      {
+        "var": "v31"
+      },
+      {
+        "var": "v32"
+      },
+      {
+        "var": "v33"
+      },
+      {
+        "var": "v34"
+      },
+      {
+        "var": "v35"
+      },
+      {
+        "var": "v36"
+      },
+      {
+        "var": "v37"
+      },
+      {
+        "var": "v38"
+      },
+      {
+        "var": "v39"
+      },
+      {
+        "var": "v40"
+      },
+      {
+        "var": "v41"
+      },
+      {
+        "var": "v42"
+      },
+      {
+        "var": "v43"
+      },
+      {
+        "var": "v44"
+      },
+      {
+        "var": "v45"
+      },
+      {
+        "var": "v46"
+      },
+      {
+        "var": "v47"
+      },
+      {
+        "var": "v48"
+      },
+      {
+        "var": "v49"
+      },
+      {
+        "var": "v50"
+      },
+      {
+        "var": "v51"
+      },
+      {
+        "var": "v52"
+      },
+      {
+        "var": "v53"
+      },
+      {
+        "var": "v54"
+      },
+      {
+        "var": "v55"
+      },
+      {
+        "var": "v56"
+      },
+      {
+        "var": "v57"
+      },
+      {
+        "var": "v58"
+      },
+      {
+        "var": "v59"
+      },
+      {
+        "var": "v60"
+      },
+      {
+        "var": "v61"
+      },
+      {
+        "var": "v62"
+      },
+      {
+        "var": "v63"
+      },
+      {
+        "var": "v64"
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+# Preserved source and evidence lineage
+
+The base is [the frozen first C05 auditor](../c05-native-matrix-independent-audit-proposal/audit.py), SHA256 `38440725af6a4739455dfd0b77eed97b2ea2c3c95f9d598c39ed649b519c92ca`. Its package FILE SHA256 is `773665cce5c4cdafae94bd9b5ac7a5b8dd4a4473bd07f35ea8330d1a5fe29f85`; its source and input manifests remain unchanged. The preserved first root receipt is SHA256 `80e88d36453b5b1df9c74d3de5ffe3003dc2354c2d39eb713842357e9beafc99`.
+
+This new source retains the base auditor wholesale except for [diagnostic-format.patch](diagnostic-format.patch), SHA256 `d46ebcfbaa859a1d84074c6428ceadb026419b894937a035296258fdf619cb32`. The only authority for those warning mappings is root's exact review FILE SHA256 `f422c9fcdf30b77ee749fbcdd05e16cfb1dc0023f33f1ded803cdf411a9c6d79`.
+
+The 61 entries in [PINNED_INPUTS.json](PINNED_INPUTS.json) and [INPUT_SHA256SUMS](INPUT_SHA256SUMS) retain all 52 authorized base input pins and add nine FILE identities: the original auditor, its package/source/input manifests and pin-map FILE, the format review, the first failed receipt, the ranking clean log and the current selection clean log. The observability clean log was already among the 52. Historical manifest files are pinned as files; this revision does not replay their historical entries. Future execution authorities and unfinished matrix outputs are absent from this static input scope.
+
+All native676/execution733 inputs remain bound to the actual C05 freeze SHA256 `affcb8fa29b193e57f9501c5a88054eaba9467b7040273f36f28c507f3146711`. No native source, test, property, compiler, helper, old evidence or status file is changed here. The original failed comparison remains a recorded result; the revision does not edit it into a pass.
+
+The auditor author previously wrote the C05 independent five-consumer/22-group fixtures and the C02 independent semantic/arithmetic oracles, not the selection or ranking implementations. This revision audits recorded evidence and preserves that disclosed authorship boundary. Prior preparation coverage and its real-normalized positive-boundary limitation remain unchanged. Logical proxies do not become S05 allocator/peak measurements, C03 optimization, deployment evidence or a full-card acceptance claim.
