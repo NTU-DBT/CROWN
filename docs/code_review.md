@@ -7,6 +7,13 @@ counterexample behind a public claim. [Error-handling dispositions](code_specs/e
 explain which catches provide rollback, reader cleanup or uncertain-I/O latching.
 The [ledger](task_ledger.md) and [handoff](handoff.md) record current acceptance.
 
+The [V73 original-scope review](verification/completion-v73-2026-11-16.md)
+receives all 78 task IDs, 777 requirement rows and 44 mandatory cases, with explicit
+user deferrals. Both complete current 396-test profiles pass without failures or
+skips. All 902 code/configuration paths, including 414 production files, retain
+their V72 bytes. The review separates current execution from inherited source
+inspection and historical releases; GitHub delivery remains authentication pending.
+
 The index maps **900 files / 202,375 lines / 22,533 blocks**. Its **21,731 authored
 contracts cover all 19,205 nonblank blocks**. The remaining 3,328 regions contain
 only blank spacing and retain structural descriptions. All selected callable,

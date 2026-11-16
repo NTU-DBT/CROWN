@@ -1,9 +1,9 @@
 # V73 original-scope review and integrated verification
 
-The original-scope requirement review is received. Release passes all 396 current
-registered tests. The complete Debug ASan/UBSan run is still in progress; this
-document does not claim its final result. GitHub publication is prepared and
-awaits authentication. The Refactor goal remains active.
+The original-scope requirement review and current integrated verification are
+received. Release and Debug ASan/UBSan each pass all 396 current registered tests,
+with zero failures or skips. GitHub publication is prepared and awaits
+authentication. The Refactor goal remains active until delivery and final receiving.
 
 ## Requirement and source review
 
@@ -58,20 +58,21 @@ recorded scope decisions, not newly claimed implementations.
 
 ## Current integrated execution
 
-Both complete native builds pass. The Release suite executes all 396 registered
-commands without a selection regex: 396 pass, zero fail and zero skip. Its actual
+Both complete native builds pass. Each profile executes all 396 registered
+commands without a selection regex: 396 pass, zero fail and zero skip. Actual
 JUnit, command, registration definitions, source-before/source-after and build
-metadata are in the
-[full-regression packet](../../build/verification/v73-full-regression-v1/release-suite-v1/receiving.json).
-The current source inventory and metadata remain unchanged across the builds and
-the completed Release suite. This supersedes V72's five-command integration scope
-only for this actual Release cohort.
+metadata are preserved for the
+[Release suite](../../build/verification/v73-full-regression-v1/release-suite-v1/receiving.json)
+and [sanitizer suite](../../build/verification/v73-full-regression-v1/sanitizer-suite-v1/receiving.json).
+The complete 902-path source inventory and captured metadata remain unchanged
+across both builds and suites. These actual current cohorts extend V72's
+five-command integration scope. Earlier full suites and V72's targeted checks
+retain their own source vintages. No rerun, timeout extension or test exclusion
+was used to manufacture these results.
 
-The full sanitizer suite runs in the same frozen 902-path cohort. Its actual
-process and eventual terminal receipt, rather than a saved observation or test
-discovery count, determine completion. Earlier full suites and V72's targeted
-checks remain distinct evidence. No rerun, timeout extension or test exclusion
-has been used to manufacture a complete result.
+The fresh inspection checker also passes all 900 mapped files and 158,448 local
+links with the same 902 source/configuration hashes. Complete tests and map
+coverage support the scoped review; they do not replace the invariant arguments.
 
 Finite tests and review arguments do not establish universal correctness or a
 performance improvement. Historical benchmark evidence supports the documented
@@ -81,7 +82,8 @@ No new release archive is accepted by this review.
 ## GitHub delivery
 
 Another agent prepared an isolated source repository on branch `main`, with
-initial commit `2390b679880712ff5d1e38c3555d5f410c8177f5`. All 902 native inputs match
+initial commit `2390b679880712ff5d1e38c3555d5f410c8177f5` and a documentation-only
+successor `4a09f56f35c15c51a634f925eca12947de08dd3c`. All 902 native inputs match
 the accepted implementation. Offline configure discovers 396 tests; the export
 itself has not executed them. Git integrity and credential-signature checks pass
 within the limits recorded in the

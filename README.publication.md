@@ -17,8 +17,8 @@ ctest --test-dir build/native --output-on-failure
 A C++23 compiler, CMake, Python 3 and the system build tools documented in the
 project guides are required. Vendored dependency inputs remain available for the
 offline native build. This publication has not itself run a new native build;
-its 902 code/configuration inputs are byte-identical to the current V72 source
-lineage. The compact evidence below retains each report's original date, scope
+its 902 code/configuration inputs are byte-identical to the sealed V73 inventory,
+which preserves the accepted V72 native implementation. The compact evidence below retains each report's original date, scope
 and limitations; it does not qualify a new release or prove universal correctness.
 
 Full historical build/verification archives, frozen source overlays, binary SDKs,
@@ -41,12 +41,30 @@ project licensing decision; this snapshot does not grant a new project license.
 
 ## Current review snapshot
 
-The [V73 original-scope review](docs/verification/completion-v73-2026-11-16.md)
-records the received requirement review and the complete Release suite: 396 tests
-pass, with no failures or skips. At this documentation snapshot, the complete
-Debug ASan/UBSan suite remains pending and GitHub API authentication remains
-pending after an expired device-login flow. The native 902 inputs remain exact
-V72. This publication export has configured and discovered the 396 tests; it has
-not executed a separate native build or test suite. The source report keeps its
-original historical evidence links and scope qualifications. The full evidence
-archives remain omitted as explained above.
+The sealed [V73 original-scope review](docs/verification/completion-v73-2026-11-16.md)
+records complete Release and Debug ASan/UBSan suites: each executes all 396
+registered tests, with 396 passes, zero failures and zero skips. These actual
+runs bind the unchanged native 902 inputs in the original V73 source cohort.
+This export has not repeated a native build or test suite. Its earlier offline
+configure discovered the same 396 tests. GitHub API authentication remains pending
+after an expired device-login flow; no repository or push is claimed here.
+
+The [V73 validation summary](publication/v73-validation-summary.json) pins the
+sealed master, source point, native inventory and both profiles' final build,
+suite and JUnit receipts. Exact relocated text copies appear in the
+[evidence map](publication/evidence-map.json). The master SHA-256 is
+`56e77572afd49273107145281d52ec7f14ff1adea948001e52b5a5de21bb97ab`;
+the V73 source-point SHA-256 is
+`96af5ec3aa4041136d92b9b8b798696fe46061a2bb529f66297f68a28134a128`.
+
+All 4,923 selected maintained/pinned source files match the current originals.
+Of these, 4,922 match both the sealed V73 source-point hashes and their immutable
+providers; the included paper PDF is pinned independently outside that source
+inventory. The export omits 74 archived files under documentation build directories
+from the source-point inventory. Full build/verification archives, frozen provider
+copies, build outputs, benchmark run archives and SDK binaries remain excluded;
+the compact relocated text selection is the explicit exception. Historical
+references inside preserved documentation, cards and receipts retain their original
+workspace paths and will not all resolve. These results support the stated finite
+review and test scope; they do not establish universal correctness or qualify a
+new release.

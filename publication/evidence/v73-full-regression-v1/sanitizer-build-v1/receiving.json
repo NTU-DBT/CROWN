@@ -1,0 +1,14 @@
+{
+  "status": "PASS_current_full_build",
+  "profile": "sanitizer",
+  "stage": "build",
+  "exit_code": 0,
+  "started_utc": "2026-11-16T07:38:30.419898+00:00",
+  "finished_utc": "2026-11-16T07:53:37.249965+00:00",
+  "wall_seconds": 906.8300671130419,
+  "source_files": 902,
+  "source_changes": [],
+  "build_metadata_changes": [],
+  "runner_pid": 2948706,
+  "child_pid": 2948708
+}

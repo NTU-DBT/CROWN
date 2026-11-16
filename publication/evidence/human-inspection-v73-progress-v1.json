@@ -1,0 +1,112 @@
+{
+  "status": "sealed_V73_original_scope_technical_review_GitHub_pending",
+  "goal": "active",
+  "goal_complete": false,
+  "received_utc": "2026-11-16T09:25:09.852341+00:00",
+  "baseline": {
+    "path": "build/verification/human-inspection-v72-progress-v1.json",
+    "sha256": "b6ce34f9d269ffc83a6b639317fbed3b7e507e9b74a84765f039e74eb47aec5b"
+  },
+  "current_source_manifest": {
+    "path": "build/verification/v73-completion-root-v1/source-point-v73-v1.json",
+    "sha256": "96af5ec3aa4041136d92b9b8b798696fe46061a2bb529f66297f68a28134a128"
+  },
+  "current_code_inventory": {
+    "path": "build/verification/v73-completion-root-v1/source-lineage.json",
+    "sha256": "5e79fb603eba46bd94e5eae3c117afc33465ec2723851d68af281753f4789e60"
+  },
+  "root_closure": {
+    "path": "build/verification/v73-completion-root-v1/root-closure.json",
+    "sha256": "3f988c7b6a73f8180f7864eea50e8bc337d074b9451118c74c80e7f8908d3aec"
+  },
+  "root_manifest": {
+    "path": "build/verification/v73-completion-root-v1/manifest.json",
+    "sha256": "939f441393e166c79f4153758bf76146b8d80b1ec583f418e832af1fe86ef692"
+  },
+  "source_paths": 4996,
+  "code_paths": 902,
+  "production_paths": 414,
+  "native_profiles": {
+    "release": {
+      "build": {
+        "path": "build/verification/v73-full-regression-v1/release-build-v1/receiving.json",
+        "sha256": "6c62b57546fda605aef07d1d44a857c54a7d249408af1040fca4fc3305827b77"
+      },
+      "suite": {
+        "path": "build/verification/v73-full-regression-v1/release-suite-v1/receiving.json",
+        "sha256": "f4c10f33b3407147a6e04a8e9414e4b2043b855c4c2e645da3269a10016089d3"
+      },
+      "junit": {
+        "path": "build/verification/v73-full-regression-v1/release-suite-v1/junit.xml",
+        "sha256": "14dd14e3761caae4be62d037067f9a155e83c121b04c004e6005dd2b2cd95781"
+      },
+      "tests": 396,
+      "unique_run_cases": 396,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "source_and_metadata_stable": true
+    },
+    "sanitizer": {
+      "build": {
+        "path": "build/verification/v73-full-regression-v1/sanitizer-build-v1/receiving.json",
+        "sha256": "ac7407d30bf6ada9643f1b3cdd6a89cb00de65ed2c68db9a2f0c4ae8f000937f"
+      },
+      "suite": {
+        "path": "build/verification/v73-full-regression-v1/sanitizer-suite-v1/receiving.json",
+        "sha256": "efa78fdfea92775b9cf68e3a55776082e29fabe495b49affda7ecaa17a0e0b4a"
+      },
+      "junit": {
+        "path": "build/verification/v73-full-regression-v1/sanitizer-suite-v1/junit.xml",
+        "sha256": "5e4bb17b2a3fe12f8f421e5a9bd5b4e2033d041589c9c13592e8b382bf3fa4e9"
+      },
+      "tests": 396,
+      "unique_run_cases": 396,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "source_and_metadata_stable": true
+    }
+  },
+  "ledger": {
+    "verified": 75,
+    "in_progress": 1,
+    "not_started": 2,
+    "total": 78
+  },
+  "requirements": {
+    "rows": 777,
+    "tasks": 78,
+    "named_cases": 44,
+    "complete": 770,
+    "deferred": 7
+  },
+  "final_document_receiving": {
+    "path": "build/verification/v73-completion-root-v1/final-document-receiving.json",
+    "sha256": "43c7d59f5b44da6fff7aec21bb1c890c1bd63e797137c1b4f856c6ee81ec3782"
+  },
+  "guide_check": {
+    "path": "build/verification/v73-completion-root-v1/final-guide-links-v1/link-audit.json",
+    "sha256": "036bdbe44fc7dc0a19a8c835c84cc9c941d551812748c1680b77796eb84ba0bb"
+  },
+  "generated_local_links": 158448,
+  "registry": {
+    "path": "docs/code_specs/reviewed_contracts.json",
+    "sha256": "3247022772f30449a086aae71bfbc3bb620cfbe85261d3fc00529532ac453823"
+  },
+  "registry_records": 21731,
+  "GitHub": {
+    "destination": "wqc0712/CROWN-native",
+    "visibility": "private",
+    "status": "authentication_pending",
+    "repo_created": false,
+    "pushed": false
+  },
+  "universal_correctness_proof": false,
+  "new_release_accepted": false,
+  "history_scope": "V73 actual full396 Release and Debug ASan/UBSan executions bind the unchanged V72 native902/production414. The three lanes review all78 tasks,777 requirement rows and44 mandatory cases with770complete/seven explicit deferred clauses. Detailed source/card/native/release/benchmark evidence retains its original source vintage and stated argument/test limits; no fresh universal every-line proof, new release, speedup or second-machine result is claimed. Licensing, approximation, parallel/distributed execution and shared-query optimization remain user-deferred as recorded.",
+  "postseal": {
+    "path": "build/verification/human-inspection-v73-postseal-v1.json",
+    "purpose": "One-way postseal receipt pins this master; no cyclic hash."
+  }
+}

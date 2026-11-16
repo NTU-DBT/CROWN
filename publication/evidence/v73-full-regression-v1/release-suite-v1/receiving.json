@@ -1,0 +1,23 @@
+{
+  "status": "PASS_full_current_396_tests",
+  "profile": "release",
+  "stage": "suite",
+  "exit_code": 0,
+  "started_utc": "2026-11-16T07:46:46.421338+00:00",
+  "finished_utc": "2026-11-16T08:05:56.418615+00:00",
+  "wall_seconds": 1149.9972689739661,
+  "source_files": 902,
+  "source_changes": [],
+  "build_metadata_changes": [],
+  "runner_pid": 2958972,
+  "child_pid": 2958974,
+  "scope": "Actual complete current registered CTest regressions; wall time is validation only, not performance evidence.",
+  "registrations": 396,
+  "registrations_stable_excluding_generated_COST_backtrace": true,
+  "junit_cases": 396,
+  "exact_registered_names": true,
+  "passed_tests": 396,
+  "failed_tests": [],
+  "skipped_tests": [],
+  "native_build_or_configure_commands": 0
+}

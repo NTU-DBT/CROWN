@@ -1,16 +1,37 @@
 {
   "created_utc": "2026-11-16T08:08:28.833483+00:00",
   "documentation_refresh": {
-    "added_source_paths": [
+    "added_source_paths": [],
+    "changed_source_paths": [
+      "docs/code_review.md",
+      "docs/handoff.md",
       "docs/verification/completion-v73-2026-11-16.md"
     ],
-    "changed_source_paths": [
-      "docs/handoff.md"
-    ],
     "code_configuration_paths_changed": 0,
-    "parent_commit": "2390b679880712ff5d1e38c3555d5f410c8177f5",
-    "status": "Release396PASS_SANpending_GitHubAuthenticationPending"
+    "parent_commit": "4a09f56f35c15c51a634f925eca12947de08dd3c",
+    "status": "Release396PASS_SAN396PASS_GitHubAuthenticationPending",
+    "v73_master": {
+      "path": "build/verification/human-inspection-v73-progress-v1.json",
+      "sha256": "56e77572afd49273107145281d52ec7f14ff1adea948001e52b5a5de21bb97ab"
+    },
+    "v73_source_point": {
+      "path": "build/verification/v73-completion-root-v1/source-point-v73-v1.json",
+      "sha256": "96af5ec3aa4041136d92b9b8b798696fe46061a2bb529f66297f68a28134a128"
+    }
   },
+  "documentation_refresh_history": [
+    {
+      "added_source_paths": [
+        "docs/verification/completion-v73-2026-11-16.md"
+      ],
+      "changed_source_paths": [
+        "docs/handoff.md"
+      ],
+      "code_configuration_paths_changed": 0,
+      "parent_commit": "2390b679880712ff5d1e38c3555d5f410c8177f5",
+      "status": "Release396PASS_SANpending_GitHubAuthenticationPending"
+    }
+  ],
   "excluded": [
     "original .git and history",
     "build products and verification archives",
@@ -2343,9 +2364,9 @@
       "sha256": "0b57acdecafa6233f36a4cad74dd469156fb48ef067a4fe98d1c4fb0248d4080"
     },
     {
-      "bytes": 32153,
+      "bytes": 32637,
       "path": "docs/code_review.md",
-      "sha256": "9f83d609aff435fe13ec046f9bcc212a843833339ce6c8d3130b78972b07e6b1"
+      "sha256": "db8a709c3964510e5734efc8c81c7e10eb5f5647e2b3ac75497e9f51e0475629"
     },
     {
       "bytes": 103622,
@@ -7328,9 +7349,9 @@
       "sha256": "e3889914424fffef25fab7a4c5f4205eaf51dcfcd52d30fe8297fb0d9dcfa559"
     },
     {
-      "bytes": 5262,
+      "bytes": 5319,
       "path": "docs/handoff.md",
-      "sha256": "36c8919a7fc950ba87ed221bd272660c50d88002d05bd9a26b52e057b4cf09bd"
+      "sha256": "ed8d4a49c27f03b6d049e2af88a329f16ba53d93bf1b6480f6e664393cb7d4ef"
     },
     {
       "bytes": 9190,
@@ -13708,9 +13729,9 @@
       "sha256": "548b2a32ce83174dd2e359f4f549188b0d81448951a7145349467a388bc696cd"
     },
     {
-      "bytes": 6047,
+      "bytes": 6269,
       "path": "docs/verification/completion-v73-2026-11-16.md",
-      "sha256": "6ea4d06dd7f3f337842db31af30f34267b90f6c634219818cca6fa234c59d2a2"
+      "sha256": "4641d851d97f2ff7fa4c8fd121ac1f6057f0c396a2963a55500b5150f9c7b64f"
     },
     {
       "bytes": 8900,
@@ -24640,8 +24661,8 @@
   ],
   "kind": "source_only_publication",
   "native_inventory_902_match": true,
-  "refreshed_utc": "2026-11-16T08:54:13.575576+00:00",
-  "source_bytes": 180451315,
+  "refreshed_utc": "2026-11-16T09:28:43.714299+00:00",
+  "source_bytes": 180452078,
   "source_files": 4923,
   "source_repository_origin": "https://github.com/NTU-DBT/CROWN"
 }

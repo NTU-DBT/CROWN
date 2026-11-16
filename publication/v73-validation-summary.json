@@ -1,0 +1,73 @@
+{
+  "code_inventory": {
+    "path": "build/verification/v73-completion-root-v1/source-lineage.json",
+    "sha256": "5e79fb603eba46bd94e5eae3c117afc33465ec2723851d68af281753f4789e60"
+  },
+  "evidence_map": "evidence-map.json",
+  "fresh_native_commands_executed_for_export_refresh": 0,
+  "frozen_provider_matches": 4922,
+  "included_paper_outside_source_point": [
+    {
+      "basis": "Included paper PDF is outside the sealed source-point inventory; matches current original and prior source manifest independently.",
+      "path": "Change_propagation_without_joins_full_version.pdf",
+      "sha256": "0865d0126179b85b7c0144669619dd218a0e914fd9c685b3dc91729ab41430e8"
+    }
+  ],
+  "limits": "Actual suites ran in the original source-bound V73 cohort, not a repeated build of this export. Full historical provider/source overlays, build logs, benchmark archives and SDKs remain omitted; original historical links can remain unresolved. No universal correctness, performance, second-machine or new-release claim.",
+  "master": {
+    "path": "build/verification/human-inspection-v73-progress-v1.json",
+    "sha256": "56e77572afd49273107145281d52ec7f14ff1adea948001e52b5a5de21bb97ab"
+  },
+  "native_paths": 902,
+  "omitted_archived_doc_build_files": 74,
+  "profiles": {
+    "release": {
+      "build": {
+        "path": "build/verification/v73-full-regression-v1/release-build-v1/receiving.json",
+        "sha256": "6c62b57546fda605aef07d1d44a857c54a7d249408af1040fca4fc3305827b77"
+      },
+      "build_exit_code": 0,
+      "failures": 0,
+      "junit": {
+        "path": "build/verification/v73-full-regression-v1/release-suite-v1/junit.xml",
+        "sha256": "14dd14e3761caae4be62d037067f9a155e83c121b04c004e6005dd2b2cd95781"
+      },
+      "skipped": 0,
+      "source_and_metadata_stable": true,
+      "suite": {
+        "path": "build/verification/v73-full-regression-v1/release-suite-v1/receiving.json",
+        "sha256": "f4c10f33b3407147a6e04a8e9414e4b2043b855c4c2e645da3269a10016089d3"
+      },
+      "suite_exit_code": 0,
+      "tests": 396,
+      "unique_cases": 396
+    },
+    "sanitizer": {
+      "build": {
+        "path": "build/verification/v73-full-regression-v1/sanitizer-build-v1/receiving.json",
+        "sha256": "ac7407d30bf6ada9643f1b3cdd6a89cb00de65ed2c68db9a2f0c4ae8f000937f"
+      },
+      "build_exit_code": 0,
+      "failures": 0,
+      "junit": {
+        "path": "build/verification/v73-full-regression-v1/sanitizer-suite-v1/junit.xml",
+        "sha256": "5e4bb17b2a3fe12f8f421e5a9bd5b4e2033d041589c9c13592e8b382bf3fa4e9"
+      },
+      "skipped": 0,
+      "source_and_metadata_stable": true,
+      "suite": {
+        "path": "build/verification/v73-full-regression-v1/sanitizer-suite-v1/receiving.json",
+        "sha256": "efa78fdfea92775b9cf68e3a55776082e29fabe495b49affda7ecaa17a0e0b4a"
+      },
+      "suite_exit_code": 0,
+      "tests": 396,
+      "unique_cases": 396
+    }
+  },
+  "source_files": 4923,
+  "source_point": {
+    "path": "build/verification/v73-completion-root-v1/source-point-v73-v1.json",
+    "sha256": "96af5ec3aa4041136d92b9b8b798696fe46061a2bb529f66297f68a28134a128"
+  },
+  "status": "sealed_V73_technical_review_GitHub_authentication_pending"
+}
