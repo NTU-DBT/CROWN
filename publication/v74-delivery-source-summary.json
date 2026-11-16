@@ -1,0 +1,36 @@
+{
+  "added_maintained_documents": [
+    "docs/handoff-history-v73-2026-11-16.md"
+  ],
+  "branch": "review/native-v73-f4732bac",
+  "changed_maintained_documents": [
+    "docs/code_review.md",
+    "docs/handoff.md",
+    "docs/verification/completion-v73-2026-11-16.md"
+  ],
+  "document_lineage": {
+    "path": "build/verification/v74-github-delivery-root-v1/document-lineage.json",
+    "sha256": "641537849a2f02f63d88762c8e3930b78cfebccb2a9a0151885c16371bce9748"
+  },
+  "frozen_provider_matches": 4923,
+  "independently_pinned_paper": [
+    {
+      "path": "Change_propagation_without_joins_full_version.pdf",
+      "sha256": "0865d0126179b85b7c0144669619dd218a0e914fd9c685b3dc91729ab41430e8"
+    }
+  ],
+  "initial_published_commit": "f4732bacc7b5e7d692d7660fc83d2f11088fa6b4",
+  "limits": "Historical source/provider overlays and complete build/benchmark/SDK archives are omitted; selected text evidence is relocated with exact hashes. Historical links can remain unresolved.",
+  "native_changed": false,
+  "native_paths": 902,
+  "omitted_archived_doc_build_files": 74,
+  "private": false,
+  "repository": "NTU-DBT/CROWN",
+  "source_files": 4924,
+  "source_point": {
+    "path": "build/verification/v74-github-delivery-root-v1/source-point-v74-v1.json",
+    "sha256": "181d03d6e248d95f792041321edf5555371d4a5ca59e58aba48b1dee1916c12c"
+  },
+  "status": "current_delivery_document_successor_verified",
+  "technical_evidence_vintage": "Both actual396 suites remain V73, native902 exact V72. No native build/test/configure repeated for delivery."
+}

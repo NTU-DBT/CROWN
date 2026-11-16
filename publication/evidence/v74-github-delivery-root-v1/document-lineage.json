@@ -1,0 +1,39 @@
+{
+  "status": "PASS_current_delivery_document_successors",
+  "basis": {
+    "path": "build/verification/v73-completion-root-v1/source-point-v73-v1.json",
+    "sha256": "96af5ec3aa4041136d92b9b8b798696fe46061a2bb529f66297f68a28134a128"
+  },
+  "source_point": {
+    "path": "build/verification/v74-github-delivery-root-v1/source-point-v74-v1.json",
+    "sha256": "181d03d6e248d95f792041321edf5555371d4a5ca59e58aba48b1dee1916c12c"
+  },
+  "documents": {
+    "docs/code_review.md": {
+      "before": "db8a709c3964510e5734efc8c81c7e10eb5f5647e2b3ac75497e9f51e0475629",
+      "after": "204c93d02e150c560fe30029e94c60f9e72badfa8b5e90034498c09ceb813cb1",
+      "provider": "build/verification/human-inspection-v74-source-overlay-v1/docs/code_review.md"
+    },
+    "docs/handoff.md": {
+      "before": "ed8d4a49c27f03b6d049e2af88a329f16ba53d93bf1b6480f6e664393cb7d4ef",
+      "after": "528f336b6bcb894e441f039d193b01fabbee8e3893f9d4134eaec93cb87856f0",
+      "provider": "build/verification/human-inspection-v74-source-overlay-v1/docs/handoff.md"
+    },
+    "docs/verification/completion-v73-2026-11-16.md": {
+      "before": "4641d851d97f2ff7fa4c8fd121ac1f6057f0c396a2963a55500b5150f9c7b64f",
+      "after": "8905fc8f08cce298ee46d1c4ef06c2ee859bea095d3f2fa94fdab9ab3ad01677",
+      "provider": "build/verification/human-inspection-v74-source-overlay-v1/docs/verification/completion-v73-2026-11-16.md"
+    },
+    "docs/handoff-history-v73-2026-11-16.md": {
+      "before": null,
+      "after": "ed8d4a49c27f03b6d049e2af88a329f16ba53d93bf1b6480f6e664393cb7d4ef",
+      "provider": "build/verification/human-inspection-v74-source-overlay-v1/docs/handoff-history-v73-2026-11-16.md"
+    }
+  },
+  "native_paths": 902,
+  "native_changed": false,
+  "first_push_receipt": {
+    "path": "build/verification/v73-github-delivery-v1/first-push-receiving.json",
+    "sha256": "666dea49dcbbf18db82ee0f2baefed649952bc4a341917710565f88dfb7140ce"
+  }
+}

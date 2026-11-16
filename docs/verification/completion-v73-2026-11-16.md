@@ -1,5 +1,10 @@
 # V73 original-scope review and integrated verification
 
+Publication update: the code is now available on the
+[GitHub review branch](https://github.com/NTU-DBT/CROWN/tree/review/native-v73-f4732bac).
+The [current handoff](../handoff.md) records delivery. The V73 review below retains
+its original pre-publication state and evidence vintage.
+
 The original-scope requirement review and current integrated verification are
 received. Release and Debug ASan/UBSan each pass all 396 current registered tests,
 with zero failures or skips. GitHub publication is prepared and awaits

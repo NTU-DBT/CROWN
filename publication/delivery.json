@@ -1,0 +1,26 @@
+{
+  "branch": "review/native-v73-f4732bac",
+  "default_branch": "master",
+  "default_branch_commit_unchanged": "f38c2b0255cff37133cb43fcfee3bda518330378",
+  "delivery_source_point": {
+    "path": "build/verification/v74-github-delivery-root-v1/source-point-v74-v1.json",
+    "sha256": "181d03d6e248d95f792041321edf5555371d4a5ca59e58aba48b1dee1916c12c"
+  },
+  "documentation_successors": "Current branch can receive explicit documentation-only successors; this record pins the initial push and does not self-reference its containing commit.",
+  "initial_delivery_receipt": "evidence/github-delivery/initial-push-receiving.json",
+  "initial_verified_commit": "f4732bacc7b5e7d692d7660fc83d2f11088fa6b4",
+  "native_paths": 902,
+  "native_source_vintage": "V73 source-bound validation; native input bytes identical to V72.",
+  "owner": "NTU-DBT",
+  "private": false,
+  "repository": "NTU-DBT/CROWN",
+  "rights": "Existing rights and notices preserved; project licensing decision user-deferred.",
+  "selected_source_files": 4924,
+  "status": "initial_public_review_branch_push_verified",
+  "technical_master": {
+    "path": "publication/evidence/human-inspection-v73-progress-v1.json",
+    "sha256": "56e77572afd49273107145281d52ec7f14ff1adea948001e52b5a5de21bb97ab"
+  },
+  "url": "https://github.com/NTU-DBT/CROWN/tree/review/native-v73-f4732bac",
+  "v74_source_summary": "v74-delivery-source-summary.json"
+}

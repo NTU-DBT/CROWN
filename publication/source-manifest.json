@@ -1,23 +1,27 @@
 {
   "created_utc": "2026-11-16T08:08:28.833483+00:00",
+  "current_delivery_source_point": {
+    "path": "build/verification/v74-github-delivery-root-v1/source-point-v74-v1.json",
+    "sha256": "181d03d6e248d95f792041321edf5555371d4a5ca59e58aba48b1dee1916c12c"
+  },
   "documentation_refresh": {
-    "added_source_paths": [],
+    "added_source_paths": [
+      "docs/handoff-history-v73-2026-11-16.md"
+    ],
+    "branch": "review/native-v73-f4732bac",
     "changed_source_paths": [
       "docs/code_review.md",
       "docs/handoff.md",
       "docs/verification/completion-v73-2026-11-16.md"
     ],
     "code_configuration_paths_changed": 0,
-    "parent_commit": "4a09f56f35c15c51a634f925eca12947de08dd3c",
-    "status": "Release396PASS_SAN396PASS_GitHubAuthenticationPending",
-    "v73_master": {
-      "path": "build/verification/human-inspection-v73-progress-v1.json",
-      "sha256": "56e77572afd49273107145281d52ec7f14ff1adea948001e52b5a5de21bb97ab"
+    "parent_commit": "f4732bacc7b5e7d692d7660fc83d2f11088fa6b4",
+    "repository": "NTU-DBT/CROWN",
+    "source_point": {
+      "path": "build/verification/v74-github-delivery-root-v1/source-point-v74-v1.json",
+      "sha256": "181d03d6e248d95f792041321edf5555371d4a5ca59e58aba48b1dee1916c12c"
     },
-    "v73_source_point": {
-      "path": "build/verification/v73-completion-root-v1/source-point-v73-v1.json",
-      "sha256": "96af5ec3aa4041136d92b9b8b798696fe46061a2bb529f66297f68a28134a128"
-    }
+    "status": "PUBLIC_existing_repository_review_branch_delivery"
   },
   "documentation_refresh_history": [
     {
@@ -30,6 +34,25 @@
       "code_configuration_paths_changed": 0,
       "parent_commit": "2390b679880712ff5d1e38c3555d5f410c8177f5",
       "status": "Release396PASS_SANpending_GitHubAuthenticationPending"
+    },
+    {
+      "added_source_paths": [],
+      "changed_source_paths": [
+        "docs/code_review.md",
+        "docs/handoff.md",
+        "docs/verification/completion-v73-2026-11-16.md"
+      ],
+      "code_configuration_paths_changed": 0,
+      "parent_commit": "4a09f56f35c15c51a634f925eca12947de08dd3c",
+      "status": "Release396PASS_SAN396PASS_GitHubAuthenticationPending",
+      "v73_master": {
+        "path": "build/verification/human-inspection-v73-progress-v1.json",
+        "sha256": "56e77572afd49273107145281d52ec7f14ff1adea948001e52b5a5de21bb97ab"
+      },
+      "v73_source_point": {
+        "path": "build/verification/v73-completion-root-v1/source-point-v73-v1.json",
+        "sha256": "96af5ec3aa4041136d92b9b8b798696fe46061a2bb529f66297f68a28134a128"
+      }
     }
   ],
   "excluded": [
@@ -2364,9 +2387,9 @@
       "sha256": "0b57acdecafa6233f36a4cad74dd469156fb48ef067a4fe98d1c4fb0248d4080"
     },
     {
-      "bytes": 32637,
+      "bytes": 32718,
       "path": "docs/code_review.md",
-      "sha256": "db8a709c3964510e5734efc8c81c7e10eb5f5647e2b3ac75497e9f51e0475629"
+      "sha256": "204c93d02e150c560fe30029e94c60f9e72badfa8b5e90034498c09ceb813cb1"
     },
     {
       "bytes": 103622,
@@ -7339,6 +7362,11 @@
       "sha256": "620f07de479dd4284405ad6f34b7d787c7ad3e058a2062753d692ed43138c0a7"
     },
     {
+      "bytes": 5319,
+      "path": "docs/handoff-history-v73-2026-11-16.md",
+      "sha256": "ed8d4a49c27f03b6d049e2af88a329f16ba53d93bf1b6480f6e664393cb7d4ef"
+    },
+    {
       "bytes": 5671,
       "path": "docs/handoff-history-w04-start-2026-11-12.md",
       "sha256": "763d40929ebedf17743f56a50d4444e0fea6ae93245464f6ebb109931648360d"
@@ -7349,9 +7377,9 @@
       "sha256": "e3889914424fffef25fab7a4c5f4205eaf51dcfcd52d30fe8297fb0d9dcfa559"
     },
     {
-      "bytes": 5319,
+      "bytes": 3476,
       "path": "docs/handoff.md",
-      "sha256": "ed8d4a49c27f03b6d049e2af88a329f16ba53d93bf1b6480f6e664393cb7d4ef"
+      "sha256": "528f336b6bcb894e441f039d193b01fabbee8e3893f9d4134eaec93cb87856f0"
     },
     {
       "bytes": 9190,
@@ -13729,9 +13757,9 @@
       "sha256": "548b2a32ce83174dd2e359f4f549188b0d81448951a7145349467a388bc696cd"
     },
     {
-      "bytes": 6269,
+      "bytes": 6554,
       "path": "docs/verification/completion-v73-2026-11-16.md",
-      "sha256": "4641d851d97f2ff7fa4c8fd121ac1f6057f0c396a2963a55500b5150f9c7b64f"
+      "sha256": "8905fc8f08cce298ee46d1c4ef06c2ee859bea095d3f2fa94fdab9ab3ad01677"
     },
     {
       "bytes": 8900,
@@ -24661,8 +24689,8 @@
   ],
   "kind": "source_only_publication",
   "native_inventory_902_match": true,
-  "refreshed_utc": "2026-11-16T09:28:43.714299+00:00",
-  "source_bytes": 180452078,
-  "source_files": 4923,
+  "refreshed_utc": "2026-11-16T10:52:18.755584+00:00",
+  "source_bytes": 180455920,
+  "source_files": 4924,
   "source_repository_origin": "https://github.com/NTU-DBT/CROWN"
 }

@@ -88,5 +88,23 @@
     "original_path": "build/verification/v73-full-regression-v1/sanitizer-suite-v1/junit.xml",
     "publication_path": "publication/evidence/v73-full-regression-v1/sanitizer-suite-v1/junit.xml",
     "sha256": "5e4bb17b2a3fe12f8f421e5a9bd5b4e2033d041589c9c13592e8b382bf3fa4e9"
+  },
+  {
+    "bytes": 2079,
+    "original_path": "build/verification/v73-github-delivery-v1/first-push-receiving.json",
+    "publication_path": "publication/evidence/github-delivery/initial-push-receiving.json",
+    "sha256": "666dea49dcbbf18db82ee0f2baefed649952bc4a341917710565f88dfb7140ce"
+  },
+  {
+    "bytes": 1646341,
+    "original_path": "build/verification/v74-github-delivery-root-v1/source-point-v74-v1.json",
+    "publication_path": "publication/evidence/v74-github-delivery-root-v1/source-point-v74-v1.json",
+    "sha256": "181d03d6e248d95f792041321edf5555371d4a5ca59e58aba48b1dee1916c12c"
+  },
+  {
+    "bytes": 1926,
+    "original_path": "build/verification/v74-github-delivery-root-v1/document-lineage.json",
+    "publication_path": "publication/evidence/v74-github-delivery-root-v1/document-lineage.json",
+    "sha256": "641537849a2f02f63d88762c8e3930b78cfebccb2a9a0151885c16371bce9748"
   }
 ]

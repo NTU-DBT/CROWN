@@ -1,74 +1,53 @@
-# CROWN continuation handoff — V73 technical review received; GitHub pending
+# CROWN handoff — reviewed implementation and GitHub delivery
 
-The original Refactor goal is ACTIVE. Accepted V72 remains immutable:
-[exact previous handoff](handoff-history-v72-2026-11-16.md),
-[V72 feature acceptance](verification/difference-v72-2026-11-16.md).
-Ledger remains 75 verified / 1 in progress (A02 user-deferred licensing) /
-2 not started (user-deferred X07 approximation and X11 parallel/distributed) /78.
-Shared-query optimization remains deferred; X10 serial owners stay independent.
-Do not mark the goal complete solely from these statuses.
+The implementation is published on the
+[GitHub review branch](https://github.com/NTU-DBT/CROWN/tree/review/native-v73-f4732bac).
+The first published commit is `f4732bacc7b5e7d692d7660fc83d2f11088fa6b4`;
+later documentation-only commits preserve its native code. The existing remote
+`master` and default branch remain unchanged. Publication uses an isolated Git
+repository; the original checkout's Git metadata is preserved.
 
-V73 entry identity passes all 4,994 prior live paths/frozen providers and 902
-code/configuration paths. No code edit is planned by the audit; current source
-remains the V72 414-production-file implementation. Root packet:
-build/verification/v73-completion-root-v1. At V73 entry, the previous goal turn was concrete
-progress (X08/source/cards/docs/closed evidence), not a status-only continuation.
+All 902 code/configuration paths, including 414 production files, retain the
+accepted V72 bytes. Both complete V73 builds pass. Release and Debug ASan/UBSan
+each execute all 396 registered tests: 396 pass, zero fail and zero skip, with
+unchanged source and build metadata. Actual commands, JUnit, logs and bindings
+remain in `build/verification/v73-full-regression-v1`. These finite executions
+support the scoped review; they do not establish universal correctness or a speedup.
 
-Root completed current native builds in the existing mutable producers
-and all 396 registered CTests, without a selection regex, in both
-Release and Debug ASan/UBSan. Packet: build/verification/v73-full-regression-v1.
-Runner run_profile.py captures actual command/child/exit, complete source before/
-after, build metadata, exact registrations and JUnit. It refuses overwriting a
-stage. Original build sessions18600/release and97245/sanitizer were confirmed live
-after the pause/resume, with runner/child pairs2949488/2949489 and2948706/2948708.
-These IDs are observations, not proof that a job is still live when resuming.
-Always inspect the current session, receipt and actual PID/process state; never
-restart merely because an observation timed out or a saved live-child file exists.
+The [original-scope review](verification/completion-v73-2026-11-16.md) receives
+all 78 task IDs, 777 requirement rows and 44 mandatory Q/U cases. Its three audit
+lanes identify 770 complete rows and seven explicit deferred clauses; no outstanding
+requirement within the agreed scope was found. The root separately receives 18
+cross-cutting/user-scope rows. Both native profiles and the requirement joins have
+independent receiving records. Historical source, benchmark, release and SDK
+evidence retains its original vintage and limitations.
 
-Three disjoint own-model audit agents checked literal original requirements
-against actual implementation, source/test evidence, mandatory cases and release
-artifacts: frontend/planner/storage/CBO; runtime/operations/weighted/extensions;
-and benchmarks/documentation/releases/G0-G11/Q01-Q20/U01-U24. Their records distinguish
-current inherited exact-source evidence from fresh reading, optional research from
-required scope, and user deferrals from verified completion. Root received the
-matrices and independently audited global invariants/Definition of Done.
-All three requirement lanes are now sealed and received in joined-requirements.json:
-78 task IDs, 777 literal/contextual rows (770 complete, seven explicit deferred
-clauses), all 44 Q/U cases and 403 evidence-file identities. No nondeferred gap
-was found. Root cross-cutting/user-scope rows are global-requirements.json.
-The current human-readable scope/result report is
-[V73 original-scope review](verification/completion-v73-2026-11-16.md); it explicitly
-keeps completed integration evidence separate from unfinished publication.
-Both complete native builds pass with unchanged 902 code/config paths. Release
-full 396 and sanitizer full 396 each pass all 396 with zero failures/skips or
-metadata/source drift. Sanitizer exec 12763, runner 3028222/child 3028224, is now
-terminal; actual receipt and complete JUnit prove success. Do not restart either
-completed cohort. The fresh code-spec check passes 158,448 links in 900 mapped
-files with the same 902 code/configuration hashes.
+The [inspection guide](code_review.md) and [block index](code_specs/README.md)
+cover 900 mapped files, 202,375 lines and 22,533 regions. All 19,205 nonblank
+regions have source-bound usage/invariant/ownership/failure/cost/reference contracts;
+3,328 blank regions retain structural descriptions. The 21,731-record registry
+and all 158,448 generated local links pass their current checks. Coverage makes
+code inspectable; it does not independently prove every block correct.
 
-User additionally requested another agent create/push GitHub. The frontend audit
-agent prepared isolated /tmp/crown-native-publish-v73, main commit
-2390b679880712ff5d1e38c3555d5f410c8177f5; docs-only successor is
-4a09f56f35c15c51a634f925eca12947de08dd3c (v73-github-doc-refresh-v1). Native 902 matches current accepted code;
-offline configure discovers 396 tests, credential-signature scan/Git integrity pass,
-and original .git/staging remain untouched. Intended new destination is PRIVATE
-wqc0712/CROWN-native, with SSH identity wqc0712 verified. GitHub API creation still
-needs device authentication. First flow 8446 exited 1 expired_token; no repository
-was created/pushed. Sealed prep: v73-github-publication-v1. User is asked to reply
-Ready before a new flow; use followup_task on v73_frontend_planner_audit to resume.
-Never restart the expired flow or reuse its code. No further create/push permission
-is required; verify actual authentication and destination ownership before action.
-Goal remains ACTIVE, awaiting GitHub authentication/delivery and final
-source/document/evidence receiving. Do not mark complete from audit counts alone.
+Ledger: 75 verified, one in progress and two not started out of 78. A02 project
+licensing disposition, X07 approximation and X11 parallel/distributed execution
+are user-deferred. Existing rights and notices remain preserved. Shared-query
+optimization remains deferred; X10 owners maintain each query independently and
+serially. Comparisons, top-k and difference retain their documented ordinary
+propagation or exact recomputation costs. No new specialized paper bound is claimed.
 
-Preserve all closed snapshots, SDKs and release/evidence packets. If an audit
-finds a real missing required behavior or inconsistent claim, fix and verify it
-in a new explicit successor; do not weaken the objective or silently relabel old
-evidence. Licensing/approximation/shared mutable query state/parallel execution
-are not new implementation gates under user instructions. Keep rights/notices.
-For active code changes, keep direct implementation, minimal exception handling,
-finite exact semantics and source-bound seven-field usage/cost contracts.
-Use PYTHONDONTWRITEBYTECODE=1 and escalated shell commands; git metadata read-only.
-Use own-model agents for substantial tasks, occasional Astra Max for hard audits,
-and Luna Max for bounded mechanical tasks. All current native code/configuration
-must remain stable during a successful full-build/full-suite cohort.
+The [exact V73 technical handoff](handoff-history-v73-2026-11-16.md) preserves the
+pre-publication state. Its sealed master is
+`build/verification/human-inspection-v73-progress-v1.json`, with 4,996 explicit
+source/provider paths and a 10,930-file successful post-seal check. The user later
+selected a new review branch in the existing public `NTU-DBT/CROWN` repository;
+the earlier proposed private repository was never created. Device authentication
+is no longer a delivery dependency.
+
+The actual remote delivery records are in `build/verification/v73-github-delivery-v1`.
+Final documentation lineage and root receiving are in
+`build/verification/v74-github-delivery-root-v1`. The publication README and
+relocated evidence map describe omitted historical archives and retained source
+vintages. Preserve all closed evidence, SDKs, release images and source providers.
+Future code changes need corresponding source/card/native verification; documentation
+successors do not change the completed native cohort.

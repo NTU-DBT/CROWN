@@ -1,0 +1,50 @@
+{
+  "authorization": "User explicitly chose a new review branch in existing NTU-DBT/CROWN.",
+  "branch": "review/native-v73-f4732bac",
+  "default_branch": "master",
+  "default_branch_before_after": "f38c2b0255cff37133cb43fcfee3bda518330378",
+  "default_branch_unchanged": true,
+  "fresh_device_flow_cancelled": {
+    "actual_exec_session": 43121,
+    "reason": "User selected existing SSH-accessible repository; API device authentication no longer needed.",
+    "terminal_exit_code": 1
+  },
+  "local_commit": "f4732bacc7b5e7d692d7660fc83d2f11088fa6b4",
+  "new_private_repository_created": false,
+  "next": "Publication-only metadata correction and root final document successor receiving.",
+  "observed_utc": "2026-11-16T10:45:27.526487+00:00",
+  "original_git_hashes_before_after": {
+    "HEAD": "f6f2b945f6c411b02ba3da9c7ace88dcf71b6af65ba2e0d89aa82900042b5a10",
+    "config": "991fcb4d107de2a315719b30abdecf7be5c3424ac1b9f29423182b13eb3a7941",
+    "index": "dff33158b0c0540bb869a01499652afa22ba6572cd06b59acd766ec298a305f3"
+  },
+  "original_git_unchanged_this_resume": true,
+  "owner": "NTU-DBT",
+  "private": false,
+  "push": {
+    "actual_exec_session": 73175,
+    "command": [
+      "git",
+      "push",
+      "git@github.com:NTU-DBT/CROWN.git",
+      "main:refs/heads/review/native-v73-f4732bac"
+    ],
+    "force": false,
+    "new_branch_created": true,
+    "terminal_exit_code": 0
+  },
+  "remote_commit": "f4732bacc7b5e7d692d7660fc83d2f11088fa6b4",
+  "repository": "NTU-DBT/CROWN",
+  "status": "first_actual_public_review_branch_push_verified",
+  "url": "https://github.com/NTU-DBT/CROWN/tree/review/native-v73-f4732bac",
+  "verification_command": [
+    "git",
+    "ls-remote",
+    "--symref",
+    "git@github.com:NTU-DBT/CROWN.git",
+    "HEAD",
+    "refs/heads/master",
+    "refs/heads/review/native-v73-f4732bac"
+  ],
+  "verification_stdout": "ref: refs/heads/master\tHEAD\nf38c2b0255cff37133cb43fcfee3bda518330378\tHEAD\nf38c2b0255cff37133cb43fcfee3bda518330378\trefs/heads/master\nf4732bacc7b5e7d692d7660fc83d2f11088fa6b4\trefs/heads/review/native-v73-f4732bac\n"
+}

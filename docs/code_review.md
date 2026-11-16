@@ -12,7 +12,8 @@ receives all 78 task IDs, 777 requirement rows and 44 mandatory cases, with expl
 user deferrals. Both complete current 396-test profiles pass without failures or
 skips. All 902 code/configuration paths, including 414 production files, retain
 their V72 bytes. The review separates current execution from inherited source
-inspection and historical releases; GitHub delivery remains authentication pending.
+inspection and historical releases. The implementation is published on the
+[GitHub review branch](https://github.com/NTU-DBT/CROWN/tree/review/native-v73-f4732bac).
 
 The index maps **900 files / 202,375 lines / 22,533 blocks**. Its **21,731 authored
 contracts cover all 19,205 nonblank blocks**. The remaining 3,328 regions contain
