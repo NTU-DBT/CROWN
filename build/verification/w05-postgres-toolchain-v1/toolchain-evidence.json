@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "kind": "isolated_postgresql_oracle_toolchain",
+  "captured_on": "2026-11-12",
+  "scope": "Download exact PostgreSQL 16 packages from local apt metadata, verify hashes, extract only into /tmp, and inspect executable versions, direct shared libraries, support files, and compiler paths.",
+  "constraints_observed": {
+    "system_packages_installed": false,
+    "apt_lists_refreshed": false,
+    "global_services_changed": false,
+    "cluster_initialization_run": false,
+    "server_started": false,
+    "system_config_modified": false,
+    "effective_uid": 1000
+  },
+  "source_evidence": [
+    {
+      "path": "Refactor.md",
+      "lines": ["389", "1321-1324"],
+      "sha256": "bb90e4a4e97e2817a0869ad86c5c8b00e571bb241f153fb44641c71f86fcd5ce",
+      "relevance": "W05 requires a mature SQL comparison with matching casts, collation, and types."
+    },
+    {
+      "path": "docs/handoff.md",
+      "lines": ["79-82"],
+      "sha256": "6f96dcc36f3018d56e2bd2d6ee8b951f94253b90f86921699eab8dad419301ce",
+      "relevance": "W05 is active and covers general SQL NULL/type behavior, plain SELECT bags, and explicit source admission."
+    },
+    {
+      "path": "include/crown/ir/scalar.hpp",
+      "lines": ["30-32"],
+      "sha256": "8b3b5a06d1ad9c1d0338e3560e6146c6b3ed98616594f72e66d8c5f17f3ae859",
+      "relevance": "CROWN Decimal has at most 38 coefficient digits and scale 0..38; it is not SQL DECIMAL(p,s) coercion."
+    },
+    {
+      "path": "build/verification/w05-sql-oracle-environment-v1/README.md",
+      "sha256": "c261c78c3b00f8fbc6ca1c731b26e6fd91ce120d91c6aaadc69303da33b61800",
+      "relevance": "Prior environment inventory showed DuckDB's mixed-scale UNION coercion loses 1e-38, motivating an actual PostgreSQL oracle."
+    }
+  ],
+  "apt_metadata": {
+    "index_refresh_performed": false,
+    "server_command": "apt-cache show postgresql-16=16.15-0ubuntu0.24.04.1",
+    "client_command": "apt-cache show postgresql-client-16=16.15-0ubuntu0.24.04.1",
+    "download_source": "http://archive.ubuntu.com/ubuntu noble-updates/main amd64",
+    "packages": [
+      {
+        "name": "postgresql-16",
+        "architecture": "amd64",
+        "version": "16.15-0ubuntu0.24.04.1",
+        "filename": "pool/main/p/postgresql-16/postgresql-16_16.15-0ubuntu0.24.04.1_amd64.deb",
+        "size_bytes": 15610426,
+        "sha256_from_apt": "d60ae76fb862cd4cca7bfdcdcdcc271c5e1d75f6b7915305ce2d962735a4b666",
+        "downloaded_path": "/tmp/w05-postgres-package-v1/postgresql-16_16.15-0ubuntu0.24.04.1_amd64.deb",
+        "sha256_downloaded": "d60ae76fb862cd4cca7bfdcdcdcc271c5e1d75f6b7915305ce2d962735a4b666",
+        "hash_match": true,
+        "extract_path": "/tmp/w05-postgres-package-v1/extracted"
+      },
+      {
+        "name": "postgresql-client-16",
+        "architecture": "amd64",
+        "version": "16.15-0ubuntu0.24.04.1",
+        "filename": "pool/main/p/postgresql-16/postgresql-client-16_16.15-0ubuntu0.24.04.1_amd64.deb",
+        "size_bytes": 1301302,
+        "sha256_from_apt": "4796f72e1a7270ad8c17b1ecb025cd453f692b42c10aaf89f6b476da61761eac",
+        "downloaded_path": "/tmp/w05-postgres-package-v1/postgresql-client-16_16.15-0ubuntu0.24.04.1_amd64.deb",
+        "sha256_downloaded": "4796f72e1a7270ad8c17b1ecb025cd453f692b42c10aaf89f6b476da61761eac",
+        "hash_match": true,
+        "extract_path": "/tmp/w05-postgres-package-v1/extracted"
+      }
+    ],
+    "download_command": {
+      "command": "apt-get download postgresql-16=16.15-0ubuntu0.24.04.1 postgresql-client-16=16.15-0ubuntu0.24.04.1",
+      "working_directory": "/tmp/w05-postgres-package-v1",
+      "exit_code": 0,
+      "output_summary": "Fetched 16.9 MB in 4s (4546 kB/s)"
+    }
+  },
+  "extracted_toolchain": {
+    "bindir": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin",
+    "sharedir": "/tmp/w05-postgres-package-v1/extracted/usr/share/postgresql/16",
+    "libdir": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/lib",
+    "executables": [
+      {
+        "name": "postgres",
+        "path": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/postgres",
+        "version_exit_code": 0,
+        "version_output": "postgres (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+        "ldd_exit_code": 0,
+        "missing_shared_libraries": []
+      },
+      {
+        "name": "initdb",
+        "path": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/initdb",
+        "version_exit_code": 0,
+        "version_output": "initdb (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+        "ldd_exit_code": 0,
+        "missing_shared_libraries": []
+      },
+      {
+        "name": "pg_ctl",
+        "path": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl",
+        "version_exit_code": 0,
+        "version_output": "pg_ctl (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+        "ldd_exit_code": 0,
+        "missing_shared_libraries": []
+      },
+      {
+        "name": "psql",
+        "path": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/psql",
+        "version_exit_code": 0,
+        "version_output": "psql (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+        "ldd_exit_code": 0,
+        "missing_shared_libraries": []
+      }
+    ],
+    "support_files": [
+      "/tmp/w05-postgres-package-v1/extracted/usr/share/postgresql/16/postgres.bki",
+      "/tmp/w05-postgres-package-v1/extracted/usr/share/postgresql/16/postgresql.conf.sample",
+      "/tmp/w05-postgres-package-v1/extracted/usr/share/postgresql/16/pg_hba.conf.sample",
+      "/tmp/w05-postgres-package-v1/extracted/usr/share/postgresql/16/pg_ident.conf.sample",
+      "/tmp/w05-postgres-package-v1/extracted/usr/share/postgresql/16/information_schema.sql",
+      "/tmp/w05-postgres-package-v1/extracted/usr/share/postgresql/16/system_views.sql",
+      "/tmp/w05-postgres-package-v1/extracted/usr/share/postgresql/16/snowball_create.sql"
+    ],
+    "system_pg_config_paths": {
+      "bindir": "/usr/lib/postgresql/16/bin",
+      "sharedir": "/usr/share/postgresql/16",
+      "libdir": "/usr/lib/x86_64-linux-gnu",
+      "includedir_server": "/usr/include/postgresql/16/server",
+      "reported_bindir_exists": false,
+      "reported_sharedir_exists": false
+    }
+  },
+  "compiler_environment": {
+    "effective_uid": 1000,
+    "environment_variables": {
+      "CC": null,
+      "CXX": null,
+      "CFLAGS": null,
+      "CXXFLAGS": null
+    },
+    "executable_paths": {
+      "cc": "/usr/bin/cc",
+      "c++": "/usr/bin/c++",
+      "gcc": "/usr/bin/gcc",
+      "g++": "/usr/bin/g++",
+      "clang": null,
+      "clang++": null,
+      "cmake": "/usr/bin/cmake",
+      "ninja": null,
+      "make": "/usr/bin/make"
+    }
+  },
+  "command_exit_log": [
+    {"command": "apt-cache show postgresql-16=16.15-0ubuntu0.24.04.1", "exit_code": 0},
+    {"command": "apt-cache policy postgresql-16 postgresql-client-16", "exit_code": 0},
+    {"command": "apt-cache show postgresql-client-16=16.15-0ubuntu0.24.04.1", "exit_code": 0},
+    {"command": "mkdir -p /tmp/w05-postgres-package-v1 build/verification/w05-postgres-toolchain-v1", "exit_code": 0},
+    {"command": "apt-get download postgresql-16=16.15-0ubuntu0.24.04.1 postgresql-client-16=16.15-0ubuntu0.24.04.1", "exit_code": 0},
+    {"command": "Python SHA-256 comparison against apt metadata", "exit_code": 0, "result": "both package hashes matched; no unexpected download-directory entries"},
+    {"command": "mkdir -p /tmp/w05-postgres-package-v1/extracted", "exit_code": 0},
+    {"command": "dpkg-deb --extract postgresql-16 package into /tmp/w05-postgres-package-v1/extracted", "exit_code": 0},
+    {"command": "dpkg-deb --extract postgresql-client-16 package into /tmp/w05-postgres-package-v1/extracted", "exit_code": 0},
+    {"command": "find extracted/usr for postgres/initdb/pg_ctl/psql", "exit_code": 0},
+    {"command": "find extracted/usr/share/postgresql/16 for BKI/config/SQL support files", "exit_code": 0},
+    {"command": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/postgres --version", "exit_code": 0},
+    {"command": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/initdb --version", "exit_code": 0},
+    {"command": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl --version", "exit_code": 0},
+    {"command": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/psql --version", "exit_code": 0},
+    {"command": "ldd on extracted postgres", "exit_code": 0, "missing_shared_libraries": []},
+    {"command": "ldd on extracted initdb", "exit_code": 0, "missing_shared_libraries": []},
+    {"command": "ldd on extracted pg_ctl", "exit_code": 0, "missing_shared_libraries": []},
+    {"command": "ldd on extracted psql", "exit_code": 0, "missing_shared_libraries": []},
+    {"command": "compiler/tool path inspection via Python shutil.which", "exit_code": 0},
+    {"command": "/usr/bin/pg_config --bindir", "exit_code": 0, "output": "/usr/lib/postgresql/16/bin"},
+    {"command": "/usr/bin/pg_config --sharedir", "exit_code": 0, "output": "/usr/share/postgresql/16"},
+    {"command": "/usr/bin/pg_config --libdir", "exit_code": 0, "output": "/usr/lib/x86_64-linux-gnu"},
+    {"command": "/usr/bin/pg_config --includedir-server", "exit_code": 0, "output": "/usr/include/postgresql/16/server"}
+  ],
+  "next_use_boundary": "This packet prepares binaries and data files only. An ephemeral cluster still needs separate initialization and server-start authorization/instructions; neither was performed here."
+}
