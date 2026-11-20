@@ -2,6 +2,7 @@
 #include "owner.hpp"
 
 #include "crown/api/error.hpp"
+#include <exception>
 #include <algorithm>
 #include <limits>
 #include <map>

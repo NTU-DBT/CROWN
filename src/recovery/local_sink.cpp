@@ -1,4 +1,5 @@
 #include "crown/recovery/local_sink.hpp"
+#include "posix_compat.hpp"
 #include "local_sink_codec.hpp"
 #include "crown/ir/digest.hpp"
 #ifdef CROWN_RUNTIME_TESTING
@@ -9,7 +10,6 @@
 #include <fcntl.h>
 #include <limits>
 #include <sys/file.h>
-#include <sys/random.h>
 #include <unistd.h>
 namespace crown::recovery::sink {
 #ifdef CROWN_RUNTIME_TESTING
@@ -45,9 +45,7 @@ struct Path {
   }
 };
 bool same(const struct stat& a,const struct stat& b) {
-  return a.st_dev==b.st_dev && a.st_ino==b.st_ino && a.st_size==b.st_size &&
-      a.st_mtim.tv_sec==b.st_mtim.tv_sec && a.st_mtim.tv_nsec==b.st_mtim.tv_nsec &&
-      a.st_ctim.tv_sec==b.st_ctim.tv_sec && a.st_ctim.tv_nsec==b.st_ctim.tv_nsec;
+  return posix::same_file_state(a,b);
 }
 std::string_view view(const ImageVector<char>& bytes) {return {bytes.data(),bytes.size()};}
 std::array<char,64> chain(const std::array<char,64>& previous,const char* checksum) {
@@ -92,7 +90,7 @@ std::int64_t File::call(Stage stage,std::size_t requested,int fd,const char* nam
       case Stage::open_directory:if(!name)fail(Fault::state,stage,outcome_);result=::open(name,O_RDONLY|O_DIRECTORY|O_CLOEXEC);break;
       case Stage::entropy:
         if(!buffer)fail(Fault::state,stage,outcome_);
-        result=::getrandom(buffer,transfer,GRND_NONBLOCK);
+        result=posix::random_bytes(buffer,transfer);
 #ifdef CROWN_RUNTIME_TESTING
         if(zero_entropy && result>0)std::fill_n(static_cast<unsigned char*>(buffer),static_cast<std::size_t>(result),static_cast<unsigned char>(0));
 #endif

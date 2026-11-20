@@ -2,6 +2,7 @@
 
 #include "crown/api/error.hpp"
 #include "arena_owner.hpp"
+#include <exception>
 #include <limits>
 #include <utility>
 

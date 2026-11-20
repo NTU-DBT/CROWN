@@ -46,9 +46,9 @@ void run(const char* fixture) {
         long double predicted=0;
         for(std::size_t j=0;j<model::component_count;++j)if(calibration.coefficients()[j]){
           const auto rate=calibration.coefficients()[j]->nanoseconds_per_unit;
-          predicted+=static_cast<long double>(observation.units[j])*rate.numerator/rate.denominator;
+          predicted+=static_cast<long double>(observation.units[j])*static_cast<long double>(rate.numerator)/static_cast<long double>(rate.denominator);
         }
-        check(predicted==observation.elapsed_ns,"collinear identified combination differs");
+        check(predicted==static_cast<long double>(observation.elapsed_ns),"collinear identified combination differs");
       }
     }else {
       const auto annotation=static_cast<std::size_t>(C::annotation_change),unused=static_cast<std::size_t>(C::checkpoint_byte);

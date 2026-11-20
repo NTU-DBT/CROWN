@@ -1,4 +1,5 @@
 #include "generation_detail.hpp"
+#include "posix_compat.hpp"
 #include "crown/ir/digest.hpp"
 #include "../runtime/checkpoint_policy.hpp"
 #include <algorithm>
@@ -31,9 +32,7 @@ void proof(const RetirementIntent& intent,const sink::Header& header,std::uint64
   if(intent.sink!=header || generation<intent.acknowledged_generation || sequence<intent.acknowledged_sequence)fail(GenerationFault::binding);
 }
 bool same(const struct stat& a,const struct stat& b) {
-  return a.st_dev==b.st_dev && a.st_ino==b.st_ino && a.st_size==b.st_size &&
-      a.st_mtim.tv_sec==b.st_mtim.tv_sec && a.st_mtim.tv_nsec==b.st_mtim.tv_nsec &&
-      a.st_ctim.tv_sec==b.st_ctim.tv_sec && a.st_ctim.tv_nsec==b.st_ctim.tv_nsec;
+  return posix::same_file_state(a,b);
 }
 // Fixed layouts fit 724/788 bytes; internal field helpers rely on those sizes.
 struct Writer {

@@ -14,6 +14,7 @@
 #ifdef CROWN_RUNTIME_TESTING
 #include "runtime_probe.hpp"
 #endif
+#include <exception>
 #include <algorithm>
 #include <atomic>
 #include <map>

@@ -1,6 +1,7 @@
 #include "weighted_delta_detail.hpp"
 #include "sql_cold_rebuild.hpp"
 #include "crown/ir/digest.hpp"
+#include <exception>
 #include <algorithm>
 #include <charconv>
 

@@ -1,4 +1,5 @@
 #include "sql_aggregate_file_detail.hpp"
+#include "posix_compat.hpp"
 #include "binary_detail.hpp"
 #include "crown/ir/digest.hpp"
 #ifdef CROWN_SQL_AGGREGATE_FILE_TESTING
@@ -9,7 +10,6 @@
 #include <fcntl.h>
 #include <limits>
 #include <sys/file.h>
-#include <sys/random.h>
 #include <unistd.h>
 
 namespace crown::recovery::sql_aggregate {
@@ -24,9 +24,7 @@ using binary_detail::require;
 namespace {
 bool closing(FileStage stage) noexcept { return stage==FileStage::close_file || stage==FileStage::close_directory; }
 bool same(const struct stat& a,const struct stat& b) noexcept {
-  return a.st_dev==b.st_dev && a.st_ino==b.st_ino && a.st_size==b.st_size &&
-      a.st_mtim.tv_sec==b.st_mtim.tv_sec && a.st_mtim.tv_nsec==b.st_mtim.tv_nsec &&
-      a.st_ctim.tv_sec==b.st_ctim.tv_sec && a.st_ctim.tv_nsec==b.st_ctim.tv_nsec;
+  return posix::same_file_state(a,b);
 }
 } // namespace
 [[noreturn]] void fail(FileFault fault,FileStage stage,FileOutcome outcome,int error) {
@@ -144,7 +142,7 @@ std::int64_t Io::call(FileStage stage,std::size_t requested,int descriptor,const
       case FileStage::open_directory:if(!name)fail(FileFault::state,stage,outcome);result=::open(name,O_RDONLY|O_DIRECTORY|O_CLOEXEC);break;
       case FileStage::entropy:
         if(!buffer)fail(FileFault::state,stage,outcome);
-        result=::getrandom(buffer,count,GRND_NONBLOCK);
+        result=posix::random_bytes(buffer,count);
 #ifdef CROWN_SQL_AGGREGATE_FILE_TESTING
         if(zero_entropy && result>0)std::fill_n(static_cast<unsigned char*>(buffer),static_cast<std::size_t>(result),static_cast<unsigned char>(0));
 #endif

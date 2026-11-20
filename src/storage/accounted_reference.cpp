@@ -1,5 +1,6 @@
 #include "crown/storage/accounted_reference.hpp"
 #include "owner.hpp"
+#include <exception>
 #include <algorithm>
 #include <limits>
 #include <list>

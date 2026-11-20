@@ -33,7 +33,7 @@ struct Header {
 struct ReaderAdvanceView {
   std::uint64_t bytes=0,records=0;
   bool header_read=false;
-  std::span<const std::uint64_t> csv_fields;
+  std::span<const std::size_t> csv_fields;
 };
 struct InputView {
   io::InputItemView item;
@@ -80,7 +80,7 @@ struct Decoded {
   Inspected info;
   storage::AccountedRow row;
   ImageVector<char> source;
-  ImageVector<std::uint64_t> csv_fields;
+  ImageVector<std::size_t> csv_fields;
   [[nodiscard]] std::string_view source_name() const & noexcept {return {source.data(),source.size()};}
   std::string_view source_name() const &&=delete;
   // Borrows this decoded owner's native row/source/CSV storage. Native query

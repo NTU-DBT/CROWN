@@ -27,7 +27,13 @@ inline std::string contents(const std::string& path) {
   std::ifstream input(path,std::ios::binary);return {std::istreambuf_iterator<char>(input),std::istreambuf_iterator<char>()};
 }
 inline std::size_t descriptors() {
-  std::size_t count=0;for(const auto& entry:std::filesystem::directory_iterator("/proc/self/fd")){static_cast<void>(entry);++count;}return count;
+  std::size_t count=0;for(const auto& entry:std::filesystem::directory_iterator(
+#if defined(__APPLE__)
+"/dev/fd"
+#else
+"/proc/self/fd"
+#endif
+)){static_cast<void>(entry);++count;}return count;
 }
 inline std::size_t temporaries(const Directory& directory) {
   std::size_t count=0;for(const auto& entry:std::filesystem::directory_iterator(directory.name))

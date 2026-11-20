@@ -277,7 +277,7 @@ int main(int argc,char** argv) {
     check(argc==2,"fixture directory required");const std::string directory=argv[1];const auto account=resource::MemoryAccount::create(32*1024*1024);
     auto h=roundtrip(directory,"header",0,jp::PayloadView{header()},account);
     const Row rich{INT64_MIN,std::string("A\0\xff",3),true,Date::parse("1970-01-01"),Decimal::parse("-123.45")};
-    const std::array<std::uint64_t,2> permutation{1,0};
+    const std::array<std::size_t,2> permutation{1,0};
     const io::InputEventView physical{{1,TableId{0},SetOperation::insert,storage::TupleValuesView::borrow(rich)},io::SourcePositionView{"alpha",0}};
     const jp::InputView input{physical,jp::ReaderAdvanceView{123,1,true,permutation}};
     auto p=roundtrip(directory,"physical-input",1,jp::PayloadView{input},account,&rich);

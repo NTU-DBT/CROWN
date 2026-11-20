@@ -38,7 +38,7 @@ std::string event_kind(runtime::SupportEventKind kind) {
 Json value_state(const runtime::SupportValueState& value) {
   return {{"member",value.member},
       {"satisfied_children",value.satisfied ? Json(value.satisfied->value) : Json(nullptr)},
-      {"child_present",value.child_present},
+      {"child_present",std::vector<bool>(value.child_present.begin(),value.child_present.end())},
       {"support",value.support ? Json(value.support->value) : Json(nullptr)}};
 }
 Json journal(const runtime::SupportJournal& value) {

@@ -1493,9 +1493,11 @@ add_library(crown_sql_aggregate src/frontend/sql_aggregate.cpp)
 target_include_directories(crown_sql_aggregate PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_include_directories(crown_sql_aggregate SYSTEM PRIVATE
-  "${_crown_pg_query_source_dir}/vendor/upb"
-  "${_crown_pg_query_source_dir}/vendor/upb/third_party/utf8_range")
+# Search the upb directories after the system headers: vendor/upb contains a file named
+# VERSION, which shadows the C++ <version> header on case-insensitive file systems (macOS).
+target_compile_options(crown_sql_aggregate PRIVATE
+  "SHELL:-idirafter ${_crown_pg_query_source_dir}/vendor/upb"
+  "SHELL:-idirafter ${_crown_pg_query_source_dir}/vendor/upb/third_party/utf8_range")
 target_link_libraries(crown_sql_aggregate PUBLIC crown_sql_rows crown_aggregate PRIVATE crown_options
   $<BUILD_INTERFACE:crown_pg_query> $<INSTALL_INTERFACE:CROWN::pg_query>)
 add_library(crown_sql_aggregate_runtime src/runtime/sql_aggregate.cpp)
