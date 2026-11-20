@@ -406,6 +406,9 @@ int workflow(int argc,char** argv) {
       session->start();if(!session->begin_next())throw Error("pending_input","logged input missing");
       finish(*session);deliver(*session);session->pause();
     }
+    // Retire existing history first as well: once the retained-generation window
+    // is full, rotation itself is refused and would otherwise never reach retirement.
+    if(retire){const auto selected=session->generation_state().selected;if(selected.generation>selected.first_generation)session->retire_generation_history();}
     session->rotate_generation();if(retire)session->retire_generation_history();
   }else if(reading){emit(results(*session,numeric,limit));return 0;}
   const auto completed=std::chrono::steady_clock::now();
