@@ -98,12 +98,17 @@ void syscall_matrix(Schema& s,const Packets& p) {
       assert(failed && descriptors()==fds && account.statistics().current.allocations==1 && temporaries(dir)==0);
       surviving(sink,mode,path,s,p,account);++failures;
     }
+    // The quota bounds one call (or one scanned frame), not the file lifetime:
+    // small caps refuse cleanly, and once a cap suffices every larger one does.
+    std::uint64_t threshold=0;
     for(std::uint64_t cap=1;cap<=operations;++cap) {
       setup(sink,mode,path,p);auto limits=ar::FileLimits{};limits.operations=cap;bool failed=false;
       try {exercise(sink,mode,path,s,p,account,limits);}catch(const ar::FileFailure& error){failed=true;assert(error.fault()==ar::FileFault::limit);}
-      assert(failed==(cap<operations) && temporaries(dir)==0 && account.statistics().current.allocations==1);
+      assert((!failed || threshold==0) && temporaries(dir)==0 && account.statistics().current.allocations==1);
+      if(!failed && threshold==0)threshold=cap;
       surviving(sink,mode,path,s,p,account);
     }
+    assert(threshold>1);
     for(auto stage:{ar::FileStage::open_directory,ar::FileStage::open_file,ar::FileStage::entropy,ar::FileStage::create_temporary,
         ar::FileStage::read_data,ar::FileStage::write_data,ar::FileStage::sync_file,ar::FileStage::sync_directory,
         ar::FileStage::truncate_tail,ar::FileStage::lock_file,ar::FileStage::stat_file,ar::FileStage::unlink_temporary}) {

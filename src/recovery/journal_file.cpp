@@ -53,12 +53,12 @@ File::File(const resource::MemoryAccount& account,const Header& header,FileLimit
 File::~File(){raw_close(fd_);}
 File::File(File&& other) noexcept
     :limits_(other.limits_),cursor_(std::move(other.cursor_)),scratch_(std::move(other.scratch_)),pending_(std::move(other.pending_)),
-      fd_(other.fd_),stamp_(other.stamp_),operations_(other.operations_),outcome_(other.outcome_),poisoned_(other.poisoned_),torn_(other.torn_) {
+      fd_(other.fd_),stamp_(other.stamp_),operations_(other.operations_),budget_base_(other.budget_base_),outcome_(other.outcome_),poisoned_(other.poisoned_),torn_(other.torn_) {
   other.fd_=-1;other.poisoned_=true;
 }
 std::int64_t File::call(FileStage stage,std::size_t requested,int fd,const char* name,int other_fd,const char* other_name,
     void* buffer,std::uint64_t offset,struct stat* status,bool emergency_cleanup) {
-  if(operations_==UINT64_MAX || (!emergency_cleanup && operations_>=limits_.operations)) {
+  if(operations_==UINT64_MAX || (!emergency_cleanup && operations_-budget_base_>=limits_.operations)) {
     if(closing(stage))raw_close(fd);
     fail(FileFault::limit,stage,outcome_);
   }
@@ -219,7 +219,7 @@ File File::open_replay(const resource::MemoryAccount& account,std::string_view p
     if(actual<total){static_cast<void>(result.cursor_.finish_tail(view(result.scratch_)));result.torn_=true;break;}
     const auto records=result.cursor_.state().records;const auto state=result.cursor_.feed(view(result.scratch_));
     if(visitor)visitor(view(result.scratch_),state,context);
-    result.retain_pending(records);offset+=total;
+    result.retain_pending(records);offset+=total;result.rebase();
   }
   char extra=0;if(result.checked(FileStage::read_data,1,result.fd_,nullptr,-1,nullptr,&extra,size)!=0)fail(FileFault::changed,FileStage::read_data,result.outcome_);
   result.unchanged_file();static_cast<void>(result.checked(FileStage::sync_file,0,result.fd_));
@@ -229,7 +229,7 @@ File File::open_replay(const resource::MemoryAccount& account,std::string_view p
 void File::append(std::string_view frame) & {
   // Cursor validation is strong before publication. Once it advances, later
   // I/O failure poisons this owner: reopen the surviving prefix before retry.
-  ready();outcome_=FileOutcome::unchanged;
+  ready();outcome_=FileOutcome::unchanged;rebase();
   if(torn_)fail(FileFault::state,FileStage::state,outcome_);
   const auto before=cursor_.state();
   if(frame.size()>limits_.scan.record.record.bytes || frame.size()>limits_.scan.bytes-before.consumed)throw Failure(Fault::limit);
@@ -242,13 +242,13 @@ void File::append(std::string_view frame) & {
 void File::repair_tail() & {
   // Truncate only the validated incomplete suffix; complete pending inputs
   // and window commits remain part of recovery authority.
-  ready();outcome_=FileOutcome::unchanged;
+  ready();outcome_=FileOutcome::unchanged;rebase();
   if(!torn_)return;
   poisoned_=true;unchanged_file();static_cast<void>(checked(FileStage::truncate_tail,0,fd_,nullptr,-1,nullptr,nullptr,cursor_.state().consumed));
   static_cast<void>(checked(FileStage::sync_file,0,fd_));outcome_=FileOutcome::durable;refresh();torn_=false;poisoned_=false;
 }
 void File::close() & {
   if(fd_<0)fail(FileFault::state,FileStage::state,FileOutcome::unchanged);
-  const int old=fd_;fd_=-1;static_cast<void>(checked(FileStage::close_file,0,old));
+  rebase();const int old=fd_;fd_=-1;static_cast<void>(checked(FileStage::close_file,0,old));
 }
 } // namespace crown::recovery::journal

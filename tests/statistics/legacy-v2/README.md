@@ -29,3 +29,7 @@ The JSON files describe the original v2 scope, including its historical
 capability strings. They do not declare acceptance of C01 or replace its v3
 schema. Do not regenerate them with the implementation under test to make a
 failed comparison pass; inspect the behavior and preserved provenance first.
+
+2026-11-20: `legacy-session.json` was regenerated for one intentional change:
+`InputLimits::records` now defaults to unbounded, so the embedded input policy
+reads `"records":null` instead of `"records":1000000`. No other byte changed.

@@ -156,6 +156,15 @@ void hostile_and_caps() {
     std::string changed(frames[1]);changed[field]^=7;checksum(changed);std::string file(frames[0]);file+=changed;reject(file);
   }
   {auto changed=std::string(frames[0]);changed[sk::frame_header_size+9]='f';checksum(changed);changed.append(frames[1]);reject(changed);}
+  // Limits::operations bounds one call (or one scanned epoch), not the file's
+  // lifetime: many epochs append and reopen under a small per-call quota.
+  {
+    const auto name=dir.file("operations-lifetime.sink");auto limits=sk::Limits{};limits.operations=16;
+    {auto file=sk::File::create(account,name,header,schema,limits);
+      for(std::uint64_t sequence=1;sequence<=300;++sequence)check(file.append(1,sequence,sequence%2?std::span<const sk::RowView>(rows):std::span<const sk::RowView>{}),"sink append under per-call quota failed");
+      check(file.state().operations>limits.operations && file.state().sequence==300,"per-call quota capped the sink lifetime");file.close();}
+    auto reopened=sk::File::open(account,name,header,schema,limits);check(reopened.state().sequence==300,"sink reopen under per-epoch quota failed");reopened.close();
+  }
   for(const bool one_under:{false,true}) {
     const auto name=dir.file(one_under?"work-under.sink":"work-exact.sink");auto limits=sk::Limits{};limits.work=used-(one_under?1U:0U);auto file=sk::File::create(account,name,header,schema,limits);static_cast<void>(file.append(1,1,rows));bool capped=false;
     try{static_cast<void>(file.append(1,2,{}));}catch(const recovery::ImageFailure& e){capped=e.fault()==recovery::ImageFault::work;}

@@ -135,6 +135,7 @@ void help() {
     "compile: --admission-options FILE --physical-options FILE --search-work N\n"
     "run/restore/benchmark: --events N (optional positional EVENTS is also accepted)\n"
     "run/benchmark: --input-format jsonl|binary --mode delta|maintenance --spool-rows N --spool-bytes N\n"
+    "run/restore/benchmark: --rotate-records N (automatic generation rotation; default 200000, 0 disables)\n"
     "runtime: --memory-limit-bytes N --query-id HEX32 --sink-id HEX32\n"
     "results: --epoch N; checkpoint: --retire\n"
     "new runs: --observe off|counters|timed|trace; benchmark: --run-label TEXT\n"
@@ -241,12 +242,20 @@ std::uint64_t nanoseconds(std::chrono::steady_clock::time_point begin,std::chron
   return elapsed>0?static_cast<std::uint64_t>(elapsed):0;
 }
 std::string snapshot(runtime::QuerySession& session,std::size_t limit) {
-  const auto state=session.snapshot();const auto sink=session.local_sink_state();const auto generation=session.generation_state();
-  Writer writer(limit);writer.raw("{\"schema_version\":1,\"committed_sequence\":");writer.number(state.sequence);
-  writer.raw(",\"source_positions\":");writer.json(state.progress.source_positions);
-  writer.raw(",\"rows\":[");bool first=true;
-  for(const auto& row:state.rows){if(!first){writer.raw(",");}first=false;writer.row(row.values());}
-  writer.raw("],\"verified_output_sequence\":");writer.number(sink.verified_sequence);
+  // The report is informational (the local sink is the durable output). A current
+  // result above the snapshot row/byte limits omits "rows" instead of failing a
+  // command whose durable work has already committed.
+  std::optional<runtime::SessionSnapshot> state;
+  try{state.emplace(session.snapshot());}catch(const Error& error){if(error.code()!="resource_limit")throw;}
+  const auto sink=session.local_sink_state();const auto generation=session.generation_state();
+  Writer writer(limit);writer.raw("{\"schema_version\":1,\"committed_sequence\":");writer.number(state?state->sequence:session.status().committed_sequence);
+  writer.raw(",\"source_positions\":");writer.json(state?state->progress.source_positions:session.progress().source_positions);
+  if(state) {
+    writer.raw(",\"rows\":[");bool first=true;
+    for(const auto& row:state->rows){if(!first){writer.raw(",");}first=false;writer.row(row.values());}
+    writer.raw("]");
+  }else writer.raw(",\"rows\":null,\"rows_omitted\":\"current result exceeds the snapshot row/byte limit; read the local sink\"");
+  writer.raw(",\"verified_output_sequence\":");writer.number(sink.verified_sequence);
   writer.raw(",\"selected_generation\":");writer.number(generation.selected.generation);
   writer.raw(",\"first_generation\":");writer.number(generation.selected.first_generation);
   writer.raw(",\"delivery_work\":");writer.number(sink.delivery_work);
@@ -350,6 +359,9 @@ int workflow(int argc,char** argv) {
   const auto requested_query=query_override?identifier(*query_override):std::array<char,32>{};
   const auto requested_sink=sink_override?identifier(*sink_override):std::array<char,32>{};
   const bool retire=arguments.command=="checkpoint" && arguments.take("--retire").has_value();
+  // Default: rotate after 200,000 WAL records (100,000 updates), a quarter of the
+  // default journal scan limits; 0 disables automatic rotation.
+  const auto rotate_records=running?arguments.number("--rotate-records",200'000):0;
   arguments.finished();
   const auto admission_begin=std::chrono::steady_clock::now();
   const auto built=artifact(arguments.positional[0],proof_work);auto program=CompiledProgram::standalone(built.plan);auto sink=sink_options(program);
@@ -381,6 +393,12 @@ int workflow(int argc,char** argv) {
       const auto rows=deliver(*session);accumulate(delivery_ns,nanoseconds(committed_at,std::chrono::steady_clock::now()));
       if(rows>UINT64_MAX-delivered_rows)throw Error("counter_overflow","delivered row counter exhausted");
       delivered_rows+=rows;++processed;
+      // Rotate to a new generation (checkpoint + fresh WAL) and retire the old one
+      // before the WAL nears its scan limits, so long streams stay recoverable and
+      // recovery replays only the suffix since the last checkpoint.
+      if(rotate_records && session->journal_state().records>=rotate_records) {
+        session->rotate_generation();session->retire_generation_history();
+      }
     }
   }else if(arguments.command=="checkpoint") {
     deliver(*session);
