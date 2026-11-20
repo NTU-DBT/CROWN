@@ -14,7 +14,14 @@ void Session::replay(std::string_view bytes,const Inspected& info,const WalState
     auto input=decode_input(d.account,d.descriptor.program(),bytes,d.codec_limits(false));
     d.charge_codec(input.frame().info().statistics.work);d.head.emplace(d.own(std::move(input)));return;
   }
-  require(d.head.has_value(),SessionFault::transition);auto prepared=d.prepare();
+  require(d.head.has_value(),SessionFault::transition);
+  if(info.kind==Kind::reject && std::get<Reject>(info.payload).reason==RejectReason::abandoned) {
+    // Abandoned heads were never prepared live; do not prepare them here either.
+    Data::Prepared abandoned{{},RejectReason::abandoned};d.publish(abandoned,{});
+    require(d.native.sequence()==after.physical_sequence && d.progress.sequence==after.command_sequence,SessionFault::binding);
+    return;
+  }
+  auto prepared=d.prepare();
   if(info.kind==Kind::reject) {
     const auto& expected=std::get<Reject>(info.payload);
     require(prepared.rejected && *prepared.rejected==expected.reason,SessionFault::binding);

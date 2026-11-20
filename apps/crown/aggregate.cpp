@@ -161,6 +161,7 @@ const char* reason(ar::RejectReason value) {
     case ar::RejectReason::foreign_key_violation:return "foreign_key_violation";
     case ar::RejectReason::aggregate_overflow:return "aggregate_overflow";
     case ar::RejectReason::annotation_overflow:return "annotation_overflow";
+    case ar::RejectReason::abandoned:return "abandoned";
   }
   throw Error("runtime_contract","unknown durable aggregate Reject reason");
 }

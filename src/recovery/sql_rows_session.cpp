@@ -132,6 +132,20 @@ void Session::log(const InputView& input) & {
       state.physical_sequence==c && d.sink->state().prefix.physical_sequence==c);
   require(c<UINT64_MAX && d.progress.sequence<UINT64_MAX && input.command_sequence==d.progress.sequence+1,SessionFault::progress);
   auto head=d.own(encode_input(d.account,d.descriptor.program(),state.records,input,d.limits.wal.scan.frame));
+  // Refuse before any I/O, leaving the session unchanged so the caller can
+  // checkpoint first, when (a) recovery of this WAL generation would refuse to
+  // replay another command, or (b) the WAL could take the Input but not the
+  // Commit/Reject that must follow it (the head would then be stuck pending).
+  // The WAL holds its header plus one Input/decision pair per command.
+  require(state.records>=1 && (state.records-1)/2<d.limits.replay_commands,SessionFault::limit);
+  const auto& wal=d.limits.wal.scan;
+  const auto largest_decision=encode(d.account,d.descriptor.program(),state.records+1,
+      Commit{state.records,head.input.frame().info().body_sha256,input.command_sequence,c+1,std::uint64_t{1}<<40,
+          head.input.frame().info().body_sha256},wal.frame);  // fixed-width frame: values only need to be valid
+  const auto decision=largest_decision.bytes().size();
+  require(state.records<=wal.records && wal.records-state.records>=2 && state.bytes<=wal.bytes &&
+      wal.bytes-state.bytes>=head.input.frame().bytes().size() &&
+      wal.bytes-state.bytes-head.input.frame().bytes().size()>=decision,SessionFault::limit);
   static_assert(std::is_nothrow_move_constructible_v<Data::Head>);
   d.wal->append(head.input.frame());d.head.emplace(std::move(head));
 }
@@ -150,6 +164,16 @@ Decision Session::decide() & {
             output.bytes().size(),sha256_fixed(output.bytes())},d.limits.wal.scan.frame);
     d.wal->append(decision);d.publish(prepared,std::move(output));
   }
+  return {command,d.native.sequence(),prepared.rejected};
+}
+Decision Session::abandon_pending() & {
+  auto& d=data();require(d.head && !d.spool);const auto state=d.wal->state().wal;
+  require(state.pending && state.pending->ordinal==d.head->input.frame().info().ordinal,SessionFault::transition);
+  const auto command=d.head->input.view().command_sequence;const auto& input=d.head->input.frame();
+  Data::Prepared prepared{{},RejectReason::abandoned};
+  auto decision=encode(d.account,d.descriptor.program(),state.records,
+      Reject{input.info().ordinal,input.info().body_sha256,command,d.native.sequence(),RejectReason::abandoned},d.limits.wal.scan.frame);
+  d.wal->append(decision);d.publish(prepared,{});
   return {command,d.native.sequence(),prepared.rejected};
 }
 bool Session::deliver() & {
