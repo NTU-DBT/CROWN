@@ -278,7 +278,7 @@ struct ProducerMachine::Impl {
     const auto& remaining = scratch.suffix[placed];
     const auto check = [&](VariableId variable, bool required) {
       std::size_t present = 0;
-      for (const auto& counts : scratch.vars) present += counts.contains(variable) ? 1 : 0;
+      for (const auto& counts : scratch.vars) present += counts.contains(variable) ? std::size_t{1} : std::size_t{0};
       if (!required && present < 2) return false;
       const auto found = remaining.find(variable);
       return (found == remaining.end() ? 0 : found->second) < scratch.vars.size() - present;
