@@ -134,7 +134,7 @@ void help() {
     "       crown {run|restore|snapshot|checkpoint|results|benchmark} ARTIFACT.json INPUT ROOT SINK [OPTIONS]\n"
     "compile: --admission-options FILE --physical-options FILE --search-work N\n"
     "run/restore/benchmark: --events N (optional positional EVENTS is also accepted)\n"
-    "run/benchmark: --input-format jsonl|binary --mode delta|maintenance --spool-rows N --spool-bytes N\n"
+    "run/benchmark: --input-format jsonl|binary --mode delta|maintenance --spool-rows N --spool-bytes N --work-limit N (0: unbounded)\n"
     "run/restore/benchmark: --rotate-records N (automatic generation rotation; default 200000, 0 disables)\n"
     "runtime: --memory-limit-bytes N --query-id HEX32 --sink-id HEX32\n"
     "results: --epoch N; checkpoint: --retire\n"
@@ -354,6 +354,14 @@ int workflow(int argc,char** argv) {
       session_options.declared_benchmark=std::make_shared<const runtime::DeclaredBenchmarkContext>(std::move(labels));
     }
     if(memory_bytes)session_options.delta.physical.support.memory_limit_bytes=*memory_bytes;
+    // Per-update work caps (delta enumeration, physical routing, support propagation).
+    // The default 1,000,000 refuses a single update whose delta or fan-out is a few
+    // ten thousand tuples; 0 removes the caps (spool and memory limits still apply).
+    if(const auto work=arguments.take("--work-limit")) {
+      const auto value=integer(*work);const auto cap=value==0?std::nullopt:std::optional<std::uint64_t>{value};
+      session_options.delta.work_limit=cap;session_options.delta.physical.work_limit=cap;
+      session_options.delta.physical.support.work_limit=cap;
+    }
   }
   const auto query_override=arguments.take("--query-id"),sink_override=arguments.take("--sink-id");
   const auto requested_query=query_override?identifier(*query_override):std::array<char,32>{};
