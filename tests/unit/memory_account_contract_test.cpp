@@ -2790,6 +2790,46 @@ void test_containing_allocation_classification() {
   block.reset();account = MemoryAccount{};other = MemoryAccount{};verify(live_bytes == baseline, "portable classification fixture leaked");
 }
 
+// Cached-offset classification must agree with the ledger search for every
+// node of a container, reject foreign owners, and restore exact statistics.
+void test_containing_site_classification() {
+  using namespace crown::resource;
+  using Value = std::pair<const int, std::array<char, 40>>;
+  using Map = std::map<int, std::array<char, 40>, std::less<int>, MemoryAllocator<Value>>;
+  const MemoryAttribution tag{MemoryOwnerKind::storage_table, 7};
+  auto fast = MemoryAccount::create(1U << 22), slow = MemoryAccount::create(1U << 22), other = MemoryAccount::create(1U << 22);
+  {
+    Map fast_map(std::less<int>{}, MemoryAllocator<Value>(fast, MemoryPurpose::primary_node, tag));
+    Map slow_map(std::less<int>{}, MemoryAllocator<Value>(slow, MemoryPurpose::primary_node, tag));
+    for (int i = 0; i < 300; ++i) { fast_map.emplace(i, std::array<char, 40>{}); slow_map.emplace(i, std::array<char, 40>{}); }
+    static MemoryAccount::ContainingSite site;
+    const auto initial = fast.statistics();
+    for (const auto life : {AllocationLifetime::retained, AllocationLifetime::active}) {
+      for (int i = 0; i < 300; i += 3) {
+        fast.set_lifetime_containing(&fast_map.find(i)->second, site, MemoryPurpose::primary_node, tag, life);
+        slow.set_lifetime_containing(&slow_map.find(i)->second, MemoryPurpose::primary_node, tag, life);
+        verify(site.offset.load() >= 0, "containing site did not calibrate its offset");
+        verify(fast.statistics().by_lifetime == slow.statistics().by_lifetime,
+            "cached containing classification differs from the ledger search");
+      }
+      // Extracted nodes keep their layout, so the cached offset still applies.
+      auto node = fast_map.extract(1);
+      fast.set_lifetime_containing(&node.mapped(), site, MemoryPurpose::primary_node, tag, life);
+      fast_map.insert(std::move(node));
+      fast.set_lifetime_containing(&fast_map.find(1)->second, site, MemoryPurpose::primary_node, tag, AllocationLifetime::active);
+    }
+    verify(fast.statistics() == initial, "cached containing classification did not restore statistics");
+    const auto* element = &fast_map.find(5)->second;
+    verify(rejects_as([&] { other.set_lifetime_containing(element, site, MemoryPurpose::primary_node, tag, AllocationLifetime::retained); }, "memory_contract") &&
+           rejects_as([&] { fast.set_lifetime_containing(element, site, MemoryPurpose::scratch, tag, AllocationLifetime::retained); }, "memory_contract") &&
+           rejects_as([&] { fast.set_lifetime_containing(element, site, MemoryPurpose::primary_node, {}, AllocationLifetime::retained); }, "memory_contract"),
+           "cached containing classification accepted a different account/purpose/owner");
+    verify(fast.statistics() == initial, "rejected cached classification changed statistics");
+    fast.check_invariants();slow.check_invariants();
+  }
+  verify(fast.statistics().current.allocations == 1 && slow.statistics().current.allocations == 1, "containing site fixture leaked");
+}
+
 constexpr crown::storage::IndexWork indexed_test_work() {
   return {1000000000, 1000000000, 1000000000, 1000000000, 1000000000};
 }
@@ -3630,6 +3670,7 @@ int main() {
   test_accounted_arena_allocation_failures_and_limits();
   test_accounted_arena_bounded_churn_model();
   test_containing_allocation_classification();
+  test_containing_site_classification();
   test_native_table_ownership_journals_and_cursors();
   test_native_table_allocation_failure_sweeps();
   test_native_table_bounded_model_and_same_account_copy();

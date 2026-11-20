@@ -167,6 +167,17 @@ std::size_t MemoryAccount::copy_attributions(std::span<MemoryAttribution> output
   return used;
 }
 
+namespace {
+template<class Block, class Statistics, class Usage>
+void reclassify(Statistics& statistics, Block& block, std::size_t category, AllocationLifetime lifetime, Usage usage) {
+  const auto previous = lifetime_index(block.lifetime);
+  if (previous == category) return;
+  subtract(statistics.by_lifetime[previous], usage);
+  add(statistics.by_lifetime[category], usage);
+  block.lifetime = lifetime;
+}
+}  // namespace
+
 void MemoryAccount::set_lifetime_containing(const void* address, MemoryPurpose purpose,
     MemoryAttribution attribution, AllocationLifetime lifetime) const {
   auto& control = required();
@@ -178,12 +189,38 @@ void MemoryAccount::set_lifetime_containing(const void* address, MemoryPurpose p
     const auto start = reinterpret_cast<std::uintptr_t>(block->payload);
     if (value < start || value - start >= block->payload_size) continue;
     require(block->purpose == purpose && block->attribution == attribution, "containing allocation ownership differs");
-    const auto previous = lifetime_index(block->lifetime);
-    if (previous != category) {
-      subtract(control.statistics.by_lifetime[previous], block->usage());
-      add(control.statistics.by_lifetime[category], block->usage());
-      block->lifetime = lifetime;
+    reclassify(control.statistics, *block, category, lifetime, block->usage());
+    return;
+  }
+  throw MemoryFailure(MemoryFault::contract);
+}
+
+void MemoryAccount::set_lifetime_containing(const void* address, ContainingSite& site, MemoryPurpose purpose,
+    MemoryAttribution attribution, AllocationLifetime lifetime) const {
+  auto& control = required();
+  require(!control.allocating && address != nullptr && attribution.valid(), "invalid containing allocation lookup");
+  static_cast<void>(purpose_index(purpose));
+  const auto category = lifetime_index(lifetime);
+  const auto offset = site.offset.load(std::memory_order_relaxed);
+  if (offset >= 0) {
+    // The site's element lies at a fixed offset inside its allocation, so this
+    // is the payload start; its back pointer names the block header.
+    const auto* payload = static_cast<const std::byte*>(address) - offset;
+    auto* block = *(reinterpret_cast<BlockData* const*>(payload) - 1);
+    if (block->owner == &control && block->payload == payload &&
+        static_cast<std::size_t>(offset) < std::max(block->payload_size, std::size_t{1})) {
+      require(block->purpose == purpose && block->attribution == attribution, "containing allocation ownership differs");
+      reclassify(control.statistics, *block, category, lifetime, block->usage());
+      return;
     }
+  }
+  const auto value = reinterpret_cast<std::uintptr_t>(address);
+  for (auto* block = control.first; block; block = block->next) {
+    const auto start = reinterpret_cast<std::uintptr_t>(block->payload);
+    if (value < start || value - start >= block->payload_size) continue;
+    require(block->purpose == purpose && block->attribution == attribution, "containing allocation ownership differs");
+    site.offset.store(static_cast<std::ptrdiff_t>(value - start), std::memory_order_relaxed);
+    reclassify(control.statistics, *block, category, lifetime, block->usage());
     return;
   }
   throw MemoryFailure(MemoryFault::contract);

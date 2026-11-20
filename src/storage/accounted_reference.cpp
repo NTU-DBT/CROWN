@@ -73,6 +73,10 @@ std::string_view TableValidationFailure::code() const noexcept {
 }
 const char* TableValidationFailure::what() const noexcept { return code().data(); }
 
+namespace site {  // Containing-allocation sites, one per element position and layout.
+struct PrimaryKey; struct ByIdKey; struct BucketKey; struct Member; struct Entry; struct KeyBuffer; struct JournalData; struct Reader;
+}  // namespace site
+
 struct AccountedReferenceTable::State {
   using PrimaryValue = std::pair<const AccountedTuple* const, TupleId>;
   using Primary = std::map<const AccountedTuple*, TupleId, TupleLess, MemoryAllocator<PrimaryValue>>;
@@ -123,8 +127,11 @@ struct AccountedReferenceTable::State {
     return AccountedVector<T>(MemoryAllocator<T>(account, MemoryPurpose::output_buffer, output_tag()));
   }
   MemoryAttribution output_tag() const noexcept { return {MemoryOwnerKind::output, owner.value}; }
-  template<class T> void lifetime(const T& value, MemoryPurpose purpose, AllocationLifetime life) const noexcept {
-    account.set_lifetime_containing(std::addressof(value), purpose, tag, life);
+  // Site names one element position in one allocation layout (see
+  // MemoryAccount::ContainingSite): O(1) after one calibration per site.
+  template<class Site, class T> void lifetime(const T& value, MemoryPurpose purpose, AllocationLifetime life) const noexcept {
+    static MemoryAccount::ContainingSite site;
+    account.set_lifetime_containing(std::addressof(value), site, purpose, tag, life);
   }
   InsertResult insert(const AccountedTuple& tuple) {
     input(tuple);const auto found = primary.find(tuple);
@@ -226,19 +233,19 @@ struct AccountedReferenceTable::Journal::Data {
   }
   void undo_erase(Undo& undo) noexcept {
     auto& s = *owner;AccountedReferenceTable::revive(s.arena, *undo.pin);
-    s.lifetime(undo.primary.key(), MemoryPurpose::primary_node, AllocationLifetime::active);
-    s.lifetime(undo.id.key(), MemoryPurpose::primary_node, AllocationLifetime::active);
+    s.lifetime<site::PrimaryKey>(undo.primary.key(), MemoryPurpose::primary_node, AllocationLifetime::active);
+    s.lifetime<site::ByIdKey>(undo.id.key(), MemoryPurpose::primary_node, AllocationLifetime::active);
     const auto row = publish_node(s.primary, std::move(undo.primary));
     undo.id.mapped().primary = row;publish_node(s.by_id, std::move(undo.id));
     for (auto& key : undo.keys) {
       auto bucket = key.index->buckets.end();
       if (key.bucket) {
-        s.lifetime(key.bucket.key(), MemoryPurpose::secondary_node, AllocationLifetime::active);
+        s.lifetime<site::BucketKey>(key.bucket.key(), MemoryPurpose::secondary_node, AllocationLifetime::active);
         AccountedReferenceTable::classify(key.bucket.key(), AllocationLifetime::active);
         bucket = publish_node(key.index->buckets, std::move(key.bucket));
       } else bucket = key.index->buckets.find(key.key);
       if (bucket == key.index->buckets.end() || !key.member) std::terminate();
-      s.lifetime(key.member.value(), MemoryPurpose::secondary_node, AllocationLifetime::active);
+      s.lifetime<site::Member>(key.member.value(), MemoryPurpose::secondary_node, AllocationLifetime::active);
       publish_node(bucket->second, std::move(key.member));
     }
   }
@@ -320,13 +327,12 @@ void AccountedReferenceTable::Journal::rollback() noexcept { if (data_) data_->r
 void AccountedReferenceTable::Journal::commit() noexcept {
   if (!active()) return;
   auto& s = *data_->owner;
-  // Each interior-node classification below searches the account ledger.
   for (auto& entry : data_->entries) {
-    s.lifetime(entry, MemoryPurpose::journal_undo, AllocationLifetime::retained);
-    if (entry.keys.data()) s.lifetime(*entry.keys.data(), MemoryPurpose::journal_undo, AllocationLifetime::retained);
+    s.lifetime<site::Entry>(entry, MemoryPurpose::journal_undo, AllocationLifetime::retained);
+    if (entry.keys.data()) s.lifetime<site::KeyBuffer>(*entry.keys.data(), MemoryPurpose::journal_undo, AllocationLifetime::retained);
   }
-  s.lifetime(*data_, MemoryPurpose::journal_undo, AllocationLifetime::retained);
-  s.lifetime(*data_->reader, MemoryPurpose::cursor, AllocationLifetime::retained);
+  s.lifetime<site::JournalData>(*data_, MemoryPurpose::journal_undo, AllocationLifetime::retained);
+  s.lifetime<site::Reader>(*data_->reader, MemoryPurpose::cursor, AllocationLifetime::retained);
   s.retained_entries += s.active_entries;s.active_entries = 0;
   data_->committed = true;data_->reader->phase = Reader::Phase::committed;
   s.active_reader.reset();s.journal_active = false;data_->owner.reset();
@@ -357,17 +363,17 @@ bool AccountedReferenceTable::Journal::erase(TupleHandle handle) {
     const auto bucket = key.index->buckets.find(key.key);
     if (bucket == key.index->buckets.end()) std::terminate();
     key.member = bucket->second.extract(handle.tuple);if (!key.member) std::terminate();
-    s.lifetime(key.member.value(), MemoryPurpose::secondary_node, AllocationLifetime::retained);
+    s.lifetime<site::Member>(key.member.value(), MemoryPurpose::secondary_node, AllocationLifetime::retained);
     if (bucket->second.empty()) {
       key.bucket = key.index->buckets.extract(bucket);
-      s.lifetime(key.bucket.key(), MemoryPurpose::secondary_node, AllocationLifetime::retained);
+      s.lifetime<site::BucketKey>(key.bucket.key(), MemoryPurpose::secondary_node, AllocationLifetime::retained);
       AccountedReferenceTable::classify(key.bucket.key(), AllocationLifetime::retained);
     }
   }
   const auto arena = found->second.arena;
   undo.primary = s.primary.extract(found->second.primary);undo.id = s.by_id.extract(found);
-  s.lifetime(undo.primary.key(), MemoryPurpose::primary_node, AllocationLifetime::retained);
-  s.lifetime(undo.id.key(), MemoryPurpose::primary_node, AllocationLifetime::retained);
+  s.lifetime<site::PrimaryKey>(undo.primary.key(), MemoryPurpose::primary_node, AllocationLifetime::retained);
+  s.lifetime<site::ByIdKey>(undo.id.key(), MemoryPurpose::primary_node, AllocationLifetime::retained);
   if (!s.arena.erase(arena)) std::terminate();
   ++s.revision;data_->publish(staged);return true;
 }

@@ -99,8 +99,14 @@ struct NodeState {
        parent(std::less<TupleId>{},Counts::allocator_type(account,resource::MemoryPurpose::support_metadata,attribution)),
        visible(std::less<TupleId>{},Counts::allocator_type(account,resource::MemoryPurpose::support_metadata,attribution)) {}
   [[nodiscard]] RecordState record(std::size_t children) const { return {records.get_allocator().account(),attribution,children}; }
-  void lifetime(const void* value,resource::AllocationLifetime lifetime) const {
-    records.get_allocator().account().set_lifetime_containing(value,resource::MemoryPurpose::support_metadata,attribution,lifetime);
+  // O(1) after one calibration per node type; see MemoryAccount::ContainingSite.
+  void lifetime(const RecordState* value,resource::AllocationLifetime lifetime) const {
+    static resource::MemoryAccount::ContainingSite site;
+    records.get_allocator().account().set_lifetime_containing(value,site,resource::MemoryPurpose::support_metadata,attribution,lifetime);
+  }
+  void lifetime(const ProjectionSupportCount* value,resource::AllocationLifetime lifetime) const {
+    static resource::MemoryAccount::ContainingSite site;  // parent and visible share one node type
+    records.get_allocator().account().set_lifetime_containing(value,site,resource::MemoryPurpose::support_metadata,attribution,lifetime);
   }
 };
 using SupportNodeProgram=program::PhysicalNode;
