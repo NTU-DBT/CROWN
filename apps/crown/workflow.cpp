@@ -384,6 +384,10 @@ int workflow(int argc,char** argv) {
   }else {
     runtime::SessionGenerationRecoveryOptions options;options.replay.journal.query_id=expected_query;
     options.replay.seek_source_from_origin=true;options.replay.memory_limit_bytes=memory_bytes;
+    // Rebuilding the native state from a checkpoint whose image already passed its
+    // image limits is linear in that state; the library's default 1,000,000-unit
+    // initialization cap would make any root above ~125k tuples unrecoverable.
+    options.replay.build.work_limit=std::nullopt;
     session=runtime::QuerySession::restore_generation_with_local_sink(program,arguments.positional[2],options,arguments.positional[3],sink,input(arguments.positional[1]));
   }
   const auto ready=std::chrono::steady_clock::now();
