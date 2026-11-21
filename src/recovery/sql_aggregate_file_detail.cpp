@@ -1,4 +1,5 @@
 #include "sql_aggregate_file_detail.hpp"
+#include "posix_compat.hpp"
 #include "binary_detail.hpp"
 #include "crown/ir/digest.hpp"
 #ifdef CROWN_SQL_AGGREGATE_FILE_TESTING
@@ -9,7 +10,6 @@
 #include <fcntl.h>
 #include <limits>
 #include <sys/file.h>
-#include <sys/random.h>
 #include <unistd.h>
 
 namespace crown::recovery::sql_aggregate {
@@ -24,9 +24,7 @@ using binary_detail::require;
 namespace {
 bool closing(FileStage stage) noexcept { return stage==FileStage::close_file || stage==FileStage::close_directory; }
 bool same(const struct stat& a,const struct stat& b) noexcept {
-  return a.st_dev==b.st_dev && a.st_ino==b.st_ino && a.st_size==b.st_size &&
-      a.st_mtim.tv_sec==b.st_mtim.tv_sec && a.st_mtim.tv_nsec==b.st_mtim.tv_nsec &&
-      a.st_ctim.tv_sec==b.st_ctim.tv_sec && a.st_ctim.tv_nsec==b.st_ctim.tv_nsec;
+  return posix::same_file_state(a,b);
 }
 } // namespace
 [[noreturn]] void fail(FileFault fault,FileStage stage,FileOutcome outcome,int error) {
@@ -114,7 +112,7 @@ Limits Io::record_limits() const {
 FileStatistics Io::statistics() const noexcept { return {operations,work}; }
 std::int64_t Io::call(FileStage stage,std::size_t requested,int descriptor,const char* name,int other_fd,
     const char* other_name,void* buffer,std::uint64_t offset,struct stat* status,bool emergency_cleanup) {
-  if(operations==UINT64_MAX || (!emergency_cleanup && operations>=limits.operations)) {
+  if(operations==UINT64_MAX || (!emergency_cleanup && operations-budget_base>=limits.operations)) {
     if(closing(stage))raw_close(descriptor);
     fail(FileFault::limit,stage,outcome);
   }
@@ -144,7 +142,7 @@ std::int64_t Io::call(FileStage stage,std::size_t requested,int descriptor,const
       case FileStage::open_directory:if(!name)fail(FileFault::state,stage,outcome);result=::open(name,O_RDONLY|O_DIRECTORY|O_CLOEXEC);break;
       case FileStage::entropy:
         if(!buffer)fail(FileFault::state,stage,outcome);
-        result=::getrandom(buffer,count,GRND_NONBLOCK);
+        result=posix::random_bytes(buffer,count);
 #ifdef CROWN_SQL_AGGREGATE_FILE_TESTING
         if(zero_entropy && result>0)std::fill_n(static_cast<unsigned char*>(buffer),static_cast<std::size_t>(result),static_cast<unsigned char>(0));
 #endif
@@ -262,6 +260,7 @@ void Io::finish_open(Directory& directory) {
   static_cast<void>(checked(FileStage::close_directory,0,directory.release()));
 }
 bool Io::read_frame(std::uint64_t offset,ImageVector<char>& scratch) {
+  rebase();
   const auto available=static_cast<std::uint64_t>(stamp.st_size)-offset;
   std::array<char,frame_header_size> prefix{};
   const auto have=static_cast<std::size_t>(std::min<std::uint64_t>(prefix.size(),available));
@@ -294,7 +293,7 @@ void Io::refresh() { static_cast<void>(checked(FileStage::stat_file,0,fd,nullptr
 void Io::validate() {
   // A receiving session rechecks both locked files after semantic replay and
   // before authorizing either tail repair. Even read uncertainty poisons it.
-  ready();outcome=FileOutcome::unchanged;poisoned=true;unchanged();char extra=0;
+  ready();rebase();outcome=FileOutcome::unchanged;poisoned=true;unchanged();char extra=0;
   if(checked(FileStage::read_data,1,fd,nullptr,-1,nullptr,&extra,static_cast<std::uint64_t>(stamp.st_size))!=0)
     fail(FileFault::changed,FileStage::read_data,outcome);
   unchanged();poisoned=false;
@@ -303,7 +302,7 @@ void Io::read(char* bytes,std::size_t size,std::uint64_t offset) { transfer(fals
 void Io::append(std::string_view bytes,std::uint64_t offset) {
   // Caller has completed validation, hashing and all growth. The latch precedes
   // even the first stamp check; every later failure forbids in-place retry.
-  ready();require(offset==static_cast<std::uint64_t>(stamp.st_size),ImageFault::binding);
+  ready();rebase();require(offset==static_cast<std::uint64_t>(stamp.st_size),ImageFault::binding);
   outcome=FileOutcome::unchanged;poisoned=true;unchanged();
   transfer(true,const_cast<char*>(bytes.data()),bytes.size(),offset);
   static_cast<void>(checked(FileStage::sync_file,0,fd));outcome=FileOutcome::durable;
@@ -311,7 +310,7 @@ void Io::append(std::string_view bytes,std::uint64_t offset) {
   if(stamp.st_size!=static_cast<off_t>(offset+bytes.size()))fail(FileFault::changed,FileStage::stat_file,outcome);
 }
 void Io::repair(std::uint64_t bytes) {
-  ready();outcome=FileOutcome::unchanged;if(!torn)return;
+  ready();rebase();outcome=FileOutcome::unchanged;if(!torn)return;
   poisoned=true;unchanged();
   static_cast<void>(checked(FileStage::truncate_tail,0,fd,nullptr,-1,nullptr,nullptr,bytes));
   static_cast<void>(checked(FileStage::sync_file,0,fd));outcome=FileOutcome::durable;
@@ -321,7 +320,7 @@ void Io::repair(std::uint64_t bytes) {
 }
 void Io::close() {
   if(fd<0)fail(FileFault::state,FileStage::state,FileOutcome::unchanged);
-  const int old=fd;fd=-1;static_cast<void>(checked(FileStage::close_file,0,old));
+  rebase();const int old=fd;fd=-1;static_cast<void>(checked(FileStage::close_file,0,old));
 }
 } // namespace file_detail
 } // namespace crown::recovery::sql_aggregate

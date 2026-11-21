@@ -2,6 +2,7 @@
 
 #include "crown/resource/ownership.hpp"
 #include "crown/storage/accounted_row.hpp"
+#include <exception>
 #include <algorithm>
 #include <iterator>
 #include <limits>

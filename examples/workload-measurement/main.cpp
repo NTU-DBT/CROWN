@@ -293,8 +293,14 @@ int run(int argc,char** argv) {
   report["workload"]=std::move(workload_report);report["sink"]={{"kind",sink_kind},{"calls",sink.calls},{"bytes",sink.bytes},{"requested_delay_us_per_record",delay}};
   report["environment"]={{"collector_compiler",__VERSION__},{"cplusplus",__cplusplus},{"pointer_bits",8*sizeof(void*)},
     {"kernel",machine.release},{"machine",machine.machine},{"clock","std::chrono::steady_clock"},{"clock_is_steady",Clock::is_steady}};
+  auto cpus=Json::array();
+#if defined(__linux__)
   cpu_set_t affinity;CPU_ZERO(&affinity);require(::sched_getaffinity(0,sizeof(affinity),&affinity)==0,"cannot read actual CPU affinity");
-  auto cpus=Json::array();for(std::size_t cpu=0;cpu<static_cast<std::size_t>(CPU_SETSIZE);++cpu)if(CPU_ISSET(cpu,&affinity))cpus.push_back(cpu);
+  for(std::size_t cpu=0;cpu<static_cast<std::size_t>(CPU_SETSIZE);++cpu)if(CPU_ISSET(cpu,&affinity))cpus.push_back(cpu);
+#else
+  // No affinity API on this platform: report every online CPU.
+  for(unsigned cpu=0;cpu<std::thread::hardware_concurrency();++cpu)cpus.push_back(cpu);
+#endif
   report["environment"]["actual_affinity"]=std::move(cpus);
   std::ifstream status("/proc/self/status");std::string status_line;
   while(std::getline(status,status_line))if(status_line.starts_with("Threads:"))report["environment"]["actual_threads"]=std::stoull(status_line.substr(8));

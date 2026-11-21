@@ -234,6 +234,33 @@ void net_batch_foreign_key_and_semantic_overflow(bool indexed) {
   }
 }
 
+// An input that deterministically fails a descriptor-bound limit stays pending
+// forever (log/checkpoint refuse while a head exists, and recovery rebuilds the
+// same head). abandon_pending durably rejects it, and recovery does not re-prepare it.
+void abandon_pending_unwedges_deterministic_limit() {
+  runtime::sql_rows::OutputLimits outputs; outputs.rows = 1;
+  Fixture f(false, bag_schema(), "SELECT x FROM r", {}, outputs);
+  {
+    auto session = f.create();
+    const std::array<Cell, 4> a{number(1), number(1), number(5), text("a")};
+    const std::array<Cell, 4> b{number(1), number(2), number(6), text("b")};
+    const std::array edits{Replacement{TableId{0}, a, 0, 1}, Replacement{TableId{0}, b, 0, 1}};
+    session.log({1, std::span<const Replacement>(edits), sr::SourcePosition{"rows", 10}, sr::ReaderPosition{10, 1}});
+    bool limited = false;
+    try { static_cast<void>(session.decide()); } catch (const Error& error) { limited = error.code() == "sql_rows_output_limit"; }
+    assert(limited && session.state().pending);
+    const auto decision = session.abandon_pending();
+    assert(decision.rejected == sr::RejectReason::abandoned && !session.state().pending && session.state().disposed == 1);
+    const std::array<Cell, 4> c{number(2), number(3), number(7), text("c")};
+    const std::array next{Replacement{TableId{0}, c, 0, 1}};
+    session.log({2, std::span<const Replacement>(next), sr::SourcePosition{"rows", 20}, sr::ReaderPosition{20, 2}});
+    assert(!session.decide().rejected && session.deliver());
+  }
+  auto recovered = f.recover();
+  const auto state = recovered.state();
+  assert(!state.pending && state.disposed == 2 && state.committed == state.delivered);
+}
+
 void pending_input_resource_retry_and_reopen() {
   Fixture f;
   const std::array<Cell, 4> physical{number(1), number(1), number(6), text("pending")};
@@ -455,6 +482,7 @@ int main() {
     net_batch_foreign_key_and_semantic_overflow(indexed);
     checkpoint_restore_next_update_and_history_cap(indexed);
   }
+  abandon_pending_unwedges_deterministic_limit();
   pending_input_resource_retry_and_reopen();
   committed_undelivered_reopen_and_exact_retry();
   false_decision_and_sink_fail_before_torn_repair();

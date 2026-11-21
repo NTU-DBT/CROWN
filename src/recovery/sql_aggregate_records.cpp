@@ -41,7 +41,7 @@ void valid(const Commit& value) {
 }
 void valid(const Reject& value) {
   require(value.input_ordinal>0 && value.physical_sequence<value.command_sequence &&
-      static_cast<unsigned>(value.reason)<=static_cast<unsigned>(RejectReason::annotation_overflow));
+      static_cast<unsigned>(value.reason)<=static_cast<unsigned>(RejectReason::abandoned));
   require(hex(value.input_sha256),ImageFault::binding);
 }
 void valid(const GroupInfo& value) {
@@ -257,7 +257,7 @@ struct Input : Reader {
       }
       case Kind::reject:{
         Reject v;v.input_ordinal=integer(8);v.input_sha256=hash<64>();v.command_sequence=integer(8);v.physical_sequence=integer(8);
-        const auto reason=integer(1);require(reason<=static_cast<unsigned>(RejectReason::annotation_overflow));
+        const auto reason=integer(1);require(reason<=static_cast<unsigned>(RejectReason::abandoned));
         v.reason=static_cast<RejectReason>(reason);valid(v);require(v.input_ordinal<value.ordinal);value.payload=v;break;
       }
       case Kind::group_epoch:value.payload=groups();break;

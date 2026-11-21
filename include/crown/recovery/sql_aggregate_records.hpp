@@ -52,7 +52,8 @@ struct Commit {
 // Stable explicit semantic allowlist. Resource/contract failures have no tag.
 enum class RejectReason : std::uint8_t {
   weight_mismatch, source_overflow, unique_violation, foreign_key_violation,
-  aggregate_overflow, annotation_overflow
+  aggregate_overflow, annotation_overflow,
+  abandoned  // caller-requested durable rejection of a pending head (Session::abandon_pending)
 };
 struct Reject {
   std::uint64_t input_ordinal = 0;

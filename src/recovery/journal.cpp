@@ -182,7 +182,7 @@ Inspected inspect_impl(std::string_view bytes,Limits limits) {
   budget.charge(budget.used-before);value.body_sha256=actual;value.statistics={bytes.size(),budget.used,budget.rows};return value;
 }
 Decoded decode_impl(const resource::MemoryAccount& account,std::string_view bytes,Limits limits) {
-  const auto validated=inspect_impl(bytes,limits);Decoded result{validated,{},ImageVector<char>(image_allocator<char>(account)),ImageVector<std::uint64_t>(image_allocator<std::uint64_t>(account))};
+  const auto validated=inspect_impl(bytes,limits);Decoded result{validated,{},ImageVector<char>(image_allocator<char>(account)),ImageVector<std::size_t>(image_allocator<std::size_t>(account))};
   Budget materialization{limits.record};Input body{{bytes.substr(frame_header_size),materialization},limits,account,&result};static_cast<void>(body.read());return result;
 }
 // Structural continuity only; pending.frame borrows caller bytes.

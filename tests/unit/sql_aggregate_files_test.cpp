@@ -165,7 +165,9 @@ template<class Factory> void receiving_limits(Factory factory,const std::string&
     if constexpr(requires{state.wal;})limits.scan.records=state.wal.records;else limits.scan.records=state.records;}
   limits.scan.bytes=bytes.size();{auto file=factory(receiver,limits);}
   for(unsigned which=0;which<4;++which) {
-    auto below=limits;if(which==0)--below.scan.work;if(which==1)--below.operations;if(which==2)--below.scan.bytes;
+    // operations bounds one call / one scanned frame, so the whole-open total is
+    // not an exact threshold; a single-operation budget must still refuse.
+    auto below=limits;if(which==0)--below.scan.work;if(which==1)below.operations=1;if(which==2)--below.scan.bytes;
     if(which==3)--below.scan.records;
     refused([&]{auto file=factory(receiver,below);});assert(contents(path)==bytes);
   }

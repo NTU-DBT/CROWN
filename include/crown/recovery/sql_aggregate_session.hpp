@@ -82,6 +82,11 @@ class Session {
   // same head. Resource failure leaves it pending; semantic Reject consumes I.
   void log(const InputView&) &;
   [[nodiscard]] Decision decide() &;
+  // Durably reject the pending head without preparing it, for an input that keeps
+  // failing a deterministic limit (work, output or source limits fixed by the
+  // descriptor), which would otherwise leave the head pending forever. Recovery
+  // applies the same Reject without re-preparing the input.
+  [[nodiscard]] Decision abandon_pending() &;
   bool deliver() &; // False if no spool; success confirms actual sink bytes/receipt.
   [[nodiscard]] GenerationRoot checkpoint() &; // Only W=I,D=C, no head/spool.
  private:

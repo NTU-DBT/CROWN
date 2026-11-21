@@ -2,6 +2,7 @@
 
 #include "crown/api/error.hpp"
 #include "crown/storage/index_failure.hpp"
+#include <exception>
 #include <compare>
 #include <cstdint>
 

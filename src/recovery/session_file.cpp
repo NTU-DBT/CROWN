@@ -1,4 +1,5 @@
 #include "crown/recovery/session_file.hpp"
+#include "posix_compat.hpp"
 #include "session_file_detail.hpp"
 #include "binary_detail.hpp"
 #include "../runtime/checkpoint_policy.hpp"
@@ -10,7 +11,6 @@
 #include <fcntl.h>
 #include <limits>
 #include <stdio.h>
-#include <sys/random.h>
 #include <unistd.h>
 
 namespace crown::recovery {
@@ -70,9 +70,7 @@ bool unlink_temporary(detail::FileIo& io,int directory,const char* name) noexcep
   return false;
 }
 bool same_file(const struct stat& a,const struct stat& b) {
-  return a.st_dev==b.st_dev && a.st_ino==b.st_ino && a.st_size==b.st_size &&
-      a.st_mtim.tv_sec==b.st_mtim.tv_sec && a.st_mtim.tv_nsec==b.st_mtim.tv_nsec &&
-      a.st_ctim.tv_sec==b.st_ctim.tv_sec && a.st_ctim.tv_nsec==b.st_ctim.tv_nsec;
+  return posix::same_file_state(a,b);
 }
 } // namespace
 
@@ -115,7 +113,7 @@ std::int64_t FileIo::call(FileStage stage,std::size_t requested,int fd,const cha
     switch(stage) {
       case FileStage::open_directory:result=::open(name,O_RDONLY|O_DIRECTORY|O_CLOEXEC);break;
       case FileStage::entropy:
-        result=::getrandom(buffer,transfer,GRND_NONBLOCK);
+        result=posix::random_bytes(buffer,transfer);
 #ifdef CROWN_RUNTIME_TESTING
         if(zero_entropy && result>0)std::fill_n(static_cast<unsigned char*>(buffer),static_cast<std::size_t>(result),static_cast<unsigned char>(0));
 #endif

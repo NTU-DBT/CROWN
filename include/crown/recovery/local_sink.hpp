@@ -16,7 +16,7 @@ struct Row {SetOperation operation=SetOperation::insert;storage::AccountedRow va
 struct Epoch {std::uint64_t generation=0,sequence=0;ImageVector<Row> rows;};
 struct Limits {
   ImageLimits record{64*1024*1024,512*1024*1024,0,65536,1024,1024*1024};
-  std::uint64_t bytes=1024*1024*1024,work=4ULL*1024*1024*1024,epochs=1'000'000,operations=1'000'000;
+  std::uint64_t bytes=1024*1024*1024,work=4ULL*1024*1024*1024,epochs=1'000'000,operations=1'000'000;  // operations: per public call / scanned epoch
   std::size_t path_bytes=4095,chunk_bytes=1024*1024;
 };
 enum class Stage :std::uint8_t {path,open_directory,entropy,create_temporary,open_file,stat_file,lock_file,read_data,write_data,sync_file,link_file,unlink_temporary,sync_directory,truncate_tail,close_file,close_directory,state};
@@ -98,7 +98,10 @@ class File {
   resource::MemoryAccount account_;Header header_;Limits limits_;
   ImageVector<ScalarType> schema_;ImageVector<Index> index_;ImageVector<char> scratch_,other_;
   int fd_=-1;struct stat stamp_{};
-  std::uint64_t operations_=0,work_=0,bytes_=0;
+  // operations_ is the lifetime syscall ordinal; Limits::operations bounds the
+  // syscalls of one public call (or one scanned epoch) counted from budget_base_.
+  std::uint64_t operations_=0,work_=0,bytes_=0,budget_base_=0;
+  void rebase() noexcept {budget_base_=operations_;}
   std::uint64_t header_bytes_=0;
   std::array<char,64> header_sha256_{};
   Outcome outcome_=Outcome::unchanged;bool poisoned_=false,torn_=false;

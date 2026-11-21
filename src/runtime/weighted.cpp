@@ -1,6 +1,7 @@
 #include "weighted_delta_detail.hpp"
 #include "sql_cold_rebuild.hpp"
 #include "crown/ir/digest.hpp"
+#include <exception>
 #include <algorithm>
 #include <charconv>
 
@@ -48,8 +49,13 @@ weighted_detail::Node::Node(const resource::MemoryAccount& account, NodeId id, s
        messages(std::less<TupleId>{},Map<Multiplicity>::allocator_type(account,resource::MemoryPurpose::support_metadata,attribution)),
        factors(std::less<TupleId>{},Map<Multiplicity>::allocator_type(account,resource::MemoryPurpose::support_metadata,attribution)),
        children(arity,0,resource::MemoryAllocator<std::size_t>(account,resource::MemoryPurpose::immutable_metadata,attribution)) {}
-void weighted_detail::Node::lifetime(const void* pointer, resource::AllocationLifetime value) const {
-    records.get_allocator().account().set_lifetime_containing(pointer,resource::MemoryPurpose::support_metadata,attribution,value);
+void weighted_detail::Node::lifetime(const weighted::RecordValue* pointer, resource::AllocationLifetime value) const {
+    static resource::MemoryAccount::ContainingSite site;  // O(1) after one calibration
+    records.get_allocator().account().set_lifetime_containing(pointer,site,resource::MemoryPurpose::support_metadata,attribution,value);
+}
+void weighted_detail::Node::lifetime(const weighted::Multiplicity* pointer, resource::AllocationLifetime value) const {
+    static resource::MemoryAccount::ContainingSite site;  // messages and factors share one node type
+    records.get_allocator().account().set_lifetime_containing(pointer,site,resource::MemoryPurpose::support_metadata,attribution,value);
 }
 
 weighted::RecordValue::RecordValue(const resource::MemoryAccount& account, resource::MemoryAttribution owner, std::size_t arity,

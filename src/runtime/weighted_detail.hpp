@@ -21,7 +21,8 @@ struct Node {
   Vector<std::size_t> children;
   std::size_t factor_begin=0, factor_end=0;
   Node(const resource::MemoryAccount&, NodeId, std::size_t arity);
-  void lifetime(const void*, resource::AllocationLifetime) const;
+  void lifetime(const weighted::RecordValue*, resource::AllocationLifetime) const;
+  void lifetime(const weighted::Multiplicity*, resource::AllocationLifetime) const;
 };
 
 // The exact existing iterative backtracking kernel, shared by the two native

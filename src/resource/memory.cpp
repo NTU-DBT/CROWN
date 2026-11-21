@@ -2,10 +2,14 @@
 
 #include <algorithm>
 #include <atomic>
+#include <bit>
+#include <cstddef>
+#include <cstring>
 #include <exception>
 #include <limits>
 #include <memory>
 #include <new>
+#include <type_traits>
 #include <utility>
 
 namespace crown::resource {
@@ -63,32 +67,68 @@ struct MemoryAccount::Control {
     statistics.by_lifetime[static_cast<std::size_t>(AllocationLifetime::active)] = statistics.current;
   }
 };
+// Compact allocation header (48 bytes on LP64). A payload whose alignment is at
+// most operator new's default alignment starts directly behind the header, so
+// such a request carries neither alignment slack nor a separate back pointer.
+// The four bytes at (payload - 8) always hold the header-to-payload distance:
+// for an adjacent payload they are this header's own payload_offset; an
+// over-aligned payload lies at least one default alignment further on and
+// gets a copy of that distance written just below it. Raw size, alignment and
+// payload address are derived instead of stored.
 struct MemoryAccount::BlockData {
   Control* owner;
   BlockData* previous;
   BlockData* next;
-  void* payload;
   std::size_t payload_size;
-  std::size_t raw_size;
-  std::size_t alignment;
+  std::uint64_t attribution_id;
+  std::uint32_t payload_offset;
+  std::uint8_t alignment_log2;
   MemoryPurpose purpose;
   AllocationLifetime lifetime;
-  MemoryAttribution attribution;
+  MemoryOwnerKind attribution_kind;
+  static constexpr std::size_t natural_alignment = __STDCPP_DEFAULT_NEW_ALIGNMENT__;
+  static constexpr std::size_t tail_bytes = 8;
+  // Largest distance an over-aligned payload can lie behind the header end.
+  [[nodiscard]] static constexpr std::size_t slack(std::size_t alignment) noexcept {
+    return alignment > natural_alignment ? alignment - natural_alignment : 0;
+  }
+  [[nodiscard]] std::size_t alignment() const noexcept { return std::size_t{1} << alignment_log2; }
+  [[nodiscard]] MemoryAttribution attribution() const noexcept { return {attribution_kind, attribution_id}; }
+  [[nodiscard]] void* payload() const noexcept {
+    return const_cast<std::byte*>(reinterpret_cast<const std::byte*>(this)) + payload_offset;
+  }
+  [[nodiscard]] std::size_t raw_size() const noexcept;
   [[nodiscard]] MemoryUsage usage() const noexcept {
-    return {1, static_cast<std::uint64_t>(raw_size), static_cast<std::uint64_t>(payload_size)};
+    return {1, static_cast<std::uint64_t>(raw_size()), static_cast<std::uint64_t>(payload_size)};
+  }
+  // Header of a payload pointer previously returned by this component.
+  [[nodiscard]] static BlockData* of(const void* payload) noexcept {
+    std::uint32_t distance;
+    std::memcpy(&distance, static_cast<const std::byte*>(payload) - tail_bytes, sizeof(distance));
+    return const_cast<BlockData*>(reinterpret_cast<const BlockData*>(static_cast<const std::byte*>(payload) - distance));
   }
 };
+std::size_t MemoryAccount::BlockData::raw_size() const noexcept {
+  return sizeof(BlockData) + slack(alignment()) + std::max(payload_size, std::size_t{1});
+}
 
 std::uint64_t MemoryAccount::control_bytes() noexcept { return sizeof(Control); }
 std::uint64_t MemoryAccount::allocation_bytes(std::size_t bytes, std::size_t alignment) {
+  // Layout facts the header-from-payload lookup and the slack-free placement rely on.
+  static_assert(std::is_standard_layout_v<BlockData>);
+  static_assert(alignof(BlockData) <= BlockData::natural_alignment);
+  static_assert(sizeof(BlockData) % BlockData::natural_alignment == 0);
+  static_assert(offsetof(BlockData, payload_offset) + BlockData::tail_bytes == sizeof(BlockData));
+  static_assert(BlockData::natural_alignment >= BlockData::tail_bytes);
   require(alignment != 0 && (alignment & (alignment - 1)) == 0, "alignment must be a nonzero power of two");
-  const auto effective = std::max(alignment, alignof(BlockData*));
+  // The stored header-to-payload distance is 32 bits wide.
+  if (alignment > (std::size_t{1} << 30)) throw MemoryFailure(MemoryFault::overflow);
+  const auto slack = BlockData::slack(alignment);
   const auto payload = std::max(bytes, std::size_t{1});
-  constexpr auto header = sizeof(BlockData) + sizeof(BlockData*);
+  constexpr auto header = sizeof(BlockData);
   constexpr auto largest = std::numeric_limits<std::size_t>::max();
-  if (effective - 1 > largest - header || payload > largest - header - (effective - 1))
-    throw MemoryFailure(MemoryFault::overflow);
-  return static_cast<std::uint64_t>(header + (effective - 1) + payload);
+  if (payload > largest - header - slack) throw MemoryFailure(MemoryFault::overflow);
+  return static_cast<std::uint64_t>(header + slack + payload);
 }
 
 MemoryAccount::MemoryAccount(Control* control) noexcept : control_(control) {}
@@ -147,7 +187,7 @@ AttributedMemoryStatistics MemoryAccount::statistics_for(MemoryAttribution attri
     result.by_lifetime[static_cast<std::size_t>(AllocationLifetime::active)] = result.current;
   }
   for (const auto* block = control.first; block; block = block->next) {
-    if (block->attribution != attribution) continue;
+    if (block->attribution() != attribution) continue;
     const auto usage = block->usage();
     add(result.current, usage);
     add(result.by_purpose[static_cast<std::size_t>(block->purpose)], usage);
@@ -162,10 +202,21 @@ std::size_t MemoryAccount::copy_attributions(std::span<MemoryAttribution> output
   require(!control.allocating && output.size()>=control.statistics.current.allocations,
       "allocation attribution inventory requires quiescent caller capacity");
   std::size_t used=0;output[used++]={};
-  for(const auto* block=control.first;block;block=block->next)output[used++]=block->attribution;
+  for(const auto* block=control.first;block;block=block->next)output[used++]=block->attribution();
   require(used==control.statistics.current.allocations,"allocation attribution inventory differs from account");
   return used;
 }
+
+namespace {
+template<class Block, class Statistics, class Usage>
+void reclassify(Statistics& statistics, Block& block, std::size_t category, AllocationLifetime lifetime, Usage usage) {
+  const auto previous = lifetime_index(block.lifetime);
+  if (previous == category) return;
+  subtract(statistics.by_lifetime[previous], usage);
+  add(statistics.by_lifetime[category], usage);
+  block.lifetime = lifetime;
+}
+}  // namespace
 
 void MemoryAccount::set_lifetime_containing(const void* address, MemoryPurpose purpose,
     MemoryAttribution attribution, AllocationLifetime lifetime) const {
@@ -175,15 +226,41 @@ void MemoryAccount::set_lifetime_containing(const void* address, MemoryPurpose p
   const auto category = lifetime_index(lifetime);
   const auto value = reinterpret_cast<std::uintptr_t>(address);
   for (auto* block = control.first; block; block = block->next) {
-    const auto start = reinterpret_cast<std::uintptr_t>(block->payload);
+    const auto start = reinterpret_cast<std::uintptr_t>(block->payload());
     if (value < start || value - start >= block->payload_size) continue;
-    require(block->purpose == purpose && block->attribution == attribution, "containing allocation ownership differs");
-    const auto previous = lifetime_index(block->lifetime);
-    if (previous != category) {
-      subtract(control.statistics.by_lifetime[previous], block->usage());
-      add(control.statistics.by_lifetime[category], block->usage());
-      block->lifetime = lifetime;
+    require(block->purpose == purpose && block->attribution() == attribution, "containing allocation ownership differs");
+    reclassify(control.statistics, *block, category, lifetime, block->usage());
+    return;
+  }
+  throw MemoryFailure(MemoryFault::contract);
+}
+
+void MemoryAccount::set_lifetime_containing(const void* address, ContainingSite& site, MemoryPurpose purpose,
+    MemoryAttribution attribution, AllocationLifetime lifetime) const {
+  auto& control = required();
+  require(!control.allocating && address != nullptr && attribution.valid(), "invalid containing allocation lookup");
+  static_cast<void>(purpose_index(purpose));
+  const auto category = lifetime_index(lifetime);
+  const auto offset = site.offset.load(std::memory_order_relaxed);
+  if (offset >= 0) {
+    // The site's element lies at a fixed offset inside its allocation, so this
+    // is the payload start; its back pointer names the block header.
+    const auto* payload = static_cast<const std::byte*>(address) - offset;
+    auto* block = BlockData::of(payload);
+    if (block->owner == &control && block->payload() == payload &&
+        static_cast<std::size_t>(offset) < std::max(block->payload_size, std::size_t{1})) {
+      require(block->purpose == purpose && block->attribution() == attribution, "containing allocation ownership differs");
+      reclassify(control.statistics, *block, category, lifetime, block->usage());
+      return;
     }
+  }
+  const auto value = reinterpret_cast<std::uintptr_t>(address);
+  for (auto* block = control.first; block; block = block->next) {
+    const auto start = reinterpret_cast<std::uintptr_t>(block->payload());
+    if (value < start || value - start >= block->payload_size) continue;
+    require(block->purpose == purpose && block->attribution() == attribution, "containing allocation ownership differs");
+    site.offset.store(static_cast<std::ptrdiff_t>(value - start), std::memory_order_relaxed);
+    reclassify(control.statistics, *block, category, lifetime, block->usage());
     return;
   }
   throw MemoryFailure(MemoryFault::contract);
@@ -208,17 +285,20 @@ MemoryBlock MemoryAccount::allocate(std::size_t bytes, std::size_t alignment, Me
     throw MemoryFailure(MemoryFault::limit);
   if (statistics.successful_allocations == maximum)
     throw MemoryFailure(MemoryFault::overflow);
-  static_assert(alignof(BlockData) <= alignof(std::max_align_t));
   const auto raw_size = static_cast<std::size_t>(charge);
   void* raw = ::operator new(raw_size);  // Failure leaves every account counter unchanged.
+  void* payload = static_cast<std::byte*>(raw) + sizeof(BlockData);
+  auto space = raw_size - sizeof(BlockData);
+  // Default-aligned storage plus a header that is a multiple of that alignment
+  // already places an ordinary payload correctly; only over-aligned requests move.
+  if (!std::align(alignment, std::max(bytes, std::size_t{1}), payload, space)) std::terminate();
+  const auto distance = static_cast<std::size_t>(static_cast<std::byte*>(payload) - static_cast<std::byte*>(raw));
+  if (distance != sizeof(BlockData) && distance < sizeof(BlockData) + BlockData::tail_bytes) std::terminate();
   auto* block = std::construct_at(static_cast<BlockData*>(raw), BlockData{&control, nullptr, control.first,
-      nullptr, bytes, raw_size, alignment, purpose, AllocationLifetime::active, attribution});
-  void* payload = static_cast<std::byte*>(raw) + sizeof(BlockData) + sizeof(BlockData*);
-  auto space = raw_size - sizeof(BlockData) - sizeof(BlockData*);
-  if (!std::align(std::max(alignment, alignof(BlockData*)), std::max(bytes, std::size_t{1}), payload, space))
-    std::terminate();
-  block->payload = payload;
-  std::construct_at(static_cast<BlockData**>(payload) - 1, block);
+      bytes, attribution.id, static_cast<std::uint32_t>(distance), static_cast<std::uint8_t>(std::countr_zero(alignment)),
+      purpose, AllocationLifetime::active, attribution.kind});
+  if (distance != sizeof(BlockData))
+    std::memcpy(static_cast<std::byte*>(payload) - BlockData::tail_bytes, &block->payload_offset, sizeof(block->payload_offset));
   retain(&control);  // Every block independently keeps its controller alive.
   if (control.first) control.first->previous = block;
   control.first = block;
@@ -236,7 +316,7 @@ void* MemoryAccount::allocate_raw(std::size_t bytes, std::size_t alignment, Memo
   auto* header = std::exchange(block.data_, nullptr);
   // Ownership transfers to the allocator's caller. The header retains the
   // controller independently until the matching deallocation reaches free().
-  return header->payload;
+  return header->payload();
 }
 MemoryUsage MemoryAccount::allocation_usage_raw(const void* pointer, std::size_t bytes, std::size_t alignment,
     MemoryPurpose purpose, MemoryAttribution attribution) const {
@@ -244,9 +324,9 @@ MemoryUsage MemoryAccount::allocation_usage_raw(const void* pointer, std::size_t
   require(pointer != nullptr, "empty raw allocation lookup");
   // As for allocator deallocation, pointer must name a still-live allocation
   // obtained through this adapter. Arbitrary addresses are not introspectable.
-  const auto* block = *(static_cast<BlockData* const*>(pointer) - 1);
-  require(block->owner == &control && block->payload == pointer && block->payload_size == bytes &&
-      block->alignment == alignment && block->purpose == purpose && block->attribution == attribution,
+  const auto* block = BlockData::of(pointer);
+  require(block->owner == &control && block->payload() == pointer && block->payload_size == bytes &&
+      block->alignment() == alignment && block->purpose == purpose && block->attribution() == attribution,
       "allocator allocation lookup ownership/size mismatch");
   return block->usage();
 }
@@ -254,7 +334,7 @@ void MemoryAccount::set_lifetime_raw(void* pointer, std::size_t bytes, std::size
     MemoryPurpose purpose, MemoryAttribution attribution, AllocationLifetime lifetime) const {
   const auto destination = lifetime_index(lifetime);
   static_cast<void>(allocation_usage_raw(pointer, bytes, alignment, purpose, attribution));
-  auto* block = *(static_cast<BlockData**>(pointer) - 1);
+  auto* block = BlockData::of(pointer);
   require(!block->owner->allocating, "allocation classification reentry");
   if (block->lifetime == lifetime) return;
   auto& statistics = block->owner->statistics;
@@ -264,9 +344,9 @@ void MemoryAccount::set_lifetime_raw(void* pointer, std::size_t bytes, std::size
 void MemoryAccount::deallocate_raw(void* pointer, std::size_t bytes, std::size_t alignment,
                                  MemoryPurpose purpose, MemoryAttribution attribution) const noexcept {
   if (!pointer) return;
-  auto* block = *(static_cast<BlockData**>(pointer) - 1);
-  if (!control_ || block->owner != control_ || block->payload != pointer || block->payload_size != bytes ||
-      block->alignment != alignment || block->purpose != purpose || block->attribution != attribution)
+  auto* block = BlockData::of(pointer);
+  if (!control_ || block->owner != control_ || block->payload() != pointer || block->payload_size != bytes ||
+      block->alignment() != alignment || block->purpose != purpose || block->attribution() != attribution)
     std::terminate();  // Standard allocator ownership/size mismatch is invalid.
   free(block);
 }
@@ -284,7 +364,6 @@ void MemoryAccount::free(BlockData* block) noexcept {
   subtract(statistics.by_lifetime[static_cast<std::size_t>(block->lifetime)], usage);
   if (statistics.freed_allocations >= statistics.successful_allocations) std::terminate();
   ++statistics.freed_allocations;
-  std::destroy_at(static_cast<BlockData**>(block->payload) - 1);
   std::destroy_at(block);
   ::operator delete(block);
   release(control);
@@ -298,8 +377,8 @@ MemoryBlock& MemoryBlock::operator=(MemoryBlock&& other) noexcept {
 }
 MemoryBlock::~MemoryBlock() { reset(); }
 void MemoryBlock::reset() noexcept { MemoryAccount::free(std::exchange(data_, nullptr)); }
-void* MemoryBlock::data() noexcept { return data_ ? data_->payload : nullptr; }
-const void* MemoryBlock::data() const noexcept { return data_ ? data_->payload : nullptr; }
+void* MemoryBlock::data() noexcept { return data_ ? data_->payload() : nullptr; }
+const void* MemoryBlock::data() const noexcept { return data_ ? data_->payload() : nullptr; }
 std::size_t MemoryBlock::size() const noexcept { return data_ ? data_->payload_size : 0; }
 MemoryUsage MemoryBlock::usage() const noexcept { return data_ ? data_->usage() : MemoryUsage{}; }
 MemoryAccount::BlockData& MemoryBlock::required() const {
@@ -307,7 +386,7 @@ MemoryAccount::BlockData& MemoryBlock::required() const {
   return *data_;
 }
 MemoryPurpose MemoryBlock::purpose() const { return required().purpose; }
-MemoryAttribution MemoryBlock::attribution() const { return required().attribution; }
+MemoryAttribution MemoryBlock::attribution() const { return required().attribution(); }
 AllocationLifetime MemoryBlock::lifetime() const { return required().lifetime; }
 MemoryStatistics MemoryBlock::account_statistics() const { return required().owner->statistics; }
 void MemoryBlock::set_lifetime(AllocationLifetime lifetime) const {
@@ -340,10 +419,14 @@ void MemoryAccount::check_invariants() const {
   for (const auto* block = control.first; block; block = block->next) {
     require(block->owner == &control && block->previous == previous, "memory allocation owner/link mismatch");
     require(block->purpose != MemoryPurpose::control, "data allocation uses controller purpose");
-    require(block->attribution.valid(), "invalid memory allocation attribution");
+    require(block->attribution().valid(), "invalid memory allocation attribution");
     const auto category = purpose_index(block->purpose), lifetime = lifetime_index(block->lifetime);
-    require(allocation_bytes(block->payload_size, block->alignment) == block->raw_size, "allocation size metadata mismatch");
-    require(*(static_cast<BlockData* const*>(block->payload) - 1) == block, "invalid memory allocation back pointer");
+    const auto distance = static_cast<std::size_t>(block->payload_offset);
+    require(distance >= sizeof(BlockData) && distance - sizeof(BlockData) <= BlockData::slack(block->alignment()) &&
+        (distance == sizeof(BlockData) || distance >= sizeof(BlockData) + BlockData::tail_bytes) &&
+        reinterpret_cast<std::uintptr_t>(block->payload()) % block->alignment() == 0 &&
+        allocation_bytes(block->payload_size, block->alignment()) == block->raw_size(), "allocation size metadata mismatch");
+    require(BlockData::of(block->payload()) == block, "invalid memory allocation back pointer");
     const auto usage = block->usage();
     require(total.requested_bytes <= statistics.limit_bytes &&
         usage.requested_bytes <= statistics.limit_bytes - total.requested_bytes, "allocation list exceeds memory limit");

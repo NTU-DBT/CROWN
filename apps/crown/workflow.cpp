@@ -134,7 +134,8 @@ void help() {
     "       crown {run|restore|snapshot|checkpoint|results|benchmark} ARTIFACT.json INPUT ROOT SINK [OPTIONS]\n"
     "compile: --admission-options FILE --physical-options FILE --search-work N\n"
     "run/restore/benchmark: --events N (optional positional EVENTS is also accepted)\n"
-    "run/benchmark: --input-format jsonl|binary --mode delta|maintenance --spool-rows N --spool-bytes N\n"
+    "run/benchmark: --input-format jsonl|binary --mode delta|maintenance --spool-rows N --spool-bytes N --work-limit N (0: unbounded)\n"
+    "run/restore/benchmark: --rotate-records N (automatic generation rotation; default 200000, 0 disables)\n"
     "runtime: --memory-limit-bytes N --query-id HEX32 --sink-id HEX32\n"
     "results: --epoch N; checkpoint: --retire\n"
     "new runs: --observe off|counters|timed|trace; benchmark: --run-label TEXT\n"
@@ -241,12 +242,20 @@ std::uint64_t nanoseconds(std::chrono::steady_clock::time_point begin,std::chron
   return elapsed>0?static_cast<std::uint64_t>(elapsed):0;
 }
 std::string snapshot(runtime::QuerySession& session,std::size_t limit) {
-  const auto state=session.snapshot();const auto sink=session.local_sink_state();const auto generation=session.generation_state();
-  Writer writer(limit);writer.raw("{\"schema_version\":1,\"committed_sequence\":");writer.number(state.sequence);
-  writer.raw(",\"source_positions\":");writer.json(state.progress.source_positions);
-  writer.raw(",\"rows\":[");bool first=true;
-  for(const auto& row:state.rows){if(!first){writer.raw(",");}first=false;writer.row(row.values());}
-  writer.raw("],\"verified_output_sequence\":");writer.number(sink.verified_sequence);
+  // The report is informational (the local sink is the durable output). A current
+  // result above the snapshot row/byte limits omits "rows" instead of failing a
+  // command whose durable work has already committed.
+  std::optional<runtime::SessionSnapshot> state;
+  try{state.emplace(session.snapshot());}catch(const Error& error){if(error.code()!="resource_limit")throw;}
+  const auto sink=session.local_sink_state();const auto generation=session.generation_state();
+  Writer writer(limit);writer.raw("{\"schema_version\":1,\"committed_sequence\":");writer.number(state?state->sequence:session.status().committed_sequence);
+  writer.raw(",\"source_positions\":");writer.json(state?state->progress.source_positions:session.progress().source_positions);
+  if(state) {
+    writer.raw(",\"rows\":[");bool first=true;
+    for(const auto& row:state->rows){if(!first){writer.raw(",");}first=false;writer.row(row.values());}
+    writer.raw("]");
+  }else writer.raw(",\"rows\":null,\"rows_omitted\":\"current result exceeds the snapshot row/byte limit; read the local sink\"");
+  writer.raw(",\"verified_output_sequence\":");writer.number(sink.verified_sequence);
   writer.raw(",\"selected_generation\":");writer.number(generation.selected.generation);
   writer.raw(",\"first_generation\":");writer.number(generation.selected.first_generation);
   writer.raw(",\"delivery_work\":");writer.number(sink.delivery_work);
@@ -345,11 +354,22 @@ int workflow(int argc,char** argv) {
       session_options.declared_benchmark=std::make_shared<const runtime::DeclaredBenchmarkContext>(std::move(labels));
     }
     if(memory_bytes)session_options.delta.physical.support.memory_limit_bytes=*memory_bytes;
+    // Per-update work caps (delta enumeration, physical routing, support propagation).
+    // The default 1,000,000 refuses a single update whose delta or fan-out is a few
+    // ten thousand tuples; 0 removes the caps (spool and memory limits still apply).
+    if(const auto work=arguments.take("--work-limit")) {
+      const auto value=integer(*work);const auto cap=value==0?std::nullopt:std::optional<std::uint64_t>{value};
+      session_options.delta.work_limit=cap;session_options.delta.physical.work_limit=cap;
+      session_options.delta.physical.support.work_limit=cap;
+    }
   }
   const auto query_override=arguments.take("--query-id"),sink_override=arguments.take("--sink-id");
   const auto requested_query=query_override?identifier(*query_override):std::array<char,32>{};
   const auto requested_sink=sink_override?identifier(*sink_override):std::array<char,32>{};
   const bool retire=arguments.command=="checkpoint" && arguments.take("--retire").has_value();
+  // Default: rotate after 200,000 WAL records (100,000 updates), a quarter of the
+  // default journal scan limits; 0 disables automatic rotation.
+  const auto rotate_records=running?arguments.number("--rotate-records",200'000):0;
   arguments.finished();
   const auto admission_begin=std::chrono::steady_clock::now();
   const auto built=artifact(arguments.positional[0],proof_work);auto program=CompiledProgram::standalone(built.plan);auto sink=sink_options(program);
@@ -364,6 +384,10 @@ int workflow(int argc,char** argv) {
   }else {
     runtime::SessionGenerationRecoveryOptions options;options.replay.journal.query_id=expected_query;
     options.replay.seek_source_from_origin=true;options.replay.memory_limit_bytes=memory_bytes;
+    // Rebuilding the native state from a checkpoint whose image already passed its
+    // image limits is linear in that state; the library's default 1,000,000-unit
+    // initialization cap would make any root above ~125k tuples unrecoverable.
+    options.replay.build.work_limit=std::nullopt;
     session=runtime::QuerySession::restore_generation_with_local_sink(program,arguments.positional[2],options,arguments.positional[3],sink,input(arguments.positional[1]));
   }
   const auto ready=std::chrono::steady_clock::now();
@@ -381,6 +405,12 @@ int workflow(int argc,char** argv) {
       const auto rows=deliver(*session);accumulate(delivery_ns,nanoseconds(committed_at,std::chrono::steady_clock::now()));
       if(rows>UINT64_MAX-delivered_rows)throw Error("counter_overflow","delivered row counter exhausted");
       delivered_rows+=rows;++processed;
+      // Rotate to a new generation (checkpoint + fresh WAL) and retire the old one
+      // before the WAL nears its scan limits, so long streams stay recoverable and
+      // recovery replays only the suffix since the last checkpoint.
+      if(rotate_records && session->journal_state().records>=rotate_records) {
+        session->rotate_generation();session->retire_generation_history();
+      }
     }
   }else if(arguments.command=="checkpoint") {
     deliver(*session);
@@ -388,6 +418,9 @@ int workflow(int argc,char** argv) {
       session->start();if(!session->begin_next())throw Error("pending_input","logged input missing");
       finish(*session);deliver(*session);session->pause();
     }
+    // Retire existing history first as well: once the retained-generation window
+    // is full, rotation itself is refused and would otherwise never reach retirement.
+    if(retire){const auto selected=session->generation_state().selected;if(selected.generation>selected.first_generation)session->retire_generation_history();}
     session->rotate_generation();if(retire)session->retire_generation_history();
   }else if(reading){emit(results(*session,numeric,limit));return 0;}
   const auto completed=std::chrono::steady_clock::now();

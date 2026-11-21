@@ -81,11 +81,18 @@ void faults(const Frames& f) {
       check(rejected && descriptors()==fds && account.statistics().current==resident && temporaries(dir)==0,"syscall failure did not reject or leaked");
       surviving(mode,path,f,account);++total;
     }
+    // The quota bounds each public call (and each scanned record), not the file's
+    // lifetime: budgets below the busiest call's need fail cleanly with a limit and
+    // every larger budget succeeds.
+    std::uint64_t threshold=0;
     for(std::uint64_t budget=1;budget<operations;++budget) {
-      setup(mode,path,f);auto limits=jp::FileLimits{};limits.operations=budget;const auto fds=descriptors();bool failed=false;
-      try{exercise(mode,path,f,account,limits);}catch(const jp::FileFailure& e){failed=e.fault()==jp::FileFault::limit;}
-      check(failed && descriptors()==fds && temporaries(dir)==0,"operation quota leaked/accepted");surviving(mode,path,f,account);
+      setup(mode,path,f);auto limits=jp::FileLimits{};limits.operations=budget;const auto fds=descriptors();bool failed=false,limited=false;
+      try{exercise(mode,path,f,account,limits);}catch(const jp::FileFailure& e){failed=true;limited=e.fault()==jp::FileFault::limit;}
+      check((!failed || (limited && threshold==0)) && descriptors()==fds && temporaries(dir)==0,"operation quota leaked/accepted");
+      if(!failed && threshold==0)threshold=budget;
+      surviving(mode,path,f,account);
     }
+    check(threshold!=1,"operation quota did not bound a single call");
     for(const auto stage:{jp::FileStage::entropy,jp::FileStage::read_data,jp::FileStage::write_data,jp::FileStage::sync_file,jp::FileStage::sync_directory,jp::FileStage::truncate_tail,jp::FileStage::lock_file}) {
       const auto event=std::find_if(baseline.events.begin(),baseline.events.begin()+static_cast<std::ptrdiff_t>(baseline.size),[&](const auto& e){return !e.after && e.stage==stage;});
       if(event==baseline.events.begin()+static_cast<std::ptrdiff_t>(baseline.size))continue;

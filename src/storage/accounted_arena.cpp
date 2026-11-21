@@ -2,6 +2,7 @@
 
 #include "arena_owner.hpp"
 #include "crown/resource/ownership.hpp"
+#include <exception>
 #include <limits>
 #include <memory>
 #include <type_traits>

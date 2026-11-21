@@ -254,25 +254,102 @@ struct ProducerMachine::Impl {
       SUBTASK(consider(key, NodeKind::generalized, {}, shared, blocks, best));
     }
   }
+  // Per-enumeration scratch for exact pruning: variable multiplicities per block and, for
+  // generalized roots, how many unplaced members still contain each variable.
+  struct PartitionScratch {
+    std::vector<std::map<VariableId, std::size_t>> vars;
+    std::vector<std::map<VariableId, std::size_t>> suffix;
+  };
+  // True when no completion of the current prefix can pass inspect_partition, so the subtree
+  // holds no candidate and skipping it preserves the order of every valid partition.
+  // Native root o: a variable outside scope(o) lying in two blocks is in both boundaries.
+  // Generalized root: a variable in B(S) or in two blocks must end up in every block, so the
+  // unplaced members containing it must cover every block that still lacks it.
+  bool dead_prefix(const Metadata& meta, std::optional<std::size_t> occurrence, const Members& members,
+                   std::size_t placed, std::size_t block, const PartitionScratch& scratch) const {
+    if (occurrence) {
+      for (const auto variable : *scopes[members[placed - 1]]) {
+        if (scopes[*occurrence]->contains(variable)) continue;
+        for (std::size_t i = 0; i < scratch.vars.size(); ++i)
+          if (i != block && scratch.vars[i].contains(variable)) return true;
+      }
+      return false;
+    }
+    const auto& remaining = scratch.suffix[placed];
+    const auto check = [&](VariableId variable, bool required) {
+      std::size_t present = 0;
+      for (const auto& counts : scratch.vars) present += counts.contains(variable) ? std::size_t{1} : std::size_t{0};
+      if (!required && present < 2) return false;
+      const auto found = remaining.find(variable);
+      return (found == remaining.end() ? 0 : found->second) < scratch.vars.size() - present;
+    };
+    for (const auto variable : meta.boundary) if (check(variable, true)) return true;
+    for (const auto& counts : scratch.vars)
+      for (const auto& [variable, count] : counts) if (check(variable, false)) return true;
+    return false;
+  }
+  void prepare_scratch(std::optional<std::size_t> occurrence, const Members& members, PartitionScratch& scratch) const {
+    if (occurrence) return;
+    scratch.suffix.assign(members.size() + 1, {});
+    for (std::size_t p = members.size(); p-- > 0;) {
+      scratch.suffix[p] = scratch.suffix[p + 1];
+      for (const auto variable : *scopes[members[p]]) ++scratch.suffix[p][variable];
+    }
+  }
+  // Strong exception guarantee: an allocation failure leaves the scratch unchanged, so the
+  // retried operation starts from the same state.
+  void place(std::size_t member, std::size_t block, PartitionScratch& scratch) const {
+    const bool fresh = block == scratch.vars.size();
+    if (fresh) scratch.vars.emplace_back();
+    auto& counts = scratch.vars[block];
+    std::size_t done = 0;
+    try {
+      for (const auto variable : *scopes[member]) { ++counts[variable]; ++done; }
+    } catch (...) {
+      for (const auto variable : *scopes[member]) {
+        if (done-- == 0) break;
+        if (--counts[variable] == 0) counts.erase(variable);
+      }
+      if (fresh) scratch.vars.pop_back();
+      throw;
+    }
+  }
+  void unplace(std::size_t member, std::size_t block, PartitionScratch& scratch) const {
+    for (const auto variable : *scopes[member])
+      if (--scratch.vars[block][variable] == 0) scratch.vars[block].erase(variable);
+    if (scratch.vars[block].empty() && block + 1 == scratch.vars.size()) scratch.vars.pop_back();
+  }
   // Enumerate partitions by ordered insertion; return early only at the universal nonempty
-  // lower bound one. See docs/planner_proofs.md, branch partitions.
+  // lower bound one. Prefixes that cannot complete to an admissible partition are skipped
+  // (dead_prefix), which leaves the order of admissible partitions unchanged. See
+  // docs/planner_proofs.md, branch partitions.
   Task partitions(const std::shared_ptr<const Key>& key, const Metadata& meta,
                   std::optional<std::size_t> occurrence, const Members& members, std::size_t position,
-                  std::vector<Members>& blocks, const Choice*& best) {
+                  std::vector<Members>& blocks, const Choice*& best, PartitionScratch& scratch) {
     Task task;
     if (position == members.size()) {
       SUBTASK(inspect_partition(key, meta, occurrence, blocks, best)); co_return;
     }
     const auto existing = blocks.size();
-    for (std::size_t i = 0; i < existing; ++i) {
+    for (std::size_t i = 0; i <= existing; ++i) {
+      bool dead = false;
+      // One mutation per operation, each with the strong guarantee, so a failed allocation
+      // is retried from unchanged state.
+      if (i == existing) co_await operation([&] { blocks.emplace_back(); });
       co_await operation([&] { blocks[i].push_back(members[position]); });
-      SUBTASK(partitions(key, meta, occurrence, members, position + 1, blocks, best));
-      co_await operation([&] { blocks[i].pop_back(); });
-      if (best && best->height == 1) co_return;
+      co_await operation([&] {
+        place(members[position], i, scratch);
+        dead = dead_prefix(meta, occurrence, members, position + 1, i, scratch);
+      });
+      if (dead) co_await operation([&] { ++stats.bound_prunes; });
+      else { SUBTASK(partitions(key, meta, occurrence, members, position + 1, blocks, best, scratch)); }
+      co_await operation([&] {
+        unplace(members[position], i, scratch);
+        blocks[i].pop_back();
+        if (i == existing) blocks.pop_back();
+      });
+      if (i < existing && best && best->height == 1) co_return;
     }
-    co_await operation([&] { Members block; block.push_back(members[position]); blocks.push_back(std::move(block)); });
-    SUBTASK(partitions(key, meta, occurrence, members, position + 1, blocks, best));
-    co_await operation([&] { blocks.pop_back(); });
   }
   // Memoize only complete state optima; component, symmetry and incumbent rules preserve one
   // optimum. A resource stop never creates an infeasible memo value. See
@@ -319,13 +396,22 @@ struct ProducerMachine::Impl {
           if (!valid) continue;
           Members remaining;
           for (const auto item : key->members) co_await operation([&] { if (item != occurrence) remaining.push_back(item); });
+          // A native root with a nonempty remainder has height at least two; only strict
+          // improvements are kept.
+          if (best && best->height && !remaining.empty() && *best->height <= 2) {
+            co_await operation([&] { ++stats.bound_prunes; }); continue;
+          }
           std::vector<Members> blocks;
-          SUBTASK(partitions(key, meta, occurrence, remaining, 0, blocks, best));
+          PartitionScratch scratch;
+          co_await operation([&] { prepare_scratch(occurrence, remaining, scratch); });
+          SUBTASK(partitions(key, meta, occurrence, remaining, 0, blocks, best, scratch));
           if (best && best->height == 1) break;
         }
         if (key->generalized && (!best || best->height != 1)) {
           std::vector<Members> blocks;
-          SUBTASK(partitions(key, meta, {}, key->members, 0, blocks, best));
+          PartitionScratch scratch;
+          co_await operation([&] { prepare_scratch({}, key->members, scratch); });
+          SUBTASK(partitions(key, meta, {}, key->members, 0, blocks, best, scratch));
         }
       }
     }

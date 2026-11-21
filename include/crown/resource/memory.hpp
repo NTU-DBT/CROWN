@@ -4,6 +4,7 @@
 // nested allocation through the same account; allocator propagation is explicit.
 // Usage, ownership and costs: docs/code_specs/primitives.md#memory-account.
 #include <array>
+#include <atomic>
 #include <compare>
 #include <cstddef>
 #include <cstdint>
@@ -133,6 +134,17 @@ class MemoryAccount {
   // allocating. Slow reference-storage undo uses this explicit cost; indexed
   // storage can classify its directly owned MemoryBlocks in O(1).
   void set_lifetime_containing(const void*, MemoryPurpose, MemoryAttribution,
+      AllocationLifetime) const;
+  // One call site whose element always lies at the same offset inside its
+  // allocation: a member of one node-based container's node type, an object
+  // inside one std::allocate_shared control-block type, element 0 of a buffer.
+  // Keep one static ContainingSite per such site (never share it between sites
+  // with different layouts). The first call searches the ledger and records the
+  // offset; later calls find and verify the allocation header in O(1).
+  struct ContainingSite {
+    std::atomic<std::ptrdiff_t> offset{-1};
+  };
+  void set_lifetime_containing(const void*, ContainingSite&, MemoryPurpose, MemoryAttribution,
       AllocationLifetime) const;
   [[nodiscard]] MemoryBlock allocate(std::size_t bytes,
       std::size_t alignment = alignof(std::max_align_t), MemoryPurpose = MemoryPurpose::scratch,

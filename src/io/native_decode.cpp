@@ -4,6 +4,7 @@
 #include "ingest_text.hpp"
 #include "crown/api/error.hpp"
 #include "crown/catalog/catalog.hpp"
+#include <exception>
 #include <algorithm>
 #include <array>
 #include <bit>

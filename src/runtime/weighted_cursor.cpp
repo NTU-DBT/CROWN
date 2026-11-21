@@ -1,4 +1,5 @@
 #include "weighted_detail.hpp"
+#include <exception>
 #include <algorithm>
 
 // Usage, factor proof and cost boundaries: docs/weighted_enumeration.md.

@@ -22,7 +22,13 @@ struct Directory {
 // Stream flags are unchecked here; callers inspect/assert the resulting fixture bytes.
 inline std::string contents(const std::string& path){std::ifstream f(path,std::ios::binary);return {std::istreambuf_iterator<char>(f),{}};}
 inline void put(const std::string& path,std::string_view data){std::ofstream f(path,std::ios::binary|std::ios::trunc);f.write(data.data(),static_cast<std::streamsize>(data.size()));check(static_cast<bool>(f),"fixture write failed");}
-inline std::size_t descriptors(){std::size_t n=0;for(const auto& e:std::filesystem::directory_iterator("/proc/self/fd")){static_cast<void>(e);++n;}return n;}
+inline std::size_t descriptors(){std::size_t n=0;for(const auto& e:std::filesystem::directory_iterator(
+#if defined(__APPLE__)
+"/dev/fd"
+#else
+"/proc/self/fd"
+#endif
+)){static_cast<void>(e);++n;}return n;}
 inline std::size_t temporaries(const Directory& directory){std::size_t n=0;for(const auto& e:std::filesystem::directory_iterator(directory.name))if(e.path().filename().native().starts_with(".crown-journal-"))++n;return n;}
 inline std::string fixture(const std::string& directory,const char* leaf) {
   std::ifstream f(directory+"/"+leaf+".hex");std::string text,result;f>>text;check(!text.empty() && text.size()%2==0,"missing journal fixture");

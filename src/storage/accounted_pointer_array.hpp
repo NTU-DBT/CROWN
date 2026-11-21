@@ -1,6 +1,7 @@
 #pragma once
 
 #include "crown/resource/allocator.hpp"
+#include <exception>
 #include <algorithm>
 #include <limits>
 #include <memory>

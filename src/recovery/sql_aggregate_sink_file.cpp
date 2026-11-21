@@ -107,7 +107,7 @@ bool SinkFile::accept(const Frame& frame,bool verify_only) {
     // Compare the whole real epoch in bounded chunks; no second owned output
     // frame or digest-only acceptance. All scratch/work is prepaid before I/O.
     d.scratch.resize(static_cast<std::size_t>(std::min<std::uint64_t>(entry.size,d.io.limits.chunk_bytes)));
-    d.io.outcome=FileOutcome::unchanged;d.io.poisoned=true;d.io.unchanged();bool equal=true;
+    d.io.rebase();d.io.outcome=FileOutcome::unchanged;d.io.poisoned=true;d.io.unchanged();bool equal=true;
     std::size_t done=0;
     while(done<bytes.size()) {
       const auto size=std::min(d.scratch.size(),bytes.size()-done);

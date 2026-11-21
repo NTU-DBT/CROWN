@@ -1,4 +1,5 @@
 #include "generation_detail.hpp"
+#include "posix_compat.hpp"
 #include "crown/ir/digest.hpp"
 #if defined(CROWN_RUNTIME_TESTING) || defined(CROWN_GENERATION_FILE_TESTING)
 #include "generation_file_probe.hpp"
@@ -9,7 +10,6 @@
 #include <fcntl.h>
 #include <limits>
 #include <sys/file.h>
-#include <sys/random.h>
 #include <unistd.h>
 
 namespace crown::recovery {
@@ -33,9 +33,7 @@ bool valid(const GenerationRoot& root) {
       (hex({root.delivery->sink_id.data(),root.delivery->sink_id.size()}) && hex({root.delivery->content_sha256.data(),64}) && root.delivery->sequence==root.physical_sequence && root.delivery->bytes>0));
 }
 bool same(const struct stat& a,const struct stat& b) {
-  return a.st_dev==b.st_dev && a.st_ino==b.st_ino && a.st_size==b.st_size &&
-      a.st_mtim.tv_sec==b.st_mtim.tv_sec && a.st_mtim.tv_nsec==b.st_mtim.tv_nsec &&
-      a.st_ctim.tv_sec==b.st_ctim.tv_sec && a.st_ctim.tv_nsec==b.st_ctim.tv_nsec;
+  return posix::same_file_state(a,b);
 }
 template<std::size_t N> void put(std::array<char,N>& bytes,std::size_t& offset,std::uint64_t value,unsigned width) {
   for(unsigned i=0;i<width;++i)bytes[offset++]=static_cast<char>((value>>(8*i))&255);
@@ -158,7 +156,7 @@ std::int64_t GenerationOwner::call(GenerationStage stage,std::size_t requested,i
       case GenerationStage::read_data:if(!buffer)fail(GenerationFault::state,stage,outcome_);result=::pread(fd,buffer,transfer,static_cast<off_t>(offset));break;
       case GenerationStage::entropy:
         if(!buffer)fail(GenerationFault::state,stage,outcome_);
-        result=::getrandom(buffer,transfer,GRND_NONBLOCK);
+        result=posix::random_bytes(buffer,transfer);
 #if defined(CROWN_RUNTIME_TESTING) || defined(CROWN_GENERATION_FILE_TESTING)
         if(zero_entropy && result>0)std::fill_n(static_cast<unsigned char*>(buffer),static_cast<std::size_t>(result),static_cast<unsigned char>(0));
 #endif

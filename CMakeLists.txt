@@ -119,6 +119,8 @@ set(CROWN_RUNTIME_SOURCES src/recovery/session_image.cpp src/recovery/session_fi
   src/runtime/workload_statistics.cpp src/runtime/combined_statistics.cpp src/runtime/memory_report.cpp src/io/memory_report.cpp)
 list(APPEND CROWN_RUNTIME_SOURCES src/runtime/weighted.cpp)
 list(APPEND CROWN_RUNTIME_SOURCES src/runtime/weighted_cursor.cpp)
+# Compact fast-path kernel; checked against DeltaRuntime by compact_runtime tests.
+list(APPEND CROWN_RUNTIME_SOURCES src/runtime/compact.cpp)
 add_library(crown_runtime ${CROWN_RUNTIME_SOURCES})
 target_include_directories(crown_runtime PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -861,6 +863,18 @@ if(BUILD_TESTING)
   add_executable(crown_delta_live_test tests/unit/delta_live_test.cpp)
   target_link_libraries(crown_delta_live_test PRIVATE crown_runtime crown_reference crown_options)
   add_test(NAME delta_live COMMAND crown_delta_live_test)
+  # Engine comparison driver (not a test): benchmarks/kernel/kernel_bench.cpp.
+  add_executable(crown_kernel_bench benchmarks/kernel/kernel_bench.cpp)
+  target_link_libraries(crown_kernel_bench PRIVATE crown_runtime)
+  # Replays the original experiment stream format: benchmarks/kernel/stream_bench.cpp.
+  add_executable(crown_stream_bench benchmarks/kernel/stream_bench.cpp)
+  target_link_libraries(crown_stream_bench PRIVATE crown_runtime)
+  add_executable(crown_compact_runtime_test tests/unit/compact_runtime_test.cpp)
+  target_link_libraries(crown_compact_runtime_test PRIVATE crown_runtime crown_options)
+  target_compile_options(crown_compact_runtime_test PRIVATE -UNDEBUG)
+  add_test(NAME compact_runtime COMMAND crown_compact_runtime_test)
+  add_test(NAME compact_runtime_indexed COMMAND crown_compact_runtime_test indexed)
+  set_tests_properties(compact_runtime compact_runtime_indexed PROPERTIES TIMEOUT 1800)
   add_executable(crown_delta_runtime_test tests/unit/delta_runtime_test.cpp)
   target_link_libraries(crown_delta_runtime_test PRIVATE crown_runtime crown_reference crown_options)
   add_test(NAME delta_runtime COMMAND crown_delta_runtime_test)
@@ -1493,9 +1507,11 @@ add_library(crown_sql_aggregate src/frontend/sql_aggregate.cpp)
 target_include_directories(crown_sql_aggregate PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_include_directories(crown_sql_aggregate SYSTEM PRIVATE
-  "${_crown_pg_query_source_dir}/vendor/upb"
-  "${_crown_pg_query_source_dir}/vendor/upb/third_party/utf8_range")
+# Search the upb directories after the system headers: vendor/upb contains a file named
+# VERSION, which shadows the C++ <version> header on case-insensitive file systems (macOS).
+target_compile_options(crown_sql_aggregate PRIVATE
+  "SHELL:-idirafter ${_crown_pg_query_source_dir}/vendor/upb"
+  "SHELL:-idirafter ${_crown_pg_query_source_dir}/vendor/upb/third_party/utf8_range")
 target_link_libraries(crown_sql_aggregate PUBLIC crown_sql_rows crown_aggregate PRIVATE crown_options
   $<BUILD_INTERFACE:crown_pg_query> $<INSTALL_INTERFACE:CROWN::pg_query>)
 add_library(crown_sql_aggregate_runtime src/runtime/sql_aggregate.cpp)

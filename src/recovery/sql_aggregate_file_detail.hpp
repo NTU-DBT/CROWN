@@ -43,7 +43,10 @@ struct Io {
   std::array<char,8> magic;
   int fd=-1;
   struct stat stamp{};
-  std::uint64_t operations=0,work=0;
+  // operations is the lifetime syscall ordinal; FileLimits::operations bounds the
+  // syscalls of one call (or one scanned frame) counted from budget_base.
+  std::uint64_t operations=0,work=0,budget_base=0;
+  void rebase() noexcept {budget_base=operations;}
   FileOutcome outcome=FileOutcome::unchanged;
   bool poisoned=false,torn=false;
   void ready() const;

@@ -41,7 +41,9 @@ struct InputLimits {
   std::size_t source_bytes=1024;
   std::size_t sources=1024;
   std::optional<std::uint64_t> total_bytes=std::nullopt;
-  std::optional<std::uint64_t> records=1000000;
+  // Like total_bytes, unbounded unless the caller sets it: a stream (and its
+  // checkpointed sequence) must not stop after a fixed number of updates.
+  std::optional<std::uint64_t> records=std::nullopt;
   bool operator==(const InputLimits&) const=default;
 };
 enum class InputFormat { jsonl, binary, csv, legacy_signed, legacy_relations, legacy_insert_only, legacy_flags, legacy_timestamp_flags };
