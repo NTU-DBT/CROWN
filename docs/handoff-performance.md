@@ -1,7 +1,7 @@
 # Performance hand-off: compact kernel and allocation header
 
 This document hands over a performance effort on branch `review/native-v73`,
-committed on top of `2291c1e` (which differs from `3b8c931`,
+committed on top of `e6ccbd6` (which differs from `46e5469`,
 the commit the work started from, only in the review report). It is separate from the project hand-off in
 [handoff.md](handoff.md), which records the verification and delivery state of
 the full implementation; leave that file as it is. The earlier independent
@@ -435,10 +435,10 @@ thread.
 N = 200,000 rows loaded (199,998 for `line3` and `star`, which divide N over
 three tables), `crown_kernel_bench` as described above.
 
-"Before" is the existing runtime at `3b8c931`; "after" is the same runtime with
+"Before" is the existing runtime at `46e5469`; "after" is the same runtime with
 the 48-byte allocation header. Both were measured earlier in this work, one
 run per cell, with a Flink baseline job possibly running in the background;
-the "before" binary was built from `3b8c931` with the same driver source minus
+the "before" binary was built from `46e5469` with the same driver source minus
 the `cmp` engine. "Kernel" is the current compact kernel, measured later in a
 separate run. Insert and erase are the mean time per update during the FIFO
 churn (kernel values converted from the driver's ns output). Allocations are
@@ -1074,7 +1074,7 @@ high-water mark). It then calls `MemoryAccount::check_invariants`.
 
 Environment: macOS, Apple Clang, Release preset unless stated otherwise.
 
-Baseline at `3b8c931` before any change in this work: of 396 registered tests,
+Baseline at `46e5469` before any change in this work: of 396 registered tests,
 351 pass, 1 is skipped (`example_output_failure`) and 44 fail. The failures
 are environmental: missing Python packages `jsonschema`, `referencing`,
 `duckdb` and `matplotlib`, missing GNU `time`, and Linux-only tools; see
@@ -1154,7 +1154,7 @@ matter only if the existing runtime itself must become faster.
 | F6 | Support metadata lives in `std::map<TupleId, …>` side tables with a heap vector of child flags per record; one presence flip costs several allocations and lookups | [support.cpp:65](../src/runtime/support.cpp#L65) (`RecordState`), [support.cpp:91](../src/runtime/support.cpp#L91) (`NodeState`) | Open in the existing runtime; in the kernel record state is a few words inside the record (or source row) |
 | F7 | The same tuple is deep-copied into the source table, the derivation-count key, records and survivors; P and E are separate tables with side count maps | [physical.cpp:90](../src/runtime/physical.cpp#L90), [support.cpp:93](../src/runtime/support.cpp#L93) | Open in the existing runtime; in the kernel a direct node's record is the source row and identity nodes keep no separate visible copy |
 | F8 | The default backend is the ordered `std::map` reference backend unless `PhysicalOptions::indexed_storage` is set | [physical.hpp:93](../include/crown/ir/physical.hpp#L93), [physical.cpp:132](../src/runtime/physical.cpp#L132) | Open |
-| F9 | `MemoryAccount::set_lifetime_containing` scanned the whole allocation ledger on every delete | `ContainingSite` overload in [memory.cpp](../src/resource/memory.cpp) | Fixed before this work in commit `bc4a396` (O(1) per call site) |
+| F9 | `MemoryAccount::set_lifetime_containing` scanned the whole allocation ledger on every delete | `ContainingSite` overload in [memory.cpp](../src/resource/memory.cpp) | Fixed before this work in commit `b02cf52` (O(1) per call site) |
 
 Additional profile findings for the existing runtime, both open: per-update
 construction of `SupportRuntime::EpochView::Group` in `stage_view`
