@@ -213,7 +213,7 @@ struct WeightedRuntime::PendingEpoch::Data {
     Vector<Frame> frames;
     Vector<storage::ScalarView> row;
     std::size_t position=0,anchor_step=0;
-    bool resume=false;
+    bool resume=false, root_key_bound=false;
     const storage::AccountedTuple* anchor=nullptr;
     std::optional<storage::AccountedTuple> anchor_key;
     DeltaWalk(Data& value):epoch(value),bag(*value.deltas),
@@ -238,6 +238,20 @@ struct WeightedRuntime::PendingEpoch::Data {
           if(bag.compare(frame.key->values(),anchor_key->values())!=0)return false;
         }
         frame.selected=anchor;frame.factor={1};return true;
+      }
+      if(position==0 && root_key_bound) {
+        if(frame.selected)return false;
+        const auto& table=epoch.owner->storage.table(step.relation);
+        bag.charge(2); // Probe the root key and borrow its live tuple.
+        const auto entry=table.find(*anchor_key,epoch.owner->allowance());
+        if(!entry)return false;
+        frame.selected=table.get(*entry,epoch.owner->allowance());
+        require(frame.selected,"weighted_contract","matched root key has no live tuple");
+        bag.charge(1,&bag.metrics.rows_visited);
+        bag.charge(1,&bag.metrics.factor_reads);
+        frame.factor=epoch.owner->nodes[step.node.value].factors.at(entry->tuple);
+        require(frame.factor.present(),"weighted_contract","private visible key has no positive factor");
+        return true;
       }
       if(!frame.cursor) {
         bag.charge(2); // Open and its eventual allocation-free cursor close.
@@ -272,6 +286,9 @@ struct WeightedRuntime::PendingEpoch::Data {
       require(anchor_step<frames.size(),"weighted_contract","factor is outside the checked visible traversal");
       const auto& step=enumeration.steps[anchor_step];
       if(step.parent_step)anchor_key=project(epoch.owner->storage.projection(*step.bucket_index),key);
+      // A direct child's separator can determine the entire root tuple.
+      // In that case a key probe replaces a scan of unrelated root groups.
+      root_key_bound=step.parent_step==0 && step.parent_key->source().same_token(anchor_key->layout());
       const SignedMagnitude difference=support?SignedMagnitude{before.present(),{1}}:
           SignedMagnitude{after<before,{after<before?before.value-after.value:after.value-before.value}};
       // Never use owner->summary(): private insertions may not yet reach root.
@@ -291,7 +308,7 @@ struct WeightedRuntime::PendingEpoch::Data {
         }
         bag.add(epoch.owner->program.result_layout(),storage::RowView::borrow(row),term);
       }
-      row.clear();anchor=nullptr;anchor_key.reset();
+      row.clear();anchor=nullptr;anchor_key.reset();root_key_bound=false;
     }
   };
   std::shared_ptr<weighted::BagDeltas::Data> deltas;
