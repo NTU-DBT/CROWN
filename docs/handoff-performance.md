@@ -1,7 +1,7 @@
 # Performance hand-off: compact kernel and allocation header
 
 This document hands over a performance effort on branch `review/native-v73`,
-committed as one commit on top of `2291c1e` (which differs from `3b8c931`,
+committed on top of `2291c1e` (which differs from `3b8c931`,
 the commit the work started from, only in the review report). It is separate from the project hand-off in
 [handoff.md](handoff.md), which records the verification and delivery state of
 the full implementation; leave that file as it is. The earlier independent
@@ -86,7 +86,7 @@ aggregates.
 `resource::MemoryAccount` was shrunk from 95 to 48 bytes of framing, which
 lowers every accounted byte figure of the existing runtime.
 
-**The work is one local commit, not pushed or merged.** The kernel is not
+**The work is committed on this branch and not merged.** The kernel is not
 wired into the CLI, `QuerySession`, recovery or the SQL sessions; only its
 test and two benchmark drivers use it.
 
