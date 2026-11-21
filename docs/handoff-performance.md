@@ -363,7 +363,7 @@ How to verify: `ctest --test-dir build/release -R compact_runtime --output-on-fa
 
 ### 4. Benchmark drivers and build wiring
 
-Two single-thread drivers, neither of which is a test.
+The single-thread benchmark drivers are available when building with tests enabled.
 
 [benchmarks/kernel/stream_bench.cpp](../benchmarks/kernel/stream_bench.cpp)
 (target `crown_stream_bench`) replays an edge stream in the original
@@ -396,6 +396,18 @@ The stream files are under `build/flink-baseline/` (untracked). Example:
 ```
 ./build/release/crown_stream_bench l3 <path to ins_1000000 file> maint cmp 5
 ./build/release/crown_stream_bench l3 <path to ins_1000000 file> maint cmp1 5
+```
+
+[paper/native_replay_compact.cpp](../benchmarks/kernel/paper/native_replay_compact.cpp)
+replays a bound paper query through the compact typed-row API. It uses the
+paper's relation routing, including the terminal-edge filter, and can emit
+signed deltas and snapshots for comparison with Flink fixture output.
+Build the target on Linux with the zlib development package installed, then
+run it on one logical CPU with a `compact_typed_row_v1` request and its input.
+
+```sh
+cmake --build build/release --target paper_native_compact_routed
+taskset -c "$BENCHMARK_CPU" build/release/paper_native_compact_routed request.json input.csv
 ```
 
 [benchmarks/kernel/kernel_bench.cpp](../benchmarks/kernel/kernel_bench.cpp)

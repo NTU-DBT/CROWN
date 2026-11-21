@@ -65,6 +65,7 @@ struct Update {
 
 class Runtime {
  public:
+  // A normalized SQL plan must expose its core result columns directly.
   explicit Runtime(const PhysicalPlan& plan, Options options = {});
   ~Runtime();
   Runtime(const Runtime&) = delete;

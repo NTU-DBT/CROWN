@@ -10,6 +10,7 @@
 // and the third must report the same delta rows in the same order. Pass
 // "indexed" to run the oracle on the indexed backend.
 #include "crown/api/error.hpp"
+#include "crown/frontend/admission.hpp"
 #include "crown/planner/lower.hpp"
 #include "crown/planner/oracle.hpp"
 #include "crown/runtime/compact.hpp"
@@ -242,6 +243,60 @@ Value make_value(ScalarType type, std::int64_t number) {
   return Value{number};
 }
 
+void check_typed_updates(const Case& input) {
+  const auto tree = planner::minimum_tree(input.catalog, input.query);
+  check(tree.tree.has_value(), "typed update fixture needs a join tree");
+  compact::Runtime runtime(planner::lower_tree(input.catalog, input.query, *tree.tree, {}));
+  const Row row{std::int64_t{1}, std::string("known")};
+  const auto empty = runtime.statistics();
+  check(!runtime.apply(TableId{0}, SetOperation::erase, row), "erase of an unknown symbol succeeded");
+  check(runtime.statistics() == empty, "erase of an unknown symbol changed the dictionary");
+  check(runtime.apply(TableId{0}, SetOperation::insert, row), "typed insert failed");
+  const auto before = runtime.statistics();
+  const auto rejects = [&](TableId table_id, SetOperation operation, const Row& invalid) {
+    try {
+      static_cast<void>(runtime.apply(table_id, operation, invalid));
+    } catch (const Error&) {
+      return;
+    }
+    throw std::runtime_error("compact runtime accepted a mistyped row");
+  };
+  rejects(TableId{0}, SetOperation::erase, Row{true, std::string("known")});
+  rejects(TableId{1}, SetOperation::insert, Row{std::string("unknown"), true});
+  check(runtime.statistics() == before, "rejected typed update changed the runtime");
+  check(runtime.apply(TableId{0}, SetOperation::erase, row), "rejected erase removed a valid row");
+  runtime.check_invariants();
+}
+
+void check_normalized_outputs() {
+  const Catalog catalog{1, {table("r", {column("x")})}};
+  const auto lower = [&](const char* sql) {
+    const auto admitted = frontend::admit_sql(sql, catalog);
+    check(admitted.program.has_value(), "compact SQL fixture failed admission");
+    const auto& normalized = *admitted.program;
+    const auto optimum = planner::minimum_tree(normalized.core_catalog, normalized.core);
+    check(optimum.tree.has_value(), "compact SQL fixture needs a join tree");
+    return planner::lower_normalized(normalized, *optimum.tree);
+  };
+  for (const char* sql : {"SELECT DISTINCT x, 7 AS seven FROM r", "SELECT EXISTS (SELECT 1 FROM r)"}) {
+    const auto plan = lower(sql);
+    bool rejected = false;
+    try {
+      compact::Runtime runtime(plan);
+    } catch (const Error&) {
+      rejected = true;
+    }
+    check(rejected, "compact runtime accepted SQL output it cannot reconstruct");
+  }
+  compact::Runtime runtime(lower("SELECT DISTINCT x FROM r"));
+  Collector result;
+  result.owner = &runtime;
+  const Row row{std::int64_t{1}};
+  check(runtime.apply(TableId{0}, SetOperation::insert, row), "compact identity SQL row insert failed");
+  runtime.enumerate(result);
+  check(result.rows == std::vector<Row>{row}, "compact identity SQL output differs");
+}
+
 std::uint64_t run(const Case& input, bool indexed, std::uint64_t seed, std::size_t updates) {
   const auto tree = planner::minimum_tree(input.catalog, input.query);
   check(tree.status == planner::OracleStatus::proven_minimum && tree.tree.has_value(), input.name + ": no join tree: " + tree.reason);
@@ -383,8 +438,11 @@ int main(int argc, char** argv) {
   try {
     const bool indexed = argc > 1 && std::string(argv[1]) == "indexed";
     std::uint64_t compared = 0;
-    for (const auto& input : cases())
+    check_normalized_outputs();
+    for (const auto& input : cases()) {
+      if (input.name == "strings") check_typed_updates(input);
       for (std::uint64_t seed = 1; seed <= 3; ++seed) compared += run(input, indexed, seed, indexed ? 600 : 1200);
+    }
     // A wider value domain gives keys with many members and many keys with
     // one, so arrays grow, shrink and move between size classes and the
     // directories and slabs are rebuilt several times.

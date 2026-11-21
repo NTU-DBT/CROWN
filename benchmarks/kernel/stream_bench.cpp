@@ -25,6 +25,7 @@
 #include "crown/runtime/compact.hpp"
 #include "crown/runtime/delta.hpp"
 #include <algorithm>
+#include <charconv>
 #include <chrono>
 #include <cstdio>
 #include <cstdlib>
@@ -32,6 +33,7 @@
 #include <iostream>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <vector>
 
 using namespace crown;
@@ -44,6 +46,13 @@ struct Counter final : compact::RowSink {
   std::uint64_t rows = 0, sum = 0;
   void row(const compact::Word* words) override { ++rows; if (words) sum += words[0]; }
 };
+std::optional<std::size_t> positive_size(std::string_view text) {
+  std::size_t value = 0;
+  const auto end = text.data() + text.size();
+  const auto parsed = std::from_chars(text.data(), end, value);
+  if (parsed.ec != std::errc{} || parsed.ptr != end || value == 0) return std::nullopt;
+  return value;
+}
 std::vector<Event> load(const std::string& path) {
   std::ifstream in(path);
   if (!in) { std::cerr << "cannot open " << path << "\n"; std::exit(2); }
@@ -63,12 +72,18 @@ std::vector<Event> load(const std::string& path) {
 }  // namespace
 
 int main(int argc, char** argv) {
-  if (argc < 4) { std::cerr << "usage: crown_stream_bench QUERY(l3|l4|star) FILE MODE(maint|full|delta) [ENGINE(cmp|cmp1|ref|idx) [REPS]]\n"; return 2; }
+  if (argc < 4 || argc > 6) { std::cerr << "usage: crown_stream_bench QUERY(l3|l4|star) FILE MODE(maint|full|delta) [ENGINE(cmp|cmp1|ref|idx) [REPS]]\n"; return 2; }
   const std::string shape = argv[1], path = argv[2], mode = argv[3], engine = argc > 4 ? argv[4] : "cmp";
-  const std::size_t reps = argc > 5 ? std::stoull(argv[5]) : 5;
   if ((mode != "maint" && mode != "full" && mode != "delta") || (engine != "cmp" && engine != "cmp1" && engine != "ref" && engine != "idx")) {
     std::cerr << "bad mode or engine\n"; return 2;
   }
+  const auto repetitions = argc > 5 ? positive_size(argv[5]) : std::optional<std::size_t>{5};
+  const auto* batch_setting = engine == "cmp" ? std::getenv("BATCH") : nullptr;
+  const auto batch_size = batch_setting ? positive_size(batch_setting)
+                                        : std::optional<std::size_t>{engine == "cmp1" ? 1U : 1024U};
+  if (!repetitions || !batch_size) { std::cerr << "REPS and BATCH must be positive integers\n"; return 2; }
+  const std::size_t reps = *repetitions;
+  const std::size_t batch = *batch_size;
   Table edge; edge.name = "G"; edge.columns = {Column{"src", ScalarType::int64}, Column{"dst", ScalarType::int64}};
   const Catalog catalog{1, {edge}};
   Query query;
@@ -101,7 +116,6 @@ int main(int argc, char** argv) {
 
   const auto events = load(path);
   const bool compact_engine = engine == "cmp" || engine == "cmp1";
-  const std::size_t batch = engine == "cmp1" ? 1 : std::getenv("BATCH") ? std::stoull(std::getenv("BATCH")) : 1024;
   std::vector<Row> rows;                 // DeltaRuntime input.
   std::vector<compact::Word> words;      // Compact kernel input: two words per event.
   std::vector<compact::Update> encoded;

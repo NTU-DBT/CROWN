@@ -406,7 +406,16 @@ struct Runtime::Impl {
   Impl(const PhysicalPlan& source, Options options)
       : plan(source), account(resource::MemoryAccount::create(options.memory_limit_bytes)) {
     require(plan.route() == PhysicalRoute::tree, "compact kernel needs a tree-routed plan");
-    adapted = plan.normalized().has_value();
+    if (const auto& sql = plan.normalized()) {
+      require(sql->binding.wrapper == frontend::SqlWrapper::rows &&
+                  sql->outputs.size() == plan.result_layout().fields().size(),
+              "compact kernel needs identity SQL row output");
+      for (std::size_t i = 0; i < sql->outputs.size(); ++i) {
+        const auto* output = std::get_if<frontend::CoreOutput>(&sql->outputs[i].value);
+        require(output && output->column == i, "compact kernel needs identity SQL row output");
+      }
+      adapted = true;
+    }
     compile_tree();
     compile_connex();
     compile_stores();
@@ -781,11 +790,15 @@ struct Runtime::Impl {
     }
   }
 
-  [[nodiscard]] Word encode(const Value& value) {
+  [[nodiscard]] std::optional<Word> find_encoded(const Value& value) const {
     if (const auto* number = std::get_if<std::int64_t>(&value)) return static_cast<Word>(*number);
     if (const auto* flag = std::get_if<bool>(&value)) return *flag ? 1 : 0;
     const auto found = dictionary.find(value);
     if (found != dictionary.end()) return found->second;
+    return std::nullopt;
+  }
+  [[nodiscard]] Word encode(const Value& value) {
+    if (const auto word = find_encoded(value)) return *word;
     const auto id = static_cast<Word>(values.size());
     values.push_back(value);
     dictionary.emplace(value, id);
@@ -1673,8 +1686,17 @@ Runtime::Runtime(Runtime&&) noexcept = default;
 Runtime& Runtime::operator=(Runtime&&) noexcept = default;
 bool Runtime::apply(TableId table, SetOperation operation, const Row& row, RowSink* delta) {
   impl_->validate(table, operation, row.size());
+  validate_row(impl_->plan.source_catalog(), table, row);
   std::array<Word, max_fields> words;
-  for (std::size_t i = 0; i < row.size(); ++i) words[i] = impl_->encode(row[i]);
+  for (std::size_t i = 0; i < row.size(); ++i) {
+    if (operation == SetOperation::insert) {
+      words[i] = impl_->encode(row[i]);
+    } else {
+      const auto word = impl_->find_encoded(row[i]);
+      if (!word) return false;
+      words[i] = *word;
+    }
+  }
   return impl_->apply(table, operation, words.data(), &row, delta, hash_words(words.data(), row.size()));
 }
 bool Runtime::apply(TableId table, SetOperation operation, std::span<const Word> words, RowSink* delta) {
