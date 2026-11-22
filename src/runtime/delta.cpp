@@ -281,13 +281,14 @@ struct DeltaRuntime::Impl {
     const auto& normalized=physical.plan().normalized();
     return options.view==ResultView::sql && normalized && normalized->binding.wrapper==frontend::SqlWrapper::exists;
   }
-  storage::Tuple map_result(storage::AccountedTuple core,DeltaMetrics& metrics) const {
+  storage::Tuple map_result(storage::AccountedTuple core,DeltaMetrics& metrics,
+      MemoryVector<storage::ScalarView>& result) const {
     const auto& normalized=physical.plan().normalized();
     if (options.view==ResultView::core || !normalized) {
       metric(metrics,metrics.output_fields,static_cast<std::uint64_t>(core.values().size()));
       return storage::Tuple::from_accounted(std::move(core));
     }
-    MemoryVector<storage::ScalarView> result(resource::MemoryAllocator<storage::ScalarView>(memory(),resource::MemoryPurpose::scratch,delta_metadata));
+    result.clear();
     result.reserve(normalized->outputs.size());
     for (const auto& output : normalized->outputs) {
       metric(metrics,metrics.output_fields);
@@ -537,13 +538,14 @@ struct DeltaRuntime::Impl::LiveTransaction {
     }
     pending.clear(); metrics.live_rows=image->rows;
   }
-  void on_output(storage::RowView row,const RowSets& changed,bool add,RowSets& removed,
+  template<class FactorKey>
+  void on_output(FactorKey&& factor_key,const RowSets& changed,bool add,RowSets& removed,
       std::optional<std::size_t> anchor={},ProductiveQueue* productive=nullptr) {
     // Parent support changes must precede the descendant projection in this
     // same accepted row. No E bucket is scanned; see incremental_live.md for
     // the deletion certificate ensuring later rows finish every dead key.
     for (std::size_t i=0;i<runtime.factors.size();++i) {
-      auto key=runtime.project(row,runtime.factors[i].head_fields,metrics,metrics.projection_fields);
+      const auto key=factor_key(i);
       if (!add) {
         runtime.metric(metrics,metrics.live_probes);
         if (!image->factors[i].contains(key)) continue;
@@ -685,18 +687,23 @@ struct DeltaRuntime::Impl::AnchoredCursor {
     note(metrics.anchor_down_rows);
     return result;
   }
-  std::optional<storage::AccountedTuple> next() {
+  // Only valid until the next cursor advance. Every DFS frame owns its
+  // selected visible-relation key in the planner's factor scope order.
+  storage::RowView selected_key(std::size_t factor) const {
+    return frames[positions[factor]].selected->values();
+  }
+  std::optional<storage::AccountedTuple> next(MemoryVector<storage::ScalarView>& output) {
     if (finished) return {};
     const auto before=work;
     note(metrics.anchor_steps);
     if (resume) { position=steps.size()-1; resume=false; }
     while (position!=0) {
       if (position==steps.size()) {
-        MemoryVector<storage::ScalarView> output(resource::MemoryAllocator<storage::ScalarView>(runtime.memory(),resource::MemoryPurpose::scratch,delta_metadata));
+        output.clear();
         output.reserve(runtime.core_layout.fields().size());
         for (const auto slot : runtime.physical.plan().enumeration().output) {
           note(metrics.anchor_fields);
-          output.push_back(frames[positions[slot.step]].selected->values().at(slot.field.value));
+          output.push_back(selected_key(slot.step).at(slot.field.value));
         }
         auto result=runtime.physical.plan().result_layout().tuple(storage::RowView::borrow(output),delta_metadata); resume=true;
         metrics.cursor_results_work+=work-before;
@@ -871,6 +878,7 @@ struct DeltaRuntime::Impl::Stage {
   DeltaMetrics prior;
   std::size_t output_begin;
   RowSets changed, removed;
+  MemoryVector<storage::ScalarView> result_fields;
   std::shared_ptr<LiveImage> next_image;
   const LiveImage* eligible=nullptr;
   std::optional<ProductiveQueue> productive;
@@ -888,7 +896,9 @@ struct DeltaRuntime::Impl::Stage {
       :runtime(owner),output(result),working(state),transaction(live),before(old_view),after(new_view),
        target(sign==SetOperation::insert?after:before),operation(sign),occurrence(route),prefix(position),
        prior(result.metrics),output_begin(result.rows.size()),changed(owner.row_sets(owner.factors.size())),
-       removed(owner.row_sets(live?owner.factors.size():0,resource::MemoryPurpose::journal_undo,resource::AllocationLifetime::retained)),replay(owner.selected_completion==DeltaCompletion::ordered_replay),
+       removed(owner.row_sets(live?owner.factors.size():0,resource::MemoryPurpose::journal_undo,resource::AllocationLifetime::retained)),
+       result_fields(resource::MemoryAllocator<storage::ScalarView>(owner.memory(),resource::MemoryPurpose::scratch,delta_metadata)),
+       replay(owner.selected_completion==DeltaCompletion::ordered_replay),
        on_output(live && owner.options.live_maintenance==LiveMaintenance::on_output) {
     auto& metrics=output.metrics; const auto preparation_begin=metrics.work;
     runtime.metric(metrics,metrics.stages); runtime.metric(metrics,metrics.view_work,before.metrics().work);
@@ -996,7 +1006,7 @@ struct DeltaRuntime::Impl::Stage {
     auto& metrics=output.metrics;
     for (;;) {
       if (!anchored && !root && !open()) { finish(); return false; }
-      auto row=anchored?anchored->next():runtime.cursor_next(*root,metrics);
+      auto row=anchored?anchored->next(result_fields):runtime.cursor_next(*root,metrics);
       if (!row) {
         anchored.reset(); root.reset();
         if (replay) {
@@ -1014,11 +1024,24 @@ struct DeltaRuntime::Impl::Stage {
       runtime.metric(metrics,metrics.accepted);
       if (output.observation) output.observation->event(TraceKind::core_result,
           metrics.accepted,0,runtime.factors[rank].node.value,occurrence.value,prefix);
-      if (on_output) transaction->on_output(row->values(),changed,operation==SetOperation::insert,removed,
-          replay?std::optional<std::size_t>{rank}:std::nullopt,replay?&*productive:nullptr);
+      if (on_output) {
+        const auto anchor=replay?std::optional<std::size_t>{rank}:std::nullopt;
+        auto* queue=replay?&*productive:nullptr;
+        if (anchored) {
+          transaction->on_output([&](std::size_t factor) {
+            for (auto remaining=runtime.factors[factor].head_fields.size();remaining!=0;--remaining)
+              runtime.metric(metrics,metrics.projection_fields);
+            return anchored->selected_key(factor);
+          },changed,operation==SetOperation::insert,removed,anchor,queue);
+        } else {
+          transaction->on_output([&](std::size_t factor) {
+            return runtime.project(row->values(),runtime.factors[factor].head_fields,metrics,metrics.projection_fields);
+          },changed,operation==SetOperation::insert,removed,anchor,queue);
+        }
+      }
       if (!runtime.scalar_sql()) {
         PhaseTimer timing(output.timings.output_mapping_ns,output.observation);
-        output.append(operation,runtime.map_result(std::move(*row),metrics));
+        output.append(operation,runtime.map_result(std::move(*row),metrics,result_fields));
       }
       if (replay) {
         const auto amount=metrics.work-transition_begin;
