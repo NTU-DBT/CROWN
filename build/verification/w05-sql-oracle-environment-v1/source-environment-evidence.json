@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "kind": "w05_sql_oracle_environment_inventory",
+  "captured_on": "2026-11-12",
+  "scope": "Read-only local inventory and bounded SQL type probes. DuckDB queries used in-memory databases.",
+  "actions_not_taken": [
+    "No package downloads or installations",
+    "No PostgreSQL server or database initialization",
+    "No system configuration changes",
+    "No native builds or test suites",
+    "No edits to maintained source or earlier W05 evidence"
+  ],
+  "source_evidence": [
+    {
+      "path": "Refactor.md",
+      "lines": ["389", "1321-1324"],
+      "sha256": "bb90e4a4e97e2817a0869ad86c5c8b00e571bb241f153fb44641c71f86fcd5ce",
+      "relevance": "W05 requires SQL-oracle comparison with matching casts, collation and types; plain bags, general NULL/type behavior, DISTINCT/grouping behavior, and set-fixture preservation."
+    },
+    {
+      "path": "docs/handoff.md",
+      "lines": ["79-82"],
+      "sha256": "6f96dcc36f3018d56e2bd2d6ee8b951f94253b90f86921699eab8dad419301ce",
+      "relevance": "Active handoff starts W05 with general SQL NULL/type behavior, plain SELECT bags, explicit source admission, and separate aggregate grouping NULL rules."
+    },
+    {
+      "path": "include/crown/ir/scalar.hpp",
+      "lines": ["30-32"],
+      "sha256": "8b3b5a06d1ad9c1d0338e3560e6146c6b3ed98616594f72e66d8c5f17f3ae859",
+      "relevance": "CROWN Decimal has a maximum 38-digit coefficient and scale 0..38; it is not SQL DECIMAL(p,s) coercion."
+    },
+    {
+      "path": "src/ir/scalar.cpp",
+      "lines": ["48-86"],
+      "sha256": "b68511f78d37fa4a2dd2d795d1f6ea543a8920064ec9b16ea3c36544074de273",
+      "relevance": "Decimal parsing/canonicalization implementation for the bounded value domain."
+    }
+  ],
+  "postgresql": {
+    "pg_config": {
+      "path": "/usr/bin/pg_config",
+      "owner_package": "libpq-dev",
+      "version_command": "/usr/bin/pg_config --version",
+      "version_output": "PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+      "bindir_command": "/usr/bin/pg_config --bindir",
+      "bindir_output": "/usr/lib/postgresql/16/bin",
+      "bindir_exists": false
+    },
+    "server_client_commands_on_path": {
+      "psql": null,
+      "postgres": null,
+      "initdb": null
+    },
+    "bindir_binaries": {
+      "psql": false,
+      "postgres": false,
+      "initdb": false
+    },
+    "installed_packages": {
+      "postgresql-16": "not installed; dpkg-query reported no package",
+      "postgresql-18": "not installed; dpkg-query reported no package",
+      "postgresql-client-16": "not installed; dpkg-query reported no package",
+      "postgresql-client-18": "not installed; dpkg-query reported no package"
+    },
+    "apt_cache": {
+      "command": "apt-cache policy postgresql-16 postgresql-18",
+      "postgresql-16": {
+        "installed": "(none)",
+        "candidate": "16.15-0ubuntu0.24.04.1"
+      },
+      "postgresql-18": "No package entry/candidate displayed; apt-cache show returned 'E: No packages found'",
+      "cached_postgresql_deb_archives": []
+    },
+    "availability_conclusion": "pg_config is present, but it is not accompanied by PostgreSQL server/client binaries. A PostgreSQL SQL oracle cannot be run locally without installing or otherwise providing a server."
+  },
+  "duckdb": {
+    "cli": {
+      "path": "/home/userroot/.local/bin/duckdb",
+      "version_command": "/home/userroot/.local/bin/duckdb --version",
+      "version_output": "v1.5.0 (Variegata) 3a3967aa81"
+    },
+    "python": {
+      "module_version": "1.5.4",
+      "python_version": "3.12.3",
+      "python_executable": "/usr/bin/python3",
+      "module_path": "/home/userroot/.local/lib/python3.12/site-packages/duckdb/__init__.py",
+      "connection": "duckdb.connect(':memory:')"
+    },
+    "python_probes": [
+      {
+        "name": "decimal_38_0_integer",
+        "sql": "SELECT CAST('99999999999999999999999999999999999999' AS DECIMAL(38,0)) AS v",
+        "result_type": "DECIMAL(38,0)",
+        "result": "99999999999999999999999999999999999999"
+      },
+      {
+        "name": "decimal_38_38_fraction",
+        "sql": "SELECT CAST('0.00000000000000000000000000000000000001' AS DECIMAL(38,38)) AS v",
+        "result_type": "DECIMAL(38,38)",
+        "result": "1E-38"
+      },
+      {
+        "name": "date_boolean",
+        "sql": "SELECT DATE '2024-02-29' AS d, TRUE AS b, typeof(DATE '2024-02-29') AS date_type, typeof(TRUE) AS boolean_type",
+        "result_types": ["DATE", "BOOLEAN", "VARCHAR", "VARCHAR"],
+        "result": ["2024-02-29", true, "DATE", "BOOLEAN"]
+      },
+      {
+        "name": "unqualified_numeric_defaults",
+        "sql": "SELECT typeof(CAST('1' AS NUMERIC)) AS integer_numeric, typeof(CAST('1.23' AS NUMERIC)) AS decimal_numeric",
+        "result": ["DECIMAL(18,3)", "DECIMAL(18,3)"]
+      },
+      {
+        "name": "mixed_decimal_extremes_union",
+        "sql": "SELECT CAST('99999999999999999999999999999999999999' AS DECIMAL(38,0)) AS v UNION ALL SELECT CAST('0.00000000000000000000000000000000000001' AS DECIMAL(38,38))",
+        "result_type": "DECIMAL(38,0)",
+        "result_rows": ["99999999999999999999999999999999999999", "0"],
+        "interpretation": "The second exact input, 1E-38, was coerced to zero by UNION type resolution."
+      },
+      {
+        "name": "precision_39_rejected",
+        "sql": "SELECT CAST('1' AS DECIMAL(39,0)) AS v",
+        "error_type": "BinderException",
+        "error": "Binder Error: DECIMAL type width must be between 1 and 38"
+      },
+      {
+        "name": "38_digit_unqualified_numeric_rejected",
+        "sql": "SELECT CAST('99999999999999999999999999999999999999' AS NUMERIC) AS v",
+        "error_type": "ConversionException",
+        "error": "Conversion to DECIMAL(18,3) failed for the 38-digit integer."
+      }
+    ],
+    "cli_probes": [
+      {
+        "name": "mixed_decimal_extremes_union",
+        "database": ":memory:",
+        "sql": "SELECT CAST('99999999999999999999999999999999999999' AS DECIMAL(38,0)) AS v UNION ALL SELECT CAST('0.00000000000000000000000000000000000001' AS DECIMAL(38,38))",
+        "version": "v1.5.0 (Variegata) 3a3967aa81",
+        "csv_result_rows": ["99999999999999999999999999999999999999", "0"]
+      },
+      {
+        "name": "default_numeric_date_boolean_types",
+        "database": ":memory:",
+        "sql": "SELECT typeof(CAST('1' AS NUMERIC)), typeof(CAST('1.23' AS NUMERIC)), typeof(DATE '2024-02-29'), typeof(TRUE)",
+        "result": ["DECIMAL(18,3)", "DECIMAL(18,3)", "DATE", "BOOLEAN"]
+      }
+    ],
+    "limitations": [
+      "DuckDB maximum DECIMAL precision is 38.",
+      "Unqualified NUMERIC is DECIMAL(18,3) in these versions, not an unconstrained arbitrary-scale decimal.",
+      "The tested UNION ALL silently loses the 1E-38 operand when combined with DECIMAL(38,0).",
+      "DATE and BOOLEAN evidence covers basic literals only; broader casts/ranges were not audited.",
+      "Collation behavior was not probed; W05 comparisons must match CROWN's declared binary collation."
+    ],
+    "assessment": "DuckDB is usable for explicitly fixed DECIMAL(p,s), DATE and BOOLEAN cases when SQL types and casts are matched. It is not a safe direct oracle for the full CROWN Decimal value domain across varying scales."
+  }
+}

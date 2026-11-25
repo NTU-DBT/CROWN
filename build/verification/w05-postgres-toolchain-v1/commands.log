@@ -1,0 +1,53 @@
+PostgreSQL 16 isolated toolchain command record
+Date: 2026-11-12
+No package installation, apt index refresh, cluster initialization, or server startup was performed.
+
+Metadata and provenance
+  apt-cache show postgresql-16=16.15-0ubuntu0.24.04.1 -> exit 0
+    Filename: pool/main/p/postgresql-16/postgresql-16_16.15-0ubuntu0.24.04.1_amd64.deb
+    Size: 15610426
+    SHA256: d60ae76fb862cd4cca7bfdcdcdcc271c5e1d75f6b7915305ce2d962735a4b666
+  apt-cache show postgresql-client-16=16.15-0ubuntu0.24.04.1 -> exit 0
+    Filename: pool/main/p/postgresql-16/postgresql-client-16_16.15-0ubuntu0.24.04.1_amd64.deb
+    Size: 1301302
+    SHA256: 4796f72e1a7270ad8c17b1ecb025cd453f692b42c10aaf89f6b476da61761eac
+  Effective UID and target-directory preflight -> exit 0; EUID 1000; both requested task directories absent.
+
+Download, integrity check, extraction
+  mkdir -p /tmp/w05-postgres-package-v1 build/verification/w05-postgres-toolchain-v1 -> exit 0
+  apt-get download postgresql-16=16.15-0ubuntu0.24.04.1 postgresql-client-16=16.15-0ubuntu0.24.04.1 -> exit 0
+    Get:1 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 postgresql-16 amd64 16.15-0ubuntu0.24.04.1 [15.6 MB]
+    Get:2 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 postgresql-client-16 amd64 16.15-0ubuntu0.24.04.1 [1301 kB]
+    Fetched 16.9 MB in 4s (4546 kB/s)
+  Python SHA-256 comparison against apt-cache metadata -> exit 0; both match; no unexpected entries in download directory.
+  mkdir -p /tmp/w05-postgres-package-v1/extracted -> exit 0
+  dpkg-deb --extract /tmp/w05-postgres-package-v1/postgresql-16_16.15-0ubuntu0.24.04.1_amd64.deb /tmp/w05-postgres-package-v1/extracted -> exit 0
+  dpkg-deb --extract /tmp/w05-postgres-package-v1/postgresql-client-16_16.15-0ubuntu0.24.04.1_amd64.deb /tmp/w05-postgres-package-v1/extracted -> exit 0
+
+Inspection
+  find extracted/usr for postgres/initdb/pg_ctl/psql -> exit 0
+    /tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl
+    /tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/psql
+    /tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/postgres
+    /tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/initdb
+  find extracted/usr/share/postgresql/16 for BKI/config/SQL support files -> exit 0
+    information_schema.sql, postgresql.conf.sample, snowball_create.sql,
+    pg_ident.conf.sample, postgres.bki, system_views.sql,
+    pg_hba.conf.sample
+  postgres --version -> exit 0; postgres (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)
+  initdb --version -> exit 0; initdb (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)
+  pg_ctl --version -> exit 0; pg_ctl (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)
+  psql --version -> exit 0; psql (PostgreSQL) 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)
+  ldd on each of postgres/initdb/pg_ctl/psql -> exit 0 for all; no dependency line contained "not found".
+
+Environment paths
+  CC/CXX/CFLAGS/CXXFLAGS -> unset
+  cc=/usr/bin/cc; c++=/usr/bin/c++; gcc=/usr/bin/gcc; g++=/usr/bin/g++
+  clang/clang++/ninja -> not found; cmake=/usr/bin/cmake; make=/usr/bin/make
+  pg_config --bindir -> exit 0; /usr/lib/postgresql/16/bin
+  pg_config --sharedir -> exit 0; /usr/share/postgresql/16
+  pg_config --libdir -> exit 0; /usr/lib/x86_64-linux-gnu
+  pg_config --includedir-server -> exit 0; /usr/include/postgresql/16/server
+
+The system pg_config paths above were not modified. The isolated binaries and
+shared support files remain under /tmp/w05-postgres-package-v1/extracted.

@@ -1,0 +1,88 @@
+PostgreSQL 16 isolated engine capability probe command log
+All SQL values emitted as JSON/text; no Python floating point conversion.
+
+[1] initdb
+$ /tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/initdb -D /tmp/w05-postgres-probe-v1/data -L /tmp/w05-postgres-package-v1/extracted/usr/share/postgresql/16 --encoding=UTF8 --no-locale --username=w05oracle --auth-local=trust --auth-host=reject --no-instructions
+exit_code: 0
+stdout:
+The files belonging to this database system will be owned by user "userroot".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "C".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+creating directory /tmp/w05-postgres-probe-v1/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... Asia/Shanghai
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+[2] private cluster config append
+$ append task-local settings to data/postgresql.conf
+exit_code: 0
+
+[3] pg_ctl start
+$ /tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl -D /tmp/w05-postgres-probe-v1/data -l /tmp/w05-postgres-probe-v1/postgres.log -w -t 20 start
+exit_code: 0
+stdout:
+waiting for server to start.... done
+server started
+
+[4] pg_ctl status after start
+$ /tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl -D /tmp/w05-postgres-probe-v1/data status
+exit_code: 0
+stdout:
+pg_ctl: server is running (PID: 3983941)
+/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/postgres "-D" "/tmp/w05-postgres-probe-v1/data"
+
+[5] postmaster pid capture
+$ read first line of private data/postmaster.pid
+exit_code: 0
+stdout:
+3983941
+
+[6] psql SQL capability queries
+$ /tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/psql --no-psqlrc --no-align --tuples-only --quiet --set=ON_ERROR_STOP=1 --host /tmp/w05-postgres-probe-v1/socket --port 55439 --username w05oracle --dbname postgres
+exit_code: 3
+stdout:
+{"server_version" : "16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)", "server_version_num" : "160015", "current_user" : "w05oracle", "server_encoding" : "UTF8", "listen_addresses" : "", "unix_socket_directories" : "/tmp/w05-postgres-probe-v1/socket", "port" : "55439"}
+{"column_type" : "numeric", "typmod" : -1, "values_ascending" : ["0.00000000000000000000000000000000000001", "99999999999999999999999999999999999999"], "tiny_equal_exactly" : true, "integer_equal_exactly" : true, "integer_greater_than_tiny" : true}
+{"null_equal_is_unknown" : true, "null_equal_is_null" : true, "null_equal_text" : null}
+{"grouped" : [{"value" : null, "count" : 2}, {"value" : "x", "count" : 2}, {"value" : "y", "count" : 1}], "distinct_values" : [null, "x", "y"]}
+stderr:
+ERROR:  collation "c" for encoding "UTF8" does not exist
+LINE 5: ...LECT collname::text FROM pg_collation WHERE oid = 'C'::regco...
+                                                             ^
+
+[7] pg_ctl status in finally
+$ /tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl -D /tmp/w05-postgres-probe-v1/data status
+exit_code: 0
+stdout:
+pg_ctl: server is running (PID: 3983941)
+/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/postgres "-D" "/tmp/w05-postgres-probe-v1/data"
+
+[8] pg_ctl fast stop in finally
+$ /tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl -D /tmp/w05-postgres-probe-v1/data -m fast -w -t 20 stop
+exit_code: 0
+stdout:
+waiting for server to shut down.... done
+server stopped
+
+[9] pg_ctl status after fast stop
+$ /tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl -D /tmp/w05-postgres-probe-v1/data status
+exit_code: 3
+stdout:
+pg_ctl: no server running
+
+[10] pg_ctl final status verification
+$ /tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl -D /tmp/w05-postgres-probe-v1/data status
+exit_code: 3
+stdout:
+pg_ctl: no server running

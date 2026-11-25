@@ -1,0 +1,318 @@
+{
+  "schema_version": 1,
+  "kind": "postgresql_engine_capability_probe",
+  "captured_on": "2026-11-12",
+  "status": "capability_assertion_failed",
+  "scope": "Engine capability evidence only; not a native CROWN/W05 agreement or test-suite result.",
+  "failure": "unexpected PostgreSQL probe output: {'socket_only_settings': True, 'unconstrained_numeric_typmod': True, 'exact_mixed_scale_numeric_values': True, 'ordinary_null_equality_is_unknown': True, 'null_grouping_and_distinct': True, 'date_boolean_and_C_collation': False}",
+  "attempts": [
+    {
+      "attempt": 1,
+      "status": "query_failed",
+      "reason": "ERROR:  collation \"c\" for encoding \"UTF8\" does not exist\nLINE 5: ...LECT collname::text FROM pg_collation WHERE oid = 'C'::regco...\n                                                             ^\n",
+      "correction": "Removed only a catalog-name lookup that folded the C collation name to lowercase c; the explicit COLLATE \"C\" comparisons are unchanged.",
+      "preserved_query_file": "build/verification/w05-postgres-probe-v1/attempt-1-failed.sql",
+      "preserved_log_file": "build/verification/w05-postgres-probe-v1/attempt-1-failed.log",
+      "partial_json_lines": [
+        "{\"server_version\" : \"16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)\", \"server_version_num\" : \"160015\", \"current_user\" : \"w05oracle\", \"server_encoding\" : \"UTF8\", \"listen_addresses\" : \"\", \"unix_socket_directories\" : \"/tmp/w05-postgres-probe-v1/socket\", \"port\" : \"55439\"}",
+        "{\"column_type\" : \"numeric\", \"typmod\" : -1, \"values_ascending\" : [\"0.00000000000000000000000000000000000001\", \"99999999999999999999999999999999999999\"], \"tiny_equal_exactly\" : true, \"integer_equal_exactly\" : true, \"integer_greater_than_tiny\" : true}",
+        "{\"null_equal_is_unknown\" : true, \"null_equal_is_null\" : true, \"null_equal_text\" : null}",
+        "{\"grouped\" : [{\"value\" : null, \"count\" : 2}, {\"value\" : \"x\", \"count\" : 2}, {\"value\" : \"y\", \"count\" : 1}], \"distinct_values\" : [null, \"x\", \"y\"]}"
+      ],
+      "cleanup": {
+        "attempted": true,
+        "pg_ctl_post_status_exit": 3,
+        "postmaster_pidfile_absent": true,
+        "owned_process_running": false,
+        "socket_directory_entries": [],
+        "stopped": true
+      }
+    },
+    {
+      "attempt": 2,
+      "status": "capability_assertion_failed",
+      "query_file": "build/verification/w05-postgres-probe-v1/queries.sql",
+      "raw_json_lines": [
+        "{\"server_version\" : \"16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)\", \"server_version_num\" : \"160015\", \"current_user\" : \"w05oracle\", \"server_encoding\" : \"UTF8\", \"listen_addresses\" : \"\", \"unix_socket_directories\" : \"/tmp/w05-postgres-probe-v1/socket\", \"port\" : \"55439\"}",
+        "{\"column_type\" : \"numeric\", \"typmod\" : -1, \"values_ascending\" : [\"0.00000000000000000000000000000000000001\", \"99999999999999999999999999999999999999\"], \"tiny_equal_exactly\" : true, \"integer_equal_exactly\" : true, \"integer_greater_than_tiny\" : true}",
+        "{\"null_equal_is_unknown\" : true, \"null_equal_is_null\" : true, \"null_equal_text\" : null}",
+        "{\"grouped\" : [{\"value\" : null, \"count\" : 2}, {\"value\" : \"x\", \"count\" : 2}, {\"value\" : \"y\", \"count\" : 1}], \"distinct_values\" : [null, \"x\", \"y\"]}",
+        "{\"date_value\" : \"2024-02-29\", \"boolean_true\" : true, \"boolean_false\" : false, \"C_same_text_equal\" : true, \"C_upper_before_lower\" : true, \"C_ascii_before_utf8\" : true}"
+      ],
+      "assertions": {
+        "socket_only_settings": true,
+        "unconstrained_numeric_typmod": true,
+        "exact_mixed_scale_numeric_values": true,
+        "ordinary_null_equality_is_unknown": true,
+        "null_grouping_and_distinct": true,
+        "date_boolean_and_C_collation": false
+      },
+      "cleanup": {
+        "attempted": true,
+        "pg_ctl_post_status_exit": 3,
+        "postmaster_pidfile_absent": true,
+        "owned_process_running": false,
+        "socket_directory_entries": [],
+        "stopped": true
+      }
+    }
+  ],
+  "connection": {
+    "transport": "Unix socket only",
+    "socket_directory": "/tmp/w05-postgres-probe-v1/socket",
+    "socket_directory_mode_octal": "0o700",
+    "port": 55439,
+    "listen_addresses": "",
+    "role": "w05oracle",
+    "data_directory": "/tmp/w05-postgres-probe-v1/data",
+    "server_log": "/tmp/w05-postgres-probe-v1/postgres.log",
+    "binaries": {
+      "initdb": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/initdb",
+      "pg_ctl": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl",
+      "postgres": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/postgres",
+      "psql": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/psql"
+    },
+    "sharedir_explicit": "/tmp/w05-postgres-package-v1/extracted/usr/share/postgresql/16",
+    "cluster_initialized_once": true,
+    "cluster_started_twice_for_capability_probe": true
+  },
+  "engine_identity": {
+    "server_version": "16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+    "server_version_num": "160015",
+    "server_binary_version": "PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+    "bki_path": "/tmp/w05-postgres-package-v1/extracted/usr/share/postgresql/16/postgres.bki",
+    "bki_sha256": "e7ccf0cbdf9a993e2bbfd99e3c4bb2161036ad33233d66281756750c409c983f",
+    "package_sha256": {
+      "/tmp/w05-postgres-package-v1/postgresql-16_16.15-0ubuntu0.24.04.1_amd64.deb": "d60ae76fb862cd4cca7bfdcdcdcc271c5e1d75f6b7915305ce2d962735a4b666",
+      "/tmp/w05-postgres-package-v1/postgresql-client-16_16.15-0ubuntu0.24.04.1_amd64.deb": "4796f72e1a7270ad8c17b1ecb025cd453f692b42c10aaf89f6b476da61761eac"
+    },
+    "package_evidence": "build/verification/w05-postgres-toolchain-v1/toolchain-evidence.json"
+  },
+  "query_sql": "-- PostgreSQL 16 local capability probe; all decimal outputs are text/JSON.\nSELECT json_build_object(\n  'server_version', current_setting('server_version'),\n  'server_version_num', current_setting('server_version_num'),\n  'current_user', current_user,\n  'server_encoding', current_setting('server_encoding'),\n  'listen_addresses', current_setting('listen_addresses'),\n  'unix_socket_directories', current_setting('unix_socket_directories'),\n  'port', current_setting('port')\n)::text;\n\nCREATE TEMP TABLE exact_numeric_probe (n numeric);\nINSERT INTO exact_numeric_probe(n) VALUES\n  ('99999999999999999999999999999999999999'::numeric),\n  ('0.00000000000000000000000000000000000001'::numeric);\nSELECT json_build_object(\n  'column_type', (SELECT pg_typeof(n)::text FROM exact_numeric_probe LIMIT 1),\n  'typmod', (SELECT atttypmod FROM pg_attribute\n    WHERE attrelid = 'pg_temp.exact_numeric_probe'::regclass\n      AND attname = 'n' AND attnum > 0 AND NOT attisdropped),\n  'values_ascending', (SELECT json_agg(n::text ORDER BY n) FROM exact_numeric_probe),\n  'tiny_equal_exactly', EXISTS (SELECT 1 FROM exact_numeric_probe\n    WHERE n = '0.00000000000000000000000000000000000001'::numeric),\n  'integer_equal_exactly', EXISTS (SELECT 1 FROM exact_numeric_probe\n    WHERE n = '99999999999999999999999999999999999999'::numeric),\n  'integer_greater_than_tiny', (SELECT max(n) > min(n) FROM exact_numeric_probe)\n)::text;\n\nSELECT json_build_object(\n  'null_equal_is_unknown', (NULL::numeric = NULL::numeric) IS UNKNOWN,\n  'null_equal_is_null', (NULL::numeric = NULL::numeric) IS NULL,\n  'null_equal_text', (NULL::numeric = NULL::numeric)::text\n)::text;\n\nCREATE TEMP TABLE null_group_probe (v text);\nINSERT INTO null_group_probe(v) VALUES (NULL), (NULL), ('x'), ('x'), ('y');\nSELECT json_build_object(\n  'grouped', (SELECT json_agg(json_build_object('value', v, 'count', n)\n                              ORDER BY v NULLS FIRST)\n              FROM (SELECT v, count(*) AS n FROM null_group_probe GROUP BY v) AS g),\n  'distinct_values', (SELECT json_agg(value ORDER BY value NULLS FIRST)\n                      FROM (SELECT DISTINCT v AS value FROM null_group_probe) AS d)\n)::text;\n\nSELECT json_build_object(\n  'date_value', DATE '2024-02-29'::text,\n  'boolean_true', TRUE,\n  'boolean_false', FALSE,\n  'C_same_text_equal', ('A'::text COLLATE \"C\" = 'A'::text COLLATE \"C\"),\n  'C_upper_before_lower', ('A'::text COLLATE \"C\" < 'a'::text COLLATE \"C\"),\n  'C_ascii_before_utf8', ('z'::text COLLATE \"C\" < 'é'::text COLLATE \"C\")\n)::text;\n",
+  "psql_command": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/psql --no-psqlrc --no-align --tuples-only --quiet --set=ON_ERROR_STOP=1 --host /tmp/w05-postgres-probe-v1/socket --port 55439 --username w05oracle --dbname postgres",
+  "results": [
+    {
+      "server_version": "16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+      "server_version_num": "160015",
+      "current_user": "w05oracle",
+      "server_encoding": "UTF8",
+      "listen_addresses": "",
+      "unix_socket_directories": "/tmp/w05-postgres-probe-v1/socket",
+      "port": "55439"
+    },
+    {
+      "column_type": "numeric",
+      "typmod": -1,
+      "values_ascending": [
+        "0.00000000000000000000000000000000000001",
+        "99999999999999999999999999999999999999"
+      ],
+      "tiny_equal_exactly": true,
+      "integer_equal_exactly": true,
+      "integer_greater_than_tiny": true
+    },
+    {
+      "null_equal_is_unknown": true,
+      "null_equal_is_null": true,
+      "null_equal_text": null
+    },
+    {
+      "grouped": [
+        {
+          "value": null,
+          "count": 2
+        },
+        {
+          "value": "x",
+          "count": 2
+        },
+        {
+          "value": "y",
+          "count": 1
+        }
+      ],
+      "distinct_values": [
+        null,
+        "x",
+        "y"
+      ]
+    },
+    {
+      "date_value": "2024-02-29",
+      "boolean_true": true,
+      "boolean_false": false,
+      "C_same_text_equal": true,
+      "C_upper_before_lower": true,
+      "C_ascii_before_utf8": true
+    }
+  ],
+  "cleanup": {
+    "attempted": true,
+    "pg_ctl_post_status_exit": 3,
+    "postmaster_pidfile_absent": true,
+    "owned_process_running": false,
+    "socket_directory_entries": [],
+    "stopped": true
+  },
+  "server_log_path": "/tmp/w05-postgres-probe-v1/postgres.log",
+  "source_hashes": {
+    "Refactor.md": "bb90e4a4e97e2817a0869ad86c5c8b00e571bb241f153fb44641c71f86fcd5ce",
+    "docs/handoff.md": "5f278b591a93e5bb8e582a7f21c99a79878bc63570bb31413b55fdc5e15ab24d"
+  },
+  "commands": [
+    {
+      "label": "initdb",
+      "command": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/initdb -D /tmp/w05-postgres-probe-v1/data -L /tmp/w05-postgres-package-v1/extracted/usr/share/postgresql/16 --encoding=UTF8 --no-locale --username=w05oracle --auth-local=trust --auth-host=reject --no-instructions",
+      "exit_code": 0,
+      "error": null,
+      "stdout": "The files belonging to this database system will be owned by user \"userroot\".\nThis user must also own the server process.\n\nThe database cluster will be initialized with locale \"C\".\nThe default text search configuration will be set to \"english\".\n\nData page checksums are disabled.\n\ncreating directory /tmp/w05-postgres-probe-v1/data ... ok\ncreating subdirectories ... ok\nselecting dynamic shared memory implementation ... posix\nselecting default max_connections ... 100\nselecting default shared_buffers ... 128MB\nselecting default time zone ... Asia/Shanghai\ncreating configuration files ... ok\nrunning bootstrap script ... ok\nperforming post-bootstrap initialization ... ok\nsyncing data to disk ... ok\n",
+      "stderr": "",
+      "attempt": 1
+    },
+    {
+      "label": "private cluster config append",
+      "command": "append task-local settings to data/postgresql.conf",
+      "exit_code": 0,
+      "error": null,
+      "stdout": "",
+      "stderr": "",
+      "attempt": 1
+    },
+    {
+      "label": "pg_ctl start",
+      "command": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl -D /tmp/w05-postgres-probe-v1/data -l /tmp/w05-postgres-probe-v1/postgres.log -w -t 20 start",
+      "exit_code": 0,
+      "error": null,
+      "stdout": "waiting for server to start.... done\nserver started\n",
+      "stderr": "",
+      "attempt": 1
+    },
+    {
+      "label": "pg_ctl status after start",
+      "command": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl -D /tmp/w05-postgres-probe-v1/data status",
+      "exit_code": 0,
+      "error": null,
+      "stdout": "pg_ctl: server is running (PID: 3983941)\n/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/postgres \"-D\" \"/tmp/w05-postgres-probe-v1/data\"\n",
+      "stderr": "",
+      "attempt": 1
+    },
+    {
+      "label": "postmaster pid capture",
+      "command": "read first line of private data/postmaster.pid",
+      "exit_code": 0,
+      "error": null,
+      "stdout": "3983941",
+      "stderr": "",
+      "attempt": 1
+    },
+    {
+      "label": "psql SQL capability queries",
+      "command": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/psql --no-psqlrc --no-align --tuples-only --quiet --set=ON_ERROR_STOP=1 --host /tmp/w05-postgres-probe-v1/socket --port 55439 --username w05oracle --dbname postgres",
+      "exit_code": 3,
+      "error": null,
+      "stdout": "{\"server_version\" : \"16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)\", \"server_version_num\" : \"160015\", \"current_user\" : \"w05oracle\", \"server_encoding\" : \"UTF8\", \"listen_addresses\" : \"\", \"unix_socket_directories\" : \"/tmp/w05-postgres-probe-v1/socket\", \"port\" : \"55439\"}\n{\"column_type\" : \"numeric\", \"typmod\" : -1, \"values_ascending\" : [\"0.00000000000000000000000000000000000001\", \"99999999999999999999999999999999999999\"], \"tiny_equal_exactly\" : true, \"integer_equal_exactly\" : true, \"integer_greater_than_tiny\" : true}\n{\"null_equal_is_unknown\" : true, \"null_equal_is_null\" : true, \"null_equal_text\" : null}\n{\"grouped\" : [{\"value\" : null, \"count\" : 2}, {\"value\" : \"x\", \"count\" : 2}, {\"value\" : \"y\", \"count\" : 1}], \"distinct_values\" : [null, \"x\", \"y\"]}\n",
+      "stderr": "ERROR:  collation \"c\" for encoding \"UTF8\" does not exist\nLINE 5: ...LECT collname::text FROM pg_collation WHERE oid = 'C'::regco...\n                                                             ^\n",
+      "attempt": 1
+    },
+    {
+      "label": "pg_ctl status in finally",
+      "command": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl -D /tmp/w05-postgres-probe-v1/data status",
+      "exit_code": 0,
+      "error": null,
+      "stdout": "pg_ctl: server is running (PID: 3983941)\n/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/postgres \"-D\" \"/tmp/w05-postgres-probe-v1/data\"\n",
+      "stderr": "",
+      "attempt": 1
+    },
+    {
+      "label": "pg_ctl fast stop in finally",
+      "command": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl -D /tmp/w05-postgres-probe-v1/data -m fast -w -t 20 stop",
+      "exit_code": 0,
+      "error": null,
+      "stdout": "waiting for server to shut down.... done\nserver stopped\n",
+      "stderr": "",
+      "attempt": 1
+    },
+    {
+      "label": "pg_ctl status after fast stop",
+      "command": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl -D /tmp/w05-postgres-probe-v1/data status",
+      "exit_code": 3,
+      "error": null,
+      "stdout": "pg_ctl: no server running\n",
+      "stderr": "",
+      "attempt": 1
+    },
+    {
+      "label": "pg_ctl final status verification",
+      "command": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl -D /tmp/w05-postgres-probe-v1/data status",
+      "exit_code": 3,
+      "error": null,
+      "stdout": "pg_ctl: no server running\n",
+      "stderr": "",
+      "attempt": 1
+    },
+    {
+      "label": "attempt-2 pg_ctl start",
+      "command": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl -D /tmp/w05-postgres-probe-v1/data -l /tmp/w05-postgres-probe-v1/postgres.log -w -t 20 start",
+      "exit_code": 0,
+      "stdout": "waiting for server to start.... done\nserver started\n",
+      "stderr": "",
+      "attempt": 2
+    },
+    {
+      "label": "attempt-2 pg_ctl status after start",
+      "command": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl -D /tmp/w05-postgres-probe-v1/data status",
+      "exit_code": 0,
+      "stdout": "pg_ctl: server is running (PID: 3984457)\n/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/postgres \"-D\" \"/tmp/w05-postgres-probe-v1/data\"\n",
+      "stderr": "",
+      "attempt": 2
+    },
+    {
+      "label": "attempt-2 postmaster pid capture",
+      "command": "read first line of private data/postmaster.pid",
+      "exit_code": 0,
+      "stdout": "3984457",
+      "stderr": "",
+      "attempt": 2
+    },
+    {
+      "label": "attempt-2 corrected psql SQL capability queries",
+      "command": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/psql --no-psqlrc --no-align --tuples-only --quiet --set=ON_ERROR_STOP=1 --host /tmp/w05-postgres-probe-v1/socket --port 55439 --username w05oracle --dbname postgres",
+      "exit_code": 0,
+      "stdout": "{\"server_version\" : \"16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)\", \"server_version_num\" : \"160015\", \"current_user\" : \"w05oracle\", \"server_encoding\" : \"UTF8\", \"listen_addresses\" : \"\", \"unix_socket_directories\" : \"/tmp/w05-postgres-probe-v1/socket\", \"port\" : \"55439\"}\n{\"column_type\" : \"numeric\", \"typmod\" : -1, \"values_ascending\" : [\"0.00000000000000000000000000000000000001\", \"99999999999999999999999999999999999999\"], \"tiny_equal_exactly\" : true, \"integer_equal_exactly\" : true, \"integer_greater_than_tiny\" : true}\n{\"null_equal_is_unknown\" : true, \"null_equal_is_null\" : true, \"null_equal_text\" : null}\n{\"grouped\" : [{\"value\" : null, \"count\" : 2}, {\"value\" : \"x\", \"count\" : 2}, {\"value\" : \"y\", \"count\" : 1}], \"distinct_values\" : [null, \"x\", \"y\"]}\n{\"date_value\" : \"2024-02-29\", \"boolean_true\" : true, \"boolean_false\" : false, \"C_same_text_equal\" : true, \"C_upper_before_lower\" : true, \"C_ascii_before_utf8\" : true}\n",
+      "stderr": "",
+      "attempt": 2
+    },
+    {
+      "label": "attempt-2 pg_ctl status in finally",
+      "command": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl -D /tmp/w05-postgres-probe-v1/data status",
+      "exit_code": 0,
+      "stdout": "pg_ctl: server is running (PID: 3984457)\n/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/postgres \"-D\" \"/tmp/w05-postgres-probe-v1/data\"\n",
+      "stderr": "",
+      "attempt": 2
+    },
+    {
+      "label": "attempt-2 pg_ctl fast stop in finally",
+      "command": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl -D /tmp/w05-postgres-probe-v1/data -m fast -w -t 20 stop",
+      "exit_code": 0,
+      "stdout": "waiting for server to shut down.... done\nserver stopped\n",
+      "stderr": "",
+      "attempt": 2
+    },
+    {
+      "label": "attempt-2 pg_ctl status after fast stop",
+      "command": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl -D /tmp/w05-postgres-probe-v1/data status",
+      "exit_code": 3,
+      "stdout": "pg_ctl: no server running\n",
+      "stderr": "",
+      "attempt": 2
+    },
+    {
+      "label": "attempt-2 pg_ctl final status verification",
+      "command": "/tmp/w05-postgres-package-v1/extracted/usr/lib/postgresql/16/bin/pg_ctl -D /tmp/w05-postgres-probe-v1/data status",
+      "exit_code": 3,
+      "stdout": "pg_ctl: no server running\n",
+      "stderr": "",
+      "attempt": 2
+    }
+  ]
+}
