@@ -65,7 +65,7 @@ struct ReplayJob {
   std::vector<unsigned char> bits;
   std::vector<Group> groups;
   std::vector<std::shared_ptr<ReplayPorts>> group_ports;
-  VariableSet shared;
+  VariableSet shared, required;
   VariableSet::const_iterator it;
   std::shared_ptr<ReplayPorts> port;
   std::shared_ptr<ReplayState> state;
@@ -142,6 +142,27 @@ struct ReplayMachine::Impl {
     auto j = std::make_unique<ReplayJob>(kind); j->input = group; return j;
   }
   UnitResult run_job(const UnitContext& context);
+  // Enumerate-stage prune (see ReplayJob::enumerate stage 6). Records, for generalized
+  // roots, the variables every later block must contain in j.shared.
+  bool admissible_prefix(ReplayJob& j) const {
+    VariableSet first, rest;
+    for (const auto member : j.first) first.insert(scopes[member].begin(), scopes[member].end());
+    for (const auto member : j.second) rest.insert(scopes[member].begin(), scopes[member].end());
+    if (!j.generalized) {
+      for (const auto variable : first)
+        if (!scopes[j.a].contains(variable) && rest.contains(variable)) return false;
+      return true;
+    }
+    j.shared = j.required;
+    for (const auto variable : first) if (rest.contains(variable)) j.shared.insert(variable);
+    for (const auto variable : j.shared) if (!first.contains(variable)) return false;
+    for (const auto& block : partition) {
+      VariableSet earlier;
+      for (const auto member : block) earlier.insert(scopes[member].begin(), scopes[member].end());
+      for (const auto variable : j.shared) if (!earlier.contains(variable)) return false;
+    }
+    return true;
+  }
   UnitResult step(const UnitContext& context);
 };
 
@@ -339,7 +360,7 @@ UnitResult ReplayMachine::Impl::run_job(const UnitContext& context) {
           if (!j.claim->generalized_allowed) { finish(); return {}; }
           if (!permitted_push(context)) return blocked();
           { auto task = make(ReplayJob::enumerate, &j.claim->occurrences);
-            task->claim = j.claim; task->generalized = true; push(std::move(task)); }
+            task->claim = j.claim; task->generalized = true; task->required = j.port->boundary; push(std::move(task)); }
           j.stage = 21; return {};
         default: finish(); return {};
       }
@@ -360,13 +381,22 @@ UnitResult ReplayMachine::Impl::run_job(const UnitContext& context) {
           if (j.b < j.input->size()) {
             (j.bits[j.b] ? j.first : j.second).push_back((*j.input)[j.b]); ++j.b; return {};
           }
+          j.stage = 6; return {};
+        case 6:
+          // Skip a first block that no completion can make admissible; the option check
+          // below would reject every such partition. Native root a: a variable outside
+          // scope(a) shared with the complement lies in two block boundaries. Generalized:
+          // B(S) and every variable shared between blocks must lie in every block.
+          if (!admissible_prefix(j)) {
+            j.first.clear(); j.second.clear(); j.b = j.bits.size(); j.stage = 5; return {};
+          }
           j.stage = 2; return {};
         case 2:
           partition.push_back(std::move(j.first)); j.stage = 3; return {};
         case 3:
           if (!permitted_push(context)) return blocked();
           { auto task = make(ReplayJob::enumerate, &j.second);
-            task->claim = j.claim; task->generalized = j.generalized; task->a = j.a;
+            task->claim = j.claim; task->generalized = j.generalized; task->a = j.a; task->required = j.shared;
             push(std::move(task)); }
           j.stage = 4; return {};
         case 4:

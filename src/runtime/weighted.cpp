@@ -1,6 +1,7 @@
 #include "weighted_delta_detail.hpp"
 #include "sql_cold_rebuild.hpp"
 #include "crown/ir/digest.hpp"
+#include <exception>
 #include <algorithm>
 #include <charconv>
 #include <cstdlib>
@@ -53,8 +54,13 @@ weighted_detail::Node::Node(const resource::MemoryAccount& account, NodeId id, s
        messages(std::less<TupleId>{},Map<Multiplicity>::allocator_type(account,resource::MemoryPurpose::support_metadata,attribution)),
        factors(std::less<TupleId>{},Map<Multiplicity>::allocator_type(account,resource::MemoryPurpose::support_metadata,attribution)),
        children(arity,0,resource::MemoryAllocator<std::size_t>(account,resource::MemoryPurpose::immutable_metadata,attribution)) {}
-void weighted_detail::Node::lifetime(const void* pointer, resource::AllocationLifetime value) const {
-    records.get_allocator().account().set_lifetime_containing(pointer,resource::MemoryPurpose::support_metadata,attribution,value);
+void weighted_detail::Node::lifetime(const weighted::RecordValue* pointer, resource::AllocationLifetime value) const {
+    static resource::MemoryAccount::ContainingSite site;  // O(1) after one calibration
+    records.get_allocator().account().set_lifetime_containing(pointer,site,resource::MemoryPurpose::support_metadata,attribution,value);
+}
+void weighted_detail::Node::lifetime(const weighted::Multiplicity* pointer, resource::AllocationLifetime value) const {
+    static resource::MemoryAccount::ContainingSite site;  // messages and factors share one node type
+    records.get_allocator().account().set_lifetime_containing(pointer,site,resource::MemoryPurpose::support_metadata,attribution,value);
 }
 
 weighted::RecordValue::RecordValue(const resource::MemoryAccount& account, resource::MemoryAttribution owner, std::size_t arity,
@@ -260,7 +266,7 @@ struct WeightedRuntime::PendingEpoch::Data {
     Vector<Seen> seen;     // Created only for a reverse walk over hidden fields.
     Vector<storage::ScalarView> row;
     std::size_t position=0,anchor_position=0;
-    bool resume=false;
+    bool resume=false, root_key_bound=false;
     const storage::AccountedTuple* anchor=nullptr;
     std::optional<storage::AccountedTuple> anchor_key;
     DeltaWalk(Data& value):epoch(value),bag(*value.deltas),
@@ -401,6 +407,11 @@ struct WeightedRuntime::PendingEpoch::Data {
           bag.charge(2);frame.key=project(*step.parent_key,*frames[route.source].selected);return pick(frame,step,*frame.key);
         case Lookup::bucket: case Lookup::scan: break;
       }
+      if(position==0 && root_key_bound) {
+        if(frame.selected)return false;
+        bag.charge(2); // Probe the root key and borrow its live tuple.
+        return pick(frame,step,*anchor_key);
+      }
       if(!frame.cursor) {
         bag.charge(2); // Open and its eventual allocation-free cursor close.
         if(route.lookup==Lookup::bucket) {
@@ -437,6 +448,7 @@ struct WeightedRuntime::PendingEpoch::Data {
         original(anchor_step);anchor_position=anchor_step;
         const auto& step=enumeration.steps[anchor_step];
         if(step.parent_step)anchor_key=project(epoch.owner->storage.projection(*step.bucket_index),key);
+        root_key_bound=step.parent_step==0 && step.parent_key->source().same_token(anchor_key->layout());
       }
       require(routes.size()==frames.size(),"weighted_contract","visible traversal route is incomplete");
       const SignedMagnitude difference=support?SignedMagnitude{before.present(),{1}}:
@@ -458,7 +470,7 @@ struct WeightedRuntime::PendingEpoch::Data {
         }
         bag.add(epoch.owner->program.result_layout(),storage::RowView::borrow(row),term);
       }
-      row.clear();anchor=nullptr;anchor_key.reset();
+      row.clear();anchor=nullptr;anchor_key.reset();root_key_bound=false;
     }
   };
   std::shared_ptr<weighted::BagDeltas::Data> deltas;

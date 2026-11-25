@@ -87,7 +87,7 @@ detail::Inspected parse(std::string_view bytes,std::span<const ScalarType> schem
     ImageVector<storage::ScalarView> cells;
     if(decoded){cells=ImageVector<storage::ScalarView>(image_allocator<storage::ScalarView>(account));cells.reserve(schema.size());}
     for(std::uint64_t i=0;i<info.rows;++i) {
-      budget.row();const auto begin=reader.position,operation=reader.integer(1),fields=reader.integer(8);require(operation<=1 && fields==schema.size(),ImageFault::binding);require(fields<=budget.limits.fields,ImageFault::limit);
+      budget.row();const std::size_t begin=reader.position;const auto operation=reader.integer(1),fields=reader.integer(8);require(operation<=1 && fields==schema.size(),ImageFault::binding);require(fields<=budget.limits.fields,ImageFault::limit);
       if(decoded)cells.clear();
       for(const auto type:schema) {
         const auto cell=binary_detail::scalar(reader);require(storage::type_of(cell)==type,ImageFault::binding);

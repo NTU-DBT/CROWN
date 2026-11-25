@@ -1,4 +1,5 @@
 #include "crown/recovery/local_sink.hpp"
+#include "posix_compat.hpp"
 #include "local_sink_codec.hpp"
 #include "crown/ir/digest.hpp"
 #ifdef CROWN_RUNTIME_TESTING
@@ -9,7 +10,6 @@
 #include <fcntl.h>
 #include <limits>
 #include <sys/file.h>
-#include <sys/random.h>
 #include <unistd.h>
 namespace crown::recovery::sink {
 #ifdef CROWN_RUNTIME_TESTING
@@ -45,9 +45,7 @@ struct Path {
   }
 };
 bool same(const struct stat& a,const struct stat& b) {
-  return a.st_dev==b.st_dev && a.st_ino==b.st_ino && a.st_size==b.st_size &&
-      a.st_mtim.tv_sec==b.st_mtim.tv_sec && a.st_mtim.tv_nsec==b.st_mtim.tv_nsec &&
-      a.st_ctim.tv_sec==b.st_ctim.tv_sec && a.st_ctim.tv_nsec==b.st_ctim.tv_nsec;
+  return posix::same_file_state(a,b);
 }
 std::string_view view(const ImageVector<char>& bytes) {return {bytes.data(),bytes.size()};}
 std::array<char,64> chain(const std::array<char,64>& previous,const char* checksum) {
@@ -63,12 +61,12 @@ File::File(const resource::MemoryAccount& account,const Header& header,std::span
 }
 File::~File(){raw_close(fd_);}
 File::File(File&& other) noexcept
-    :account_(other.account_),header_(other.header_),limits_(other.limits_),schema_(std::move(other.schema_)),index_(std::move(other.index_)),scratch_(std::move(other.scratch_)),other_(std::move(other.other_)),fd_(other.fd_),stamp_(other.stamp_),operations_(other.operations_),work_(other.work_),bytes_(other.bytes_),header_bytes_(other.header_bytes_),header_sha256_(other.header_sha256_),outcome_(other.outcome_),poisoned_(other.poisoned_),torn_(other.torn_) {other.fd_=-1;other.poisoned_=true;}
+    :account_(other.account_),header_(other.header_),limits_(other.limits_),schema_(std::move(other.schema_)),index_(std::move(other.index_)),scratch_(std::move(other.scratch_)),other_(std::move(other.other_)),fd_(other.fd_),stamp_(other.stamp_),operations_(other.operations_),work_(other.work_),bytes_(other.bytes_),budget_base_(other.budget_base_),header_bytes_(other.header_bytes_),header_sha256_(other.header_sha256_),outcome_(other.outcome_),poisoned_(other.poisoned_),torn_(other.torn_) {other.fd_=-1;other.poisoned_=true;}
 void File::consume(std::uint64_t amount){if(amount>limits_.work-work_)throw ImageFailure(ImageFault::work);work_+=amount;}
 ImageLimits File::record_limits() const {auto result=limits_.record;result.work=std::min(result.work,limits_.work-work_);return result;}
 std::int64_t File::call(Stage stage,std::size_t requested,int fd,const char* name,int other_fd,const char* other_name,
     void* buffer,std::uint64_t offset,struct stat* status,bool emergency_cleanup) {
-  if(operations_==UINT64_MAX || (!emergency_cleanup && operations_>=limits_.operations)) {
+  if(operations_==UINT64_MAX || (!emergency_cleanup && operations_-budget_base_>=limits_.operations)) {
     if(closing(stage))raw_close(fd);
     fail(Fault::limit,stage,outcome_);
   }
@@ -92,7 +90,7 @@ std::int64_t File::call(Stage stage,std::size_t requested,int fd,const char* nam
       case Stage::open_directory:if(!name)fail(Fault::state,stage,outcome_);result=::open(name,O_RDONLY|O_DIRECTORY|O_CLOEXEC);break;
       case Stage::entropy:
         if(!buffer)fail(Fault::state,stage,outcome_);
-        result=::getrandom(buffer,transfer,GRND_NONBLOCK);
+        result=posix::random_bytes(buffer,transfer);
 #ifdef CROWN_RUNTIME_TESTING
         if(zero_entropy && result>0)std::fill_n(static_cast<unsigned char*>(buffer),static_cast<std::size_t>(result),static_cast<unsigned char>(0));
 #endif
@@ -260,7 +258,7 @@ File File::open(const resource::MemoryAccount& account,std::string_view path,con
       result.consume(256);const auto digest=chain(result.index_.empty()?result.header_sha256_:result.index_.back().content_sha256,prefix.data()+frame_prefix_size);
       result.index_.push_back({info.generation,offset,total,digest});
     }
-    offset+=total;result.bytes_=offset;
+    offset+=total;result.bytes_=offset;result.rebase();
   }
   char extra=0;if(result.checked(Stage::read_data,1,result.fd_,nullptr,-1,nullptr,&extra,size)!=0)fail(Fault::changed,Stage::read_data,result.outcome_);
   result.unchanged_file();static_cast<void>(result.checked(Stage::sync_file,0,result.fd_));static_cast<void>(result.checked(Stage::sync_directory,0,directory.fd));result.outcome_=Outcome::durable;
@@ -275,7 +273,7 @@ void File::verify_epoch(std::uint64_t generation,std::uint64_t sequence,std::spa
 bool File::accept_epoch(std::uint64_t generation,std::uint64_t sequence,std::span<const RowView> rows,bool verify_only) {
   // Freeze canonical bytes and fund new index capacity before append I/O.
   // Existing epochs require full-byte comparison, not a digest-only retry.
-  ready();outcome_=Outcome::unchanged;if(torn_ && !verify_only)fail(Fault::state,Stage::state,outcome_);
+  ready();outcome_=Outcome::unchanged;rebase();if(torn_ && !verify_only)fail(Fault::state,Stage::state,outcome_);
   if(sequence<=header_.base_sequence)throw ImageFailure(ImageFault::binding);
   const auto ordinal=sequence-header_.base_sequence;const bool duplicate=ordinal<=index_.size();
   if(verify_only && !duplicate)throw ImageFailure(ImageFault::binding);
@@ -302,7 +300,7 @@ bool File::accept_epoch(std::uint64_t generation,std::uint64_t sequence,std::spa
 Epoch File::read_epoch(std::uint64_t sequence) {
   // The returned decoded rows own this account's payload independently of
   // File lifetime; scratch and codec work remain this owner's cumulative cost.
-  ready();if(sequence<=header_.base_sequence || sequence-header_.base_sequence>index_.size())throw ImageFailure(ImageFault::binding);
+  ready();rebase();if(sequence<=header_.base_sequence || sequence-header_.base_sequence>index_.size())throw ImageFailure(ImageFault::binding);
   const auto entry=index_[static_cast<std::size_t>(sequence-header_.base_sequence-1)];scratch_.resize(static_cast<std::size_t>(entry.size));poisoned_=true;
   unchanged_file();transfer(false,scratch_.data(),scratch_.size(),entry.offset);unchanged_file();poisoned_=false;
   const auto info=detail::inspect(view(scratch_),schema_,record_limits());consume(info.work);
@@ -312,8 +310,8 @@ Epoch File::read_epoch(std::uint64_t sequence) {
   auto limits=limits_.record;limits.work=std::min(limits.work,reserve);return detail::decode(account_,view(scratch_),schema_,limits);
 }
 void File::repair_tail() {
-  ready();outcome_=Outcome::unchanged;if(!torn_)return;poisoned_=true;unchanged_file();
+  ready();outcome_=Outcome::unchanged;rebase();if(!torn_)return;poisoned_=true;unchanged_file();
   static_cast<void>(checked(Stage::truncate_tail,0,fd_,nullptr,-1,nullptr,nullptr,bytes_));static_cast<void>(checked(Stage::sync_file,0,fd_));outcome_=Outcome::durable;refresh();torn_=false;poisoned_=false;
 }
-void File::close() {if(fd_<0)fail(Fault::state,Stage::state,Outcome::unchanged);const int old=fd_;fd_=-1;static_cast<void>(checked(Stage::close_file,0,old));}
+void File::close() {if(fd_<0)fail(Fault::state,Stage::state,Outcome::unchanged);rebase();const int old=fd_;fd_=-1;static_cast<void>(checked(Stage::close_file,0,old));}
 } // namespace crown::recovery::sink

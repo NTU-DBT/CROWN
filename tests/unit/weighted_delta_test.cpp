@@ -298,6 +298,21 @@ void generalized_factor(bool indexed) {
   compare_runtime_bag(model.runtime,next_inputs);
 }
 
+void direct_child_binds_root_key(bool indexed) {
+  Model model(shared_key_path(indexed));
+  for (std::int64_t key = 1; key <= 64; ++key) {
+    model.set(0, {n(key)}, 2);
+    model.set(1, {n(key)}, 3);
+  }
+  auto pending = model.runtime.begin_epoch(model.runtime.sequence() + 1, w::DeltaCapture::enabled);
+  stage_replace(pending, model.inputs, 1, {n(33)}, 3, 5);
+  const DeltaMap expected{{Row{n(33)}, Signed{false, 4}}};
+  check(preview_deltas(pending) == expected, "bound root lookup changed the weighted delta");
+  const auto epoch = pending.commit();
+  check(epoch.bag_deltas.metrics().rows_visited == 1, "bound root lookup visited unrelated keys");
+  compare_runtime_bag(model.runtime, model.inputs);
+}
+
 void nullary_unsigned_magnitude(bool indexed) {
   Model model(unary(indexed,true,true));
   const auto before_inputs=model.inputs;
@@ -603,6 +618,7 @@ int main() {
       dead_prefix_is_pruned(indexed);
       hidden_projection_and_repeated_head(indexed);
       generalized_factor(indexed);
+      direct_child_binds_root_key(indexed);
       nullary_unsigned_magnitude(indexed);
       typed_string_ownership(indexed);
       resource_failure_rollback_and_retry(indexed);

@@ -4,6 +4,7 @@
 #include "crown/ir/program.hpp"
 #include "crown/storage/accounted_index_work.hpp"
 #include "../storage/index_work_alias.hpp"
+#include <exception>
 #include <memory>
 #include <utility>
 

@@ -107,7 +107,10 @@ void window_case(bool indexed,WindowFifoPolicy fifo,SessionState control) {
 void golden(const char* path) {
   const auto account=resource::MemoryAccount::create(16*1024*1024);SessionCheckpoint state;state.state=SessionState::stopped;
   state.input_kind=SessionInputKind::typed_physical;state.end_of_input=true;state.committed_sequence=99;
-  state.input_options=io::AccountedInputOptions(account,io::InputOptions{});state.queue_limits=io::QueueLimits{};
+  // The independent fixture encodes an explicit 1,000,000-record input limit
+  // (the earlier default); the current default is unbounded.
+  io::InputOptions input;input.limits.records=1'000'000;
+  state.input_options=io::AccountedInputOptions(account,input);state.queue_limits=io::QueueLimits{};
   io::InputProgress accepted{99,{{"alpha",0},{"z",UINT64_MAX}}};state.source=io::AccountedInputProgress(account,accepted);
   recovery::ImageManifest manifest;manifest.binding.physical_sha256.fill('a');manifest.binding.source_sha256.fill('b');manifest.binding.catalog_version=7;manifest.epoch=99;
   // Construct policy independently from the encoder, using the public defaults.
@@ -141,7 +144,10 @@ template<class Action> void preflight_failure(Action action) {
     check(failed && s04_alloc::calls==0,"malformed/limited binary session was not rejected before allocation");}
 }
 void corruptions_and_limits() {
-  const auto test=typed::fixture(false,0);const auto compiler=CompiledProgram::standalone(test.plan);auto source=QuerySession::create_typed(test.plan);
+  // The hard-coded offsets below follow the layout with an explicit
+  // 1,000,000-record input limit (the earlier default; it is now unbounded).
+  SessionOptions fixed_layout;fixed_layout.input.limits.records=1'000'000;
+  const auto test=typed::fixture(false,0);const auto compiler=CompiledProgram::standalone(test.plan);auto source=QuerySession::create_typed(test.plan,io::QueueLimits{},fixed_layout);
   source->start();Database database;database.tables.resize(1);typed::step(*source,test,database,test.updates[0],DeltaMode::delta);source->stop();
   auto image=source->checkpoint_image();const auto info=recovery::inspect_session_image(bytes(image));
   // The fixed-width prefix offsets are derived independently from the documented

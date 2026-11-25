@@ -31,7 +31,7 @@ class FileFailure final:public std::exception {
 struct FileLimits {
   ScanLimits scan;
   std::size_t path_bytes=4095,chunk_bytes=1024*1024;
-  std::uint64_t operations=1'000'000;
+  std::uint64_t operations=1'000'000;  // per public call (and per scanned record), not per file lifetime
 };
 class File {
   // Owns the actual descriptor/lock; copied Scanned values retain neither.
@@ -77,7 +77,12 @@ class File {
   ImageVector<char> scratch_,pending_;
   int fd_=-1;
   struct stat stamp_{};
-  std::uint64_t operations_=0;
+  // operations_ is the lifetime syscall ordinal (reported, and seen by test hooks).
+  // FileLimits::operations bounds the syscalls of one public call -- or of one
+  // record during an open scan -- counted from budget_base_, so retry loops stay
+  // bounded without capping the file's lifetime.
+  std::uint64_t operations_=0,budget_base_=0;
+  void rebase() noexcept {budget_base_=operations_;}
   FileOutcome outcome_=FileOutcome::unchanged;
   bool poisoned_=false,torn_=false;
 };

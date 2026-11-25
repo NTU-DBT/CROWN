@@ -47,6 +47,18 @@ std::size_t label_bytes(const NativeLabel& label) {
   return add(sizeof(NativeLabel)+sizeof(std::pair<std::uint64_t,std::uint64_t>)+2*sizeof(std::uint64_t),label.values.stored_payload_bytes());
 }
 std::size_t count_bytes(const NativeCount& count) {return add(sizeof(NativeCount),count.values.stored_payload_bytes());}
+// Live physical rows by (table, values), so an insertion finds an existing copy
+// of its row in O(log n) instead of scanning every live row. Keys borrow the
+// values owned by the matching counts node, whose address is stable.
+struct RowKey { TableId table; storage::RowView values; };
+struct RowProbe { TableId table; storage::TupleValuesView values; };
+struct RowKeyLess {
+  using is_transparent=void;
+  bool operator()(const RowKey& a,const RowKey& b) const { return a.table!=b.table?a.table<b.table:(a.values<=>b.values)<0; }
+  bool operator()(const RowKey& a,const RowProbe& b) const { return a.table!=b.table?a.table<b.table:(b.values<=>a.values)>0; }
+  bool operator()(const RowProbe& a,const RowKey& b) const { return a.table!=b.table?a.table<b.table:(a.values<=>b.values)<0; }
+};
+using RowIndex=std::map<RowKey,std::uint64_t,RowKeyLess,resource::MemoryAllocator<std::pair<const RowKey,std::uint64_t>>>;
 } // namespace
 struct WindowTables::Data {
   std::vector<TableId,resource::MemoryAllocator<TableId>> values;
@@ -81,6 +93,7 @@ struct WindowController::Impl {
   std::array<char,64> catalog_sha256;
   WindowMap<std::uint64_t,NativeLabel> labels;
   WindowMap<std::uint64_t,NativeCount> counts;
+  RowIndex rows;
   WindowSet<std::pair<std::uint64_t,std::uint64_t>> expirations;
   Fifo global;
   WindowMap<TableId,Fifo> relations;
@@ -92,6 +105,7 @@ struct WindowController::Impl {
       :account(memory),options(memory,value),catalog_sha256(io::input_detail::catalog_digest(memory,catalog,std::is_same_v<CatalogView,program::Catalog>)),
        labels(std::less<std::uint64_t>{},decltype(labels)::allocator_type(account,resource::MemoryPurpose::support_metadata,window_memory)),
        counts(std::less<std::uint64_t>{},decltype(counts)::allocator_type(account,resource::MemoryPurpose::support_metadata,window_memory)),
+       rows(RowKeyLess{},RowIndex::allocator_type(account,resource::MemoryPurpose::support_metadata,window_memory)),
        expirations(std::less<std::pair<std::uint64_t,std::uint64_t>>{},decltype(expirations)::allocator_type(account,resource::MemoryPurpose::support_metadata,window_memory)),
        global(std::less<std::uint64_t>{},Fifo::allocator_type(account,resource::MemoryPurpose::support_metadata,window_memory)),
        relations(std::less<TableId>{},decltype(relations)::allocator_type(account,resource::MemoryPurpose::support_metadata,window_memory)) {
@@ -213,6 +227,7 @@ struct WindowController::Prepared::Data {
   std::optional<PhysicalUpdateView> update;
   decltype(Impl::labels)::node_type label_node;
   decltype(Impl::counts)::node_type count_node;
+  RowIndex::node_type row_node;
   decltype(Impl::expirations)::node_type expiration_node;
   Impl::Fifo::node_type global_node,relation_node;
   std::optional<NativeActiveCommand> new_active;
@@ -236,7 +251,7 @@ void WindowController::Prepared::publish() noexcept {
   if (p.insertion) {
     const auto table=p.label_node.mapped().table;
     d.labels.insert(std::move(p.label_node));
-    if (p.count_node) d.counts.insert(std::move(p.count_node));
+    if (p.count_node) { d.counts.insert(std::move(p.count_node)); d.rows.insert(std::move(p.row_node)); }
     else ++d.counts.find(p.count)->second.count;
     d.expirations.insert(std::move(p.expiration_node));
     d.global.insert(std::move(p.global_node));
@@ -248,7 +263,7 @@ void WindowController::Prepared::publish() noexcept {
     d.relations.find(entry->second.table)->second.erase(p.label);
     d.global.erase(p.label); d.labels.erase(entry);
     const auto count=d.counts.find(p.count);
-    if (--count->second.count==0) d.counts.erase(count);
+    if (--count->second.count==0) { d.rows.erase(RowKey{count->second.table,count->second.values.view()}); d.counts.erase(count); }
   }
   if (p.new_active) d.active=std::move(p.new_active);
   if (p.is_watermark) {
@@ -332,7 +347,8 @@ WindowController::WindowController(const resource::MemoryAccount& account,const 
         detail::validate_native_row(catalog,count.table,storage::TupleValuesView::borrow(count.values.view()));
         state_require(unique.emplace(StateKey{count.table,count.values.view()},count.id).second);
         d.bytes=add(d.bytes,count_bytes(count));state_require(d.bytes<=d.options.max_accounted_bytes,recovery::ImageFault::limit);
-        d.counts.emplace(count.id,NativeCount{count.id,count.table,count.values.clone(account,window_memory),count.count});
+        const auto placed=d.counts.emplace(count.id,NativeCount{count.id,count.table,count.values.clone(account,window_memory),count.count}).first;
+        d.rows.emplace(RowKey{placed->second.table,placed->second.values.view()},count.id);
         references.emplace(count.id,0);
       }
       previous=0;
@@ -479,15 +495,17 @@ WindowController::Prepared WindowController::prepare_pattern_view(const io::Wind
     require(d.labels.size()<d.options.max_labels,"resource_limit","window live label limit exceeded");
     std::uint64_t count_id=insert->label;
     bool new_count=true;
-    for (const auto& [id,count]:d.counts) {
-      charge(); charge(static_cast<std::uint64_t>(insert->values.size()));
-      if (count.table==insert->table && count.values.view()==insert->values) { count_id=id; new_count=false; break; }
-    }
+    charge(); charge(static_cast<std::uint64_t>(insert->values.size()));
+    if (const auto found=d.rows.find(RowProbe{insert->table,insert->values}); found!=d.rows.end()) { count_id=found->second; new_count=false; }
     if (new_count) {
       decltype(d.counts) nodes(d.counts.key_comp(),d.counts.get_allocator());
       auto it=nodes.emplace(count_id,NativeCount{count_id,insert->table,storage::AccountedRow::copy_view(d.account,insert->values,window_memory),1}).first;
       p->bytes=add(p->bytes,count_bytes(it->second)); p->count_node=nodes.extract(it);
-      physical(insert->table,SetOperation::insert,it->second.values.view());
+      // Read through the node handle: `it` no longer refers into a container.
+      const auto& count=p->count_node.mapped();
+      RowIndex index(d.rows.key_comp(),d.rows.get_allocator());
+      index.emplace(RowKey{count.table,count.values.view()},count_id); p->row_node=index.extract(index.begin());
+      physical(insert->table,SetOperation::insert,count.values.view());
     } else require(d.counts.find(count_id)->second.count<std::numeric_limits<std::uint64_t>::max(),"resource_limit","window row count overflow");
     decltype(d.labels) nodes(d.labels.key_comp(),d.labels.get_allocator());
     auto it=nodes.emplace(insert->label,NativeLabel{insert->label,insert->table,storage::AccountedRow::copy_view(d.account,insert->values,window_memory),insert->timestamp,insert->timestamp+d.options.width,count_id}).first;

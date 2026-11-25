@@ -14,6 +14,7 @@
 #ifdef CROWN_RUNTIME_TESTING
 #include "runtime_probe.hpp"
 #endif
+#include <exception>
 #include <algorithm>
 #include <atomic>
 #include <map>
@@ -311,7 +312,8 @@ struct PhysicalRuntime::PendingUpdate::Data {
         case CountKind::changed: it->item->second=it->before; break;
         case CountKind::erased:
           it->removed.key().set_lifetime(resource::AllocationLifetime::active);
-          it->counts->get_allocator().account().set_lifetime_containing(&it->removed.mapped(),
+          static resource::MemoryAccount::ContainingSite removed_count_site;  // O(1) after one calibration
+          it->counts->get_allocator().account().set_lifetime_containing(&it->removed.mapped(),removed_count_site,
               resource::MemoryPurpose::source_counts,it->counts->get_allocator().attribution(),resource::AllocationLifetime::active);
           if (!it->counts->insert(std::move(it->removed)).inserted) std::terminate();
           break;
@@ -370,7 +372,8 @@ struct PhysicalRuntime::PendingUpdate::Data {
       require(inserted,"runtime_contract","new physical derivation already exists");
       undo.push_back({CountKind::inserted,&counts,item,0,{}});
     } else if (after==0) {
-      counts.get_allocator().account().set_lifetime_containing(&found->second,resource::MemoryPurpose::source_counts,
+      static resource::MemoryAccount::ContainingSite count_site;  // O(1) after one calibration
+      counts.get_allocator().account().set_lifetime_containing(&found->second,count_site,resource::MemoryPurpose::source_counts,
           counts.get_allocator().attribution(),resource::AllocationLifetime::retained);
       auto removed=counts.extract(found);removed.key().set_lifetime(resource::AllocationLifetime::retained);
       undo.push_back({CountKind::erased,&counts,{},before,std::move(removed)});

@@ -3,6 +3,7 @@
 #include "crown/ir/program_model.hpp"
 #include "input_native.hpp"
 #include "ingest_text.hpp"
+#include <exception>
 #include <array>
 #include <limits>
 

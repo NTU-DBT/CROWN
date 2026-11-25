@@ -1,5 +1,6 @@
 #include "crown/io/input_progress.hpp"
 #include "crown/io/ingest.hpp"
+#include <exception>
 #include <stdexcept>
 
 namespace crown::io {

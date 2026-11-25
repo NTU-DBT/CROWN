@@ -317,7 +317,6 @@ struct QuerySession::Impl {
     recovery::journal::InputView input_view{item,{}};
     if(reader) {
       const auto position=reader->decoder_position();
-      static_assert(std::is_same_v<std::size_t,std::uint64_t>); // Supported Linux64 ABI.
       input_view.reader=recovery::journal::ReaderAdvanceView{position.bytes,position.records,position.header_read,position.csv_fields};
     }
     const auto encoded=recovery::journal::encode(runtime->compiled_program().account(),state.records,

@@ -83,7 +83,7 @@ void stream_and_resources() {
     check(source->begin_next(),"CSV journal record missing");static_cast<void>(typed::finish(*source));const auto bytes=contents(log);const auto records=frames(bytes);
     const auto input=jp::decode(account,records[static_cast<std::size_t>(2*sequence-1)]);const auto view=input.input_view();
     check(view.reader && view.reader->records==sequence && view.reader->bytes==4+4*sequence && view.reader->header_read &&
-        input.csv_fields==recovery::ImageVector<std::uint64_t>({1,0},recovery::image_allocator<std::uint64_t>(account)) &&
+        input.csv_fields==recovery::ImageVector<std::size_t>({1,0},recovery::image_allocator<std::size_t>(account)) &&
         std::get<io::InputEventView>(view.item).source_position->offset==123+4*sequence,"CSV decoder/source origin/permutation not journaled");
   }
   check(source->progress().source_positions.at("csv")==131,"CSV source acknowledgment differs");

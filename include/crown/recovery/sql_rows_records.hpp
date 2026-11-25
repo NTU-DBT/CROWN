@@ -24,7 +24,8 @@ using WalState = sql_aggregate::WalState;
 // Stable plain-row semantic allowlist; resource/contract failures have no tag.
 enum class RejectReason : std::uint8_t {
   weight_mismatch, source_overflow, unique_violation, foreign_key_violation,
-  annotation_overflow
+  annotation_overflow,
+  abandoned  // caller-requested durable rejection of a pending head (Session::abandon_pending)
 };
 struct Reject {
   std::uint64_t input_ordinal = 0;
