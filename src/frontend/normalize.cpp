@@ -427,12 +427,19 @@ SqlNormalizeResult normalize_sql(const BoundSql& binding, const NormalizeOptions
 }
 
 std::optional<Row> adapt_row(const NormalizedSql& query, OccurrenceId occurrence, const Row& physical) {
+  Row result;
+  std::vector<std::optional<Value>> scratch;
+  if (!adapt_row_into(query, occurrence, physical, result, scratch)) return {};
+  return result;
+}
+bool adapt_row_into(const NormalizedSql& query, OccurrenceId occurrence, const Row& physical,
+    Row& result, std::vector<std::optional<Value>>& values) {
   const auto& adapter = query.adapters.at(occurrence.value);
   validate_row(query.binding.catalog,adapter.base,physical);
-  for (const auto& fixed : adapter.constant_columns) if (physical.at(fixed.column.value) != fixed.value) return {};
-  for (const auto& equality : adapter.equal_columns) if (physical.at(equality.left.value) != physical.at(equality.right.value)) return {};
+  for (const auto& fixed : adapter.constant_columns) if (physical.at(fixed.column.value) != fixed.value) return false;
+  for (const auto& equality : adapter.equal_columns) if (physical.at(equality.left.value) != physical.at(equality.right.value)) return false;
   // Each call copies query-wide constant slots before its local evaluation.
-  auto values = query.constants;
+  values.assign(query.constants.begin(), query.constants.end());
   for (const auto id : adapter.program) {
     const auto& node = query.binding.expressions.at(id.value).node;
     if (const auto* column = std::get_if<BoundColumn>(&node)) {
@@ -441,13 +448,13 @@ std::optional<Row> adapt_row(const NormalizedSql& query, OccurrenceId occurrence
     } else if (const auto* operation = std::get_if<BoundOperation>(&node)) values[id.value] = evaluate_operation(*operation,values);
     else throw Error("normalization_contract", "constant node in nonconstant adapter program");
   }
-  for (const auto id : adapter.predicates) if (truth(values.at(id.value)) != std::optional<bool>{true}) return {};
-  Row result;
-  for (const auto& projection : adapter.projection) {
-    const auto& value = values.at(projection.expression.value);
-    contract(value.has_value(), "adapter emitted NULL into the classical core"); result.push_back(*value);
+  for (const auto id : adapter.predicates) if (truth(values.at(id.value)) != std::optional<bool>{true}) return false;
+  result.resize(adapter.projection.size());
+  for (std::size_t i = 0; i < adapter.projection.size(); ++i) {
+    const auto& value = values.at(adapter.projection[i].expression.value);
+    contract(value.has_value(), "adapter emitted NULL into the classical core"); result[i] = *value;
   }
-  return result;
+  return true;
 }
 
 Relation map_sql_result(const NormalizedSql& query, const Relation& core_result) {

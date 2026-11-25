@@ -2,7 +2,9 @@
 
 #include "crown/planner/fallback.hpp"
 #include "crown/runtime/physical.hpp"
+#include "crown/storage/keyed.hpp"
 #include "crown/resource/owner_allocator.hpp"
+#include <functional>
 #include <memory>
 #include <optional>
 #include <span>
@@ -14,7 +16,15 @@ struct Limits {
   std::uint64_t source_rows = 65536; // All physical rows in one private source image.
   std::uint64_t rows = 65536; // Distinct retained output rows, not witness count.
 };
-struct Options { PhysicalRuntimeOptions sources; Limits recompute; };
+struct Options {
+  PhysicalRuntimeOptions sources;
+  Limits recompute;
+  storage::keyed::GcOptions gc{};  // keyed core only
+  // Keyed core: false maintains the answer without materializing each
+  // epoch's answer changes (Epoch::added/removed stay empty; snapshots,
+  // answer counts and limits are unchanged), as DeltaMode::maintenance.
+  bool answer_changes = true;
+};
 struct Metrics {
   std::uint64_t work = 0, source_work = 0, source_rows = 0;
   std::uint64_t row_visits = 0, term_tests = 0, equality_tests = 0, assignments = 0;
@@ -91,8 +101,16 @@ class Runtime {
   [[nodiscard]] bool ready() const;
   [[nodiscard]] std::uint64_t sequence() const;
   [[nodiscard]] bool has_answer() const;
+  // The maintaining core: "keyed_v1" (docs/keyed_core.md) or "reference_v1".
+  [[nodiscard]] std::string_view engine() const;
+  // Keyed core: its cyclic algorithm ("ghd" or "support"); else "reference".
+  [[nodiscard]] std::string_view algorithm() const;
   [[nodiscard]] Epoch apply(const PhysicalSetUpdate&);
   [[nodiscard]] Snapshot snapshot(Limits = {}) const;
+  // Streaming snapshot: each answer as an owning result tuple (valid for the
+  // call), in engine order rather than sorted, without materializing the
+  // snapshot. Returns the number of answers visited.
+  std::uint64_t visit(const std::function<void(const storage::Tuple&)>& visitor, Limits = {}) const;
   // Cold owning diagnostics. Product estimates are advisory Cartesian/prefix
   // upper bounds; nullopt denotes overflow, not wrapped or measured work.
   [[nodiscard]] Explain explain() const;

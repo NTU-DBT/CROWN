@@ -1,3 +1,5 @@
+#include <array>
+#include <cstring>
 #include "crown/storage/layout.hpp"
 #include "crown/storage/accounted_layout.hpp"
 #include "crown/storage/accounted_projection.hpp"
@@ -40,7 +42,8 @@ struct NativeTuplePayload:detail::TuplePayload {
     account=memory;native=owned.values();
   }
 };
-void require(bool value,std::string_view code,std::string_view message) { if (!value) throw Error(std::string(code),std::string(message)); }
+[[noreturn, gnu::cold, gnu::noinline]] void fail(std::string_view code,std::string_view message) { throw Error(std::string(code),std::string(message)); }
+inline void require(bool value,std::string_view code,std::string_view message) { if (!value) [[unlikely]] fail(code,message); }
 // Inclusion of exact decimal domains; no conversion/rounding is performed.
 bool fits_domain(const Field& source,const Field& target) {
   if (source.type != target.type) return false;
@@ -131,11 +134,131 @@ Tuple::Tuple(const Tuple& other):layout_(other.layout_) {
   if(other.payload_ && other.payload_->legacy)payload_=std::make_shared<LegacyTuplePayload>(*other.payload_->legacy);
   else payload_=other.payload_;
 }
+namespace {
+struct CompactTuplePayload final:detail::TuplePayload {
+  static constexpr std::size_t inline_cells=8;
+  std::array<ScalarView,inline_cells> small{};
+  std::vector<ScalarView> large;
+  std::string text;
+};
+}  // namespace
+Tuple Tuple::from_cells(const TupleLayout& layout,RowView values,const resource::MemoryAccount* account) {
+  auto owner=std::make_shared<CompactTuplePayload>();
+  if(account)owner->account=*account;
+  std::size_t text=0;
+  for(const auto& cell:values.cells())if(const auto* string=std::get_if<std::string_view>(&cell))text+=string->size();
+  owner->text.reserve(text);
+  ScalarView* cells=owner->small.data();
+  if(values.size()>CompactTuplePayload::inline_cells){owner->large.resize(values.size());cells=owner->large.data();}
+  for(std::size_t i=0;i<values.size();++i) {
+    const auto& cell=values[i];
+    if(const auto* string=std::get_if<std::string_view>(&cell)) {
+      const auto offset=owner->text.size();owner->text.append(*string);
+      cells[i]=std::string_view(owner->text.data()+offset,string->size());
+    } else cells[i]=cell;
+  }
+  owner->native=RowView::borrow({cells,values.size()});
+  owner->usage={1,sizeof(CompactTuplePayload)+owner->large.capacity()*sizeof(ScalarView)+owner->text.capacity(),
+      values.size()*sizeof(ScalarView)+text};
+  return Tuple(layout,std::move(owner));
+}
+// One allocation per chunk: row payloads, then cells, then string bytes.
+struct TuplePool::Chunk {
+  static constexpr std::size_t target_bytes=8192;
+  resource::MemoryAccount account;
+  std::size_t row_capacity=0, cell_capacity=0, text_capacity=0;
+  std::size_t rows_used=0, cells_used=0, text_used=0;
+  std::unique_ptr<std::byte[]> block;
+  detail::TuplePayload* rows=nullptr;
+  ScalarView* cells=nullptr;
+  char* text=nullptr;
+  Chunk(std::size_t row_count,std::size_t cell_count,std::size_t text_bytes)
+      :row_capacity(row_count),cell_capacity(cell_count),text_capacity(text_bytes) {
+    static_assert(alignof(detail::TuplePayload)<=alignof(std::max_align_t) && alignof(ScalarView)<=alignof(std::max_align_t));
+    const auto payload_bytes=row_count*sizeof(detail::TuplePayload);
+    const auto cell_offset=(payload_bytes+alignof(ScalarView)-1)/alignof(ScalarView)*alignof(ScalarView);
+    const auto text_offset=cell_offset+cell_count*sizeof(ScalarView);
+    block=std::make_unique_for_overwrite<std::byte[]>(text_offset+text_bytes);
+    rows=reinterpret_cast<detail::TuplePayload*>(block.get());
+    std::uninitialized_value_construct_n(rows,row_count);
+    cells=reinterpret_cast<ScalarView*>(block.get()+cell_offset);
+    std::uninitialized_value_construct_n(cells,cell_count);
+    text=reinterpret_cast<char*>(block.get()+text_offset);
+  }
+  ~Chunk() { std::destroy_n(cells,cell_capacity); std::destroy_n(rows,row_capacity); }
+  Chunk(const Chunk&)=delete;
+  Chunk& operator=(const Chunk&)=delete;
+  [[nodiscard]] bool fits(std::size_t width,std::size_t bytes) const noexcept {
+    return rows_used<row_capacity && cell_capacity-cells_used>=width && text_capacity-text_used>=bytes;
+  }
+};
+TuplePool::TuplePool(const resource::MemoryAccount* account) {
+  if(account && *account){account_=*account;accounted_=true;}
+}
+TuplePool::~TuplePool()=default;
+TuplePool::TuplePool(TuplePool&&) noexcept=default;
+TuplePool& TuplePool::operator=(TuplePool&&) noexcept=default;
+void TuplePool::trim() noexcept { spare_.clear(); }
+TuplePool::Chunk& TuplePool::next_chunk(std::size_t width,std::size_t bytes) {
+  // Filled chunks queue oldest first and at most `probes` pinned chunks are
+  // examined per call, so a large epoch whose rows are all alive costs O(1)
+  // per chunk. A pinned chunk rotates to the back (beyond `queue_limit` the
+  // queue drops its reference; live rows keep it). A released chunk is reused,
+  // or freed when `keep` others are queued or it is too small for this row.
+  constexpr std::size_t keep=1024, probes=4, queue_limit=8192;
+  if(current_){spare_.push_back(std::move(current_));current_.reset();}
+  for(std::size_t probe=0;probe<probes && !spare_.empty();) {
+    auto oldest=std::move(spare_.front());spare_.pop_front();
+    if(oldest.use_count()!=1) {
+      if(spare_.size()<queue_limit)spare_.push_back(std::move(oldest));
+      ++probe;continue;
+    }
+    if(spare_.size()>=keep || oldest->cell_capacity<width || oldest->text_capacity<bytes) continue;
+    oldest->rows_used=oldest->cells_used=oldest->text_used=0;
+    current_=std::move(oldest);
+    return *current_;
+  }
+  const auto row_bytes=sizeof(detail::TuplePayload)+std::max<std::size_t>(width,1)*sizeof(ScalarView)+bytes;
+  const auto rows=std::max<std::size_t>(1,std::min<std::size_t>(256,Chunk::target_bytes/row_bytes));
+  auto chunk=std::make_shared<Chunk>(rows,std::max<std::size_t>(width,1)*rows,bytes?std::max(bytes*rows,std::size_t{256}):256);
+  if(accounted_)chunk->account=account_;
+  current_=std::move(chunk);
+  return *current_;
+}
+std::size_t TuplePool::requested_bytes(RowView values) noexcept {
+  std::size_t bytes=0;
+  for(const auto& cell:values.cells())if(const auto* string=std::get_if<std::string_view>(&cell))bytes+=string->size();
+  return sizeof(detail::TuplePayload)+values.size()*sizeof(ScalarView)+bytes;
+}
+Tuple TuplePool::make(const TupleLayout& layout,RowView values) {
+  const auto width=values.size();
+  std::size_t bytes=0;
+  for(const auto& cell:values.cells())if(const auto* string=std::get_if<std::string_view>(&cell))bytes+=string->size();
+  Chunk* chunk=current_.get();
+  if(!chunk || !chunk->fits(width,bytes))chunk=&next_chunk(width,bytes);
+  ScalarView* cells=chunk->cells+chunk->cells_used;
+  for(std::size_t i=0;i<width;++i) {
+    const auto& cell=values[i];
+    if(const auto* string=std::get_if<std::string_view>(&cell)) {
+      char* target=chunk->text+chunk->text_used;
+      if(!string->empty())std::memcpy(target,string->data(),string->size());
+      chunk->text_used+=string->size();
+      cells[i]=std::string_view(target,string->size());
+    } else cells[i]=cell;
+  }
+  chunk->cells_used+=width;
+  auto& payload=chunk->rows[chunk->rows_used++];
+  payload.native=RowView::borrow({cells,width});
+  const auto share=sizeof(detail::TuplePayload)+width*sizeof(ScalarView)+bytes;
+  payload.usage={0,share,width*sizeof(ScalarView)+bytes};
+  payload.shared_account=accounted_?&chunk->account:nullptr;
+  return Tuple(layout,std::shared_ptr<const detail::TuplePayload>(current_,&payload));
+}
 Tuple Tuple::from_accounted(AccountedTuple row) {
   const auto account=row.layout().query_account();const auto attribution=row.attribution();
-  const auto before=account.statistics().current;
+  const auto before=account.current_usage();
   auto owner=resource::make_accounted_shared<NativeTuplePayload>(attribution,account,resource::MemoryPurpose::output_buffer,account,std::move(row));
-  const auto after=account.statistics().current;
+  const auto after=account.current_usage();
   // The constructor only moves an admitted tuple and copies account handles.
   // Therefore this exact difference is the shared object's real allocation(s),
   // including rebound control-block storage and all account framing. It is not
@@ -146,11 +269,11 @@ Tuple Tuple::from_accounted(AccountedTuple row) {
       after.payload_bytes-before.payload_bytes+values.payload_bytes};
   auto layout=owner->owned.layout().descriptor();return Tuple(std::move(layout),std::move(owner));
 }
-bool Tuple::is_accounted() const noexcept{return payload_ && bool(payload_->account);}
+bool Tuple::is_accounted() const noexcept{return payload_ && bool(payload_->query_account());}
 resource::MemoryUsage Tuple::memory_usage() const noexcept{return payload_?payload_->usage:resource::MemoryUsage{};}
 resource::MemoryStatistics Tuple::account_statistics() const {
   if(!is_accounted())throw resource::MemoryFailure(resource::MemoryFault::contract);
-  return payload_->account.statistics();
+  return payload_->query_account().statistics();
 }
 Tuple& Tuple::operator=(const Tuple& other) {
   if (this!=&other) {

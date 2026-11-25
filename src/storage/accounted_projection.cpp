@@ -10,8 +10,9 @@
 
 namespace crown::storage {
 namespace {
-void require(bool value, ProjectionProblem problem) {
-  if (!value) throw ProjectionValidationFailure(problem);
+[[noreturn, gnu::cold, gnu::noinline]] void fail(ProjectionProblem problem) { throw ProjectionValidationFailure(problem); }
+inline void require(bool value, ProjectionProblem problem) {
+  if (!value) [[unlikely]] fail(problem);
 }
 bool fits_domain(const Field& source, const Field& target) noexcept {
   if (source.type != target.type) return false;

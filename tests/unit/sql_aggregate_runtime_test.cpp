@@ -3,12 +3,14 @@
 #include "crown/api/error.hpp"
 #include "indexed_runtime_fixture.hpp"
 #include "index_allocation.hpp"
+#include <algorithm>
 #include <array>
 #include <cassert>
 #include <iostream>
 #include <map>
 #include <optional>
 #include <string>
+#include <tuple>
 #include <vector>
 
 namespace {
@@ -425,6 +427,92 @@ void receiving_freeze_and_work(bool indexed, bool integer) {
 }
 }  // namespace
 
+
+// Fused batches (Options::fused) against the layered path: the same random
+// net batches (chains, no-ops, NULLs, filters, joins, self-joins, globals and
+// rejected stale weights) give the same groups, changes, source weights and
+// root weights after every batch.
+void fused_matches_layered() {
+  const char* programs[] = {
+      "SELECT a.g,COUNT(*),COUNT(b.y),SUM(b.y),AVG(b.y) FROM r a JOIN s b ON a.id=b.id WHERE a.flag GROUP BY a.id,a.g",
+      "SELECT a.g,COUNT(*),SUM(a.x) FROM r a JOIN r b ON a.id=b.id GROUP BY a.g",
+      "SELECT COUNT(*),SUM(x),AVG(x) FROM r",
+      "SELECT a.id,b.y,COUNT(*),SUM(a.x) FROM r a JOIN s b ON a.id=b.id GROUP BY a.id,b.y"};
+  std::uint64_t state = 0x9e3779b97f4a7c15ULL;
+  auto next = [&](std::uint64_t bound) { state ^= state << 13; state ^= state >> 7; state ^= state << 17; return state % bound; };
+  auto cell = [&](std::int64_t low, std::int64_t high, bool nullable) -> sql_rows::Cell {
+    if (nullable && next(5) == 0) return {};
+    return n(low + static_cast<std::int64_t>(next(static_cast<std::uint64_t>(high - low + 1))));
+  };
+  auto changes = [](const sql_aggregate::Epoch& epoch) {
+    std::vector<std::tuple<SqlRow, std::optional<SqlRow>, std::optional<SqlRow>>> out;
+    for (const auto& change : epoch.output)
+      out.emplace_back(change.key.export_values(), change.before ? std::optional{change.before->export_values()} : std::nullopt,
+          change.after ? std::optional{change.after->export_values()} : std::nullopt);
+    std::sort(out.begin(), out.end());
+    return out;
+  };
+  for (const auto* sql : programs) {
+    auto program = compile(sql);
+    sql_aggregate::Options layered_options; layered_options.capture_changes = true;
+    auto fused_options = layered_options; fused_options.fused = true;
+    auto layered = create(program, false, layered_options);
+    auto fused = create(program, false, fused_options);
+    assert(!layered.fused() && fused.fused());
+    std::map<std::pair<std::size_t, Cells>, std::uint64_t> weights;
+    for (int batch = 0; batch < 400; ++batch) {
+      std::vector<Cells> rows;
+      std::vector<sql_rows::SourceReplacement> edits;
+      const auto count = 1 + next(4);
+      rows.reserve(2 * count);
+      bool stale = false;
+      std::map<std::pair<std::size_t, Cells>, std::uint64_t> proposed;
+      for (std::uint64_t e = 0; e < count; ++e) {
+        const std::size_t table = next(3) == 0 ? 1 : 0;
+        Cells values = table == 0 ? row(cell(1, 3, true), next(4) == 0 ? sql_rows::Cell{} : (next(2) ? s("a") : s("b")),
+                                        cell(-3, 3, true), next(4) != 0)
+                                  : Cells{cell(1, 3, true), cell(1, 3, true)};
+        const auto key = std::pair{table, values};
+        const auto found = proposed.find(key);
+        const auto current = found != proposed.end() ? found->second : (weights.contains(key) ? weights.at(key) : 0);
+        auto before = current;
+        if (next(25) == 0) { before = current + 1; stale = true; }
+        const auto after = next(3);
+        proposed[key] = after;
+        rows.push_back(std::move(values));
+        edits.push_back(edit(table, rows.back(), before, after));
+        if (next(4) == 0) {  // chain a second edit on the same row
+          const auto again = next(3);
+          rows.push_back(rows.back());
+          edits.push_back(edit(table, rows.back(), after, again));
+          proposed[key] = again;
+        }
+      }
+      const sql_rows::NetBatch net{layered.sequence() + 1, edits};
+      std::optional<std::string> layered_error, fused_error;
+      std::optional<sql_aggregate::Epoch> a, b;
+      try { a.emplace(layered.prepare_batch(net).commit()); } catch (const Error& failure) { layered_error = failure.code(); }
+      try { b.emplace(fused.prepare_batch(net).commit()); } catch (const Error& failure) { fused_error = failure.code(); }
+      assert(layered_error == fused_error);
+      assert(!stale || layered_error);
+      assert(layered.sequence() == fused.sequence() && layered.ready() && fused.ready());
+      if (!layered_error) {
+        for (const auto& [key, after] : proposed) weights[key] = after;
+        assert(a->changed == b->changed && a->group_changed == b->group_changed);
+        assert(changes(*a) == changes(*b));
+        assert(b->native.sequence == b->sequence);
+      }
+      assert(results(layered) == results(fused));
+      assert(layered.root_weight().value == fused.root_weight().value);
+      for (const auto& [key, weight] : weights)
+        assert(layered.source_weight(TableId{key.first}, key.second) == weight &&
+               fused.source_weight(TableId{key.first}, key.second) == weight);
+    }
+    // The source image (checkpoints) is the same on both paths.
+    assert(layered.source_snapshot().source.rows.size() == fused.source_snapshot().source.rows.size());
+  }
+}
+
 int main() {
   for (const auto indexed : {false,true}) {
     joined_groups(indexed); aliases_and_group_identity(indexed); global_constants_and_rounding(indexed);
@@ -433,5 +521,6 @@ int main() {
       allocation_failure_commit_and_lifetime(indexed, integer); receiving_freeze_and_work(indexed, integer);
     }
   }
+  fused_matches_layered();
   std::cout << "composed SQL aggregate runtime controls passed\n";
 }

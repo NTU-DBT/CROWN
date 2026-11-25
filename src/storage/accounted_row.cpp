@@ -188,10 +188,23 @@ std::uint64_t RowView::hash() const noexcept {
   return hasher.get();
 }
 bool RowView::operator==(RowView other) const noexcept {
-  return size_ == other.size_ && (*this <=> other) == 0;
+  if (size_ != other.size_) return false;
+  for (std::size_t i = 0; i < size_; ++i) {
+    const auto* a = std::get_if<std::int64_t>(&data_[i]);
+    const auto* b = std::get_if<std::int64_t>(&other.data_[i]);
+    if (a && b) { if (*a != *b) return false; continue; }
+    if ((data_[i] <=> other.data_[i]) != 0) return false;
+  }
+  return true;
 }
+// Same order as the variant comparison (alternative index, then value), with
+// the dominant int64/int64 cell pair compared directly.
 std::strong_ordering RowView::operator<=>(RowView other) const noexcept {
-  for (std::size_t i = 0; i < std::min(size_, other.size_); ++i) {
+  const auto count = std::min(size_, other.size_);
+  for (std::size_t i = 0; i < count; ++i) {
+    const auto* a = std::get_if<std::int64_t>(&data_[i]);
+    const auto* b = std::get_if<std::int64_t>(&other.data_[i]);
+    if (a && b) { if (*a != *b) return *a <=> *b; continue; }
     const auto order = data_[i] <=> other.data_[i];
     if (order != 0) return order;
   }

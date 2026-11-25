@@ -13,6 +13,10 @@ struct TuplePayload {
   const Row* legacy=nullptr;
   RowView native;
   resource::MemoryAccount account;
+  // Pooled arena rows (TuplePool) refer to their chunk's single account copy
+  // instead of holding one each; the chunk outlives every row it holds.
+  const resource::MemoryAccount* shared_account=nullptr;
   resource::MemoryUsage usage;
+  [[nodiscard]] const resource::MemoryAccount& query_account() const noexcept { return shared_account?*shared_account:account; }
 };
 } // namespace crown::storage::detail

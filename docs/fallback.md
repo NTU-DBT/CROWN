@@ -30,7 +30,7 @@ auto explanation = owner.explain();
 Variables, constants, ignored columns, repeated variables, self-join aliases,
 disconnected components and ordered/repeated output variables retain their
 classical meanings. A true empty-body query yields one empty tuple; a
-contradiction yields none. Boolean queries stop after their first witness.
+contradiction yields none. Boolean queries keep one support count for the empty answer.
 Int64, binary strings, Boolean, finite Date and bounded exact Decimal values use
 the existing typed scalar semantics. SQL NULL and bag-result semantics remain
 outside this interface.
@@ -45,24 +45,38 @@ views. `Binding::sources()` exposes the source-only compiled program.
 ## Evaluation and publication
 
 One PhysicalRuntime enforces original full-row set identity and UNIQUE/FK
-constraints. A changed source used by the original query triggers full
-recomputation from a private [accounted source after-image](source_images.md).
-Duplicate insertions, absent deletions, unused-source updates and contradictions
-preserve the committed answer without a join recomputation. Inputs still advance
-the source sequence according to the ordinary physical update contract.
+constraints. Answers are maintained incrementally (22 November 2026; this
+replaced per-update full recomputation, which made every update cost a complete
+nested-loop join). Planning fixes a prefix P: a minimal connected set of
+occurrences that binds every head variable. The remaining occurrences split
+into residual components that share no variable outside P; each component is a
+persistent view counting its completions per value of its variables that also
+occur in P. Every answer keeps a support count
 
-An iterative nested-loop evaluator matches every original atom and term. A
-binding trail restores variables when backtracking; execution does not recurse
-with query depth. Projection follows complete matching, then an ordered funded
-DISTINCT set produces sorted native answers. Multiple witnesses contribute one
-projected answer; only the last witness's removal retracts it.
+    S(ans) = sum over P-assignments p projecting to ans of
+             prod over views j of [V_j(key_j(p)) > 0]
 
-The owner prepares the complete result, owning endpoint delta handles and exact
-old/new set differences before committing the source token. Source commit and a
-same-allocator result swap publish the prepared epoch without allocation. One
-busy guard spans preparation, publication and retirement of old state. Native
-RAII and the existing physical token unwind a refusal; there is no second source
-owner or source rollback journal.
+and exists exactly while S(ans) > 0. Each used original table keeps its full
+physical rows plus ordered/hashed indexes on the fields that the join plans
+bind. A changed row first updates the views that use its table by anchored
+enumeration of their new or removed completions. Keys whose view count crosses
+zero then adjust the supports of the committed P-assignments that carry them
+(earlier views use updated presence, later views committed presence), and
+finally the P-assignments that use the changed row adjust their supports with
+updated presence. A view count that stays positive costs nothing outside that
+view; for example, a dumbbell projection only revisits its bridge edges when a
+vertex gains its first or loses its last triangle. Self-joins count every
+completion once: when occurrence k is bound to the changed row, earlier
+occurrences of that table exclude it and later ones include it. Duplicate
+insertions, absent deletions, unused-source updates and contradictions preserve
+the committed answer without evaluation.
+
+All fallible work (enumeration, support/view deltas, detached result/index/view
+nodes and hash capacity) precedes the source commit. Source commit, counter
+updates and node relinking then publish the prepared epoch without allocation.
+One busy guard spans preparation, publication and retirement of old state.
+Native RAII and the existing physical token unwind a refusal; there is no second
+source owner or source rollback journal.
 
 `Epoch::input` describes the physical/support epoch, not the query answer delta.
 `added` and `removed` contain exact projected endpoint set differences.
@@ -75,12 +89,12 @@ Calls on one owner require external serialization.
 ## Limits, observations and costs
 
 `Options::sources` retains existing physical/storage limits. `recompute.work` is
-one balance for metadata freezing plus initial answers during construction, and
-one balance per later apply. Source capture receives only its remaining work.
-Row/term/equality/scalar-byte visits, projection, ordered deduplication, answer
-materialization and endpoint merging spend that balance. `source_rows` bounds
-all physical rows in a private image; `rows` bounds distinct retained answers,
-not witness count. Snapshot copying has its own explicit Limits. Resource or
+one balance for metadata freezing and planning during construction, and one
+balance per later apply. Candidate-row/term/equality/scalar-byte visits,
+projection, support and view deltas, answer materialization and node
+preparation spend that balance. `source_rows` bounds all committed physical rows
+after an evaluated update (refused as `source_image_row_limit`, as before);
+`rows` bounds distinct retained answers, not supports or witnesses. Snapshot copying has its own explicit Limits. Resource or
 row/work refusal preserves committed sources, results and sequence.
 
 `Plan::estimates(table_counts)` counts each physical source once and repeats
@@ -97,12 +111,15 @@ cardinalities, actual result rows and native account statistics. Its optional
 while earlier prefixes remain large or overflow. Metrics record actual selected
 work categories, not elapsed time or hardware instructions.
 
-An update pays ordinary full-source validation/maintenance, complete source
-capture and nested-loop prefix matching, then DISTINCT comparisons, native
-output materialization and endpoint merging. Scalar widths matter. Memory can
-hold old answers, source images, distinct candidates, new answers and deltas at
-once. Owning snapshots and final-owner cleanup retain their real costs. No
-constant startup, delay, termination or specialized GHD/update bound is claimed.
+An update pays ordinary full-source validation/maintenance, index and view
+maintenance proportional to the completions that use the changed row, and
+P-assignment work proportional to the supports that change (zero-crossing keys
+and P-assignments using the row). Retained state is one copy of every used
+table's rows, their join indexes, the view counts and the answers with their
+supports. Owning snapshots and final-owner cleanup retain their real costs. No
+constant startup, delay, termination or specialized GHD/update bound is claimed:
+a P-assignment enumeration or a view's completion enumeration can still be large
+for high-degree values.
 
 The algorithm here is the conservative evaluator requested by
 [Refactor X06](../Refactor.md), implemented as local engineering. The CROWN

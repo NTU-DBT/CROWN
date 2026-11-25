@@ -83,6 +83,7 @@ struct SourceSnapshot {
 };
 }  // namespace crown::runtime::sql_rows
 
+namespace crown::runtime::keyed { class WeightSink; }
 namespace crown::runtime {
 // One physical bag-row replacement fans out to all SQL occurrences in one
 // native epoch. Source rows and enforced-key counters publish after native
@@ -169,6 +170,8 @@ class SqlRowsRuntime {
   [[nodiscard]] const frontend::SqlRowsProgram& program() const &;
   const frontend::SqlRowsProgram& program() const && = delete;
   [[nodiscard]] std::uint64_t sequence() const;
+  // The native core under the SQL source layer (WeightedRuntime::engine()).
+  [[nodiscard]] std::string_view engine() const;
   [[nodiscard]] bool ready() const;
   // Native inner/full-root weight before DISTINCT/EXISTS output transformation.
   [[nodiscard]] weighted::Multiplicity root_weight() const;
@@ -190,6 +193,17 @@ class SqlRowsRuntime {
   // Rows follow original TableId then the source's exact nullable tuple order.
   // Failure releases the incomplete image without changing committed state.
   [[nodiscard]] sql_rows::SourceSnapshot source_snapshot(sql_rows::SourceSnapshotLimits = {}) const;
+  // Fused batches: on the keyed core, for programs without key constraints.
+  // The net batch is validated and chained as in prepare_batch; then every
+  // changed native contribution goes straight into the keyed bag engine
+  // (WeightedRuntime::fused_stage) and each changed head tuple is reported to
+  // `sink` as it changes. No PendingEpoch, delta capture or work accounting.
+  // The batch stays open until commit_fused (which publishes the source rows)
+  // or rollback_fused. prepare_fused returns whether a source weight changed.
+  [[nodiscard]] bool fused_available() const;
+  bool prepare_fused(const sql_rows::NetBatch&, keyed::WeightSink& sink);
+  [[nodiscard]] weighted::Epoch commit_fused();
+  void rollback_fused() noexcept;
  private:
   friend class detail::SqlColdRebuild;
   explicit SqlRowsRuntime(std::shared_ptr<Data>) noexcept;

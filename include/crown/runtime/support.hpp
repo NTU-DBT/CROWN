@@ -203,6 +203,21 @@ struct ResultCursorMetrics {
 };
 
 enum class CursorObservationSource { committed_results, epoch_visible, epoch_witnesses, epoch_keys, epoch_bucket };
+namespace detail {
+// A result cursor implemented outside SupportRuntime (the keyed engine).
+class ExternalResultCursor {
+ public:
+  virtual ~ExternalResultCursor() = default;
+  [[nodiscard]] virtual std::optional<storage::AccountedTuple> next() = 0;
+  [[nodiscard]] virtual std::optional<storage::Tuple> next_tuple() = 0;
+  virtual void cancel() noexcept = 0;
+  [[nodiscard]] virtual ResultCursorState state() const noexcept = 0;
+  [[nodiscard]] virtual std::uint64_t sequence() const noexcept = 0;
+  [[nodiscard]] virtual SupportOwnerId owner() const noexcept = 0;
+  [[nodiscard]] virtual const storage::TupleLayout& layout() const noexcept = 0;
+  [[nodiscard]] virtual const ResultCursorMetrics& metrics() const noexcept = 0;
+};
+}  // namespace detail
 enum class CursorTerminalReason { not_recorded, none, exhausted, explicit_cancel, destruction, move_replacement, invalidated, startup_failure, next_failure };
 enum class CursorMetricId { startup_ns, successful_next_ns, exhausted_next_ns,
   failed_next_ns, cleanup_ns, successful_calls, exhausted_calls, failed_calls,
@@ -304,9 +319,12 @@ class SupportRuntime {
    private:
     friend class SupportRuntime;
     friend class EpochView;
+    friend class DeltaRuntime;
     struct Data;
     explicit ResultCursor(resource::AccountedUnique<Data> data) noexcept;
+    explicit ResultCursor(std::unique_ptr<detail::ExternalResultCursor> external) noexcept;
     resource::AccountedUnique<Data> data_;
+    std::unique_ptr<detail::ExternalResultCursor> external_;
   };
   // Journal-backed immutable relation context. Copies and cursors
   // share one read lease. Pending rollback invalidates and closes its cursors;

@@ -1,0 +1,14 @@
+6 7
+0 C int -1 {} 0
+1 D int 0 {0} 0
+2 A int 0 {0} 0
+3 B int 2 {0,2} 0
+4 E int 1 {1} 0
+5 FF int 4 {1,4} 0
+M 1 C,D
+LBC 3 B,C
+LCA 2 C,A
+RDE 4 D,E
+RFD 5 FF,D
+LAB 3 A,B
+REF 5 E,FF

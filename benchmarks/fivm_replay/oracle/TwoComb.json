@@ -1,0 +1,63 @@
+{
+ "query": "TwoComb",
+ "source": "/tmp/claude-1000/-home-userroot-Codex-CROWN/ec685d80-d57a-440f-9bb0-717b126b9b7b/scratchpad/bench/runs-G1/runtime-TwoComb-full/stdout",
+ "source_sha256": "752bc718d8c7389c230b5b4c4f3f10de094c8fac2d331119df69b34f671d69b6",
+ "engine": "keyed_v1",
+ "implementation": "native_crown_serial_original_routing",
+ "physical_inputs": 1242274,
+ "relation_updates": 3277622,
+ "enumeration_markers": 10,
+ "snapshot_rows": 42181362,
+ "snapshots": [
+  {
+   "sequence": 62117,
+   "marker": 1,
+   "rows": 1642495
+  },
+  {
+   "sequence": 124233,
+   "marker": 2,
+   "rows": 28526697
+  },
+  {
+   "sequence": 248464,
+   "marker": 3,
+   "rows": 6112221
+  },
+  {
+   "sequence": 372695,
+   "marker": 4,
+   "rows": 2474703
+  },
+  {
+   "sequence": 496925,
+   "marker": 5,
+   "rows": 1134038
+  },
+  {
+   "sequence": 621155,
+   "marker": 6,
+   "rows": 628530
+  },
+  {
+   "sequence": 745387,
+   "marker": 7,
+   "rows": 591379
+  },
+  {
+   "sequence": 869615,
+   "marker": 8,
+   "rows": 588130
+  },
+  {
+   "sequence": 993848,
+   "marker": 9,
+   "rows": 437648
+  },
+  {
+   "sequence": 1118043,
+   "marker": 10,
+   "rows": 45521
+  }
+ ]
+}

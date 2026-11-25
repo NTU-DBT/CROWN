@@ -1,3 +1,7 @@
+#include "crown/runtime/keyed_engine.hpp"
+#include "owner_override.hpp"
+#include <deque>
+#include <cstdlib>
 #include "crown/runtime/delta.hpp"
 #include "memory_report_detail.hpp"
 #include "storage_work.hpp"
@@ -24,8 +28,12 @@ using RowSets=MemoryVector<NativeRows>;
 // Node IDs are valid vector positions; UINT64_MAX is reserved for coordinator
 // storage so its arrays/control/scratch cannot collide with factor node zero.
 constexpr resource::MemoryAttribution delta_metadata{resource::MemoryOwnerKind::delta_node,UINT64_MAX};
-void require(bool condition,std::string_view code,std::string_view message) {
-  if (!condition) throw Error(std::string(code),std::string(message));
+// The check is inlined on hot paths; only failure leaves the caller.
+[[noreturn, gnu::cold, gnu::noinline]] void fail(std::string_view code,std::string_view message) {
+  throw Error(std::string(code),std::string(message));
+}
+inline void require(bool condition,std::string_view code,std::string_view message) {
+  if (!condition) [[unlikely]] fail(code,message);
 }
 template<class Failure> [[noreturn]] void delta_present(const Failure& failure) {
   throw Error(std::string(failure.code()),failure.what());
@@ -115,6 +123,7 @@ struct DeltaRuntime::Impl {
   workload::detail::State* workload;
   storage::TupleLayout output_layout;
   storage::TupleLayout core_layout;
+  storage::TupleLayout sql_layout;
   MemoryVector<Factor> factors;
   MemoryVector<std::optional<std::size_t>> ranks;
   std::shared_ptr<LiveImage> live;
@@ -126,12 +135,91 @@ struct DeltaRuntime::Impl {
   bool processing=false, output_active=false;
   DeltaMetrics change_mode(DeltaMode);
   DeltaState lifecycle=DeltaState::ready;
+  // Keyed core (docs/keyed_core.md). When present it owns all query state;
+  // the reference PhysicalRuntime above stays empty apart from initial sources.
+  std::unique_ptr<keyed::SetEngine> keyed;
+  std::uint64_t keyed_sequence=0;
+  struct KeyedCursor;
+  struct KeyedOutput;
+  // Cells of the event row on the direct keyed apply path (writer only).
+  std::vector<storage::ScalarView> event_cells;
+  void select_engine() {
+    if (options.engine==DeltaEngine::reference) return;
+    // Operational override: CROWN_DELTA_ENGINE=reference resolves automatic
+    // selection to the reference core (its own contract tests use this).
+    if (options.engine==DeltaEngine::automatic)
+      if (const char* forced=std::getenv("CROWN_DELTA_ENGINE"); forced && std::string_view(forced)=="reference") return;
+    const auto& program=physical.compiled_program();
+    const auto reason=keyed::SetEngine::unsupported(program);
+    if (!reason.empty()) {
+      require(options.engine!=DeltaEngine::keyed,"keyed_engine_unsupported",reason);
+      return;
+    }
+    keyed::EngineOptions engine{false,options.gc,options.view==ResultView::sql};
+    engine.memory_limit_bytes=options.physical.support.memory_limit_bytes;
+    keyed=std::make_unique<keyed::SetEngine>(program,engine);
+    keyed_sequence=physical.sequence();
+    // Initialized or restored sources move into the keyed core.
+    const auto image=physical.snapshot();
+    std::vector<storage::ScalarView> cells;
+    for (std::size_t t=0;t<image.physical.tables.size();++t)
+      for (const auto& row:image.physical.tables[t]) {
+        cells.clear();
+        for (const auto& value:row) cells.push_back(storage::borrow_scalar(value));
+        static_cast<void>(keyed->apply(TableId{t},SetOperation::insert,storage::RowView::borrow(cells),nullptr));
+      }
+  }
+  // Reference twin of the keyed state at the current sequence and mode, built
+  // from the retained sources on demand (O(state)) for reference-core
+  // diagnostics, checkpoints and replanning; rebuilt after the next commit.
+  std::unique_ptr<DeltaRuntime> twin;
+  std::uint64_t twin_sequence=std::numeric_limits<std::uint64_t>::max();
+  DeltaMode twin_mode=DeltaMode::maintenance;
+  PhysicalRuntime reference_sources(std::shared_ptr<detail::StorageWorkContext> context) const {
+    BuildOptions build; build.work_limit=std::nullopt;
+    return PhysicalRuntime::initialize_at(physical.plan(),keyed->sources(),options.physical,build,keyed_sequence,{},std::move(context));
+  }
+  DeltaRuntime& reference_twin() {
+    if (twin && twin_sequence==keyed_sequence && twin_mode==mode) return *twin;
+    twin.reset();
+    auto context=detail::storage_context(physical.plan(),options.physical.support.memory_limit_bytes,physical.storage_context()->memory());
+    detail::StorageOperation operation(context);
+    auto twin_options=options; twin_options.engine=DeltaEngine::reference; twin_options.mode=mode;
+    BuildOptions build; build.work_limit=std::nullopt;
+    detail::ForcedSupportOwner same_owner(physical.owner().value);
+    twin=std::unique_ptr<DeltaRuntime>(new DeltaRuntime(reference_sources(context),twin_options,build));
+    twin->impl().options.work_limit=options.work_limit;
+    twin_sequence=keyed_sequence; twin_mode=mode;
+    return *twin;
+  }
+  [[noreturn]] static void keyed_unavailable(std::string_view what) {
+    throw Error("keyed_engine_unavailable",std::string(what)+" is a reference-core diagnostic; select DeltaEngine::reference");
+  }
+  // Core head row -> result row of the configured view, as an owning tuple.
+  // Writer-side pooled result tuples (epoch rows and derivation records);
+  // each result cursor owns its own arena.
+  mutable std::optional<storage::TuplePool> tuple_arena;
+  // The previous keyed epoch's output object, reused once its facade is gone.
+  std::shared_ptr<Epoch::Data> spare_output;
+  storage::TuplePool& arena() const {
+    if (!tuple_arena) tuple_arena.emplace(&memory());
+    return *tuple_arena;
+  }
+  // Layout of keyed rows in `view` (the engine maps SQL outputs itself).
+  const storage::TupleLayout& view_layout(ResultView view) const {
+    return view==ResultView::core || !physical.plan().normalized()?core_layout:sql_layout;
+  }
+  storage::AccountedTuple keyed_view_native(storage::RowView values,ResultView view) const {
+    const auto& compiled=physical.plan();
+    if (view==ResultView::core || !compiled.normalized()) return compiled.result_layout().tuple(values,{resource::MemoryOwnerKind::output,0});
+    return compiled.sql_result_layout().tuple(values,{resource::MemoryOwnerKind::output,0});
+  }
 
   template<class Source> Impl(Source plan,DeltaOptions value,std::shared_ptr<detail::StorageWorkContext> context)
       :Impl(PhysicalRuntime(std::move(plan),value.physical,std::move(context)),value) {}
   Impl(PhysicalRuntime owner,DeltaOptions value)
       :options(value),physical(std::move(owner)),observation(physical.observation_state()),workload(&physical.workload_state()),output_layout(physical.result_layout(value.view)),
-       core_layout(physical.result_layout(ResultView::core)),
+       core_layout(physical.result_layout(ResultView::core)),sql_layout(physical.result_layout(ResultView::sql)),
        factors(resource::MemoryAllocator<Factor>(physical.plan().account(),resource::MemoryPurpose::immutable_metadata,delta_metadata)),
        ranks(resource::MemoryAllocator<std::optional<std::size_t>>(physical.plan().account(),resource::MemoryPurpose::immutable_metadata,delta_metadata)) {
     ranks.resize(physical.plan().nodes().size());
@@ -171,6 +259,7 @@ struct DeltaRuntime::Impl {
       ranks[node.id.value]=i; factors.push_back(std::move(factor));
       if (parent) factors[*parent].children.push_back(i);
     }
+    select_engine();
   }
   // Called only after successful construction or a semantic mode switch.
   // Bootstrap runs before initial binding, with temporarily adjusted build
@@ -195,7 +284,7 @@ struct DeltaRuntime::Impl {
   }
   void readable() const { require(!processing,"runtime_busy","delta epoch preparation is active"); }
   void writable() const {
-    readable(); require(!output_active && physical.ready(),"runtime_busy","query readers or committed delta output are active");
+    readable(); require(!output_active && physical.ready() && (!keyed || keyed->readers()==0),"runtime_busy","query readers or committed delta output are active");
   }
   void charge(DeltaMetrics& metrics,std::uint64_t amount=1) const {
     const auto used=metrics.work;
@@ -303,6 +392,65 @@ struct DeltaRuntime::Impl {
   }
 };
 
+// Committed results of the keyed core behind the public ResultCursor facade.
+// Readers block the writer until the cursor is exhausted, cancelled or gone.
+struct DeltaRuntime::Impl::KeyedCursor final : detail::ExternalResultCursor {
+  std::shared_ptr<const Impl> runtime;
+  std::unique_ptr<keyed::SetEngine::Cursor> cursor;
+  ResultView view;
+  bool scalar, scalar_done=false;
+  storage::TupleLayout output_layout;
+  ResultCursorMetrics work;
+  ResultCursorState status=ResultCursorState::active;
+  std::uint64_t epoch;
+  std::optional<std::uint64_t> limit;
+  std::optional<storage::TuplePool> pool;
+  KeyedCursor(std::shared_ptr<const Impl> owner_impl,ResultView selected,ResultCursorOptions options)
+      :runtime(std::move(owner_impl)),cursor(runtime->keyed->open_cursor(selected==ResultView::sql)),view(selected),
+       scalar(selected==ResultView::sql && runtime->scalar_sql()),
+       output_layout(runtime->physical.result_layout(selected)),epoch(runtime->keyed_sequence),limit(options.work_limit) {}
+  std::optional<storage::AccountedTuple> next() override {
+    if (status!=ResultCursorState::active) return {};
+    if (limit && work.total_work>=*limit) {
+      status=ResultCursorState::failed; cursor.reset();
+      throw Error("resource_limit","result cursor work limit exceeded");
+    }
+    ++work.total_work; ++work.results.work; ++work.results.rows_emitted;
+    if (scalar) {
+      if (scalar_done) { status=ResultCursorState::exhausted; cursor.reset(); return {}; }
+      scalar_done=true;
+      const std::array values{storage::ScalarView{runtime->keyed->has_answer()}};
+      return runtime->physical.plan().sql_result_layout().tuple(storage::RowView::borrow(values),{resource::MemoryOwnerKind::output,0});
+    }
+    const auto row=cursor->next();
+    if (!row) { status=ResultCursorState::exhausted; cursor.reset(); return {}; }
+    return runtime->keyed_view_native(*row,view);
+  }
+  std::optional<storage::Tuple> next_tuple() override {
+    if (status!=ResultCursorState::active || scalar) {
+      auto native=next(); if (!native) return {}; return storage::Tuple::from_accounted(std::move(*native));
+    }
+    if (limit && work.total_work>=*limit) {
+      status=ResultCursorState::failed; cursor.reset();
+      throw Error("resource_limit","result cursor work limit exceeded");
+    }
+    ++work.total_work; ++work.results.work; ++work.results.rows_emitted;
+    const auto row=cursor->next();
+    if (!row) { status=ResultCursorState::exhausted; cursor.reset(); return {}; }
+    if (!pool) pool.emplace(&runtime->memory());
+    return pool->make(runtime->view_layout(view),*row);
+  }
+  void cancel() noexcept override {
+    if (status==ResultCursorState::active) status=ResultCursorState::cancelled;
+    cursor.reset();
+  }
+  ResultCursorState state() const noexcept override { return status; }
+  std::uint64_t sequence() const noexcept override { return epoch; }
+  SupportOwnerId owner() const noexcept override { return runtime->physical.owner(); }
+  const storage::TupleLayout& layout() const noexcept override { return output_layout; }
+  const ResultCursorMetrics& metrics() const noexcept override { return work; }
+};
+
 struct DeltaRuntime::Impl::LiveTransaction {
   enum class Kind { insert_live, erase_live, insert_separator, change_separator, erase_separator };
   struct Undo {
@@ -326,6 +474,7 @@ struct DeltaRuntime::Impl::LiveTransaction {
   std::shared_ptr<LiveImage> image;
   resource::AccountedUnique<Undo> undo;
   MemoryVector<Event> pending;
+  MemoryVector<storage::ScalarView> probe;  // Borrowed projection cells for insertion probes.
   RemovedParents removed_parents;
   std::size_t erased_rows=0, removed_copies=0, erased_parent_rows=0, removed_parent_copies=0, erased_child_rows=0;
   bool retain_before=true;
@@ -334,8 +483,12 @@ struct DeltaRuntime::Impl::LiveTransaction {
   LiveTransaction(const Impl& owner,DeltaMetrics& work,std::shared_ptr<LiveImage> state)
       :runtime(owner),metrics(work),image(std::move(state)),
        pending(resource::MemoryAllocator<Event>(owner.memory(),resource::MemoryPurpose::journal_undo,delta_metadata)),
+       probe(resource::MemoryAllocator<storage::ScalarView>(owner.memory(),resource::MemoryPurpose::scratch,delta_metadata)),
        removed_parents(resource::MemoryAllocator<detail::AccountedRowMap<NativeRows>>(owner.memory(),resource::MemoryPurpose::journal_undo,delta_metadata)),
        retain_before(owner.selected_completion!=DeltaCompletion::ordered_replay) {
+    std::size_t widest=0;
+    for(const auto& factor:owner.factors)widest=std::max(widest,factor.head_fields.size());
+    probe.reserve(widest);
     removed_parents.reserve(image->parents.size());
     for(const auto& factor:owner.factors)removed_parents.emplace_back(owner.memory(),resource::MemoryPurpose::journal_undo,
         resource::MemoryAttribution{resource::MemoryOwnerKind::delta_node,factor.node.value},resource::AllocationLifetime::retained);
@@ -402,8 +555,8 @@ struct DeltaRuntime::Impl::LiveTransaction {
     pending.clear(); closed=true;
   }
   template<class Source>
-  void change(std::size_t factor,const Source& key,bool add,RowSets& removed,ProductiveQueue* productive=nullptr) {
-    runtime.metric(metrics,metrics.live_probes);
+  void change(std::size_t factor,const Source& key,bool add,RowSets& removed,ProductiveQueue* productive=nullptr,bool probed=false) {
+    if (!probed) runtime.metric(metrics,metrics.live_probes);
     auto& rows=image->factors[factor]; const auto found=rows.find(key);
     if ((found!=rows.end())==add) return;
     const storage::AccountedRow* event_row=nullptr;
@@ -542,6 +695,25 @@ struct DeltaRuntime::Impl::LiveTransaction {
     // same accepted row. No E bucket is scanned; see incremental_live.md for
     // the deletion certificate ensuring later rows finish every dead key.
     for (std::size_t i=0;i<runtime.factors.size();++i) {
+      if (add) {
+        // Most accepted rows reuse live projections: probe with borrowed
+        // cells and copy a key only for a real insertion. Metrics match the
+        // owned-key path (projection fields, then one live probe).
+        probe.clear();
+        for (const auto field : runtime.factors[i].head_fields) {
+          runtime.metric(metrics,metrics.projection_fields); probe.push_back(Impl::scalar(row,field));
+        }
+        runtime.metric(metrics,metrics.live_probes);
+        if (image->factors[i].contains(storage::RowView::borrow(probe))) continue;
+        auto key=storage::AccountedRow::copy_of(runtime.memory(),storage::RowView::borrow(probe),delta_metadata);
+        change(i,key,add,removed,productive,true);
+        for (const auto event : pending) for (const auto child : runtime.factors[event.factor].children) {
+          const auto parent_key=runtime.project(*event.row,runtime.factors[child].parent_separator,metrics,metrics.separator_fields);
+          static_cast<void>(separator(child,parent_key,*event.row,add));
+        }
+        pending.clear();
+        continue;
+      }
       auto key=runtime.project(row,runtime.factors[i].head_fields,metrics,metrics.projection_fields);
       if (!add) {
         runtime.metric(metrics,metrics.live_probes);
@@ -730,10 +902,136 @@ struct DeltaRuntime::Epoch::Data {
     Spool(const Spool&)=delete;
     Spool& operator=(const Spool&)=delete;
     ~Spool() { clear(); }
-    [[nodiscard]] std::size_t size() const noexcept { return count; }
-    [[nodiscard]] bool empty() const noexcept { return count==0; }
-    SignedResult& front() noexcept { return head->value; }
+    // Keyed epochs spool into a growing vector consumed from a head index
+    // (bounded by the logical spool row/byte limits) instead of one ledger
+    // allocation per node. An unused vector allocates nothing.
+    bool compact=false;
+    std::vector<SignedResult> fast;
+    std::size_t fast_head=0;
+    // Keyed core rows (compact mode) are coded instead: per cell one tag (the
+    // ScalarView alternative) and one word (an int64 or Boolean value, or the
+    // index of a text span or of a wide cell). Each tuple is built in the
+    // runtime's pool when its row is read, so a large epoch holds about nine
+    // bytes per integer cell rather than a materialized tuple per row, and a
+    // reader that releases rows as it goes reuses one warm pool chunk.
+    struct Coded {
+      static_assert(std::is_same_v<std::variant_alternative_t<0,storage::ScalarView>,std::int64_t> &&
+          std::is_same_v<std::variant_alternative_t<1,storage::ScalarView>,std::string_view> &&
+          std::is_same_v<std::variant_alternative_t<2,storage::ScalarView>,bool>);
+      std::size_t width=0;
+      const storage::TupleLayout* layout=nullptr;
+      storage::TuplePool* pool=nullptr;
+      MemoryVector<std::uint8_t> operations, tags;
+      MemoryVector<std::uint64_t> words;
+      MemoryVector<char> text;
+      MemoryVector<std::pair<std::size_t,std::size_t>> spans;  // text offset and size
+      MemoryVector<storage::ScalarView> wide;                   // dates and decimals
+      std::size_t head=0;
+      std::optional<SignedResult> built;  // the head row once read
+      mutable std::vector<storage::ScalarView> cells;  // decoding scratch
+      template<class Allocator> explicit Coded(const Allocator& allocator)
+          :operations(resource::MemoryAllocator<std::uint8_t>(allocator)),tags(resource::MemoryAllocator<std::uint8_t>(allocator)),
+           words(resource::MemoryAllocator<std::uint64_t>(allocator)),text(resource::MemoryAllocator<char>(allocator)),
+           spans(resource::MemoryAllocator<std::pair<std::size_t,std::size_t>>(allocator)),
+           wide(resource::MemoryAllocator<storage::ScalarView>(allocator)) {}
+      [[nodiscard]] std::size_t size() const noexcept { return operations.size()-head; }
+      // Strong guarantee: on failure the coded rows are unchanged.
+      void push(SetOperation operation,storage::RowView values,const storage::TupleLayout& target,storage::TuplePool& arena) {
+        if (operations.empty()) { width=values.size(); layout=&target; pool=&arena; }
+        else require(values.size()==width && layout==&target && pool==&arena,"runtime_contract","coded delta rows changed shape");
+        const auto marks=std::array{tags.size(),words.size(),text.size(),spans.size(),wide.size()};
+        try {
+          for (const auto& cell : values.cells()) {
+            std::uint64_t word=0;
+            if (const auto* integer=std::get_if<std::int64_t>(&cell)) word=static_cast<std::uint64_t>(*integer);
+            else if (const auto* string=std::get_if<std::string_view>(&cell)) {
+              word=spans.size(); spans.push_back({text.size(),string->size()});
+              text.insert(text.end(),string->begin(),string->end());
+            } else if (const auto* boolean=std::get_if<bool>(&cell)) word=*boolean;
+            else { word=wide.size(); wide.push_back(cell); }
+            tags.push_back(static_cast<std::uint8_t>(cell.index())); words.push_back(word);
+          }
+          operations.push_back(static_cast<std::uint8_t>(operation));
+        } catch (...) {
+          tags.resize(marks[0]); words.resize(marks[1]); text.resize(marks[2]); spans.resize(marks[3]); wide.resize(marks[4]);
+          if (operations.empty()) { width=0; layout=nullptr; pool=nullptr; }
+          throw;
+        }
+      }
+      // Row `row` (absolute; ordinal row + 1) as a tuple of the pool.
+      [[nodiscard]] SignedResult build(std::size_t row) const {
+        if (cells.size()<width) cells.resize(width);
+        const auto base=row*width;
+        for (std::size_t c=0;c<width;++c) {
+          const auto word=words[base+c];
+          switch (tags[base+c]) {
+            case 0: cells[c].emplace<0>(static_cast<std::int64_t>(word)); break;
+            case 1: cells[c].emplace<1>(text.data()+spans[word].first,spans[word].second); break;
+            case 2: cells[c].emplace<2>(word!=0); break;
+            default: cells[c]=wide[word]; break;
+          }
+        }
+        return {static_cast<std::uint64_t>(row)+1,static_cast<SetOperation>(operations[row]),
+            pool->make(*layout,storage::RowView::borrow({cells.data(),width}))};
+      }
+      SignedResult& front() { if (!built) built.emplace(build(head)); return *built; }
+      void pop_front() noexcept { built.reset(); if (++head==operations.size()) clear(); }
+      void clear() noexcept {
+        // Capacity is kept for the next epoch unless a large epoch grew it.
+        constexpr std::size_t keep_words=std::size_t{1}<<22;
+        if (words.capacity()>keep_words) {
+          decltype(operations)(operations.get_allocator()).swap(operations);
+          decltype(tags)(tags.get_allocator()).swap(tags);
+          decltype(words)(words.get_allocator()).swap(words);
+          decltype(text)(text.get_allocator()).swap(text);
+          decltype(spans)(spans.get_allocator()).swap(spans);
+          decltype(wide)(wide.get_allocator()).swap(wide);
+        }
+        operations.clear(); tags.clear(); words.clear(); text.clear(); spans.clear(); wide.clear();
+        head=0; built.reset(); width=0; layout=nullptr; pool=nullptr;
+      }
+    } coded{allocator};
+    [[nodiscard]] std::size_t size() const noexcept { return compact?fast.size()-fast_head+coded.size():count; }
+    [[nodiscard]] bool empty() const noexcept { return size()==0; }
+    // The next row (a coded row is built into a tuple on first access).
+    SignedResult& front() {
+      if (compact && coded.size()) return coded.front();
+      return compact?fast[fast_head]:head->value;
+    }
+    // Remove and return the next row.
+    SignedResult take_front() {
+      if (compact && coded.size()) {
+        auto row=coded.built?std::move(*coded.built):coded.build(coded.head);
+        coded.pop_front();
+        return row;
+      }
+      SignedResult row=std::move(front()); pop_front();
+      return row;
+    }
+    [[nodiscard]] std::uint64_t front_ordinal() const noexcept {
+      if (compact && coded.size()) return static_cast<std::uint64_t>(coded.head)+1;
+      return compact?fast[fast_head].ordinal:head->value.ordinal;
+    }
+    template<class Visit> void for_each(Visit&& visit) const {
+      if (compact) {
+        for (std::size_t i=fast_head;i<fast.size();++i) visit(fast[i]);
+        for (std::size_t i=coded.head;i<coded.operations.size();++i) {
+          if (i==coded.head && coded.built) visit(*coded.built);
+          else visit(coded.build(i));
+        }
+        return;
+      }
+      for (auto* node=head;node;node=node->next) visit(node->value);
+    }
+    void push_coded(SetOperation operation,storage::RowView values,const storage::TupleLayout& layout,storage::TuplePool& pool) {
+      require(compact && fast_head==fast.size(),"runtime_contract","coded rows follow materialized delta rows");
+      coded.push(operation,values,layout,pool);
+    }
     void push_back(SignedResult value) {
+      if (compact) {
+        require(coded.operations.empty(),"runtime_contract","materialized rows follow coded delta rows");
+        fast.push_back(std::move(value)); return;
+      }
       auto* node=allocator.allocate(1);
       // SignedResult transfers an already prepared owning row without throwing.
       static_assert(std::is_nothrow_constructible_v<Node,SignedResult>);
@@ -742,10 +1040,20 @@ struct DeltaRuntime::Epoch::Data {
       tail=node; ++count;
     }
     void pop_front() noexcept {
+      if (compact && coded.size()) { coded.pop_front(); return; }
+      if (compact) {
+        { auto discard=std::move(fast[fast_head]); static_cast<void>(discard); }  // release its payload now
+        if (++fast_head==fast.size()) { fast.clear(); fast_head=0; }
+        return;
+      }
       auto* node=head;head=node->next;std::destroy_at(node);allocator.deallocate(node,1);--count;
       if (!head) tail=nullptr;
     }
-    void clear() noexcept { while (head) pop_front(); }
+    void clear() noexcept {
+      coded.clear();
+      if (compact) { fast.clear(); fast_head=0; return; }
+      while (head) pop_front();
+    }
   };
   std::shared_ptr<Impl> owner;
   std::shared_ptr<detail::ObservationState> observation;
@@ -769,24 +1077,48 @@ struct DeltaRuntime::Epoch::Data {
     stages.reserve(owner->physical.plan().inputs().size());
   }
   ~Data() { finish(); }
+  // Keyed epochs reuse the runtime's previous output object (spool and stage
+  // capacity included) once no facade refers to it: no allocation per epoch.
+  static std::shared_ptr<Data> make(const std::shared_ptr<Impl>& runtime) {
+    if (runtime->keyed && runtime->spare_output && runtime->spare_output.use_count()==1) {
+      auto data=std::move(runtime->spare_output); data->recycle(runtime); return data;
+    }
+    return resource::make_accounted_shared<Data>({resource::MemoryOwnerKind::output,0},runtime->memory(),resource::MemoryPurpose::output_buffer,runtime);
+  }
+  void recycle(const std::shared_ptr<Impl>& runtime) {
+    finish();
+    // A recycled keyed epoch keeps its input record, with the derivation and
+    // transition vectors' capacity and allocators; the next apply refills it.
+    if (input) {
+      input->input.derivations.clear(); input->input.source.reset();
+      input->support.transitions.clear(); input->support.journal.reset();
+    }
+    owner=runtime; observation=owner->observation; layout=owner->output_layout;
+    metrics=DeltaMetrics{}; timings=DeltaTimings{}; rows.clear(); stages.clear(); payload_bytes=0;
+    leased=false; retain_output=true; delivering=false; discard_requested=false;
+    observation_ticket=detail::ObservationTicket{}; disposition=OutputDisposition{}; observation_closed=false;
+  }
   void observe() const noexcept {
     if (!observation) return;
-    observation->set(MetricId::delta_work,metrics.work);
-    observation->set(MetricId::delta_candidates,metrics.candidates);
-    observation->set(MetricId::delta_accepted,metrics.accepted);
-    observation->set(MetricId::delta_rejected,metrics.rejected);
-    observation->set(MetricId::delta_replay_preparation_work,metrics.replay_preparation_work);
-    observation->set(MetricId::delta_replay_first_work,metrics.replay_first_work);
-    observation->set(MetricId::delta_replay_results_work,metrics.replay_results_work);
-    observation->set(MetricId::delta_replay_termination_work,metrics.replay_termination_work);
-    observation->set(MetricId::delta_finalization_work,metrics.finalization_work);
-    observation->set(MetricId::delta_propagation_ns,timings.propagation_ns);
-    observation->set(MetricId::delta_internal_delta_ns,timings.internal_delta_ns);
-    observation->set(MetricId::delta_output_mapping_ns,timings.output_mapping_ns);
-    observation->set(MetricId::delta_serialization_ns,timings.serialization_ns);
-    observation->set(MetricId::delta_sink_wait_ns,timings.sink_wait_ns);
-    observation->set(MetricId::delta_spool_rows_prepared,metrics.spool_rows);
-    observation->set(MetricId::delta_spool_bytes_prepared,metrics.spool_bytes);
+    // A fresh attempt holds zeros: only nonzero values need writing.
+    auto& state=*observation;
+    const auto set=[&state](MetricId id,std::uint64_t value) noexcept { if (value) state.set(id,value); };
+    set(MetricId::delta_work,metrics.work);
+    set(MetricId::delta_candidates,metrics.candidates);
+    set(MetricId::delta_accepted,metrics.accepted);
+    set(MetricId::delta_rejected,metrics.rejected);
+    set(MetricId::delta_replay_preparation_work,metrics.replay_preparation_work);
+    set(MetricId::delta_replay_first_work,metrics.replay_first_work);
+    set(MetricId::delta_replay_results_work,metrics.replay_results_work);
+    set(MetricId::delta_replay_termination_work,metrics.replay_termination_work);
+    set(MetricId::delta_finalization_work,metrics.finalization_work);
+    set(MetricId::delta_propagation_ns,timings.propagation_ns);
+    set(MetricId::delta_internal_delta_ns,timings.internal_delta_ns);
+    set(MetricId::delta_output_mapping_ns,timings.output_mapping_ns);
+    set(MetricId::delta_serialization_ns,timings.serialization_ns);
+    set(MetricId::delta_sink_wait_ns,timings.sink_wait_ns);
+    set(MetricId::delta_spool_rows_prepared,metrics.spool_rows);
+    set(MetricId::delta_spool_bytes_prepared,metrics.spool_bytes);
   }
 
   void finish() noexcept {
@@ -806,7 +1138,9 @@ struct DeltaRuntime::Epoch::Data {
     }
     owner.reset(); rows.clear();
   }
-  void append(SetOperation operation,storage::Tuple tuple) {
+  // Observation of one more output row; false when output is no longer
+  // retained (the row is counted as discarded).
+  bool retained_row() {
     if (observation) {
       observation->add(MetricId::delta_mapped_records);
       observation->event(TraceKind::mapped_record);
@@ -814,26 +1148,45 @@ struct DeltaRuntime::Epoch::Data {
     if (!retain_output) {
       owner->metric(metrics,metrics.discarded_records);
       if (observation) observation->add(MetricId::delta_discarded_records);
-      return;
+      return false;
     }
+    return true;
+  }
+  void append(SetOperation operation,storage::Tuple tuple) {
+    if (!retained_row()) return;
+    if (!rows.compact)
+      require(tuple.is_accounted() && tuple.account_statistics().owner==owner->memory().statistics().owner,
+          "runtime_contract","delta output does not belong to the original query account");
+    const auto actual=tuple.memory_usage().requested_bytes;
+    require(actual<=std::numeric_limits<std::size_t>::max(),"resource_limit","delta output allocation exceeds host size_t");
+    const auto [next_payload,bytes]=admit(static_cast<std::size_t>(actual));
+    rows.push_back({static_cast<std::uint64_t>(rows.size())+1,operation,std::move(tuple)});
+    payload_bytes=next_payload; metrics.spool_rows=rows.size(); metrics.spool_bytes=bytes; metrics.spool_capacity_rows=rows.size();
+  }
+  // A keyed core row: coded, built as a tuple of `layout` in `pool` when read.
+  // Limits and metrics count the tuple it becomes, as for append(Tuple).
+  void append(SetOperation operation,storage::RowView values,const storage::TupleLayout& layout,storage::TuplePool& pool) {
+    if (!rows.compact) { append(operation,pool.make(layout,values)); return; }
+    if (!retained_row()) return;
+    const auto [next_payload,bytes]=admit(storage::TuplePool::requested_bytes(values));
+    rows.push_coded(operation,values,layout,pool);
+    payload_bytes=next_payload; metrics.spool_rows=rows.size(); metrics.spool_bytes=bytes; metrics.spool_capacity_rows=rows.size();
+  }
+  // Spool limits for one more row of `payload` requested bytes; charges one
+  // unit of work and returns the payload and spool byte totals with it.
+  std::pair<std::size_t,std::size_t> admit(std::size_t payload) {
     const auto& options=owner->options;
     require(rows.size()<options.spool_row_limit && rows.size()<std::numeric_limits<std::uint64_t>::max(),
         "resource_limit","unpublished delta spool row limit exceeded; previous input preserved");
-    require(tuple.is_accounted() && tuple.account_statistics().owner==owner->memory().statistics().owner,
-        "runtime_contract","delta output does not belong to the original query account");
-    const auto actual=tuple.memory_usage().requested_bytes;
-    require(actual<=std::numeric_limits<std::size_t>::max(),"resource_limit","delta output allocation exceeds host size_t");
-    const auto payload=static_cast<std::size_t>(actual);
     const auto next_payload=add_size(payload_bytes,payload);
     require(next_payload<=options.spool_byte_limit,"resource_limit","unpublished delta spool payload limit exceeded");
     const auto next_count=add_size(rows.size(),1);
-    const auto node_bytes=resource::MemoryAccount::allocation_bytes(sizeof(Spool::Node),alignof(Spool::Node));
+    static const auto node_bytes=resource::MemoryAccount::allocation_bytes(sizeof(Spool::Node),alignof(Spool::Node));
     require(node_bytes<=std::numeric_limits<std::size_t>::max(),"resource_limit","delta spool node exceeds host size_t");
     const auto bytes=add_size(slots_size(next_count,static_cast<std::size_t>(node_bytes)),next_payload);
     require(bytes<=options.spool_byte_limit,"resource_limit","unpublished delta spool byte limit exceeded; previous input preserved");
     owner->charge(metrics);
-    rows.push_back({static_cast<std::uint64_t>(rows.size())+1,operation,std::move(tuple)});
-    payload_bytes=next_payload; metrics.spool_rows=rows.size(); metrics.spool_bytes=bytes; metrics.spool_capacity_rows=rows.size();
+    return {next_payload,bytes};
   }
   void disable_output() {
     if (observation) { disposition.discard_drain_requested=true; observe_output(); }
@@ -852,6 +1205,36 @@ struct DeltaRuntime::Epoch::Data {
     retain_output=false; rows.clear(); payload_bytes=0;
     for (auto& stage : stages) { stage.output_begin=0; stage.output_count=0; }
     metrics.finalization_work+=metrics.work-start;
+  }
+};
+
+// Keyed core output of one event: accepted rows go to the epoch spool, and
+// each staged route records its derivation change, workload facts and
+// DeltaStage summary (shared by the step-wise and the direct apply paths).
+struct DeltaRuntime::Impl::KeyedOutput final : keyed::RowSink, keyed::RouteObserver {
+  Impl& runtime;
+  Epoch::Data& output;
+  decltype(PhysicalPreview::derivations)& derivations;
+  KeyedOutput(Impl& owner,Epoch::Data& epoch,decltype(PhysicalPreview::derivations)& changes) noexcept
+      :runtime(owner),output(epoch),derivations(changes) {}
+  // The engine emits rows in the runtime's result view (options.view).
+  void row(SetOperation operation,storage::RowView values) override {
+    runtime.metric(output.metrics,output.metrics.accepted);
+    output.append(operation,values,runtime.view_layout(runtime.options.view),runtime.arena());
+  }
+  void route(const keyed::RouteReport& report) override {
+    auto& d=runtime;
+    d.workload->occurrence(OccurrenceId{report.occurrence},true);
+    d.workload->derivation(OccurrenceId{report.occurrence},report.before,report.after);
+    const auto& node=d.physical.plan().nodes()[report.node];
+    derivations.push_back({OccurrenceId{report.occurrence},node.id,
+        d.arena().make(node.layout.descriptor(),report.record),report.before,report.after,report.crossing});
+    if (!report.crossing || d.mode!=DeltaMode::delta) return;
+    const auto begin=output.rows.size()-std::min<std::size_t>(output.rows.size(),static_cast<std::size_t>(report.rows));
+    output.stages.push_back({OccurrenceId{report.occurrence},report.prefix,report.before_answer,report.after_answer,
+        report.changed_keys,report.rows,report.rows,0,begin,static_cast<std::size_t>(report.rows),report.live_rows});
+    output.metrics.changed_keys+=report.changed_keys; output.metrics.candidates+=report.rows;
+    ++output.metrics.stages;
   }
 };
 
@@ -1081,12 +1464,71 @@ struct DeltaRuntime::PendingEpoch::Data {
   DeltaState phase=DeltaState::pending_delta;
   detail::ObservationTicket observation_ticket;
   workload::detail::Ticket workload_ticket;
+  bool keyed_open=false, keyed_changed=false;
+  std::size_t keyed_stepped=0;  // spooled core rows already released by step()
+  std::size_t keyed_route=0, keyed_routes=0;  // next occurrence route to stage
+  // Owned copy of the event row across steps: inline cells (heap only for
+  // more than 16 columns) whose strings point into one owned byte buffer.
+  std::array<storage::ScalarView,16> keyed_inline{};
+  std::vector<storage::ScalarView> keyed_wide;
+  std::string keyed_text;
+  storage::RowView keyed_view;
+  TableId table{};
+
+  // Per-route derivation changes (Epoch::input()).
+  std::optional<decltype(PhysicalPreview::derivations)> keyed_derivations;
+  void begin_keyed(const PhysicalUpdateView& update) {
+    auto& d=*owner;
+    require(update.sequence==d.keyed_sequence+1,"invalid_sequence","physical update sequence must advance by one");
+    const auto& sources=d.physical.compiled_program().sources();
+    require(update.table.value<sources.size(),"invalid_table","physical update names an unknown table");
+    const auto issue=sources[update.table.value].layout.validation_issue_view(update.values);
+    if (!issue.ok()) throw storage::TupleValidationFailure(issue);
+    std::size_t text=0;
+    for (const auto value : update.values) if (const auto* string=std::get_if<std::string_view>(&value)) text+=string->size();
+    keyed_text.reserve(text);  // no reallocation below: string views stay valid
+    storage::ScalarView* cells=keyed_inline.data();
+    if (update.values.size()>keyed_inline.size()) { keyed_wide.resize(update.values.size()); cells=keyed_wide.data(); }
+    std::size_t width=0;
+    for (const auto value : update.values) {
+      if (const auto* string=std::get_if<std::string_view>(&value)) {
+        const auto offset=keyed_text.size(); keyed_text.append(*string);
+        cells[width++]=std::string_view(keyed_text.data()+offset,string->size());
+      } else cells[width++]=value;
+    }
+    keyed_view=storage::RowView::borrow({cells,width});
+    keyed_derivations.emplace(resource::OwnerAllocator<DerivationChange>(d.memory(),
+        resource::MemoryPurpose::output_buffer,{resource::MemoryOwnerKind::output,0}));
+    d.keyed->begin(); keyed_open=true;
+    keyed_changed=d.keyed->stage_source(update.table,update.operation,keyed_view);
+    d.workload->physical_fact(keyed_changed);
+    keyed_routes=keyed_changed?d.keyed->routes(update.table):0;
+  }
+  // Stage the next occurrence route; false once every route is staged.
+  bool stage_keyed_route() {
+    if (keyed_route>=keyed_routes) return false;
+    auto& d=*owner;
+    Impl::KeyedOutput sink(d,*output,*keyed_derivations);
+    const bool emit=d.mode==DeltaMode::delta && !d.scalar_sql() && output->retain_output;
+    d.keyed->stage_route(table,keyed_route++,operation,keyed_view,emit?&sink:nullptr,&sink);
+    return true;
+  }
+  PhysicalEpoch keyed_epoch() {
+    const auto& account=owner->memory();
+    PhysicalPreview preview{sequence,table,operation,keyed_changed,{},{},std::move(*keyed_derivations)};
+    SupportEpoch support{sequence,keyed_changed,owner->keyed->has_answer(),{},
+        decltype(SupportEpoch::transitions)(resource::OwnerAllocator<MembershipTransition>(account,
+            resource::MemoryPurpose::output_buffer,{resource::MemoryOwnerKind::output,0})),nullptr};
+    return PhysicalEpoch{std::move(preview),std::move(support)};
+  }
 
   Data(std::shared_ptr<Impl> runtime,const PhysicalUpdateView& update)
       :owner(std::move(runtime)),storage_lease(detail::storage_lease(owner->physical.storage_context())),
-       output(resource::make_accounted_shared<Epoch::Data>({resource::MemoryOwnerKind::output,0},owner->memory(),resource::MemoryPurpose::output_buffer,owner)),working(owner->live),
+       output(Epoch::Data::make(owner)),working(owner->live),
        sequence(update.sequence),operation(update.operation),before_answer(owner->physical.has_answer()) {
-    if (owner->mode==DeltaMode::delta && owner->options.live_maintenance!=LiveMaintenance::eager)
+    table=update.table;
+    if (owner->keyed) { before_answer=owner->keyed->has_answer(); output->rows.compact=true; }
+    if (!owner->keyed && owner->mode==DeltaMode::delta && owner->options.live_maintenance!=LiveMaintenance::eager)
       transaction.emplace(*owner,output->metrics,working);
     if (output->observation) {
       observation_ticket=output->observation->begin(ObservationLayer::delta,sequence);
@@ -1096,13 +1538,14 @@ struct DeltaRuntime::PendingEpoch::Data {
     workload_ticket=owner->workload->physical(update.table,update.operation);
     try {
       PhaseTimer timing(output->timings.propagation_ns,output->observation,&output->timings.internal_delta_ns);
-      physical.emplace(owner->physical.begin_staged(update));
+      if (owner->keyed) begin_keyed(update);
+      else physical.emplace(owner->physical.begin_staged(update));
     }
     catch (...) { rollback(); throw; }
     output->observe();
   }
   ~Data() { rollback(); }
-  bool active() const noexcept { return owner && physical && physical->active(); }
+  bool active() const noexcept { return owner && ((physical && physical->active()) || keyed_open); }
   void validate() const { require(active(),"invalid_delta_epoch","pending delta epoch is closed"); }
   void set_phase(DeltaState value) noexcept { phase=value; owner->lifecycle=value; }
   void rollback() noexcept {
@@ -1111,6 +1554,7 @@ struct DeltaRuntime::PendingEpoch::Data {
     // before restoration of independently journaled live/index nodes.
     { PhaseTimer timing(output->timings.internal_delta_ns,output->observation); stage.reset(); }
     { PhaseTimer timing(output->timings.propagation_ns,output->observation); if (physical) physical->rollback(); }
+    if (keyed_open) { owner->keyed->rollback(); keyed_open=false; }
     {
       PhaseTimer timing(output->timings.internal_delta_ns,output->observation);
       if (transaction) transaction->rollback();
@@ -1158,6 +1602,22 @@ struct DeltaRuntime::PendingEpoch::Data {
     }
   }
   DeltaStep step() {
+    if (owner->keyed) {
+      // Each accepted core row is one step; routes are staged one at a time.
+      if (output->retain_output && keyed_stepped<output->rows.size()) { ++keyed_stepped; return DeltaStep::core_result; }
+      if (stage_keyed_route()) {
+        if (output->retain_output && keyed_stepped<output->rows.size()) { ++keyed_stepped; return DeltaStep::core_result; }
+        return DeltaStep::progress;
+      }
+      if (owner->mode==DeltaMode::delta && owner->scalar_sql() && before_answer!=owner->keyed->has_answer()) {
+        auto& metrics=output->metrics;
+        owner->metric(metrics,metrics.output_fields,2);
+        output->append(SetOperation::erase,owner->scalar_result(before_answer));
+        output->append(SetOperation::insert,owner->scalar_result(!before_answer));
+      }
+      set_phase(DeltaState::epoch_prepared);
+      return DeltaStep::prepared;
+    }
     if (stage) {
       PhaseTimer timing(output->timings.internal_delta_ns,output->observation,&output->timings.output_mapping_ns);
       if (stage->next()) return DeltaStep::core_result;
@@ -1250,7 +1710,10 @@ DeltaRuntime::Epoch DeltaRuntime::PendingEpoch::commit() {
   static_assert(std::is_nothrow_move_constructible_v<SignedResult>);
   {
     PhaseTimer timing(data_->output->timings.propagation_ns,data_->output->observation);
-    data_->output->input.emplace(data_->physical->commit());
+    if (d.keyed) {
+      data_->output->input.emplace(data_->keyed_epoch());
+      d.keyed->commit(); data_->keyed_open=false; d.keyed_sequence=data_->sequence;
+    } else data_->output->input.emplace(data_->physical->commit());
   }
   if (data_->transaction) {
     PhaseTimer timing(data_->output->timings.internal_delta_ns,data_->output->observation);
@@ -1274,6 +1737,7 @@ DeltaRuntime::Epoch DeltaRuntime::PendingEpoch::commit() {
   output->leased=!output->rows.empty(); d.output_active=output->leased; d.processing=false; d.lifecycle=DeltaState::ready;
   data_->physical.reset(); data_->transaction.reset(); data_->phase=DeltaState::committed; data_->owner.reset();
   if (!output->leased) output->owner.reset();
+  if (d.keyed) d.spare_output=output;
   return Epoch(std::move(output));
 }
 DeltaRuntime::Epoch DeltaRuntime::PendingEpoch::discard() { start_drain(); drain(); return commit(); }
@@ -1281,11 +1745,13 @@ void DeltaRuntime::PendingEpoch::rollback() noexcept { if (data_) data_->rollbac
 
 DeltaRuntime::Epoch::Epoch(std::shared_ptr<Data> data) noexcept:data_(std::move(data)) {}
 DeltaRuntime::Epoch::Epoch(Epoch&&) noexcept=default;
+// Releasing the facade releases the output (unread rows, lease) even when the
+// runtime keeps the object for reuse.
 DeltaRuntime::Epoch& DeltaRuntime::Epoch::operator=(Epoch&& other) noexcept {
-  if (this!=&other) data_=std::move(other.data_);
+  if (this!=&other) { if (data_) data_->finish(); data_=std::move(other.data_); }
   return *this;
 }
-DeltaRuntime::Epoch::~Epoch()=default;
+DeltaRuntime::Epoch::~Epoch() { if (data_) data_->finish(); }
 bool DeltaRuntime::Epoch::active() const noexcept { return data_ && data_->leased; }
 std::uint64_t DeltaRuntime::Epoch::sequence() const { return input().input.sequence; }
 const PhysicalEpoch& DeltaRuntime::Epoch::input() const {
@@ -1300,7 +1766,7 @@ std::optional<SignedResult> DeltaRuntime::Epoch::next() {
   require(bool(data_),"invalid_delta_epoch","moved-from delta epoch");
   require(!data_->delivering,"runtime_busy","a sink callback owns the current output row");
   if (data_->rows.empty()) return {};
-  std::optional<SignedResult> result{std::move(data_->rows.front())}; data_->rows.pop_front();
+  std::optional<SignedResult> result{data_->rows.take_front()};
   if (data_->observation) {
     data_->disposition.transferred=true; data_->observe_output();
     data_->observation->add(MetricId::delta_transferred_records);
@@ -1312,14 +1778,14 @@ std::optional<SignedResult> DeltaRuntime::Epoch::next() {
 void DeltaRuntime::Epoch::visit_complete(void(*visitor)(const SignedResult&,void*),void* context) const {
   require(data_ && !data_->delivering,"runtime_busy","epoch output is unavailable");
   require(data_->rows.size()==data_->metrics.spool_rows,"partial_epoch_output","whole epoch delivery requires unconsumed output");
-  for(auto* node=data_->rows.head;node;node=node->next)visitor(node->value,context);
+  data_->rows.for_each([&](const SignedResult& row){visitor(row,context);});
 }
 void DeltaRuntime::Epoch::acknowledge_complete() noexcept {
   if(!data_ || data_->delivering || data_->rows.size()!=data_->metrics.spool_rows)std::terminate();
   while(!data_->rows.empty()) {
     if(data_->observation) {
       data_->disposition.sink_invoked=true;data_->observation->add(MetricId::delta_sink_attempts);data_->observation->add(MetricId::delta_sink_successes);
-      data_->observation->add(MetricId::delta_acknowledged_records);data_->observation->event(TraceKind::acknowledged,data_->rows.front().ordinal);
+      data_->observation->add(MetricId::delta_acknowledged_records);data_->observation->event(TraceKind::acknowledged,data_->rows.front_ordinal());
     }
     data_->rows.pop_front();
   }
@@ -1415,9 +1881,11 @@ DeltaRuntime::DeltaRuntime(PhysicalRuntime physical,DeltaOptions options,BuildOp
     static_cast<void>(set_mode(DeltaMode::delta));
     d.options=options;
     detail::build_metric(d.initialization,build,d.initialization.live_bootstrap_work,d.bootstrap.work);
-    d.initialization.live_rows=d.live->rows;
-    d.initialization.live_parent_rows=d.live->parent_rows;
-    d.initialization.live_child_rows=d.live->child_rows;
+    if (d.live) {
+      d.initialization.live_rows=d.live->rows;
+      d.initialization.live_parent_rows=d.live->parent_rows;
+      d.initialization.live_child_rows=d.live->child_rows;
+    }
   }
   d.observe_configuration(true);
 }
@@ -1434,7 +1902,18 @@ DeltaRuntime DeltaRuntime::initialize(CompiledProgram source,const Database& dat
 } catch(const storage::IndexFailure& failure) {delta_present(failure);}
   catch(const storage::TableValidationFailure& failure) {delta_present(failure);}
 DeltaRuntime DeltaRuntime::rebuilt(BuildOptions build) const {
-  const auto& d=impl(); d.writable();
+  auto& d=impl(); d.writable();
+  if (d.keyed) {
+    // A keyed owner rebuilds from its retained sources into a new keyed owner.
+    auto context=detail::storage_context(d.physical.plan(),d.options.physical.support.memory_limit_bytes,d.physical.storage_context()->memory());
+    detail::StorageOperation target_operation(context);
+    auto options=d.options; options.mode=d.mode;
+    auto result=DeltaRuntime(d.reference_sources(std::move(context)),options,build);
+    result.impl().options=d.options;
+    result.declare_benchmark_context(d.declared_benchmark);
+    result.impl().observe_configuration(true);
+    return result;
+  }
   auto context=detail::storage_context(d.physical.plan(),d.options.physical.support.memory_limit_bytes,d.physical.storage_context()->memory());
   detail::StorageOperation target_operation(context);
   auto options=d.options; options.mode=d.mode;
@@ -1446,7 +1925,18 @@ DeltaRuntime DeltaRuntime::rebuilt(BuildOptions build) const {
 }
 DeltaRuntime DeltaRuntime::rebuilt_for(const planner::MinimumHeightCandidate& candidate,BuildOptions build,
     const program::ReplanLimits& replan) const {
-  const auto& d=impl();d.writable();
+  auto& d=impl();d.writable();
+  if (d.keyed) {
+    auto& twin=d.reference_twin();
+    auto context=detail::storage_context(d.physical.plan(),d.options.physical.support.memory_limit_bytes,d.physical.storage_context()->memory());
+    detail::StorageOperation target_operation(context);
+    auto options=d.options;options.mode=d.mode;
+    auto result=DeltaRuntime(twin.impl().physical.rebuilt_for(candidate,build,replan,std::move(context)),options,build);
+    result.impl().options=d.options;
+    result.declare_benchmark_context(d.declared_benchmark);
+    result.impl().observe_configuration(true);
+    return result;
+  }
   auto context=detail::storage_context(d.physical.plan(),d.options.physical.support.memory_limit_bytes,d.physical.storage_context()->memory());
   detail::StorageOperation target_operation(context);
   auto options=d.options;options.mode=d.mode;
@@ -1470,7 +1960,7 @@ recovery::ImageBinding image_binding(const CompiledProgram& program,const DeltaO
 }
 } // namespace
 recovery::EncodedImage DeltaRuntime::checkpoint_image(recovery::ImageLimits limits) const {
-  const auto& d=impl();d.writable();
+  auto& d=impl();d.writable(); if (d.keyed) return d.reference_twin().checkpoint_image(limits);
   return d.physical.checkpoint_image(image_binding(d.physical.compiled_program(),d.options,d.mode),limits);
 }
 recovery::ImageBinding DeltaRuntime::checkpoint_binding() const {
@@ -1512,6 +2002,7 @@ DeltaRuntimeProfile DeltaRuntime::profile() const {
   result.mode=d.mode; result.live_maintenance=d.options.live_maintenance; result.completion=d.selected_completion;
   result.view=d.options.view; result.query_factors=d.factors.size();
   result.backend=d.physical.plan().options().indexed_storage?"indexed_chained_v1":"reference_ordered_v1";
+  result.engine=d.keyed?"keyed_v1":"reference_v1";
   result.spool_row_limit=d.options.spool_row_limit; result.spool_byte_limit=d.options.spool_byte_limit;
   result.maintenance_bound="physical routing/support/constraints are reported separately; constraint validation may scan/copy DB; no uniform O(1) update bound";
   result.finalization_bound="O_Q(1+M+K+J+U+V) keys/patches/undo plus unread spool and final-owner state teardown; widths/allocator/arena high-water costs additional";
@@ -1548,13 +2039,21 @@ DeltaRuntimeProfile DeltaRuntime::profile() const {
   return result;
 }
 SupportOwnerId DeltaRuntime::owner() const { return impl().physical.owner(); }
-std::uint64_t DeltaRuntime::sequence() const { return impl().physical.sequence(); }
+std::uint64_t DeltaRuntime::sequence() const { const auto& d=impl(); return d.keyed?d.keyed_sequence:d.physical.sequence(); }
+DeltaEngine DeltaRuntime::engine() const { return impl().keyed?DeltaEngine::keyed:DeltaEngine::reference; }
+void DeltaRuntime::collect_garbage() {
+  auto& d=impl(); d.writable();
+  if (d.keyed) d.keyed->collect();
+}
+storage::keyed::GcStatistics DeltaRuntime::gc_statistics() const {
+  const auto& d=impl(); return d.keyed?d.keyed->collector().statistics():storage::keyed::GcStatistics{};
+}
 DeltaMode DeltaRuntime::mode() const { return impl().mode; }
-bool DeltaRuntime::ready() const { const auto& d=impl(); return !d.processing && !d.output_active && d.physical.ready(); }
+bool DeltaRuntime::ready() const { const auto& d=impl(); return !d.processing && !d.output_active && d.physical.ready() && (!d.keyed || d.keyed->readers()==0); }
 DeltaState DeltaRuntime::state() const {
   const auto& d=impl(); return d.processing?d.lifecycle:d.output_active?DeltaState::committed_output:DeltaState::ready;
 }
-bool DeltaRuntime::has_answer() const { const auto& d=impl(); d.readable(); return d.physical.has_answer(); }
+bool DeltaRuntime::has_answer() const { const auto& d=impl(); d.readable(); return d.keyed?d.keyed->has_answer():d.physical.has_answer(); }
 const storage::TupleLayout& DeltaRuntime::result_layout() const { return impl().output_layout; }
 const DeltaMetrics& DeltaRuntime::bootstrap_metrics() const { return impl().bootstrap; }
 #ifdef CROWN_RUNTIME_TESTING
@@ -1570,6 +2069,10 @@ DeltaMetrics DeltaRuntime::Impl::change_mode(DeltaMode mode) {
   require(mode==DeltaMode::maintenance || mode==DeltaMode::delta,"invalid_mode","unknown delta maintenance mode");
   DeltaMetrics metrics;
   if (mode==d.mode) return metrics;
+  if (d.keyed) {
+    d.keyed->set_delta(mode==DeltaMode::delta);
+    d.mode=mode; d.bootstrap=metrics; d.observe_configuration(); return metrics;
+  }
   if (mode==DeltaMode::maintenance) {
     d.live.reset(); d.mode=mode; d.observe_configuration(); return metrics;
   }
@@ -1591,24 +2094,125 @@ DeltaRuntime::Epoch DeltaRuntime::apply(const PhysicalSetUpdate& update) {
   auto pending=begin(update); pending.drain(); return pending.commit();
 }
 DeltaRuntime::Epoch DeltaRuntime::apply_view(const PhysicalUpdateView& update) {
-  auto pending=begin_view(update);pending.drain();return pending.commit();
+  auto& d=impl();
+  if (!d.keyed) { auto pending=begin_view(update);pending.drain();return pending.commit(); }
+  // Keyed core: begin + drain + commit in one call. The
+  // borrowed update stays valid throughout, so nothing is copied or kept
+  // across steps. Validation, outputs, stages, derivations, workload facts and
+  // failure atomicity match the step-wise PendingEpoch path.
+  d.writable();
+  require(update.sequence==d.keyed_sequence+1,"invalid_sequence","physical update sequence must advance by one");
+  const auto& sources=d.physical.compiled_program().sources();
+  require(update.table.value<sources.size(),"invalid_table","physical update names an unknown table");
+  const auto issue=sources[update.table.value].layout.validation_issue_view(update.values);
+  if (!issue.ok()) throw storage::TupleValidationFailure(issue);
+  storage::RowView row;
+  if (const auto native=update.values.native_view()) row=*native;
+  else {
+    if (d.event_cells.size()<update.values.size()) d.event_cells.resize(update.values.size());
+    std::size_t width=0;
+    for (const auto value : update.values) d.event_cells[width++]=value;
+    row=storage::RowView::borrow({d.event_cells.data(),width});
+  }
+  auto output=Epoch::Data::make(impl_);
+  output->rows.compact=true;
+  const bool before_answer=d.keyed->has_answer();
+  detail::ObservationTicket observation_ticket;
+  if (output->observation) {
+    observation_ticket=output->observation->begin(ObservationLayer::delta,update.sequence);
+    output->observation_ticket=observation_ticket;
+  }
+  d.processing=true; d.lifecycle=DeltaState::pending_delta;
+  const auto ticket=d.workload->physical(update.table,update.operation);
+  if (!output->input) {
+    const resource::MemoryAttribution attribution{resource::MemoryOwnerKind::output,0};
+    output->input.emplace(PhysicalEpoch{
+        PhysicalPreview{0,TableId{},SetOperation::insert,false,{},{},decltype(PhysicalPreview::derivations)(
+            resource::OwnerAllocator<DerivationChange>(d.memory(),resource::MemoryPurpose::output_buffer,attribution))},
+        SupportEpoch{0,false,false,{},decltype(SupportEpoch::transitions)(resource::OwnerAllocator<MembershipTransition>(
+            d.memory(),resource::MemoryPurpose::output_buffer,attribution)),nullptr}});
+  }
+  auto& epoch_input=*output->input;
+  auto& derivations=epoch_input.input.derivations;
+  bool open=false;
+  try {
+    // One timed phase per event (timed observation reads the clock twice).
+    PhaseTimer timing(output->timings.propagation_ns,output->observation);
+    d.keyed->begin(); open=true;
+    const bool changed=d.keyed->stage_source(update.table,update.operation,row);
+    d.workload->physical_fact(changed);
+    if (changed) {
+      Impl::KeyedOutput sink(d,*output,derivations);
+      const bool emit=d.mode==DeltaMode::delta && !d.scalar_sql();
+      const auto routes=d.keyed->routes(update.table);
+      for (std::size_t route=0;route<routes;++route)
+        d.keyed->stage_route(update.table,route,update.operation,row,emit?&sink:nullptr,&sink);
+    }
+    if (d.mode==DeltaMode::delta && d.scalar_sql() && before_answer!=d.keyed->has_answer()) {
+      d.metric(output->metrics,output->metrics.output_fields,2);
+      output->append(SetOperation::erase,d.scalar_result(before_answer));
+      output->append(SetOperation::insert,d.scalar_result(!before_answer));
+    }
+    auto& preview=epoch_input.input;
+    preview.sequence=update.sequence; preview.table=update.table; preview.operation=update.operation;
+    preview.physical_changed=changed; preview.metrics={};
+    auto& support=epoch_input.support;
+    support.sequence=update.sequence; support.native_changed=changed; support.has_answer=d.keyed->has_answer();
+    support.metrics={};
+    d.keyed->commit(); open=false; d.keyed_sequence=update.sequence;
+  } catch (...) {
+    if (open) d.keyed->rollback();
+    {
+      PhaseTimer timing(output->timings.internal_delta_ns,output->observation);
+      output->finish(); d.processing=false; d.lifecycle=DeltaState::ready;
+    }
+    output->observe();
+    if (output->observation) output->observation->finish(observation_ticket,ObservationOutcome::aborted);
+    d.workload->finish(ticket,false);
+    throw;
+  }
+  output->observe();
+  if (output->observation) {
+    output->disposition.published=true;
+    output->disposition.released=output->rows.empty();
+    output->observe_output();
+    if (output->rows.empty()) output->observation_closed=true;
+    output->observation->finish(observation_ticket,ObservationOutcome::committed);
+  }
+  d.workload->finish(ticket,true);
+  output->leased=!output->rows.empty(); d.output_active=output->leased; d.processing=false; d.lifecycle=DeltaState::ready;
+  if (!output->leased) output->owner.reset();
+  d.spare_output=output;
+  return Epoch(std::move(output));
 }
 SupportRuntime::ResultCursor DeltaRuntime::results(ResultCursorOptions options) const {
   const auto& d=impl(); d.readable();
+  if (d.keyed) return SupportRuntime::ResultCursor(std::make_unique<Impl::KeyedCursor>(impl_,d.options.view,options));
   return d.options.view==ResultView::core?d.physical.core_results(options):d.physical.results(options);
 }
-SupportRuntime::ResultCursor DeltaRuntime::core_results(ResultCursorOptions options) const { const auto& d=impl(); d.readable(); return d.physical.core_results(options); }
-SupportRuntime::EpochView DeltaRuntime::current_view(EpochViewOptions options) const { const auto& d=impl(); d.readable(); return d.physical.current_view(options); }
-PhysicalSnapshot DeltaRuntime::snapshot() const { const auto& d=impl(); d.readable(); return d.physical.snapshot(); }
+SupportRuntime::ResultCursor DeltaRuntime::core_results(ResultCursorOptions options) const {
+  const auto& d=impl(); d.readable();
+  if (d.keyed) return SupportRuntime::ResultCursor(std::make_unique<Impl::KeyedCursor>(impl_,ResultView::core,options));
+  return d.physical.core_results(options);
+}
+SupportRuntime::EpochView DeltaRuntime::current_view(EpochViewOptions options) const {
+  auto& d=impl(); d.readable(); if (d.keyed) return d.reference_twin().current_view(options); return d.physical.current_view(options);
+}
+PhysicalSnapshot DeltaRuntime::snapshot() const {
+  auto& d=impl(); d.readable(); if (d.keyed) return d.reference_twin().snapshot(); return d.physical.snapshot();
+}
 std::optional<LiveSnapshot> DeltaRuntime::live_snapshot() const {
-  const auto& d=impl(); d.readable(); if (!d.live) return {};
+  auto& d=impl(); d.readable(); if (d.keyed) return d.reference_twin().live_snapshot(); if (!d.live) return {};
   LiveSnapshot result{d.live_sequence,{}};result.factors.reserve(d.live->factors.size());
   for(const auto& rows:d.live->factors)result.factors.push_back(rows.export_rows());
   return result;
 }
-PhysicalStorageStatistics DeltaRuntime::storage_statistics() const { const auto& d=impl(); d.readable(); return d.physical.storage_statistics(); }
+PhysicalStorageStatistics DeltaRuntime::storage_statistics() const {
+  auto& d=impl(); d.readable(); if (d.keyed) return d.reference_twin().storage_statistics(); return d.physical.storage_statistics();
+}
 CanonicalDeltaState DeltaRuntime::canonical_state() const {
   detail::StorageOperation storage_operation(impl().physical.storage_context());
+  if (impl().keyed) { auto& twin=impl().reference_twin(); return twin.canonical_state(); }
   const auto& d=impl(); d.readable();
   CanonicalDeltaState result{d.physical.canonical_state(),d.mode==DeltaMode::delta,d.options.view==ResultView::sql,{}};
   if (d.live) {
@@ -1627,6 +2231,7 @@ CanonicalDeltaState DeltaRuntime::canonical_state() const {
 }
 InvariantReport DeltaRuntime::inspect_invariants(InspectionOptions options) const {
   detail::StorageOperation storage_operation(impl().physical.storage_context());
+  if (impl().keyed) { auto& twin=impl().reference_twin(); return twin.inspect_invariants(options); }
   const auto& d=impl(); d.readable(); detail::InspectionContext context(options,d.memory());
   const auto issue=[&](InvariantCode code,InvariantComponent component,std::optional<NodeId> node,
       storage::RowView key,std::uint64_t expected,std::uint64_t actual) {
@@ -1810,7 +2415,9 @@ std::size_t RuntimeTestProbe::set_live_total(DeltaRuntime& runtime,InvariantComp
 
 void DeltaRuntime::check_invariants() const {
   detail::StorageOperation storage_operation(impl().physical.storage_context());
-  const auto& d=impl(); d.readable(); d.physical.check_invariants();
+  const auto& d=impl(); d.readable();
+  if (d.keyed) { d.keyed->check_invariants(); return; }
+  d.physical.check_invariants();
   if (d.mode==DeltaMode::maintenance) { require(!d.live,"runtime_contract","maintenance mode retained a live cache"); return; }
   require(d.live && d.live_sequence==d.physical.sequence(),"runtime_contract","live cache has a stale epoch tag");
   auto view=d.physical.current_view(d.options.epoch_view); DeltaMetrics metrics;
@@ -1824,8 +2431,12 @@ void DeltaRuntime::declare_benchmark_context(std::shared_ptr<const DeclaredBench
   if (d.observation) d.observation->declare_benchmark(d.declared_benchmark);
 }
 std::optional<CursorObservation> DeltaRuntime::last_cursor_observation() const { return impl().physical.last_cursor_observation(); }
-CommittedStateGauges DeltaRuntime::committed_state_gauges() const { const auto& d=impl();d.readable();return d.physical.committed_state_gauges(); }
-CapturedStateGauges DeltaRuntime::capture_state_gauges() const {const auto& d=impl();d.readable();return d.physical.capture_state_gauges();}
+CommittedStateGauges DeltaRuntime::committed_state_gauges() const {
+  auto& d=impl();d.readable(); if (d.keyed) return d.reference_twin().committed_state_gauges(); return d.physical.committed_state_gauges();
+}
+CapturedStateGauges DeltaRuntime::capture_state_gauges() const {
+  auto& d=impl();d.readable(); if (d.keyed) return d.reference_twin().capture_state_gauges(); return d.physical.capture_state_gauges();
+}
 ObservationSnapshot DeltaRuntime::observations() const {
   const auto& d=impl(); auto result=d.physical.observations();
   result.initialization=d.physical.initialization_context();
@@ -1838,8 +2449,10 @@ CapturedObservationTrace DeltaRuntime::capture_observation_trace() const {
   auto result=impl().physical.capture_observation_trace();result.snapshot=observations();return result;
 }
 bool DeltaRuntime::same_sources(const DeltaRuntime& other,reoptimization::detail::Budget& budget) const {
-  const auto& left=impl();const auto& right=other.impl();left.writable();right.writable();
-  return left.physical.same_sources(right.physical,budget);
+  auto& left=impl();auto& right=other.impl();left.writable();right.writable();
+  const auto& l=left.keyed?left.reference_twin().impl().physical:left.physical;
+  const auto& r=right.keyed?right.reference_twin().impl().physical:right.physical;
+  return l.same_sources(r,budget);
 }
 }  // namespace crown::runtime
 
@@ -1851,7 +2464,11 @@ void DeltaRuntime::reset_workload_statistics() {
   auto& d=impl(); d.writable(); d.physical.reset_workload_statistics();
 }
 workload::Snapshot DeltaRuntime::workload_statistics() const {
-  const auto& d=impl(); return d.workload->snapshot(d.physical.compiled_program(),d.physical.owner(),d.physical.sequence(),d.processing);
+  auto& d=impl();
+  // A keyed owner's state captures come from its reference twin; stamp its
+  // events with the same owner boundary and the keyed committed sequence.
+  if (d.keyed) return d.workload->snapshot(d.physical.compiled_program(),d.physical.owner(),d.keyed_sequence,d.processing);
+  return d.workload->snapshot(d.physical.compiled_program(),d.physical.owner(),d.physical.sequence(),d.processing);
 }
 workload::Options DeltaRuntime::workload_statistics_options() const { return impl().workload->options(); }
 #ifdef CROWN_RUNTIME_TESTING
@@ -1867,11 +2484,13 @@ statistics::OwnerCapture DeltaRuntime::capture_statistics(const statistics::Owne
 }
 statistics::OwnerCapture DeltaRuntime::capture_statistics_view(statistics::OwnerRequestView request,statistics::Limits limits) const {
   detail::StorageOperation storage_operation(impl().physical.storage_context());
+  if (impl().keyed) { auto& twin=impl().reference_twin(); return twin.capture_statistics_view(request,limits); }
   const auto& d=impl();
   if(d.processing){statistics::detail::OwnerBuilder pending{{d.physical.owner(),d.physical.sequence(),statistics::OwnerLayer::physical},d.physical.compiled_program(),request,limits,true};return pending.finish();}
   return d.physical.capture_statistics_view(request,limits);
 }
 statistics::Freshness DeltaRuntime::statistics_freshness(const statistics::OwnerCapture& captured,std::uint64_t max_event_lag) const {
+  if (impl().keyed) return impl().reference_twin().statistics_freshness(captured,max_event_lag);
   return impl().physical.statistics_freshness(captured,max_event_lag);
 }
 }

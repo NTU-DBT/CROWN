@@ -80,10 +80,10 @@ void SessionRows::prepare() {
   if(data_) {
     require(data_.use_count()==1,"runtime_contract","snapshot collection already published");return;
   }
-  const auto before=account_.statistics().current;
+  const auto before=account_.current_usage();
   auto data=resource::make_accounted_shared<Data>({resource::MemoryOwnerKind::output,0},account_,
       resource::MemoryPurpose::output_buffer,account_);
-  const auto after=account_.statistics().current;
+  const auto after=account_.current_usage();
   // Data's constructor only installs an empty allocator-aware vector. This is
   // its actual shared object/control allocation, with no nested allocations.
   data->control_usage={after.allocations-before.allocations,after.requested_bytes-before.requested_bytes,

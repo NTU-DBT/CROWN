@@ -1,0 +1,53 @@
+CROWN, Flink and F-IVM comparison
+Median end-to-end process wall seconds
+
+Final C++ replay: 375 accepted, 0 unfinished, 0 invalid
+CROWN columns use blocking GC and the 64 MiB pool. The systems were
+measured in the distinct cohorts documented in record.txt.
+F-IVM entries are present for full snapshots and maintenance only.
+Sample counts, RSS, CPU time and Flink internal timers are in the CSVs.
+
+Case                              CROWN old   CROWN final         F-IVM      Flink p1      Flink p4     Flink p16
+----                              ---------   -----------         -----      --------      --------     ---------
+runtime-length3_filter-full            5.09          3.66          1.54         36.26         16.63         13.64
+runtime-length3_filter-delta          10.88          9.43             -         56.89         22.39         13.33
+runtime-length4_filter-full           93.46         85.89         14.91        637.47        187.40         72.07
+runtime-length4_filter-delta         418.72        411.68             -       1068.99        328.46        137.60
+runtime-TwoComb-full                  10.39          7.97          6.41        101.57         92.68         83.92
+runtime-TwoComb-delta                 37.85         33.50             -        230.13        238.50        201.08
+runtime-dumbbell_full-full            11.84          1.76          0.60         23.27         10.68          8.83
+runtime-dumbbell_full-delta           10.01          2.64             -         23.50         11.93          9.93
+runtime-length3_project-full           3.88          2.59          5.71         30.75         15.94         16.06
+runtime-length3_project-delta          4.22          2.90             -         33.08         16.74         15.85
+runtime-length4_project-full           6.99          4.93         15.39         46.63         24.95         29.83
+runtime-length4_project-delta         12.44         10.37             -         62.87         28.60         29.67
+runtime-dumbbell-full                 29.91         25.47         86.19        187.04         96.65         83.21
+runtime-dumbbell-delta                28.90         25.95             -        188.34         96.41         84.05
+runtime-star_cnt-full                 12.51          7.25          0.32         43.10         17.44         11.63
+runtime-star_cnt-delta                14.73          9.25             -         45.40         18.79         11.73
+snb1-sf1-full                         21.04         15.29             -         95.97         35.36         33.84
+snb1-sf1-delta                        29.83         23.72             -        109.94         40.57         36.06
+snb2-sf1-full                         20.95         15.85             -        101.02         45.12         54.80
+snb2-sf1-delta                        27.85         21.71             -        121.10         48.03         53.45
+snb3-sf1-full                         20.84         14.97             -         89.29         38.67         36.64
+snb3-sf1-delta                        28.48         22.46             -        114.04         47.18         38.99
+snb1-sf0.3-full                        4.38          2.84             -         38.07         15.99         14.74
+snb2-sf0.3-full                        4.58          3.03             -         35.51         20.54         21.00
+snb1-sf3-full                         66.43         48.28             -        247.60         82.23         75.86
+snb2-sf3-full                         66.15         48.80             -        260.54        113.03        138.08
+snb1-sf10-full                       222.29        166.15             -        808.63        250.30        223.67
+snb2-sf10-full                       224.86        169.29             -        932.81        388.07        485.33
+scale-snb1_window-sf0.3-delta          5.42          3.80             -         39.29         16.99         15.03
+scale-snb1_window-sf3-delta           92.68         74.77             -        296.16         99.76         80.24
+scale-snb1_window-sf10-delta         311.56        260.85             -       1066.14        334.62        242.53
+scale-snb2_window-sf0.3-delta          5.29          3.79             -         40.33         22.04         21.00
+scale-snb2_window-sf3-delta           90.98         72.08             -        357.64        126.76        135.67
+scale-snb2_window-sf10-delta         332.11        274.50             -       1376.68        469.28        467.58
+runtime-length3_filter-none            3.57          1.97          1.48             -             -             -
+runtime-length4_filter-none            5.42          3.34         12.16             -             -             -
+runtime-TwoComb-none                   5.45          3.29          6.03             -             -             -
+runtime-dumbbell_full-none             9.89          1.63          0.61             -             -             -
+runtime-length3_project-none           3.97          2.55          5.65             -             -             -
+runtime-length4_project-none           6.05          3.79         15.56             -             -             -
+runtime-dumbbell-none                 25.21         25.66         88.29             -             -             -
+runtime-star_cnt-none                 12.58          7.16          0.32             -             -             -

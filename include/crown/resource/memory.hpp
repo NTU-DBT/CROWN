@@ -118,6 +118,8 @@ class MemoryAccount {
   ~MemoryAccount();
   [[nodiscard]] explicit operator bool() const noexcept { return control_ != nullptr; }
   [[nodiscard]] MemoryStatistics statistics() const;
+  // statistics().current without copying the per-purpose/lifetime arrays.
+  [[nodiscard]] MemoryUsage current_usage() const;
   // Explicit diagnostic O(outstanding allocations), with no allocation or
   // per-owner registry/history growth. Includes controller bytes for query:0.
   // Native bindings supply operator IDs; standalone callers supply their own.

@@ -1,0 +1,63 @@
+{
+ "query": "star_cnt",
+ "source": "/tmp/claude-1000/-home-userroot-Codex-CROWN/ec685d80-d57a-440f-9bb0-717b126b9b7b/scratchpad/bench/runs-G1/runtime-star_cnt-full/stdout",
+ "source_sha256": "197f356511e5e86972e632a3dc64d9178e66a694222dd32c592b1a1c53def8dd",
+ "engine": "keyed_v1",
+ "implementation": "native_serial_sql_star_count",
+ "physical_inputs": 1017674,
+ "relation_updates": 4070696,
+ "enumeration_markers": 10,
+ "snapshot_rows": 89165,
+ "snapshots": [
+  {
+   "sequence": 50884,
+   "marker": 1,
+   "rows": 451
+  },
+  {
+   "sequence": 101768,
+   "marker": 2,
+   "rows": 1179
+  },
+  {
+   "sequence": 203536,
+   "marker": 3,
+   "rows": 1603
+  },
+  {
+   "sequence": 305304,
+   "marker": 4,
+   "rows": 1995
+  },
+  {
+   "sequence": 407072,
+   "marker": 5,
+   "rows": 2939
+  },
+  {
+   "sequence": 508840,
+   "marker": 6,
+   "rows": 4711
+  },
+  {
+   "sequence": 610608,
+   "marker": 7,
+   "rows": 6365
+  },
+  {
+   "sequence": 712376,
+   "marker": 8,
+   "rows": 8763
+  },
+  {
+   "sequence": 814144,
+   "marker": 9,
+   "rows": 17461
+  },
+  {
+   "sequence": 915906,
+   "marker": 10,
+   "rows": 43698
+  }
+ ]
+}

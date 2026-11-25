@@ -2,6 +2,7 @@
 
 #include "crown/runtime/weighted.hpp"
 #include "crown/api/error.hpp"
+#include "crown/runtime/keyed_engine.hpp"
 #include "storage_work.hpp"
 #include <map>
 
@@ -56,6 +57,17 @@ struct WeightedRuntime::Impl {
   std::uint64_t sequence=0, readers=0;
   bool updating=false;
   std::optional<weighted::Attempt> last;
+  // Keyed core (docs/keyed_core.md, bag mode): when present it owns every
+  // native weight, child sum, visible factor and the root summary; the
+  // reference maps above stay empty. Diagnostic snapshots use a reference
+  // twin rebuilt from its native records. Journals (capture_changes/events)
+  // keep the reference core.
+  std::unique_ptr<keyed::SetEngine> keyed;
+  // Open fused keyed epoch (WeightedRuntime::fused_begin..fused_commit).
+  bool fused_open=false, fused_changed=false;
+  std::uint64_t fused_sequence=0;
+  weighted::Multiplicity fused_before{};
+  [[nodiscard]] std::shared_ptr<Impl> reference_twin() const;
 
   Impl(CompiledProgram, weighted::Options, std::shared_ptr<detail::StorageWorkContext>);
   // Closed initial sequence belongs to a fresh unpublished owner only.

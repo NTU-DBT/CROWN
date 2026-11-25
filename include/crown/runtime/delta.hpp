@@ -1,6 +1,7 @@
 #pragma once
 
 #include "crown/runtime/physical.hpp"
+#include "crown/storage/keyed.hpp"
 #include <string_view>
 
 namespace crown::observability {class ModeDescriptor;}
@@ -9,6 +10,9 @@ class QuerySession;
 namespace ranking::detail {struct OwnerAccess;}
 namespace reoptimization::detail {class Budget;struct Access;}
 enum class DeltaMode { maintenance, delta };
+// Execution core: the keyed core (docs/keyed_core.md) or the reference core.
+// automatic selects keyed whenever the compiled program is supported.
+enum class DeltaEngine { automatic, keyed, reference };
 enum class LiveMaintenance { on_output, incremental, eager };
 enum class DeltaCompletion { automatic, ordered_replay, anchored, root_first };
 enum class DeltaBound { unclaimed, bounded_indexed_actions };
@@ -36,6 +40,7 @@ struct DeltaRuntimeProfile {
   std::string_view semantics="exact_set", query_class="free_connex", arithmetic="exact-nonnull-v1";
   std::string_view update_contract="single physical full-row set event with atomic ordered aliases";
   std::string_view backend="reference_ordered_v1";
+  std::string_view engine="reference_v1";  // keyed_v1 when the keyed core executes
   std::string_view state_bound, maintenance_bound, preparation_bound, candidate_bound, accepted_bound;
   std::string_view finalization_bound, public_startup_bound;
   std::string_view ordered_costs="map/set operations use O(log N) comparisons in the relevant state/patch/queue; scalar widths and allocator costs are additional";
@@ -60,6 +65,8 @@ struct DeltaOptions {
   // Shared query descriptors and candidate/mapping scratch are additional.
   std::size_t spool_row_limit = 65536;
   std::size_t spool_byte_limit = 64 * 1024 * 1024;
+  DeltaEngine engine = DeltaEngine::automatic;
+  storage::keyed::GcOptions gc{};  // keyed core only
 };
 struct DeltaMetrics {
   std::uint64_t work = 0, stages = 0, journal_records = 0, view_work = 0;
@@ -252,6 +259,11 @@ class DeltaRuntime {
   [[nodiscard]] SupportOwnerId owner() const;
   [[nodiscard]] std::uint64_t sequence() const;
   [[nodiscard]] DeltaMode mode() const;
+  // Selected execution core (keyed unless the program or options need the reference core).
+  [[nodiscard]] DeltaEngine engine() const;
+  // Keyed core: collect retired keys now and release excess index capacity.
+  void collect_garbage();
+  [[nodiscard]] storage::keyed::GcStatistics gc_statistics() const;
   [[nodiscard]] bool ready() const;
   [[nodiscard]] DeltaState state() const;
   [[nodiscard]] bool has_answer() const;

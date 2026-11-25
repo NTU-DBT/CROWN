@@ -10,6 +10,13 @@ struct Options {
   std::uint64_t count_limit = INT64_MAX;
   std::uint64_t memory_limit_bytes = 256ULL * 1024 * 1024;
   bool capture_changes = false;
+  // Fused batches (keyed core, no key constraints; else ignored): SQL source
+  // edits stage straight into the keyed bag engine and every changed head
+  // tuple folds into its group as it changes (SqlRowsRuntime::prepare_fused),
+  // instead of through the SqlRows/Weighted prepared epochs and captured bag
+  // deltas. Same groups and changes; epochs carry no source work or native
+  // metrics, and native.bag_deltas stays empty.
+  bool fused = false;
 };
 struct Metrics : aggregate::BatchMetrics {
   std::uint64_t native_deltas = 0;
@@ -97,6 +104,10 @@ class SqlAggregateRuntime {
   [[nodiscard]] const resource::MemoryAccount& account() const &;
   const resource::MemoryAccount& account() const && = delete;
   [[nodiscard]] std::uint64_t sequence() const;
+  // The native core under the composed SQL layers (WeightedRuntime::engine()).
+  [[nodiscard]] std::string_view engine() const;
+  // Whether batches take the fused path (Options::fused on a capable source).
+  [[nodiscard]] bool fused() const;
   [[nodiscard]] bool ready() const noexcept;
   [[nodiscard]] weighted::Multiplicity root_weight() const;
   [[nodiscard]] resource::MemoryStatistics accounted_memory_statistics() const;

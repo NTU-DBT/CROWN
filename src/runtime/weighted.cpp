@@ -3,9 +3,14 @@
 #include "crown/ir/digest.hpp"
 #include <algorithm>
 #include <charconv>
+#include <cstdlib>
+#include <set>
+#include <string_view>
 
 namespace crown::runtime {
 namespace {
+// Set while a reference twin is built: its Impl must not select the keyed core.
+thread_local bool keyed_disabled=false;
 // Full-subtree equations and usage contracts: docs/weighted_messages.md,
 // Refactor.md §10.2. P1 §7.3 supplies aggregation context; its projected output
 // factors in docs/weighted_enumeration.md are distinct from these full messages.
@@ -99,11 +104,21 @@ WeightedRuntime::Impl::Impl(CompiledProgram shape,weighted::Options opts,std::sh
       require(program.nodes()[program.tree().root->value].parent_key.fields().empty(),
           "weighted_contract","root summary requires the explicit empty key");
     }
+    const char* forced=std::getenv("CROWN_WEIGHTED_ENGINE");
+    if (!keyed_disabled && !(forced && std::string_view(forced)=="reference") && !options.capture_changes &&
+        !options.capture_events && program.route()==PhysicalRoute::tree && keyed::SetEngine::unsupported(program).empty()) {
+      keyed::EngineOptions engine;
+      engine.delta=true; engine.bag=true; engine.sql_view=false; engine.gc=options.gc;
+      engine.multiplicity_limit=options.multiplicity_limit;
+      engine.memory_limit_bytes=static_cast<std::size_t>(account().statistics().limit_bytes);
+      keyed=std::make_unique<keyed::SetEngine>(program,engine);
+    }
   }
 const resource::MemoryAccount& WeightedRuntime::Impl::account() const { return context->memory(); }
 storage::IndexWorkAllowance* WeightedRuntime::Impl::allowance() const { return detail::compact_storage_work(context); }
 void WeightedRuntime::Impl::readable() const { require(!updating,"runtime_busy","a weighted logical epoch is private"); }
 Multiplicity WeightedRuntime::Impl::summary() const noexcept {
+    if (keyed) return {keyed->root_weight()};
     if (program.route()==PhysicalRoute::constant_true) return {1};
     if (program.route()==PhysicalRoute::constant_false) return {};
     const auto& values=nodes[program.tree().root->value].messages;
@@ -123,6 +138,25 @@ WeightedRuntime::Impl::create(const Shape& shape, weighted::Options options,
     auto compiled=CompiledProgram::freeze(context->memory(),shape,detail::compact_storage_work(context));
     return resource::make_accounted_shared<Impl>(context->memory(),resource::MemoryPurpose::support_metadata,
         std::move(compiled),options,context);
+}
+
+// A reference core in the same account holding exactly the keyed native
+// weights (diagnostic snapshots). O(state); nothing is cached.
+std::shared_ptr<WeightedRuntime::Impl> WeightedRuntime::Impl::reference_twin() const {
+  struct Disable {
+    bool previous=keyed_disabled;
+    Disable() noexcept {keyed_disabled=true;}
+    ~Disable() {keyed_disabled=previous;}
+  } disable;
+  auto twin_options=options;twin_options.work_limit.reset();
+  auto twin=create(program,twin_options,account());
+  WeightedRuntime runtime(twin);
+  auto pending=runtime.begin_epoch(1);
+  keyed->for_each_record([&](std::uint32_t node,storage::RowView values,std::uint64_t weight) {
+    static_cast<void>(pending.stage({NodeId{node},storage::export_row(values),{0},{weight}}));
+  });
+  static_cast<void>(pending.commit());
+  return twin;
 }
 
 WeightedRuntime detail::SqlColdRebuild::native(const resource::MemoryAccount& account,const PhysicalPlan& shape,
@@ -195,48 +229,182 @@ struct WeightedRuntime::PendingEpoch::Data {
 
   // Only the opt-in path owns these buffers. Selected rows borrow private table
   // journals, and all cursors close before a factor is changed or rollback runs.
+  //
+  // A changed factor affects exactly the output assignments compatible with its
+  // visible key. The walk is therefore re-rooted at that anchor: its ancestors
+  // are reached through the C* separators (a whole-key probe when the parent's
+  // visible key is the separator, else the native parent's compiled reverse
+  // separator index), then every other step follows its usual separator bucket.
+  // Work is proportional to the affected assignments, not to the root relation.
+  // Shapes without such an access path keep the original root-first walk.
   struct DeltaWalk {
+    enum class Lookup : std::uint8_t { anchor, checked_anchor, point, reverse, probe, bucket, scan };
+    struct Route {
+      std::size_t step=0, source=0; // Source is the walk position that keys this frame.
+      Lookup lookup=Lookup::scan;
+      std::size_t edge=0;           // Reverse only: the child's incoming edge.
+      bool distinct=false;          // Reverse only: hidden fields may repeat a visible key.
+    };
     struct Frame {
       std::optional<storage::AccountedStorageTable::Cursor> cursor;
       std::optional<storage::AccountedTuple> key;
       const storage::AccountedTuple* selected=nullptr;
       Multiplicity factor{1};
     };
+    using Seen=std::set<TupleId,std::less<TupleId>,resource::MemoryAllocator<TupleId>>;
     Data& epoch;
     weighted::BagDeltas::Data& bag;
-    Vector<Frame> frames;
+    Vector<Frame> frames;  // Walk order.
+    Vector<Route> routes;  // Walk order.
+    Vector<std::size_t> placed; // Compiled step -> walk position.
+    Vector<Seen> seen;     // Created only for a reverse walk over hidden fields.
     Vector<storage::ScalarView> row;
-    std::size_t position=0,anchor_step=0;
+    std::size_t position=0,anchor_position=0;
     bool resume=false;
     const storage::AccountedTuple* anchor=nullptr;
     std::optional<storage::AccountedTuple> anchor_key;
     DeltaWalk(Data& value):epoch(value),bag(*value.deltas),
         frames(resource::MemoryAllocator<Frame>(value.owner->account(),resource::MemoryPurpose::delta_state)),
+        routes(resource::MemoryAllocator<Route>(value.owner->account(),resource::MemoryPurpose::delta_state)),
+        placed(resource::MemoryAllocator<std::size_t>(value.owner->account(),resource::MemoryPurpose::delta_state)),
+        seen(resource::MemoryAllocator<Seen>(value.owner->account(),resource::MemoryPurpose::delta_state)),
         row(resource::MemoryAllocator<storage::ScalarView>(value.owner->account(),resource::MemoryPurpose::delta_state)) {
       const auto count=epoch.owner->program.enumeration().steps.size();
-      frames.reserve(count);
+      frames.reserve(count);routes.reserve(count);placed.reserve(count);
       for(std::size_t i=0;i<count;++i) {bag.charge(2);frames.emplace_back();} // Init and failure cleanup.
       row.reserve(epoch.owner->program.result_layout().fields().size());
     }
+    const program::EnumerationStep& step_at(std::size_t step) const {return epoch.owner->program.enumeration().steps[step];}
     storage::AccountedTuple project(const storage::AccountedProjection& projection,
         const storage::AccountedTuple& tuple) {
       for(const auto field:projection.fields()) {bag.charge(1,&bag.metrics.fields);bag.bytes(tuple.values()[field.value]);}
       return projection.apply(tuple);
     }
-    bool select(Frame& frame, const program::EnumerationStep& step) {
-      bag.charge();
-      if(position==anchor_step) {
-        if(frame.selected)return false;
-        if(step.parent_step) {
-          frame.key=project(*step.parent_key,*frames[*step.parent_step].selected);
-          if(bag.compare(frame.key->values(),anchor_key->values())!=0)return false;
+    // Re-root the C* traversal at the anchor. Fails (no state is used) when an
+    // ancestor has neither a whole-key probe nor a compiled reverse index.
+    bool anchored(std::size_t anchor_step) {
+      const auto& program=epoch.owner->program;const auto& steps=program.enumeration().steps;
+      routes.clear();placed.assign(steps.size(),steps.size());
+      routes.push_back({anchor_step,0,Lookup::anchor});placed[anchor_step]=0;
+      for(auto child=anchor_step;steps[child].parent_step;child=*steps[child].parent_step) {
+        bag.charge();
+        const auto parent=*steps[child].parent_step;const auto& below=steps[child];const auto& above=steps[parent];
+        if(!below.bucket_index)return false;
+        const auto& separator=epoch.owner->storage.projection(*below.bucket_index);
+        Route route{parent,placed[child],Lookup::point};
+        if(!separator.target().same_token(epoch.owner->storage.table(above.relation).layout())) {
+          // The parent's visible key is wider than the separator. Only a native
+          // parent owns the reverse separator index over its full records.
+          const auto& shape=program.nodes()[above.node.value];
+          const auto edge=epoch.owner->incoming[below.node.value];
+          if(shape.kind!=NodeKind::native || !shape.visible_projection || !edge ||
+              program.edges()[*edge].parent!=above.node || !program.edges()[*edge].reverse_index)return false;
+          const auto& reverse=epoch.owner->storage.projection(*program.edges()[*edge].reverse_index);
+          if(!reverse.target().same_token(separator.target()) ||
+              !shape.visible_projection->source().same_token(epoch.owner->storage.table(shape.records).layout()))return false;
+          route.lookup=Lookup::reverse;route.edge=*edge;
+          route.distinct=!shape.visible_projection->source().same_token(shape.visible_projection->target());
         }
-        frame.selected=anchor;frame.factor={1};return true;
+        placed[parent]=routes.size();routes.push_back(route);
+      }
+      // Parent-before-child order: each remaining step's parent is placed.
+      for(std::size_t i=0;i<steps.size();++i) if(placed[i]==steps.size()) {
+        bag.charge();
+        require(steps[i].parent_step && placed[*steps[i].parent_step]<steps.size(),
+            "weighted_contract","visible traversal is not root-connected");
+        // A child whose visible key is its whole separator has a one-row
+        // bucket; probe that key instead of opening a bucket cursor.
+        const auto whole=steps[i].parent_key &&
+            steps[i].parent_key->target().same_token(epoch.owner->storage.table(steps[i].relation).layout());
+        placed[i]=routes.size();routes.push_back({i,placed[*steps[i].parent_step],whole?Lookup::probe:Lookup::bucket});
+      }
+      return true;
+    }
+    void original(std::size_t anchor_step) {
+      const auto& steps=epoch.owner->program.enumeration().steps;
+      routes.clear();placed.clear();
+      for(std::size_t i=0;i<steps.size();++i) {
+        placed.push_back(i);
+        routes.push_back({i,steps[i].parent_step?*steps[i].parent_step:0,
+            i==anchor_step?Lookup::checked_anchor:steps[i].parent_step?Lookup::bucket:Lookup::scan});
+      }
+    }
+    bool pick(Frame& frame, const program::EnumerationStep& step, const storage::AccountedTuple& key) {
+      const auto& table=epoch.owner->storage.table(step.relation);
+      const auto found=table.find(key,epoch.owner->allowance());
+      if(!found)return false;
+      bag.charge(1,&bag.metrics.rows_visited);
+      frame.selected=table.get(*found,epoch.owner->allowance());
+      require(frame.selected!=nullptr,"weighted_contract","private visible key lost its row");
+      bag.charge(1,&bag.metrics.factor_reads);
+      frame.factor=epoch.owner->nodes[step.node.value].factors.at(found->tuple);
+      require(frame.factor.present(),"weighted_contract","private visible key has no positive factor");
+      return true;
+    }
+    storage::AccountedTuple separator(const Route& route) {
+      return project(epoch.owner->storage.projection(*step_at(routes[route.source].step).bucket_index),
+          *frames[route.source].selected);
+    }
+    bool reverse(Frame& frame, const Route& route, const program::EnumerationStep& step) {
+      const auto& program=epoch.owner->program;const auto& shape=program.nodes()[step.node.value];
+      const auto at=static_cast<std::size_t>(&frame-frames.data());
+      if(!frame.cursor) {
+        bag.charge(2); // Open and its eventual allocation-free cursor close.
+        frame.key=separator(route);
+        frame.cursor=epoch.bucket(shape.records,epoch.owner->storage.index(*program.edges()[route.edge].reverse_index),*frame.key);
+        if(route.distinct) {
+          if(seen.empty()) {
+            seen.reserve(frames.size());
+            for(std::size_t i=0;i<frames.size();++i)
+              seen.emplace_back(std::less<TupleId>{},resource::MemoryAllocator<TupleId>(epoch.owner->account(),resource::MemoryPurpose::delta_state));
+          }
+          seen[at].clear();
+        }
+      }
+      while(const auto entry=frame.cursor->next_entry(epoch.owner->allowance())) {
+        bag.charge();
+        const auto visible=project(*shape.visible_projection,entry->tuple);
+        const auto& table=epoch.owner->storage.table(step.relation);
+        const auto found=table.find(visible,epoch.owner->allowance());
+        if(!found)continue; // No positive contribution reaches this visible key.
+        if(route.distinct) {bag.charge();if(!seen[at].insert(found->tuple).second)continue;}
+        bag.charge(1,&bag.metrics.rows_visited);
+        frame.selected=table.get(*found,epoch.owner->allowance());
+        require(frame.selected!=nullptr,"weighted_contract","private visible key lost its row");
+        bag.charge(1,&bag.metrics.factor_reads);
+        frame.factor=epoch.owner->nodes[step.node.value].factors.at(found->tuple);
+        require(frame.factor.present(),"weighted_contract","private visible key has no positive factor");
+        return true;
+      }
+      return false;
+    }
+    bool select(Frame& frame, const Route& route) {
+      bag.charge();
+      const auto& step=step_at(route.step);
+      switch(route.lookup) {
+        case Lookup::checked_anchor:
+          if(frame.selected)return false;
+          if(step.parent_step) {
+            frame.key=project(*step.parent_key,*frames[route.source].selected);
+            if(bag.compare(frame.key->values(),anchor_key->values())!=0)return false;
+          }
+          frame.selected=anchor;frame.factor={1};return true;
+        case Lookup::anchor:
+          if(frame.selected)return false;
+          frame.selected=anchor;frame.factor={1};return true;
+        case Lookup::point:
+          if(frame.selected)return false; // A whole visible key selects at most one row.
+          bag.charge(2);frame.key=separator(route);return pick(frame,step,*frame.key);
+        case Lookup::reverse: return reverse(frame,route,step);
+        case Lookup::probe:
+          if(frame.selected)return false;
+          bag.charge(2);frame.key=project(*step.parent_key,*frames[route.source].selected);return pick(frame,step,*frame.key);
+        case Lookup::bucket: case Lookup::scan: break;
       }
       if(!frame.cursor) {
         bag.charge(2); // Open and its eventual allocation-free cursor close.
-        if(step.parent_step) {
-          frame.key=project(*step.parent_key,*frames[*step.parent_step].selected);
+        if(route.lookup==Lookup::bucket) {
+          frame.key=project(*step.parent_key,*frames[route.source].selected);
           frame.cursor=epoch.bucket(step.relation,epoch.owner->storage.index(*step.bucket_index),*frame.key);
         } else frame.cursor=epoch.delta_live(step.relation);
       }
@@ -249,7 +417,7 @@ struct WeightedRuntime::PendingEpoch::Data {
       return true;
     }
     void close_frame(Frame& frame) noexcept {frame.cursor.reset();frame.key.reset();frame.selected=nullptr;}
-    storage::ScalarView value(AssignmentSlot slot) const {return frames[slot.step].selected->values()[slot.field.value];}
+    storage::ScalarView value(AssignmentSlot slot) const {return frames[placed[slot.step]].selected->values()[slot.field.value];}
     void collect(NodeId node, const storage::AccountedTuple& key, Multiplicity before, Multiplicity after) {
       // A positive-to-positive factor change cannot alter DISTINCT support.
       // Only the explicit support-capture path skips this walk; all numeric
@@ -258,24 +426,29 @@ struct WeightedRuntime::PendingEpoch::Data {
       if(support && before.present()==after.present())return;
       const auto& enumeration=epoch.owner->program.enumeration();
       position=0;resume=false;anchor=&key;anchor_key.reset();
-      anchor_step=enumeration.steps.size();
+      auto anchor_step=enumeration.steps.size();
       for(std::size_t i=0;i<enumeration.steps.size();++i) {
         bag.charge();
         if(enumeration.steps[i].node==node) {anchor_step=i;break;}
       }
       require(anchor_step<frames.size(),"weighted_contract","factor is outside the checked visible traversal");
-      const auto& step=enumeration.steps[anchor_step];
-      if(step.parent_step)anchor_key=project(epoch.owner->storage.projection(*step.bucket_index),key);
+      if(anchored(anchor_step))anchor_position=0;
+      else {
+        original(anchor_step);anchor_position=anchor_step;
+        const auto& step=enumeration.steps[anchor_step];
+        if(step.parent_step)anchor_key=project(epoch.owner->storage.projection(*step.bucket_index),key);
+      }
+      require(routes.size()==frames.size(),"weighted_contract","visible traversal route is incomplete");
       const SignedMagnitude difference=support?SignedMagnitude{before.present(),{1}}:
           SignedMagnitude{after<before,{after<before?before.value-after.value:after.value-before.value}};
       // Never use owner->summary(): private insertions may not yet reach root.
-      while(weighted_detail::advance_visible(*this,enumeration.steps)) {
+      while(weighted_detail::advance_visible(*this,routes)) {
         for(const auto equality:enumeration.equalities)
           require(bag.cell(value(equality.left),value(equality.right))==0,"weighted_contract","private assignments disagree");
         auto term=difference;
         // Defer products until every compatible frame exists. Dead prefixes
         // cannot overflow before a later empty bucket establishes zero.
-        for(std::size_t i=0;!support && i<frames.size();++i)if(i!=anchor_step) {
+        for(std::size_t i=0;!support && i<frames.size();++i)if(i!=anchor_position) {
           bag.charge(1,&bag.metrics.multiplications);
           term.magnitude=epoch.owner->policy.multiply(term.magnitude,frames[i].factor);
         }
@@ -290,6 +463,8 @@ struct WeightedRuntime::PendingEpoch::Data {
   };
   std::shared_ptr<weighted::BagDeltas::Data> deltas;
   resource::AccountedUnique<DeltaWalk> delta_walk;
+  bool keyed=false;
+  std::vector<storage::ScalarView> keyed_cells;
   Data(std::shared_ptr<Impl> value, std::uint64_t sequence, DeltaCapture capture)
       :owner(std::move(value)),lease(detail::storage_lease(owner->context)),
        journal(owner->options.capture_changes || owner->options.capture_events ?
@@ -301,7 +476,11 @@ struct WeightedRuntime::PendingEpoch::Data {
     if(capture==DeltaCapture::enabled || capture==DeltaCapture::support) {
       deltas=resource::make_accounted_shared<weighted::BagDeltas::Data>(owner->account(),resource::MemoryPurpose::delta_state,
           owner->account(),owner->policy,output.metrics.work,owner->options.work_limit);
-      delta_walk=resource::make_accounted_unique<DeltaWalk>(owner->account(),resource::MemoryPurpose::delta_state,*this);
+      if(!owner->keyed)delta_walk=resource::make_accounted_unique<DeltaWalk>(owner->account(),resource::MemoryPurpose::delta_state,*this);
+    }
+    if(owner->keyed) {
+      if(deltas)deltas->charge();  // a captured epoch costs at least one unit, as on the reference core
+      owner->keyed->begin();keyed=true;
     }
   }
   ~Data() { rollback(); }
@@ -328,6 +507,11 @@ struct WeightedRuntime::PendingEpoch::Data {
   }
   void rollback() noexcept {
     if (!owner) return;
+    if (keyed) {
+      owner->keyed->rollback();deltas.reset();
+      sample_grant();owner->last=Attempt{output.sequence,Phase::aborted,output.metrics};owner->updating=false;
+      owner.reset();lease.reset();return;
+    }
     delta_walk.reset();deltas.reset(); // Release private readers before inverse table work.
     if (journal) journal->phase=Phase::aborted;
     // Restore metadata first while the original native table handles survive.
@@ -695,6 +879,7 @@ const weighted::Binding& WeightedRuntime::binding() const & {return impl().bindi
 const weighted::Options& WeightedRuntime::options() const {return impl().options;}
 std::uint64_t WeightedRuntime::owner() const {return impl().account().statistics().owner;}
 std::uint64_t WeightedRuntime::sequence() const {return impl().sequence;}
+std::string_view WeightedRuntime::engine() const {return impl().keyed?"keyed_v1":"reference_v1";}
 bool WeightedRuntime::ready() const {const auto& d=impl();return !d.updating && d.readers==0;}
 Multiplicity WeightedRuntime::root_weight() const {const auto& d=impl();d.readable();return d.summary();}
 std::optional<Attempt> WeightedRuntime::last_attempt() const {return impl().last;}
@@ -710,11 +895,54 @@ WeightedRuntime::PendingEpoch WeightedRuntime::begin_epoch(std::uint64_t sequenc
   auto data=resource::make_accounted_unique<PendingEpoch::Data>(d.account(),resource::MemoryPurpose::journal_undo,impl_,sequence,capture);
   d.updating=true;return PendingEpoch(std::move(data));
 }
+bool WeightedRuntime::fused_available() const noexcept { return impl_ && impl_->keyed; }
+void WeightedRuntime::fused_begin(std::uint64_t sequence) {
+  auto& d=impl();d.readable();
+  require(bool(d.keyed),"fused_unavailable","fused epochs need the keyed core");
+  require(d.readers==0,"runtime_busy","a weighted result cursor has leased the epoch");
+  require(d.sequence!=UINT64_MAX && sequence==d.sequence+1,"invalid_sequence","weighted logical sequence must be contiguous from one");
+  d.keyed->begin();
+  d.updating=true;d.fused_open=true;d.fused_changed=false;d.fused_sequence=sequence;d.fused_before=d.summary();
+}
+void WeightedRuntime::fused_stage(NodeId id, storage::RowView values, Multiplicity before, Multiplicity after,
+    keyed::WeightSink* sink) {
+  auto& d=impl();
+  require(d.fused_open,"invalid_epoch","no fused weighted epoch is open");
+  require(id.value<d.program.nodes().size(),"invalid_native_update","weighted native node is outside the shape");
+  const auto& node=d.program.nodes()[id.value];
+  require(node.kind==NodeKind::native,"invalid_native_update","generalized nodes have no weighted input port");
+  const auto issue=node.layout.validation_issue_view(storage::TupleValuesView::borrow(values));
+  if (!issue.ok()) throw storage::TupleValidationFailure(issue);
+  static_cast<void>(d.policy.add(after,{}));
+  if (before==after) return;
+  d.keyed->stage_weight(static_cast<std::uint32_t>(id.value),values,before.value,after.value,sink);
+  d.fused_changed=true;
+}
+Epoch WeightedRuntime::fused_commit() {
+  auto& d=impl();
+  require(d.fused_open,"invalid_epoch","no fused weighted epoch is open");
+  d.keyed->commit();
+  d.fused_open=false;d.updating=false;d.sequence=d.fused_sequence;
+  d.last=Attempt{d.sequence,Phase::committed,{}};
+  return Epoch{d.sequence,d.fused_changed,d.fused_before,d.summary(),{},nullptr};
+}
+void WeightedRuntime::fused_rollback() noexcept {
+  if (!impl_ || !impl_->fused_open) return;
+  auto& d=*impl_;
+  d.keyed->rollback();
+  d.fused_open=false;d.updating=false;
+  d.last=Attempt{d.fused_sequence,Phase::aborted,{}};
+}
 Epoch WeightedRuntime::apply(const Update& update) {
   auto pending=begin_epoch(update.sequence);static_cast<void>(pending.stage(update.replacement));return pending.commit();
 }
 Snapshot WeightedRuntime::snapshot(SnapshotLimits limits) const {
-  auto& d=impl();d.readable();detail::StorageOperation operation(d.context);
+  auto& d=impl();d.readable();
+  if (d.keyed) {
+    const auto twin=d.reference_twin();detail::StorageOperation operation(twin->context);
+    return capture_weighted(*twin,d.sequence,false,limits,[&](RelationId id){return twin->storage.table(id).live(twin->allowance());});
+  }
+  detail::StorageOperation operation(d.context);
   return capture_weighted(d,d.sequence,false,limits,[&](RelationId id){return d.storage.table(id).live(d.allowance());});
 }
 WeightedRuntime::PendingEpoch::PendingEpoch(resource::AccountedUnique<Data> data) noexcept:data_(std::move(data)) {}
@@ -734,6 +962,44 @@ bool WeightedRuntime::PendingEpoch::stage_contribution(NodeId node, storage::Tup
 bool WeightedRuntime::PendingEpoch::stage_native(NodeId id, storage::TupleValuesView values,
     Multiplicity old, Multiplicity next, bool contribution) {
   require(active(),"invalid_epoch","weighted epoch is closed");
+  if (data_->keyed) try {
+    auto& d=data_->active();
+    require(id.value<d.program.nodes().size(),"invalid_native_update","weighted native node is outside the shape");
+    const auto& node=d.program.nodes()[id.value];
+    require(node.kind==NodeKind::native,"invalid_native_update","generalized nodes have no weighted input port");
+    const auto issue=node.layout.validation_issue_view(values);
+    if (!issue.ok()) throw storage::TupleValidationFailure(issue);
+    storage::RowView row;
+    if (const auto native=values.native_view()) row=*native;
+    else {
+      auto& cells=data_->keyed_cells;cells.clear();
+      for (const auto value:values) cells.push_back(value);
+      row=storage::RowView::borrow(cells);
+    }
+    data_->metric(data_->output.metrics.native_inputs);
+    static_cast<void>(d.policy.add(next,{}));
+    const auto current=d.keyed->weight(static_cast<std::uint32_t>(id.value),row);
+    if (!contribution) require(current==old.value,"weight_conflict","expected native weight differs from the current row");
+    const auto before=contribution?Multiplicity{current}:old;
+    const auto after=contribution?d.policy.replace({current},old,next):next;
+    if (before==after) return false;
+    // Each changed head tuple folds into this epoch's consolidated capture.
+    struct Capture final:keyed::WeightSink {
+      Data& epoch;const storage::AccountedLayout& layout;
+      Capture(Data& owner,const storage::AccountedLayout& result):epoch(owner),layout(result) {}
+      void change(storage::RowView values,std::uint64_t was,std::uint64_t now) override {
+        if (!epoch.deltas) return;
+        if (epoch.capture_mode==DeltaCapture::support) {
+          if ((was==0)==(now==0)) return;
+          epoch.deltas->add(layout,values,{now==0,{1}});
+        } else epoch.deltas->add(layout,values,{now<was,{now<was?was-now:now-was}});
+      }
+    } capture(*data_,d.program.result_layout());
+    d.keyed->stage_weight(static_cast<std::uint32_t>(id.value),row,before.value,after.value,&capture);
+    data_->metric(data_->output.metrics.native_changes);data_->output.changed=true;
+    data_->output.after=d.summary();
+    return true;
+  } catch (...) {rollback();throw;}
   try {
     auto& d=data_->active();detail::StorageOperation operation(d.context,data_->lease);
     require(id.value<d.program.nodes().size(),"invalid_native_update","weighted native node is outside the shape");
@@ -770,7 +1036,12 @@ const BagDeltaMetrics& weighted::BagDeltas::metrics() const & {
 }
 const Epoch& WeightedRuntime::PendingEpoch::preview() const {require(active(),"invalid_epoch","weighted epoch is closed");return data_->output;}
 Snapshot WeightedRuntime::PendingEpoch::snapshot(SnapshotLimits limits) const {
-  require(active(),"invalid_epoch","weighted epoch is closed");auto& d=data_->active();detail::StorageOperation operation(d.context,data_->lease);
+  require(active(),"invalid_epoch","weighted epoch is closed");auto& d=data_->active();
+  if (data_->keyed) {
+    const auto twin=d.reference_twin();detail::StorageOperation operation(twin->context);
+    return capture_weighted(*twin,data_->output.sequence,true,limits,[&](RelationId id){return twin->storage.table(id).live(twin->allowance());});
+  }
+  detail::StorageOperation operation(d.context,data_->lease);
   auto result=capture_weighted(d,data_->output.sequence,true,limits,[&](RelationId id){return data_->live(id);});
   data_->sample_grant();return result;
 }
@@ -778,6 +1049,7 @@ Epoch WeightedRuntime::PendingEpoch::commit() {
   require(active(),"invalid_epoch","weighted epoch is closed");auto& d=data_->active();
   // All arithmetic/allocation/draining finished in stage(). Publication and
   // rollback use funded journals/node handles; no exception translation here.
+  if (data_->keyed) {d.keyed->commit();data_->keyed=false;}
   data_->sample_grant();
   data_->delta_walk.reset();
   if(data_->deltas) {

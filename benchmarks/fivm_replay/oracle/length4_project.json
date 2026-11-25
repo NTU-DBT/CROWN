@@ -1,0 +1,63 @@
+{
+ "query": "length4_project",
+ "source": "/tmp/claude-1000/-home-userroot-Codex-CROWN/ec685d80-d57a-440f-9bb0-717b126b9b7b/scratchpad/bench/runs-G1/runtime-length4_project-full/stdout",
+ "source_sha256": "221c99cffbb6c9fcb20b2f1a7add2ae79f4ff0cdd27ed93172d7618f4e23bb9a",
+ "engine": "keyed_v1",
+ "implementation": "native_crown_serial_original_routing",
+ "physical_inputs": 1017674,
+ "relation_updates": 4070696,
+ "enumeration_markers": 10,
+ "snapshot_rows": 11001937,
+ "snapshots": [
+  {
+   "sequence": 50884,
+   "marker": 1,
+   "rows": 1675776
+  },
+  {
+   "sequence": 101768,
+   "marker": 2,
+   "rows": 5684291
+  },
+  {
+   "sequence": 203536,
+   "marker": 3,
+   "rows": 1469691
+  },
+  {
+   "sequence": 305304,
+   "marker": 4,
+   "rows": 638360
+  },
+  {
+   "sequence": 407072,
+   "marker": 5,
+   "rows": 428478
+  },
+  {
+   "sequence": 508840,
+   "marker": 6,
+   "rows": 234214
+  },
+  {
+   "sequence": 610608,
+   "marker": 7,
+   "rows": 246989
+  },
+  {
+   "sequence": 712376,
+   "marker": 8,
+   "rows": 326430
+  },
+  {
+   "sequence": 814144,
+   "marker": 9,
+   "rows": 237024
+  },
+  {
+   "sequence": 915906,
+   "marker": 10,
+   "rows": 60684
+  }
+ ]
+}

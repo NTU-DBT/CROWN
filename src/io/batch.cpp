@@ -226,7 +226,7 @@ Admission TypedQueue::enqueue(TransportBatch& batch) {
     bytes=add(bytes,Data::Item::owned_bytes(item.value,d.row_issue(item.value)));
     if(bytes>remaining)return Admission::full;
   }
-  const auto before=d.account.statistics().current.requested_bytes;
+  const auto before=d.account.current_usage().requested_bytes;
   auto prepared=resource::make_accounted_unique<Data::Batch>(input_detail::memory_owner,d.account,resource::MemoryPurpose::support_metadata);
   prepared->bytes=bytes;
   for(const auto& item:batch.data_->items) {
@@ -240,7 +240,7 @@ Admission TypedQueue::enqueue(TransportBatch& batch) {
   // Reconcile the preflight against actual retained requests before publication.
   // Every allocation since 'before' belongs to this native graph; no shadow
   // containers, global capacity ticket or replacement query account exists.
-  if(d.account.statistics().current.requested_bytes-before!=bytes)
+  if(d.account.current_usage().requested_bytes-before!=bytes)
     throw resource::MemoryFailure(resource::MemoryFault::contract);
   const auto count=batch.size();auto* tail=prepared.get();
   if(d.tail)d.tail->next=std::move(prepared);else d.head=std::move(prepared);

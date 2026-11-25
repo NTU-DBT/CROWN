@@ -1,3 +1,4 @@
+#include "owner_override.hpp"
 #include "crown/runtime/support.hpp"
 #include "memory_report_detail.hpp"
 
@@ -21,11 +22,16 @@
 
 namespace crown::runtime {
 namespace {
-void require(bool condition,std::string_view code,std::string_view message) {
-  if (!condition) throw Error(std::string(code),std::string(message));
+// The check is inlined on hot paths; only failure leaves the caller.
+[[noreturn, gnu::cold, gnu::noinline]] void fail(std::string_view code,std::string_view message) {
+  throw Error(std::string(code),std::string(message));
+}
+inline void require(bool condition,std::string_view code,std::string_view message) {
+  if (!condition) [[unlikely]] fail(code,message);
 }
 template<class Failure> [[noreturn]] void support_present(const Failure& failure) { throw Error(std::string(failure.code()),failure.what()); }
 SupportOwnerId new_owner() {
+  if (const auto forced=detail::forced_support_owner) { detail::forced_support_owner=0; return {forced}; }
   static std::atomic<std::uint64_t> last{0}; auto value=last.load(std::memory_order_relaxed);
   for (;;) {
     require(value!=std::numeric_limits<std::uint64_t>::max(),"support_overflow","runtime owner IDs exhausted");
@@ -1060,11 +1066,25 @@ struct SupportRuntime::ResultCursor::Data {
       metric(work,&CursorWork::equality_checks);
       require(value(equality.left)==value(equality.right),"runtime_contract","enumeration separator traversal produced inconsistent assignments");
     }
-    MemoryVector<storage::ScalarView> row(resource::MemoryAllocator<storage::ScalarView>(
-        runtime->storage_context->memory(),resource::MemoryPurpose::scratch,{resource::MemoryOwnerKind::cursor,0}));
-    row.reserve(output_layout.fields().size());
+    // Gather the output cells in a stack buffer for ordinary arities; only
+    // unusually wide rows use a funded scratch vector. Either way the cells are
+    // copied into the emitted tuple's own funded block below.
+    constexpr std::size_t inline_cells=16;
+    const auto arity=output_layout.fields().size();
+    std::array<storage::ScalarView,inline_cells> inline_row;
+    std::optional<MemoryVector<storage::ScalarView>> wide_row;
+    if (arity>inline_cells) {
+      wide_row.emplace(resource::MemoryAllocator<storage::ScalarView>(
+          runtime->storage_context->memory(),resource::MemoryPurpose::scratch,{resource::MemoryOwnerKind::cursor,0}));
+      wide_row->reserve(arity);
+    }
+    std::size_t used=0;
     const auto append=[&](const storage::ScalarView& value) {
-      row.push_back(value);
+      if (wide_row) wide_row->push_back(value);
+      else {
+        require(used<inline_cells,"runtime_contract","result row exceeds its output layout");
+        inline_row[used++]=value;
+      }
     };
     if (scalar) { metric(work,&CursorWork::output_fields); append(storage::ScalarView{answer}); }
     else if (view==ResultView::sql && plan.normalized()) {
@@ -1075,7 +1095,8 @@ struct SupportRuntime::ResultCursor::Data {
       }
     } else for (const auto slot : program.output) { metric(work,&CursorWork::output_fields); append(value(slot)); }
     auto result=[&] {
-      auto native=native_output_layout.tuple(storage::RowView::borrow(row),
+      const auto cells=wide_row?std::span<const storage::ScalarView>(*wide_row):std::span<const storage::ScalarView>(inline_row.data(),used);
+      auto native=native_output_layout.tuple(storage::RowView::borrow(cells),
           {Native?resource::MemoryOwnerKind::cursor:resource::MemoryOwnerKind::output,0});
       if constexpr(Native)return native;
       else return storage::Tuple::from_accounted(std::move(native));
@@ -1271,35 +1292,61 @@ void SupportRuntime::EpochView::Group::abort() noexcept {
 }
 SupportRuntime::ResultCursor::ResultCursor(resource::AccountedUnique<Data> data) noexcept:data_(std::move(data)) {}
 SupportRuntime::ResultCursor::ResultCursor(ResultCursor&&) noexcept=default;
+SupportRuntime::ResultCursor::ResultCursor(std::unique_ptr<detail::ExternalResultCursor> external) noexcept
+    :external_(std::move(external)) {}
 SupportRuntime::ResultCursor& SupportRuntime::ResultCursor::operator=(ResultCursor&& other) noexcept {
   if (this!=&other) {
     if(data_)data_->close(ResultCursorState::cancelled,CursorTerminalReason::move_replacement);
+    if(external_)external_->cancel();
     data_=std::move(other.data_);
+    external_=std::move(other.external_);
   }
   return *this;
 }
 SupportRuntime::ResultCursor::~ResultCursor()=default;
-bool SupportRuntime::ResultCursor::active() const noexcept { return data_ && data_->status==ResultCursorState::active; }
-ResultCursorState SupportRuntime::ResultCursor::state() const { require(bool(data_),"invalid_cursor","moved-from result cursor"); return data_->status; }
-std::uint64_t SupportRuntime::ResultCursor::sequence() const { require(bool(data_),"invalid_cursor","moved-from result cursor"); return data_->epoch; }
-SupportOwnerId SupportRuntime::ResultCursor::owner() const { require(bool(data_),"invalid_cursor","moved-from result cursor"); return data_->identity; }
-const storage::TupleLayout& SupportRuntime::ResultCursor::layout() const { require(bool(data_),"invalid_cursor","moved-from result cursor"); return data_->output_layout; }
-const ResultCursorMetrics& SupportRuntime::ResultCursor::metrics() const { require(bool(data_),"invalid_cursor","moved-from result cursor"); return data_->metrics; }
+bool SupportRuntime::ResultCursor::active() const noexcept {
+  if (external_) return external_->state()==ResultCursorState::active;
+  return data_ && data_->status==ResultCursorState::active;
+}
+ResultCursorState SupportRuntime::ResultCursor::state() const {
+  if (external_) return external_->state();
+  require(bool(data_),"invalid_cursor","moved-from result cursor"); return data_->status;
+}
+std::uint64_t SupportRuntime::ResultCursor::sequence() const {
+  if (external_) return external_->sequence();
+  require(bool(data_),"invalid_cursor","moved-from result cursor"); return data_->epoch;
+}
+SupportOwnerId SupportRuntime::ResultCursor::owner() const {
+  if (external_) return external_->owner();
+  require(bool(data_),"invalid_cursor","moved-from result cursor"); return data_->identity;
+}
+const storage::TupleLayout& SupportRuntime::ResultCursor::layout() const {
+  if (external_) return external_->layout();
+  require(bool(data_),"invalid_cursor","moved-from result cursor"); return data_->output_layout;
+}
+const ResultCursorMetrics& SupportRuntime::ResultCursor::metrics() const {
+  if (external_) return external_->metrics();
+  require(bool(data_),"invalid_cursor","moved-from result cursor"); return data_->metrics;
+}
 CursorObservation SupportRuntime::ResultCursor::observation() const {
+  if (external_) { CursorObservation result; result.mandatory=external_->metrics(); result.state=external_->state(); result.sequence=external_->sequence(); return result; }
   require(bool(data_),"invalid_cursor","moved-from result cursor");
   auto result=data_->diagnostic;result.mandatory=data_->metrics;result.state=data_->status;return result;
 }
 void SupportRuntime::ResultCursor::cancel() noexcept {
+  if(external_){external_->cancel();return;}
   if(data_ && data_->status==ResultCursorState::active){
     if(data_->observation_admitted)cursor_add(data_->diagnostic,CursorMetricId::cancel_calls);
     data_->close(ResultCursorState::cancelled,CursorTerminalReason::explicit_cancel);
   }
 }
 std::optional<storage::Tuple> SupportRuntime::ResultCursor::next() try {
+  if (external_) return external_->next_tuple();
   require(bool(data_),"invalid_cursor","moved-from result cursor");
   return data_->produce<false>();
 } catch(const storage::IndexFailure& failure) { support_present(failure); } catch(const storage::TableValidationFailure& failure) { support_present(failure); }
 std::optional<storage::AccountedTuple> SupportRuntime::ResultCursor::next_native() try {
+  if (external_) return external_->next();
   require(bool(data_),"invalid_cursor","moved-from result cursor");
   return data_->produce<true>();
 } catch(const storage::IndexFailure& failure) { support_present(failure); } catch(const storage::TableValidationFailure& failure) { support_present(failure); }

@@ -1,0 +1,43 @@
+--- dbtoaster/mmap.hpp
++++ dbtoaster/mmap.hpp
+@@ -566,7 +566,8 @@
+ 
+     primary_index->insert(curr, h);
+ 
+-    buffered_inserts.push_back(curr);
++    // Pending inserts only feed secondary indexes; maps without any never buffer.
++    if (sizeof...(SECONDARY_INDEXES) > 0) buffered_inserts.push_back(curr);
+     // for (size_t i = 0; i < sizeof...(SECONDARY_INDEXES); i++)
+     //   secondary_indexes[i]->insert(curr);
+   }
+@@ -585,17 +586,24 @@
+     elem->prv = nullptr;
+ 
+     primary_index->erase(elem, h);
++    // Flush pending inserts (as slice() does) instead of a linear search of the
++    // buffer, which grows with every insert when the map is never sliced.
++    flush_buffered_inserts();
+     for (size_t i = 0; i < sizeof...(SECONDARY_INDEXES); i++)
+       secondary_indexes[i]->erase(elem);
+ 
+-    for (typename std::vector<T*>::iterator it = buffered_inserts.begin(); it != buffered_inserts.end(); ++it) {
+-      if (elem == *it) {
+-        buffered_inserts.erase(it); // inefficient but OK
+-        break;
++    pool->deleteElement(elem);
++  }
++
++  inline void flush_buffered_inserts() {
++    if (buffered_inserts.size() > 0) {
++      for (typename std::vector<T*>::iterator it = buffered_inserts.begin(); it != buffered_inserts.end(); ++it) {
++        for (size_t i = 0; i < sizeof...(SECONDARY_INDEXES); i++) {
++          secondary_indexes[i]->insert(*it);
++        }
+       }
++      buffered_inserts.clear();
+     }
+-
+-    pool->deleteElement(elem);
+   }
+ 
+  public:

@@ -50,7 +50,8 @@ target_sources(crown_core PRIVATE src/resource/memory.cpp
   src/storage/tuple_values.cpp
   src/storage/accounted_row.cpp src/storage/accounted_layout.cpp
   src/storage/accounted_projection.cpp src/storage/accounted_arena.cpp
-  src/storage/arena_owner.cpp src/storage/accounted_reference.cpp)
+  src/storage/arena_owner.cpp src/storage/accounted_reference.cpp
+  src/storage/keyed.cpp)
 target_sources(crown_core PRIVATE src/planner/residual.cpp src/planner/residual_reduce.cpp
   src/planner/residual_view.cpp src/planner/residual_trace.cpp src/planner/residual_reconstruct.cpp)
 target_sources(crown_core PRIVATE src/io/ingest.cpp src/io/ingest_text.cpp src/io/batch.cpp src/io/input_progress.cpp src/io/input_view.cpp src/io/search.cpp)
@@ -62,7 +63,8 @@ target_sources(crown_core PRIVATE src/planner/meta.cpp)
 target_include_directories(crown_core PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_link_libraries(crown_core PUBLIC crown_json PRIVATE crown_options)
+find_package(Threads REQUIRED)
+target_link_libraries(crown_core PUBLIC crown_json Threads::Threads PRIVATE crown_options)
 
 # Cold, optional meta-decomposition enumeration and CROWN candidate preparation.
 # Existing runtime/selection libraries do not link back to this planner adapter.
@@ -112,7 +114,7 @@ target_include_directories(crown_selection PUBLIC
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_link_libraries(crown_selection PUBLIC crown_ranking PRIVATE crown_options)
 
-set(CROWN_RUNTIME_SOURCES src/recovery/session_image.cpp src/recovery/session_file.cpp src/recovery/journal.cpp src/recovery/journal_file.cpp src/recovery/generation.cpp src/recovery/generation_retirement.cpp src/recovery/local_sink.cpp src/recovery/local_sink_codec.cpp src/runtime/support.cpp src/runtime/physical.cpp src/runtime/delta.cpp
+set(CROWN_RUNTIME_SOURCES src/runtime/keyed_engine.cpp src/runtime/keyed_cyclic.cpp src/recovery/session_image.cpp src/recovery/session_file.cpp src/recovery/journal.cpp src/recovery/journal_file.cpp src/recovery/generation.cpp src/recovery/generation_retirement.cpp src/recovery/local_sink.cpp src/recovery/local_sink_codec.cpp src/runtime/support.cpp src/runtime/physical.cpp src/runtime/delta.cpp
   src/io/support.cpp src/io/inspection.cpp src/runtime/replay.cpp src/runtime/session.cpp src/runtime/window.cpp src/runtime/observation.cpp src/runtime/reoptimization.cpp
   src/recovery/plan_descriptor.cpp
   src/runtime/statistics.cpp src/runtime/native_statistics.cpp src/runtime/owner_statistics.cpp src/runtime/statistics_collection.cpp
@@ -2005,6 +2007,57 @@ if(BUILD_TESTING)
   endif()
 endif()
 
+# Flat CROWN executor: lean single-writer maintenance/enumeration over the same
+# compiled free-connex program (docs/flat_runtime.md).
+add_library(crown_flat src/runtime/flat.cpp src/runtime/flat_cyclic.cpp src/runtime/flat_count.cpp)
+add_library(crown_keyed_engine INTERFACE)
+target_link_libraries(crown_keyed_engine INTERFACE crown_runtime)
+target_include_directories(crown_flat PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_link_libraries(crown_flat PUBLIC crown_runtime PRIVATE crown_options)
+set_target_properties(crown_flat PROPERTIES EXPORT_NAME flat)
+add_library(CROWN::flat ALIAS crown_flat)
+install(TARGETS crown_flat EXPORT CrownTargets
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+if(BUILD_TESTING)
+  add_executable(crown_flat_test tests/unit/flat_runtime_test.cpp)
+  target_include_directories(crown_flat_test PRIVATE tests/support examples/component-runtime)
+  target_compile_options(crown_flat_test PRIVATE -UNDEBUG)
+  target_link_libraries(crown_flat_test PRIVATE crown_flat crown_sql crown_options)
+  add_test(NAME flat_runtime COMMAND crown_flat_test)
+  add_executable(crown_flat_cyclic_test tests/unit/flat_cyclic_test.cpp)
+  target_compile_options(crown_flat_cyclic_test PRIVATE -UNDEBUG)
+  target_link_libraries(crown_flat_cyclic_test PRIVATE crown_flat crown_fallback crown_options)
+  add_test(NAME flat_cyclic COMMAND crown_flat_cyclic_test)
+  add_executable(crown_keyed_cyclic_test tests/unit/keyed_cyclic_test.cpp)
+  target_compile_options(crown_keyed_cyclic_test PRIVATE -UNDEBUG)
+  target_link_libraries(crown_keyed_cyclic_test PRIVATE crown_fallback crown_options)
+  add_test(NAME keyed_cyclic COMMAND crown_keyed_cyclic_test)
+  add_executable(crown_keyed_bag_test tests/unit/keyed_bag_test.cpp)
+  target_compile_options(crown_keyed_bag_test PRIVATE -UNDEBUG)
+  target_link_libraries(crown_keyed_bag_test PRIVATE crown_runtime crown_plan crown_options)
+  add_test(NAME keyed_bag COMMAND crown_keyed_bag_test)
+  add_executable(crown_keyed_engine_test tests/unit/keyed_engine_test.cpp)
+  target_include_directories(crown_keyed_engine_test PRIVATE tests/support examples/component-runtime)
+  target_compile_options(crown_keyed_engine_test PRIVATE -UNDEBUG)
+  target_link_libraries(crown_keyed_engine_test PRIVATE crown_keyed_engine crown_runtime crown_sql crown_options)
+  add_test(NAME keyed_engine COMMAND crown_keyed_engine_test)
+  set_tests_properties(keyed_engine PROPERTIES TIMEOUT 900 LABELS "exact")
+  add_executable(crown_keyed_storage_test tests/unit/keyed_storage_test.cpp)
+  target_compile_options(crown_keyed_storage_test PRIVATE -UNDEBUG)
+  target_link_libraries(crown_keyed_storage_test PRIVATE crown_core crown_options Threads::Threads)
+  add_test(NAME keyed_storage COMMAND crown_keyed_storage_test)
+  set_tests_properties(keyed_storage PROPERTIES TIMEOUT 600 LABELS "exact")
+  add_executable(crown_flat_count_test tests/unit/flat_count_test.cpp)
+  target_compile_options(crown_flat_count_test PRIVATE -UNDEBUG)
+  target_link_libraries(crown_flat_count_test PRIVATE crown_flat crown_plan crown_options)
+  add_test(NAME flat_count COMMAND crown_flat_count_test)
+  set_tests_properties(flat_runtime flat_cyclic flat_count PROPERTIES TIMEOUT 900 LABELS "exact")
+endif()
+
 # Explicit exact-set general-query fallback; ordinary execution stays separate.
 add_library(crown_fallback src/planner/fallback.cpp src/runtime/fallback.cpp)
 target_include_directories(crown_fallback PUBLIC
@@ -2071,4 +2124,63 @@ if(BUILD_TESTING)
     set_tests_properties(difference difference_oracle PROPERTIES ENVIRONMENT
       "ASAN_OPTIONS=detect_leaks=1:halt_on_error=1;UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1")
   endif()
+endif()
+
+# Tests of reference-core contracts (exact memory-ledger requests, journal and
+# audit records, observation traces/phase work, RuntimeTestProbe internals,
+# owner-bound statistics captures) run DeltaRuntime on the reference core.
+# Everything else runs on the default keyed core (docs/keyed_core.md).
+if(BUILD_TESTING)
+  set(CROWN_REFERENCE_CORE_TESTS
+    window_memory
+    component_planning composed_explain cursor_observation delta_anchor delta_factor delta_lifecycle
+    delta_lifecycle_exceptions delta_live delta_memory delta_replay delta_replay_scale delta_runtime
+    delta_runtime_anchored delta_runtime_eager delta_runtime_eager_exceptions
+    delta_runtime_exceptions delta_runtime_incremental delta_runtime_incremental_exceptions
+    delta_runtime_root_first generation_faults generation_recovery_admission
+    history_retirement_faults initialization_exceptions installed_cost_calibration
+    installed_ranking_evaluation instrumentation_memory invariant_memory invariant_wire
+    local_sink_replay_faults maintenance_cost maintenance_cost_calibration
+    maintenance_cost_statistics_saturation native_replay native_replay_faults
+    observation_mode_binding observation_run_context operator_memory_cli operator_memory_report
+    operator_memory_schema public_tuple_memory ranking_census ranking_evaluation
+    ranking_evidence_memory ranking_public_independent ranking_result_memory reoptimization_install
+    reoptimization_promotion_allocation reoptimization_recovery_budget reoptimization_selection
+    reoptimization_session report_capture_memory runtime_checkpoint runtime_inspection
+    runtime_observation s04_indexed_delta_runtime s04_indexed_delta_runtime_anchored
+    s04_indexed_delta_runtime_eager s04_indexed_delta_runtime_incremental
+    s04_indexed_delta_runtime_root_first s04_indexed_owner_statistics s04_indexed_runtime_budget
+    s04_selection_indexed_owner search_evaluation selection_census selection_current
+    selection_native_admission selection_public_independent selection_result_memory
+    session_checkpoint session_checkpoint_grant session_checkpoint_window
+    session_checkpoint_window_grant session_exceptions session_file session_image
+    session_image_grant session_memory statistics_combined_exceptions_production
+    statistics_combined_exceptions_testing statistics_combined_production
+    statistics_combined_testing statistics_delta_fifo statistics_delta_fifo_anchored
+    statistics_delta_fifo_eager statistics_delta_fifo_incremental statistics_delta_fifo_root_first
+    statistics_delta_lifo statistics_delta_lifo_anchored statistics_delta_lifo_eager
+    statistics_delta_lifo_incremental statistics_delta_lifo_root_first statistics_owner
+    statistics_replay_fifo statistics_replay_lifo statistics_report_exceptions_production
+    statistics_report_exceptions_testing statistics_reports_production statistics_reports_testing
+    statistics_runtime_only_production statistics_runtime_only_testing statistics_scalars
+    statistics_window_fifo statistics_window_lifo statistics_workload statistics_workload_exceptions
+    update_pattern_profile update_pattern_runtime update_pattern_transfer window_sequence
+  )
+  foreach(reference_test IN LISTS CROWN_REFERENCE_CORE_TESTS)
+    if(TEST ${reference_test})
+      set_property(TEST ${reference_test} APPEND PROPERTY ENVIRONMENT "CROWN_DELTA_ENGINE=reference")
+    endif()
+  endforeach()
+  # Tests of the reference weighted core's own contracts (per-phase native
+  # metrics such as factor replacements, and the indexed-storage native grant
+  # each stage, cursor and cold rebuild consumes and refills) run WeightedRuntime on it. Their
+  # semantic content is also covered on the keyed core by keyed_bag and the
+  # SQL aggregate/rows suites.
+  set(CROWN_REFERENCE_WEIGHTED_TESTS weighted_bag weighted_delta weighted_support weighted_cursor_limits weighted_limits
+    sql_aggregate_rebuild)
+  foreach(reference_test IN LISTS CROWN_REFERENCE_WEIGHTED_TESTS)
+    if(TEST ${reference_test})
+      set_property(TEST ${reference_test} APPEND PROPERTY ENVIRONMENT "CROWN_WEIGHTED_ENGINE=reference")
+    endif()
+  endforeach()
 endif()

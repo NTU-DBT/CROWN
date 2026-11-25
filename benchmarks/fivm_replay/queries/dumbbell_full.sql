@@ -1,0 +1,23 @@
+IMPORT DTREE FROM FILE 'dumbbell_full.order';
+
+CREATE DISTRIBUTED TYPE RingFactorizedRelation
+FROM FILE 'ring/ring_factorized.hpp'
+WITH PARAMETER SCHEMA (dynamic_min);
+
+CREATE STREAM M(C INT, D INT) FROM FILE 'unused.m' LINE DELIMITED CSV;
+CREATE STREAM LBC(B INT, C INT) FROM FILE 'unused.lbc' LINE DELIMITED CSV;
+CREATE STREAM LCA(C INT, A INT) FROM FILE 'unused.lca' LINE DELIMITED CSV;
+CREATE STREAM RDE(D INT, E INT) FROM FILE 'unused.rde' LINE DELIMITED CSV;
+CREATE STREAM RFD(FF INT, D INT) FROM FILE 'unused.rfd' LINE DELIMITED CSV;
+CREATE STREAM LAB(A INT, B INT) FROM FILE 'unused.lab' LINE DELIMITED CSV;
+CREATE STREAM REF(E INT, FF INT) FROM FILE 'unused.ref' LINE DELIMITED CSV;
+
+SELECT SUM(
+  [lift<0>: RingFactorizedRelation<[0,INT]>](C) *
+  [lift<1>: RingFactorizedRelation<[1,INT]>](A) *
+  [lift<2>: RingFactorizedRelation<[2,INT]>](B) *
+  [lift<3>: RingFactorizedRelation<[3,INT]>](D) *
+  [lift<4>: RingFactorizedRelation<[4,INT]>](E) *
+  [lift<5>: RingFactorizedRelation<[5,INT]>](FF)
+)
+FROM M NATURAL JOIN LBC NATURAL JOIN LCA NATURAL JOIN RDE NATURAL JOIN RFD NATURAL JOIN LAB NATURAL JOIN REF;

@@ -12,8 +12,9 @@ namespace crown::storage {
 namespace {
 constexpr auto none = std::numeric_limits<std::size_t>::max();
 constexpr auto last_generation = std::numeric_limits<std::uint64_t>::max();
-void require(bool value, ArenaProblem issue = ArenaProblem::invariant) {
-  if (!value) throw ArenaValidationFailure(issue);
+[[noreturn, gnu::cold, gnu::noinline]] void fail(ArenaProblem issue) { throw ArenaValidationFailure(issue); }
+inline void require(bool value, ArenaProblem issue = ArenaProblem::invariant) {
+  if (!value) [[unlikely]] fail(issue);
 }
 void add(resource::MemoryUsage& to, resource::MemoryUsage value) noexcept {
   // Disjoint actual blocks of this account; their sum is already admitted.

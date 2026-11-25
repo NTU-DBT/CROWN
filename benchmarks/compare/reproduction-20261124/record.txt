@@ -1,0 +1,93 @@
+CROWN comparison coverage and reproduction
+2026-11-24
+
+Outcome
+-------
+The final native replay completed all 375 jobs at 16:52 Singapore time.
+The audit accepted every run and verified all 11 native input hashes.
+The main timing CSV contains 1,351 samples across the three cohorts.
+Final C++ median wall time was lower at 34 of 34 Flink p1 points, 33 of
+34 p4 points, 31 of 34 p16 points and eight of 16 F-IVM points. These
+counts describe the observed timings under the cohorts below. Filtered
+4-Hop delta produced 2,302,991,888 delta rows in all three 64 MiB
+blocking runs and had a median wall time of 411.68 seconds.
+
+Scope
+-----
+This record covers Claude's comparison matrix in build/experiments/compare-v1
+and the subsequent native optimization follow-ups. The matrix has 34 paper
+replay points in full-snapshot and per-update-delta modes. It covers eight
+graph queries and the SNB workloads and scales specified by that campaign.
+The eight graph queries also have a maintenance-only point. A delta point
+retains full snapshots at markers where its input binding requests them.
+
+The historical matrix had 638 completed jobs: 375 C++ CROWN, 213 Flink,
+48 F-IVM and two exact verification calls. The archived Flink p1 series
+supplies ten runs per paper point, including the 25 points where the later
+campaign skipped an additional p1 repeat. The p1 archive is kept as its
+own cohort. Each of the 34 points has three p4 and three p16 campaign runs.
+
+The final saved C++ binaries are compare-v1/bin-fivm3. Claude's later
+measurements covered selected cases on this build. The final-cxx replay uses
+these binaries across the entire historical C++ matrix, including three
+repetitions per GC configuration. It keeps the original 256 MiB tiers and
+adds any tiers required by the same first-run RSS rule. The original run
+files, executable builds and reports are preserved.
+
+Cohorts and metrics
+-------------------
+CROWN wall time comes from GNU time for each process, including teardown.
+Blocking GC uses one configured core. Background GC uses two configured
+cores. F-IVM is the native C++ implementation with the signed factorized ring
+and index fixes recorded in benchmarks/fivm_replay/record.txt. F-IVM full mode
+visits snapshot rows. Its maintenance-only runs are paired with the CROWN
+none points. F-IVM has no per-update output in this campaign.
+
+Flink wall time comes from its launcher receipt. The internal timer is the
+maximum AccumulateTime across workers. The original and final C++ experiments
+ran concurrent jobs on disjoint physical cores. The final C++ replay had no
+concurrent Flink jobs. The archived p1 trials and targeted A/B trials had their
+own schedules. Timing comparisons across these cohorts include the effects
+of those different conditions.
+
+The audit checks successful receipt status, executed configurations, elapsed
+time and resource records, and archived Flink stdout/stderr/RSS fingerprints.
+It also compares native input, relation update, delta and snapshot counts
+and marker signatures across the C++ builds. Existing row-by-row checks on
+the sliding-window and long prefixes are reused for byte-identical binaries.
+The final fallback was independently checked on both dumbbell queries.
+F-IVM full runs are checked against finite-input snapshot oracles, with
+separate fixture-based row validation in its own experiment record.
+
+Files
+-----
+report.txt             Readable end-to-end wall-time table for the full matrix.
+comparison.csv         One line per point and mode, with medians and sample counts.
+medians.csv            Per-cohort and configuration timing, RSS, CPU and row metrics.
+samples.csv            Per-run evidence paths and measurements.
+row-verification.csv   Reference-vs-keyed exact prefix verification receipts.
+fivm-fixtures.csv       Exact F-IVM fixture comparisons, including the negative control.
+followups.csv          Claude's targeted A/B and focused F-IVM comparisons.
+historical-surveys.csv Earlier exploratory results and timeouts by build label.
+audit.json             Matrix coverage, validation status and fingerprints.
+
+Some older exploratory builds timed out on 4-Hop delta, star count or
+dumbbell. Those records remain in the survey table. All of those points
+completed in the main comparison campaign. The historical timing values
+remain associated with their original build labels.
+
+Replay commands
+---------------
+Run from the CROWN root with the archived inputs, original measurements and
+the four saved binaries available. Use a fresh replay directory.
+
+  old=build/experiments/compare-v1
+  replay=build/experiments/compare-reproduction-fresh
+  out=build/experiments/compare-reproduction-fresh-report
+  python3 benchmarks/compare/prepare_reproduction.py "$old" "$replay"
+  python3 benchmarks/compare/scheduler.py "$replay" --poll 1
+  python3 benchmarks/compare/collect_reproduction.py "$old" "$replay" "$out" --verify-inputs
+
+The collector can export a progress snapshot with --allow-unfinished. A
+final audit records complete=true only after all planned measurement receipts
+are accepted and both matrix coverage checks pass.

@@ -1,0 +1,63 @@
+{
+ "query": "length3_filter",
+ "source": "/tmp/claude-1000/-home-userroot-Codex-CROWN/ec685d80-d57a-440f-9bb0-717b126b9b7b/scratchpad/bench/runs-G1/runtime-length3_filter-full/stdout",
+ "source_sha256": "6ee8328060decc0c20a3395c05fbdf219e37cf3b4011c030ddc3c08f00aa5aa5",
+ "engine": "keyed_v1",
+ "implementation": "native_crown_serial_original_routing",
+ "physical_inputs": 1017674,
+ "relation_updates": 2137114,
+ "enumeration_markers": 10,
+ "snapshot_rows": 19521906,
+ "snapshots": [
+  {
+   "sequence": 50884,
+   "marker": 1,
+   "rows": 1554038
+  },
+  {
+   "sequence": 101768,
+   "marker": 2,
+   "rows": 6132351
+  },
+  {
+   "sequence": 203536,
+   "marker": 3,
+   "rows": 3290821
+  },
+  {
+   "sequence": 305304,
+   "marker": 4,
+   "rows": 2124710
+  },
+  {
+   "sequence": 407072,
+   "marker": 5,
+   "rows": 1355336
+  },
+  {
+   "sequence": 508840,
+   "marker": 6,
+   "rows": 1015433
+  },
+  {
+   "sequence": 610608,
+   "marker": 7,
+   "rows": 1522058
+  },
+  {
+   "sequence": 712376,
+   "marker": 8,
+   "rows": 1441585
+  },
+  {
+   "sequence": 814144,
+   "marker": 9,
+   "rows": 786998
+  },
+  {
+   "sequence": 915906,
+   "marker": 10,
+   "rows": 298576
+  }
+ ]
+}

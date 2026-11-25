@@ -2,6 +2,7 @@
 
 #include "crown/ir/model.hpp"
 #include "crown/storage/tuple_values.hpp"
+#include <deque>
 #include <memory>
 #include <span>
 #include <string_view>
@@ -81,18 +82,57 @@ class Tuple {
   // Transfers native payload ownership without scalar/metadata export and
   // allocates its actual immutable shared owner under the original account.
   [[nodiscard]] static Tuple from_accounted(AccountedTuple);
+  // Compact immutable owner of a copy of `values` (keyed core results): one
+  // plain allocation for up to 8 cells with their string bytes; memory_usage()
+  // reports its exact size. The caller guarantees the values match `layout`.
+  // With `account`, the tuple reports that query account (is_accounted()) and
+  // its exact payload bytes, without a per-allocation ledger entry.
+  [[nodiscard]] static Tuple from_cells(const TupleLayout& layout, RowView values,
+      const resource::MemoryAccount* account = nullptr);
   [[nodiscard]] bool is_accounted() const noexcept;
   [[nodiscard]] resource::MemoryUsage memory_usage() const noexcept;
   [[nodiscard]] resource::MemoryStatistics account_statistics() const;
  private:
   friend class TupleLayout;
   friend class Projection;
+  friend class TuplePool;
   Tuple(TupleLayout,std::shared_ptr<const detail::TuplePayload>) noexcept;
   TupleLayout layout_;
   std::shared_ptr<const detail::TuplePayload> payload_;
 };
 template<class Values> requires std::is_same_v<std::remove_cvref_t<Values>,TupleValuesView>
 Tuple TupleLayout::tuple(Values&& values) const{return tuple_view(std::forward<Values>(values));}
+// Builds ordinary Tuples (keyed core results) whose payloads are packed into
+// pooled chunks of a few kilobytes: in steady state no allocation, no ledger
+// entry and no account copy per row. Every tuple shares its chunk's ownership,
+// so a chunk is freed (or reused by this arena) once all its tuples are gone;
+// sparse long-lived retention therefore keeps at most one chunk per tuple.
+// One thread builds; the tuples themselves may be read, copied and released
+// anywhere. With an account the tuples report it (is_accounted()), and
+// memory_usage() reports each row's exact share without an allocation count.
+class TuplePool {
+ public:
+  explicit TuplePool(const resource::MemoryAccount* account = nullptr);
+  ~TuplePool();
+  TuplePool(TuplePool&&) noexcept;
+  TuplePool& operator=(TuplePool&&) noexcept;
+  TuplePool(const TuplePool&) = delete;
+  TuplePool& operator=(const TuplePool&) = delete;
+  // A copy of `values`; the caller guarantees they match `layout`.
+  [[nodiscard]] Tuple make(const TupleLayout& layout, RowView values);
+  // The requested bytes (memory_usage()) of the tuple make() builds for `values`.
+  [[nodiscard]] static std::size_t requested_bytes(RowView values) noexcept;
+  // Drop the chunks kept for reuse (live tuples keep theirs).
+  void trim() noexcept;
+  struct Chunk;
+ private:
+  Chunk& next_chunk(std::size_t cells, std::size_t text);
+  resource::MemoryAccount account_;
+  bool accounted_ = false;
+  std::shared_ptr<Chunk> current_;
+  // Filled chunks, oldest first (rows are mostly released in creation order).
+  std::deque<std::shared_ptr<Chunk>> spare_;
+};
 class Projection {
  public:
   Projection(TupleLayout source, TupleLayout target, std::vector<FieldId> fields);

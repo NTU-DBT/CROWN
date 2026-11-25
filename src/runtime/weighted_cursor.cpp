@@ -33,6 +33,7 @@ struct WeightedRuntime::ResultCursor::Data {
   Vector<storage::ScalarView> row;
   std::size_t position=0;
   bool answer=false, resume=false, leased=false;
+  std::unique_ptr<keyed::SetEngine::Cursor> keyed;  // the keyed core's weighted reader
 
   Data(std::shared_ptr<Impl> runtime, CursorOptions opts)
       :owner(std::move(runtime)),lease(detail::storage_lease(owner->context)),
@@ -51,6 +52,7 @@ struct WeightedRuntime::ResultCursor::Data {
       frames.emplace_back();
     }
     row.reserve(program.result_layout().fields().size());
+    if (owner->keyed) keyed=owner->keyed->open_cursor(false);
     metrics.startup_work=metrics.work;
     sample_grant();
   }
@@ -79,7 +81,7 @@ struct WeightedRuntime::ResultCursor::Data {
     if (status!=CursorState::active) return;
     sample_grant();
     for (const auto& frame:frames) if (frame.cursor) ++metrics.cleanup_frames;
-    frames.clear();row.clear();
+    frames.clear();row.clear();keyed.reset();
     if (leased) {
       if (!owner || !owner->readers) std::terminate();
       --owner->readers;leased=false;
@@ -137,6 +139,14 @@ struct WeightedRuntime::ResultCursor::Data {
   std::optional<Result> advance() {
     metric(metrics.calls);
     if (!answer) return {};
+    if (keyed) {
+      const auto values=keyed->next();
+      if (!values) return {};
+      metric(metrics.output_fields,static_cast<std::uint64_t>(values->size()));
+      auto native=program.result_layout().tuple(*values,{resource::MemoryOwnerKind::output,0});
+      metric(metrics.rows_emitted);
+      return Result{storage::Tuple::from_accounted(std::move(native)),{keyed->weight()}};
+    }
     if (program.route()!=PhysicalRoute::tree) {
       if (resume) return {};
       resume=true;return emit({1});

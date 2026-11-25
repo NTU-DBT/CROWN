@@ -1,0 +1,267 @@
+Native C++ F-IVM and CROWN on filtered 3-Hop
+2026-11-23
+
+Workload
+--------
+CROWN lists several queries in experiments/experiment.md. This run uses the
+first, Line-3 with the filter, and the length3_filter binding from
+experiments/specs/full_join_queries.spec. The cutoff is strictly greater than
+32684. Each physical graph edit goes to G1 and G2, then to G3 when the
+destination passes the cutoff.
+
+  SELECT g1.src, g1.dst, g3.src, g3.dst
+  FROM graph g1
+  JOIN graph g2 ON g1.dst = g2.src
+  JOIN graph g3 ON g2.dst = g3.src
+  WHERE g3.dst > 32684
+
+The campaign uses the archived Epinions 20% window with 1,017,674 physical
+edits, 2,137,114 routed relation edits and 10 snapshot markers. The derived
+bounded replay uses the first 25,000 Epinions inserts, a 4,096-edge sliding
+window, snapshots every 2,048 inserts and after insert 25,000, then drains the
+window. It has 50,000 physical edits, 100,264 relation edits and 13 markers.
+
+Implementations
+---------------
+CROWN is the local C++23 paper replay executable with CROWN_ENGINE=flat and
+one thread. The CROWN Git base was f38c2b0255cff37133cb43fcfee3bda518330378.
+The build used the current worktree's native sources and build/release libraries.
+The base commit alone does not identify that native build.
+
+F-IVM upstream was cloned from https://github.com/fdbresearch/FIVM at
+e55304d97ae06e1ee4aea3dd7b8d4c422d361667. The numeric plan uses upstream
+generated triggers and a stock SUM(1) grouped by all four output variables,
+which materializes the complete result. The factorized plan maintains a
+variable order rooted at B, with branches A and C and D below C. Its timed
+variant uses signed-factorized.patch on an isolated copy of the upstream ring.
+The patch propagates signed totals from dropped factors and erases zero-weight
+entries. It was exercised with one signed tuple per trigger call.
+
+The upstream Scala compiler generated the C++ headers during initial setup.
+All measured executables and all correctness replays used C++ only. The saved
+headers allow rebuilds with g++ and the upstream C++ headers, without Scala
+or Java. The upstream checkout is clean.
+
+Correctness
+-----------
+A SQLite recomputation compared every row in 171 fixture frames, including the
+final frame, with 7,120 rows total. CROWN, stock numeric F-IVM and signed
+factorized F-IVM all matched. The stock factorized payload first diverged at
+edit 10, when the middle edge (2,3) was deleted. It still emitted
+(1,2,3,40000) and (4,2,3,40000) when the query result was empty. It was omitted
+from timing.
+
+Every campaign snapshot count matched the existing independent Epinions
+cardinality oracle, totaling 19,521,906 rows across the ten markers. Each
+bounded snapshot count matched the degree-based oracle, totaling 11,672 rows
+across the thirteen markers. Row-by-row validation used the separate fixture.
+Campaign validation checked the cardinality at every marker.
+
+Results
+-------
+Median of three measured processes per row, after one warmup. Both engines
+ran serially on logical CPU 37 on an Intel Xeon Platinum 8259CL (Linux
+7.0.0-38-generic, GCC 13.3.0, -O3 -DNDEBUG). Snapshot runs visit every output
+row and count it without serializing it. The loop includes parsing, routing,
+maintenance and optional snapshots. GNU time measures total process wall time
+and peak resident memory. The shared host also ran an exploratory numeric
+process pinned to CPU 12 on the other NUMA node.
+
+  Workload  Output       Implementation       Loop (s)  Wall (s)  RSS (KiB)
+  campaign  none         CROWN flat              0.725      0.73     36,660
+  campaign  none         F-IVM signed            1.526      1.54     39,996
+  campaign  snapshots    CROWN flat              1.078      1.08     36,716
+  campaign  snapshots    F-IVM signed            1.598      1.61     39,996
+  bounded   none         CROWN flat              0.030      0.03      9,556
+  bounded   none         F-IVM stock numeric     0.023      0.02      4,752
+  bounded   none         F-IVM signed            0.027      0.02      4,748
+  bounded   snapshots    CROWN flat              0.030      0.03      8,948
+  bounded   snapshots    F-IVM stock numeric     0.023      0.02      4,752
+  bounded   snapshots    F-IVM signed            0.027      0.02      4,752
+
+The separate stock numeric campaign attempt with snapshots was stopped at
+300.63 seconds using the 300-second budget. The input reader had reached
+1,105,785 of 12,343,516 bytes (at most 103,054 complete edits with read-ahead).
+Peak RSS was 586,148 KiB. The process emitted no completed campaign report,
+so it has no campaign timing sample.
+
+Evidence and rerun
+------------------
+results.csv contains all 30 measured samples. The workspace retains the
+checkout, input paths, build logs, commands, fixture captures,
+oracle receipts, warmups and binary SHA-256 fingerprints under
+build/experiments/fivm-crown/. The complete campaign and bounded evidence
+are in replay-v1/ and replay-bounded-v1/. The numeric preflight receipt is
+native/numeric/preflight-receipt.json. Timed CROWN executable SHA-256:
+1c69435399238c9a8de31f3872764a5c00abf60725d40f51ab58de2277c06e74.
+
+From the CROWN root with its archived paper campaign present, use fresh output
+directories and a permitted CPU. The build script restores missing headers
+from generated-cpp.tar.gz. The archive contains the two generated C++ trigger
+headers at probe/*.hpp. Archive SHA-256:
+70bb3318f7560cefa83daea01c92d665ec53d20a81d1841aea7964e4f853cb5a.
+
+  work=build/experiments/fivm-crown
+  bash benchmarks/fivm_replay/build-native.sh "$work"
+  python3 benchmarks/fivm_replay/experiment.py --work "$work" \
+    --crown "$work/paper_native_routed" --out "$work/fresh-campaign" \
+    --cpu 37 --engines crown signed
+  python3 benchmarks/fivm_replay/experiment.py --work "$work" \
+    --crown "$work/paper_native_routed" --out "$work/fresh-bounded" \
+    --cpu 37 --bounded
+
+To rebuild the CROWN comparator, build the paper replay harness against the
+native CROWN libraries using benchmarks/paper_replay/build.sh and pass the
+resulting paper_native_routed to --crown. Source changes can change the binary
+and measurements.
+
+
+Paper query set for the F-IVM baseline
+2026-11-23
+======================================
+
+This section extends the length3_filter harness above to eight CROWN paper
+queries, each with its own per-query F-IVM plan, and adds a runner for the
+experiment scheduler. Routing, filters, SQL heads and inputs come from the
+bindings of the runtime-<Q>-full-reference_ordered_v1 groups in
+native-campaign-v8/run-manifest-v8.json. The SNB queries are not included.
+
+Files (benchmarks/fivm_replay/)
+-------------------------------
+  queries/<q>.sql, <q>.order  F-IVM input: variable order and lifted variables
+  plans/<q>.cpp              routing of one physical edit to the relation triggers,
+                             and enumeration of the maintained result
+  plans/dumbbell_common.hpp  dumbbell routing shared by both dumbbell heads
+  replay_common.hpp          shared replay loop: parse, route, mark, report JSON
+  build-queries.sh WORK [--codegen] [Q...]   builds WORK/bin/<q>
+  generated-queries.tar.gz   the eight generated trigger headers, so a rebuild
+                             needs only g++ (sha256 b360ee37...a6b016)
+  mmap-erase.patch           F-IVM runtime performance fix (see below)
+  run_case.py                runs one process and writes DIR/result.json
+  check_rows.py              row-by-row SQLite check on small fixtures
+  oracle/<Q>.json            CROWN per-marker counts copied from the G1 runs
+The work directory build/experiments/fivm-crown/ holds the generated headers
+and .m3 files in queries/, the binaries in bin/, the validation runs in
+validation-runs-v2/, the row checks in row-checks/, and the stock-runtime
+builds in bin-stock-mmap/.
+
+Replay semantics are unchanged from the harness above. Each relation update is
+one batch-trigger call on a reusable 1-row DataChunk with payload +1 or -1. At
+each "*", mode full visits every row of the maintained result and counts it
+without serializing it. Mode none only maintains the views. F-IVM has no
+per-update delta output, so "none" is the maintenance-only measurement used
+for the delta cases. The final result is enumerated after the timed loop and
+must be empty. The query object is never destroyed, so wall time has no view
+teardown. With an optional third argument, the binary writes the rows as CSV
+for row checks.
+
+Plans and variable orders
+-------------------------
+Every factorized plan uses the signed ring (signed-factorized.patch). Only head
+variables are lifted. The other variables are summed into counts.
+DISTINCT/projection rows are the distinct head tuples with positive weight.
+  Query            Plan     Order (root first)           Lifted       Routing (edge = src,dst)
+  length3_filter   signed   B -> {A, C -> D}             A,B,C,D      g1,g2 all; g3 iff dst>32684
+  length3_project  signed   B -> {C -> D, A}             B,C          g1,g2 all; g3 iff dst>-1
+  length4_filter   signed   C -> {B -> A, D -> E}        A..E         g1..g3 all; g4 iff dst>32684
+  length4_project  signed   C -> {B -> A, D -> E}        B,C,D        g1..g3 all; g4 iff dst>-1
+  star_cnt         numeric  A -> {B, C, D, E}            SUM(1) GROUP BY A; rows = groups with count != 0
+                                                                      g1..g4 all (g_i(a,x))
+  TwoComb          signed   B -> {A, C -> D}             A,B,C,D      tagged: G -> g1,g2,g3; V1 -> v1(a); V2 -> v2(d)
+  dumbbell_full    signed   C -> {A -> B, D -> E -> FF}  all six      m all; lbc,lca,rde,rfd,lab,ref iff src>32684 and dst>32684
+  dumbbell         signed   C -> {D -> E -> FF, A -> B}  C,D          m all; the six triangle aliases iff src>0 and dst>0
+Columns are positional (src,dst): m(c,d) lbc(b,c) lca(c,a) rde(d,e)
+rfd(f,d) lab(a,b) ref(e,f). Updates are applied in CROWN's alias order. The
+dumbbell variable F is named FF because the generated CSV constructor has a
+parameter named f. The dumbbell queries are cyclic. Each order puts every
+relation on a root-to-leaf path, so F-IVM materializes the 2-path views
+V_B(c,a) and V_FF(d,e). The length3_filter plan matches the earlier probe,
+and its regenerated header is byte-identical to probe/generated.hpp.
+
+Runtime fix (mmap-erase.patch)
+------------------------------
+Upstream MultiHashMap::insert appends every new entry to buffered_inserts,
+which is meant to feed the secondary indexes at the next slice(). erase() then
+searches this vector linearly ("inefficient but OK"). When a map is never
+sliced, the vector holds every insert the map has ever had, so each delete
+costs time linear in all past inserts. With the stock runtime, dumbbell ran
+482 CPU s and reached only line ~108.6k of 1,017,684. Deletions begin at line
+101,771. That run was stopped. The patch, applied to a private copy of
+dbtoaster/mmap.hpp, has two parts. Maps without secondary indexes never buffer.
+erase() first flushes the buffer into the secondary indexes, as slice() does,
+and then erases. The contents of every index after each operation are
+unchanged. All eight binaries use the patch. STOCK_MMAP=1 builds without it.
+The length3_filter numbers in the section above used the stock runtime.
+Stock vs patched, one concurrent run each in mode none, wall seconds:
+length3_filter 1.70/1.29, length3_project 6.13/5.34, length4_filter
+10.29/9.14, length4_project 14.12/13.26, star_cnt 1.68/0.32, TwoComb 5.09/4.44,
+dumbbell_full 5.61/0.56, dumbbell >482 (stopped)/77.4. Every stock run that
+finished matched the oracle counts.
+
+Validation
+----------
+Full input: every full run matched CROWN at every one of the 10 markers. Each
+run also matched physical_inputs and relation_updates (for example dumbbell
+7,114,418, dumbbell_full 1,241,738, TwoComb 1,242,274 inputs and 3,277,622
+updates) and ended with final_rows = 0. Each none run matched the input and
+update counts. Snapshot totals: length3_filter 19,521,906;
+length3_project 272,592; length4_filter 962,645,330; length4_project
+11,001,937; star_cnt 89,165 groups; TwoComb 42,181,362; dumbbell_full
+1,850,490; dumbbell 214,300. The oracle is the CROWN keyed_v1 G1 runs.
+
+Row by row (check_rows.py): SQLite evaluates the binding's own program.sql
+over relations that the checker routes from the binding's graph_aliases or
+tag_routes. It does not use the C++ routing. Every captured frame, at each
+marker and at the end, must equal the SQLite result as a multiset.
+- Synthetic fixtures (seeds 1-3): about 440 edits, about half of them deletes,
+  a marker every 25 edits, then a full drain. Nodes
+  {0..5, 32684..32686, 40000, 40001} straddle both cutoffs and allow
+  self-loops.
+- Real fixtures: 2,000 consecutive campaign inserts from offsets 0 and 300,000,
+  replayed as a 400-edge sliding window and drained.
+- Denser real fixtures: TwoComb 20,000 inserts with an 8,000 window;
+  dumbbell_full 15,000 inserts with an 8,000 window from offsets 470,000 and
+  490,000 (77,408 and 83,534 rows compared); dumbbell 6,000 inserts with a
+  3,000 window.
+For star_cnt's real fixtures only, SQLite uses an equivalent degree-product
+SQL; the literal join has deg^4 rows per group. All fixtures of all eight
+queries matched. Rows compared per synthetic seed range from 170
+(dumbbell_full) to 16,618 (length4_filter). Negative control: the old
+stock-ring binary (native/factorized/replay) fails 4 of 5 length3_filter
+fixtures. It has extra rows after deletions.
+
+Indicative timings
+------------------
+One run per mode. Each process ran on its own CPU in 20-23, with up to four
+running concurrently and other experiments on the host. These numbers are not
+the timed campaign. Columns are wall s, loop s, output s, maxrss KiB.
+  length3_filter   none  1.29  1.275  -      39,636 | full  1.35  1.343 0.088  39,876
+  length3_project  none  5.34  5.335  -      31,604 | full  5.34  5.341 0.017  31,072
+  length4_filter   none  9.14  9.139  -      64,948 | full 11.84 11.836 2.618  64,912
+  length4_project  none 13.26 13.248  -      56,012 | full 13.38 13.367 0.060  56,004
+  star_cnt         none  0.32  0.324  -      18,576 | full  0.33  0.330 0.000  18,576
+  TwoComb          none  4.44  4.429  -      62,532 | full  4.57  4.560 0.163  62,540
+  dumbbell_full    none  0.56  0.555  -      45,680 | full  0.55  0.547 0.008  45,672
+  dumbbell         none 77.45 77.404  -     555,988 | full 68.95 68.907 0.011 555,932
+
+Rerun
+-----
+GCC 13.3.0, -std=c++23 -O3 -DNDEBUG, F-IVM e55304d. The binaries rebuild
+byte-identically from the archive. SHA-256 prefixes: length3_filter
+8b017005d0de4cc2, length3_project 7b6504f541765ea9, length4_filter
+c76d9594da952990, length4_project 469cba98088e0d4c, star_cnt
+37d9208d95e80639, twocomb f3273bc16367189d, dumbbell_full 91d494f2ea92652c,
+dumbbell 5ec514d1bb2cf11c. From the CROWN root, pinned by the caller:
+  work=build/experiments/fivm-crown
+  taskset -c 20-23 bash benchmarks/fivm_replay/build-queries.sh "$work"
+  taskset -c 20 python3 benchmarks/fivm_replay/run_case.py --query length4_filter \
+    --mode full --out "$work/runs/length4_filter-full" [--timeout 7200]
+  taskset -c 20 python3 benchmarks/fivm_replay/check_rows.py --query dumbbell \
+    --out "$work/row-checks/dumbbell"
+run_case.py --query takes length3_filter, length3_project, length4_filter,
+length4_project, star_cnt, TwoComb, dumbbell_full or dumbbell. It never pins
+CPUs. On timeout it kills the process group and sets timed_out. result.json
+has query, mode, plan, wall_s, loop_s, output_s, user_s, sys_s, maxrss_kib
+(from /usr/bin/time), physical_inputs, relation_updates, snapshot_rows,
+snapshots, final_rows, exit_status, timed_out, validation{matched,problems}
+and ok.

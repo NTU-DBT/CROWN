@@ -59,6 +59,11 @@ using SqlNormalizeResult = std::variant<NormalizedSql, BindingDiagnostic>;
 // Plain row-producing bags are explicitly rejected.
 [[nodiscard]] SqlNormalizeResult normalize_sql(const BoundSql& binding, const NormalizeOptions& options = {});
 [[nodiscard]] std::optional<Row> adapt_row(const NormalizedSql& query, OccurrenceId occurrence, const Row& physical);
+// adapt_row into caller storage: `result` receives the core row (false when the
+// occurrence filters the row out); `scratch` holds the expression slots. Both
+// keep their capacity across calls, so a replay loop allocates nothing.
+[[nodiscard]] bool adapt_row_into(const NormalizedSql& query, OccurrenceId occurrence, const Row& physical,
+    Row& result, std::vector<std::optional<Value>>& scratch);
 // Preserve ordered/repeated/constant outputs and the scalar EXISTS wrapper.
 [[nodiscard]] Relation map_sql_result(const NormalizedSql& query, const Relation& core_result);
 }  // namespace crown::frontend

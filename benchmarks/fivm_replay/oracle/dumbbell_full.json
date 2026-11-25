@@ -1,0 +1,63 @@
+{
+ "query": "dumbbell_full",
+ "source": "/tmp/claude-1000/-home-userroot-Codex-CROWN/ec685d80-d57a-440f-9bb0-717b126b9b7b/scratchpad/bench/runs-G1/runtime-dumbbell_full-full/stdout",
+ "source_sha256": "17fc3cff8955b1d3e12b4f725bc890c75f15e5eee4624de050dbb9a64e515eea",
+ "engine": "keyed_v1",
+ "implementation": "native_serial_explicit_cyclic_fallback",
+ "physical_inputs": 1017674,
+ "relation_updates": 1241738,
+ "enumeration_markers": 10,
+ "snapshot_rows": 1850490,
+ "snapshots": [
+  {
+   "sequence": 50884,
+   "marker": 1,
+   "rows": 0
+  },
+  {
+   "sequence": 101768,
+   "marker": 2,
+   "rows": 0
+  },
+  {
+   "sequence": 203536,
+   "marker": 3,
+   "rows": 0
+  },
+  {
+   "sequence": 305304,
+   "marker": 4,
+   "rows": 0
+  },
+  {
+   "sequence": 407072,
+   "marker": 5,
+   "rows": 0
+  },
+  {
+   "sequence": 508840,
+   "marker": 6,
+   "rows": 0
+  },
+  {
+   "sequence": 610608,
+   "marker": 7,
+   "rows": 5
+  },
+  {
+   "sequence": 712376,
+   "marker": 8,
+   "rows": 5
+  },
+  {
+   "sequence": 814144,
+   "marker": 9,
+   "rows": 49640
+  },
+  {
+   "sequence": 915906,
+   "marker": 10,
+   "rows": 1800840
+  }
+ ]
+}

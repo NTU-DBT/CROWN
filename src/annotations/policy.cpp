@@ -154,8 +154,10 @@ Multiplicity MultiplicityPolicy::add(Multiplicity a, Multiplicity b) const {
 }
 Multiplicity MultiplicityPolicy::multiply(Multiplicity a, Multiplicity b) const {
   validate(a); validate(b);
-  if (b.value != 0 && a.value > limit_ / b.value) overflow();
-  return {a.value * b.value};
+  // a*b > limit, without a division: the exact product or a wrap.
+  std::uint64_t product;
+  if (__builtin_mul_overflow(a.value, b.value, &product) || product > limit_) overflow();
+  return {product};
 }
 Multiplicity MultiplicityPolicy::remove(Multiplicity total, Multiplicity old) const {
   validate(total); validate(old);

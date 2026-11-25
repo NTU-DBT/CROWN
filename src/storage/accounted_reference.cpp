@@ -18,8 +18,9 @@ using resource::MemoryFault;
 using resource::MemoryOwnerKind;
 using resource::MemoryPurpose;
 constexpr auto maximum = std::numeric_limits<std::uint64_t>::max();
-void require(bool value, TableProblem issue = TableProblem::invariant) {
-  if (!value) throw TableValidationFailure(issue);
+[[noreturn, gnu::cold, gnu::noinline]] void fail(TableProblem issue) { throw TableValidationFailure(issue); }
+inline void require(bool value, TableProblem issue = TableProblem::invariant) {
+  if (!value) [[unlikely]] fail(issue);
 }
 StorageOwnerId new_owner() {
   const auto id = detail::try_new_storage_owner();
@@ -77,7 +78,10 @@ struct AccountedReferenceTable::State {
   using Primary = std::map<const AccountedTuple*, TupleId, TupleLess, MemoryAllocator<PrimaryValue>>;
   struct Record { Primary::const_iterator primary;ArenaHandle arena; };
   using ById = std::map<TupleId, Record, std::less<TupleId>, MemoryAllocator<std::pair<const TupleId, Record>>>;
-  using Members = std::set<TupleId, std::less<TupleId>, MemoryAllocator<TupleId>>;
+  // Each membership also records the stable arena tuple (the same address the
+  // primary key binds), so bucket traversal needs no per-row by_id lookup.
+  using MemberValue = std::pair<const TupleId, const AccountedTuple*>;
+  using Members = std::map<TupleId, const AccountedTuple*, std::less<TupleId>, MemoryAllocator<MemberValue>>;
   using Buckets = std::map<AccountedTuple, Members, TupleLess, MemoryAllocator<std::pair<const AccountedTuple, Members>>>;
   struct Index {
     AccountedProjection projection;
@@ -139,8 +143,8 @@ struct AccountedReferenceTable::State {
     for (auto& [index_id, index] : indices) {
       static_cast<void>(index_id);auto key = index.projection.apply(tuple, tag);
       auto bucket = index.buckets.find(key);
-      Members members(std::less<TupleId>{}, MemoryAllocator<TupleId>(account, MemoryPurpose::secondary_node, tag));
-      auto member = prepare_node(members, id);
+      Members members(std::less<TupleId>{}, MemoryAllocator<MemberValue>(account, MemoryPurpose::secondary_node, tag));
+      auto member = prepare_node(members, id, nullptr);
       if (bucket == index.buckets.end()) {
         publish_node(members, std::move(member));
         auto bucket_node = prepare_node(index.buckets, std::move(key), std::move(members));
@@ -150,12 +154,18 @@ struct AccountedReferenceTable::State {
     // The arena is the last throwing preparation. All map nodes are owned and
     // detached already. Publication below changes only links and counters.
     const auto allocated = arena.insert(tuple);
-    row_node.key() = &arena.get(allocated);
+    const auto* stored = &arena.get(allocated);
+    row_node.key() = stored;
     const auto row = publish_node(primary, std::move(row_node));
     id_node.mapped() = Record{row, allocated};publish_node(by_id, std::move(id_node));
     for (auto& item : prepared) {
-      if (item.bucket) publish_node(item.index->buckets, std::move(item.bucket));
-      else publish_node(item.existing->second, std::move(item.member));
+      if (item.bucket) {
+        item.bucket.mapped().begin()->second = stored;
+        publish_node(item.index->buckets, std::move(item.bucket));
+      } else {
+        item.member.mapped() = stored;
+        publish_node(item.existing->second, std::move(item.member));
+      }
     }
     last_tuple = id.value;++revision;return {true, handle(id)};
   }
@@ -237,7 +247,7 @@ struct AccountedReferenceTable::Journal::Data {
         bucket = publish_node(key.index->buckets, std::move(key.bucket));
       } else bucket = key.index->buckets.find(key.key);
       if (bucket == key.index->buckets.end() || !key.member) std::terminate();
-      s.lifetime(key.member.value(), MemoryPurpose::secondary_node, AllocationLifetime::active);
+      s.lifetime(key.member.key(), MemoryPurpose::secondary_node, AllocationLifetime::active);
       publish_node(bucket->second, std::move(key.member));
     }
   }
@@ -356,7 +366,7 @@ bool AccountedReferenceTable::Journal::erase(TupleHandle handle) {
     const auto bucket = key.index->buckets.find(key.key);
     if (bucket == key.index->buckets.end()) std::terminate();
     key.member = bucket->second.extract(handle.tuple);if (!key.member) std::terminate();
-    s.lifetime(key.member.value(), MemoryPurpose::secondary_node, AllocationLifetime::retained);
+    s.lifetime(key.member.key(), MemoryPurpose::secondary_node, AllocationLifetime::retained);
     if (bucket->second.empty()) {
       key.bucket = key.index->buckets.extract(bucket);
       s.lifetime(key.bucket.key(), MemoryPurpose::secondary_node, AllocationLifetime::retained);
@@ -385,9 +395,9 @@ IndexId AccountedReferenceTable::add_index(AccountedProjection projection) {
   for (const auto& [tuple, id] : s.primary) {
     auto key = index.projection.apply(*tuple, s.tag);auto found = index.buckets.find(key);
     if (found == index.buckets.end()) {
-      State::Members members(std::less<TupleId>{}, MemoryAllocator<TupleId>(s.account, MemoryPurpose::secondary_node, s.tag));
-      members.insert(id);index.buckets.emplace(std::move(key), std::move(members));
-    } else found->second.insert(id);
+      State::Members members(std::less<TupleId>{}, MemoryAllocator<State::MemberValue>(s.account, MemoryPurpose::secondary_node, s.tag));
+      members.emplace(id, tuple);index.buckets.emplace(std::move(key), std::move(members));
+    } else found->second.emplace(id, tuple);
   }
   const IndexId id{s.last_index + 1};s.indices.emplace(id, std::move(index));s.last_index = id.value;++s.revision;return id;
 }
@@ -410,7 +420,7 @@ AccountedVector<AccountedTuple> AccountedReferenceTable::keys(IndexId id) const 
 AccountedVector<TupleHandle> AccountedReferenceTable::bucket(IndexId id, const AccountedTuple& key) const {
   auto& s = state();auto& index = s.index(id);s.key(index, key);auto result = s.output<TupleHandle>();
   const auto found = index.buckets.find(key);if (found != index.buckets.end()) {
-    reserve(result, found->second.size());for (const auto tuple : found->second) result.push_back(s.handle(tuple));
+    reserve(result, found->second.size());for (const auto& member : found->second) result.push_back(s.handle(member.first));
   }return result;
 }
 std::size_t AccountedReferenceTable::erase_key(IndexId id, const AccountedTuple& key) {
@@ -447,7 +457,7 @@ std::optional<TupleHandle> AccountedReferenceTable::Cursor::next() {
   require(bool(data_), TableProblem::invalid_cursor);const auto s = data_->valid();if (data_->empty) return {};
   if (data_->bucket_mode) {
     if (data_->member == data_->member_end) return {};
-    return s->handle(*data_->member++);
+    return s->handle((data_->member++)->first);
   }
   if (data_->primary == data_->primary_end) return {};
   return s->handle((data_->primary++)->second);
@@ -456,8 +466,8 @@ std::optional<AccountedReferenceTable::Cursor::Entry> AccountedReferenceTable::C
   require(bool(data_), TableProblem::invalid_cursor);const auto s = data_->valid();if (data_->empty) return {};
   if (data_->bucket_mode) {
     if (data_->member == data_->member_end) return {};
-    const auto id = s->by_id.find(*data_->member++);require(id != s->by_id.end());
-    return Entry{s->handle(id->first), s->arena.get(id->second.arena)};
+    const auto member = data_->member++;
+    return Entry{s->handle(member->first), *member->second};
   }
   if (data_->primary == data_->primary_end) return {};
   const auto entry = data_->primary++;return Entry{s->handle(entry->second), *entry->first};
@@ -530,8 +540,9 @@ void AccountedReferenceTable::check_invariants() const {
     require(id.value > 0 && id.value <= s.last_index && index.projection.source().same_token(s.layout));std::size_t count = 0;
     for (const auto& [key, members] : index.buckets) {
       require(index.projection.target().same_token(key.layout()) && !members.empty());
-      for (const auto member : members) {
+      for (const auto& [member, stored] : members) {
         const auto row = s.by_id.find(member);require(row != s.by_id.end() && matches(index.projection, *row->second.primary->first, key));
+        require(stored == row->second.primary->first && stored == &s.arena.get(row->second.arena));
         require(count < s.primary.size());++count;
       }
     }

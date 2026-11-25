@@ -1,0 +1,8 @@
+4 3
+0 B int -1 {} 0
+1 A int 0 {0} 0
+2 C int 0 {0} 0
+3 D int 2 {2} 0
+G1 1 A,B
+G2 2 B,C
+G3 3 C,D

@@ -46,8 +46,12 @@ template<class T> void source_image_slots(storage::IndexWorkAllowance* work,std:
   if(count>UINT64_MAX/words)throw storage::IndexFailure(storage::IndexFault::overflow);
   work->admit(storage::IndexWork{.pointer_slots=static_cast<std::uint64_t>(count)*words});
 }
-void require(bool condition,std::string_view code,std::string_view message) {
-  if (!condition) throw Error(std::string(code),std::string(message));
+// The check is inlined on hot paths; only failure leaves the caller.
+[[noreturn, gnu::cold, gnu::noinline]] void fail(std::string_view code,std::string_view message) {
+  throw Error(std::string(code),std::string(message));
+}
+inline void require(bool condition,std::string_view code,std::string_view message) {
+  if (!condition) [[unlikely]] fail(code,message);
 }
 void add_size(std::size_t& target,std::size_t amount) {
   require(amount<=std::numeric_limits<std::size_t>::max()-target,"storage_overflow","physical storage statistics exhausted");

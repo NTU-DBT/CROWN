@@ -1,5 +1,6 @@
 #include "crown/runtime/sql_rows.hpp"
 #include "sql_cold_rebuild.hpp"
+#include "sql_tuple_table.hpp"
 #include "../planner/compiled_source.hpp"
 #include "../frontend/sql_rows_eval.hpp"
 #include "crown/api/error.hpp"
@@ -16,28 +17,22 @@ template<class T> auto allocator(const resource::MemoryAccount& account,
     resource::MemoryPurpose purpose) { return resource::MemoryAllocator<T>(account, purpose); }
 [[noreturn]] void fail(const char* code, const char* message) { throw Error(code, message); }
 
-// Immutable nullable keys support borrowed probes. NULL sorts first; all
-// present alternatives use the same exact scalar order as the native core.
-struct Less {
-  using is_transparent = void;
-  static bool compare(std::span<const Cell> a, std::span<const Cell> b) noexcept {
-    return std::lexicographical_compare(a.begin(), a.end(), b.begin(), b.end());
-  }
-  bool operator()(const Tuple& a, const Tuple& b) const noexcept { return compare(a.view(), b.view()); }
-  bool operator()(const Tuple& a, std::span<const Cell> b) const noexcept { return compare(a.view(), b); }
-  bool operator()(std::span<const Cell> a, const Tuple& b) const noexcept { return compare(a, b.view()); }
-};
-using Counts = std::map<Tuple, std::uint64_t, Less,
-    resource::MemoryAllocator<std::pair<const Tuple, std::uint64_t>>>;
-
-// A detached node uses the receiving map's allocator. Insertion after native
-// commit therefore allocates nothing; the comparator is nonthrowing.
-Counts::node_type node_for(Counts& target, Tuple key, std::uint64_t value) {
-  Counts prepared(target.key_comp(), target.get_allocator());
-  return prepared.extract(prepared.emplace(std::move(key), value).first);
-}
+// Immutable nullable keys support borrowed probes (sql_tuple_table.hpp):
+// equality is equivalence in the exact scalar order of the native core (NULL
+// first). Capacity for every insert is reserved while preparing, so
+// publication after native commit allocates nothing.
+using Counts = sql_detail::TupleTable<std::uint64_t>;
+constexpr auto absent = Counts::npos;
 std::uint64_t count(const Counts& values, std::span<const Cell> key) {
-  const auto found = values.find(key); return found == values.end() ? 0 : found->second;
+  const auto found = values.find(key); return found == absent ? 0 : values.at(found).value;
+}
+// Publish one prepared counter change; the key was present at preparation
+// iff `present`. Nonthrowing: an insert has reserved capacity.
+void publish_count(Counts& target, Tuple key, std::uint64_t hash, bool present, std::uint64_t after) noexcept {
+  if (!present) { if (after) target.insert(std::move(key), after, hash); return; }
+  const auto position = target.find(key.view(), hash);
+  if (!after) target.erase(position);
+  else target.at(position).value = after;
 }
 std::uint64_t replace_count(std::uint64_t current, std::uint64_t before, std::uint64_t after) {
   if (before > current) fail("sql_rows_contract", "source contribution exceeds its key counter");
@@ -57,12 +52,24 @@ PhysicalPlan lower(const frontend::SqlRowsProgram& program, const FreeConnexTree
 }
 }  // namespace
 
+namespace {
+// Touched source rows (domain = source table) and key counters (domain =
+// constraint) of one prepared batch, each item owning its key.
+struct Proposal {
+  Counts* target;
+  bool present;  // committed at preparation
+  std::uint64_t before,after;
+};
+using Touched=sql_detail::TouchedSet<Proposal>;
+}  // namespace
+
 struct SqlRowsRuntime::Data {
   struct Edit {
     Counts* target;
-    Counts::iterator position;
+    Tuple key;  // the committed key, or a reserved new copy
+    std::uint64_t hash;
+    bool present;
     std::uint64_t after;
-    Counts::node_type inserted;
   };
   resource::MemoryAccount account;
   frontend::SqlRowsProgram program;
@@ -74,6 +81,18 @@ struct SqlRowsRuntime::Data {
   Items<storage::ScalarView> projected;
   Items<Edit> edits;
   std::size_t key_used = 0, other_used = 0, projected_used = 0;
+  // Touched sets of the previous batch (empty, capacity kept) for the next.
+  std::optional<Touched> spare_rows, spare_keys;
+  // The open fused batch's touched source rows (prepare_fused..commit_fused).
+  std::optional<Touched> fused;
+  Touched take(std::optional<Touched>& spare) {
+    if (!spare) return Touched(account);
+    auto value = std::move(*spare); spare.reset(); return value;
+  }
+  static void give(std::optional<Touched>& spare, Touched& value) noexcept {
+    value.clear();
+    if (!spare) spare.emplace(std::move(value));
+  }
 
   Data(const resource::MemoryAccount& owner, frontend::SqlRowsProgram source,
       const FreeConnexTree& tree, const PhysicalOptions& physical, Options requested)
@@ -104,11 +123,11 @@ struct SqlRowsRuntime::Data {
     sources.reserve(program.sources().size()); keys.reserve(program.constraints().size());
     std::size_t width = 0, maximum_edits = 0;
     for (const auto& table : program.sources()) {
-      sources.emplace_back(Less{}, allocator<Counts::value_type>(owner, resource::MemoryPurpose::source_counts));
+      sources.emplace_back(owner, resource::MemoryPurpose::source_counts);
       maximum_edits = std::max(maximum_edits, table.constraints.size());
     }
     for (const auto& constraint : program.constraints()) {
-      keys.emplace_back(Less{}, allocator<Counts::value_type>(owner, resource::MemoryPurpose::support_metadata));
+      keys.emplace_back(owner, resource::MemoryPurpose::support_metadata);
       width = std::max(width, constraint.columns.size());
     }
     key.resize(width); other.resize(width); edits.reserve(maximum_edits);
@@ -178,11 +197,13 @@ struct SqlRowsRuntime::Data {
       frontend::rows_detail::step(&work); const auto& constraint = program.constraints()[index];
       const auto selected = project_key(constraint, update.values, key, key_used, work);
       if (!selected) continue;
-      auto& target = keys[index]; const auto found = target.find(*selected);
+      auto& target = keys[index]; const auto hash = sql_detail::hash_cells(*selected);
+      const auto found = target.find(*selected, hash);
+      const auto current = found == absent ? 0 : target.at(found).value;
       frontend::rows_detail::step(&work);
       const auto before = constraint.parent ? std::uint64_t(update.before != 0) : update.before;
       const auto after = constraint.parent ? std::uint64_t(update.after != 0) : update.after;
-      const auto next = replace_count(found == target.end() ? 0 : found->second, before, after);
+      const auto next = replace_count(current, before, after);
       if (constraint.parent) {
         if (update.after && !proposed_count(*constraint.parent, *selected, update, work))
           fail("foreign_key_violation", "SQL source foreign key has no live parent");
@@ -192,11 +213,11 @@ struct SqlRowsRuntime::Data {
           if (proposed_count(reference, *selected, update, work))
             fail("foreign_key_violation", "SQL source parent key is still referenced");
       }
-      if (next == (found == target.end() ? 0 : found->second)) continue;
-      Counts::node_type inserted;
-      if (found == target.end() && next)
-        inserted = node_for(target, Tuple::copy_of(account, *selected), next);
-      edits.push_back({&target, found, next, std::move(inserted)});
+      if (next == current) continue;
+      Tuple owned;
+      if (found != absent) owned = target.at(found).key;
+      else if (next) { owned = Tuple::copy_of(account, *selected); target.reserve(1); }
+      edits.push_back({&target, std::move(owned), hash, found != absent, next});
     }
   }
   // Only touched scratch prefixes are cleared. Detached edits own private
@@ -219,14 +240,14 @@ struct SqlRowsRuntime::Data {
     validate(table, update.values, &work);
     if (update.after > options.native.multiplicity_limit)
       fail("sql_rows_overflow", "SQL source weight exceeds the configured multiplicity limit");
-    auto& rows = sources[update.source.value]; const auto found = rows.find(update.values);
+    auto& rows = sources[update.source.value]; const auto row_hash = sql_detail::hash_cells(update.values);
+    const auto found = rows.find(update.values, row_hash);
     frontend::rows_detail::step(&work);
-    const auto actual = found == rows.end() ? 0 : found->second;
+    const auto actual = found == absent ? 0 : rows.at(found).value;
     if (actual != update.before) fail("sql_rows_weight_mismatch", "SQL prior source weight differs from committed state");
-    Counts::node_type inserted;
+    Tuple inserted;
     if (update.before != update.after) {
-      if (found == rows.end() && update.after)
-        inserted = node_for(rows, Tuple::copy_of(account, update.values), update.after);
+      if (found == absent && update.after) { inserted = Tuple::copy_of(account, update.values); rows.reserve(1); }
       prepare_keys(table, update, work);
       if (!program.contradiction()) for (const auto id : table.occurrences) {
         frontend::rows_detail::step(&work); const auto& occurrence = program.occurrences()[id.value];
@@ -239,17 +260,13 @@ struct SqlRowsRuntime::Data {
     }
     const auto spent = consumed(options.source_work_limit, work.remaining());
     auto result = pending.commit();
-    // All throwing work is finished. Node handles share their destination
-    // allocators; immutable validated keys have a nonthrowing comparator.
+    // All throwing work is finished: inserts have reserved capacity and the
+    // immutable validated keys hash and compare without throwing.
     if (update.before != update.after) {
-      for (auto& edit : edits) {
-        if (edit.position == edit.target->end()) edit.target->insert(std::move(edit.inserted));
-        else if (!edit.after) edit.target->erase(edit.position);
-        else edit.position->second = edit.after;
-      }
-      if (found == rows.end()) { if (update.after) rows.insert(std::move(inserted)); }
+      for (auto& edit : edits) publish_count(*edit.target, std::move(edit.key), edit.hash, edit.present, edit.after);
+      if (found == absent) { if (update.after) rows.insert(std::move(inserted), update.after, row_hash); }
       else if (!update.after) rows.erase(found);
-      else found->second = update.after;
+      else rows.at(found).value = update.after;
     }
     return {update.before != update.after, spent, std::move(result)};
   }
@@ -260,28 +277,7 @@ struct SqlRowsRuntime::Data {
 // The owner keeps committed iterators and shared tuple payloads alive even when
 // its facade moves or dies. No caller row/Cell span survives construction.
 struct SqlRowsRuntime::PreparedBatch::Data {
-  struct Probe { std::size_t domain; std::span<const Cell> row; };
-  struct Key { std::size_t domain; Tuple row; };
-  struct Order {
-    using is_transparent=void;
-    bool operator()(const Key& a,const Key& b) const noexcept {
-      return a.domain!=b.domain?a.domain<b.domain:Less::compare(a.row.view(),b.row.view());
-    }
-    bool operator()(const Key& a,Probe b) const noexcept {
-      return a.domain!=b.domain?a.domain<b.domain:Less::compare(a.row.view(),b.row);
-    }
-    bool operator()(Probe a,const Key& b) const noexcept {
-      return a.domain!=b.domain?a.domain<b.domain:Less::compare(a.row,b.row.view());
-    }
-  };
-  struct Proposal {
-    Counts* target;
-    Counts::iterator position;
-    std::uint64_t before,after;
-    Counts::node_type inserted;
-  };
-  using Touched=std::map<Key,Proposal,Order,
-      resource::MemoryAllocator<std::pair<const Key,Proposal>>>;
+  // Iterated in (domain, key) order; borrowed from the owner's spares.
   std::shared_ptr<SqlRowsRuntime::Data> owner;
   WeightedRuntime::PendingEpoch pending;
   storage::IndexWorkAllowance work;
@@ -293,13 +289,11 @@ struct SqlRowsRuntime::PreparedBatch::Data {
   Data(std::shared_ptr<SqlRowsRuntime::Data> sql,const NetBatch& batch,WeightedRuntime::PendingEpoch native)
       :owner(std::move(sql)),pending(std::move(native)),
        work(owner->options.source_work_limit,true),
-       rows(Order{},allocator<Touched::value_type>(owner->account,resource::MemoryPurpose::scratch)),
-       keys(Order{},allocator<Touched::value_type>(owner->account,resource::MemoryPurpose::scratch)) {prepare(batch);}
+       rows(owner->take(owner->spare_rows)),keys(owner->take(owner->spare_keys)) {prepare(batch);}
   Data(std::shared_ptr<SqlRowsRuntime::Data> sql,const NetBatch& batch,WeightedRuntime::PendingEpoch native,
       storage::IndexWorkAllowance& cold)
       :owner(std::move(sql)),pending(std::move(native)),work(storage::detail::IndexWorkAlias::fixed(cold)),
-       rows(Order{},allocator<Touched::value_type>(owner->account,resource::MemoryPurpose::scratch)),
-       keys(Order{},allocator<Touched::value_type>(owner->account,resource::MemoryPurpose::scratch)) {prepare(batch);}
+       rows(owner->take(owner->spare_rows)),keys(owner->take(owner->spare_keys)) {prepare(batch);}
   void prepare(const NetBatch& batch) {
     SqlRowsRuntime::Data::Scratch scratch{*owner};
     for(const auto& edit:batch.replacements) {
@@ -307,9 +301,10 @@ struct SqlRowsRuntime::PreparedBatch::Data {
       const auto& table=owner->source(edit.source);
       owner->validate(table,edit.values,&work);
       if(edit.before==edit.after) {
-        frontend::rows_detail::step(&work);const auto queued=rows.find(Probe{edit.source.value,edit.values});
+        frontend::rows_detail::step(&work);
+        const auto* queued=rows.find(edit.source.value,edit.values,sql_detail::hash_cells(edit.values));
         std::uint64_t current;
-        if(queued!=rows.end())current=queued->second.after;
+        if(queued)current=queued->payload.after;
         else {frontend::rows_detail::step(&work);current=count(owner->sources[edit.source.value],edit.values);}
         if(current!=edit.before)fail("sql_rows_weight_mismatch","SQL prior source weight differs from proposed state");
         continue; // A no-op validates its chain but needs no new key/payload.
@@ -317,15 +312,16 @@ struct SqlRowsRuntime::PreparedBatch::Data {
       auto& proposal=touch(rows,edit.source.value,owner->sources[edit.source.value],edit.values,edit.before);
       proposal.after=edit.after; // Only the final chained weight is admitted below.
     }
-    for(const auto& [key,proposal]:rows) {
-      static_cast<void>(key);frontend::rows_detail::step(&work);
+    rows.sort();
+    for(const auto& item:rows.items()) {
+      const auto& proposal=item.payload;frontend::rows_detail::step(&work);
       if(proposal.after>owner->options.native.multiplicity_limit)
         fail("sql_rows_overflow","final SQL source weight exceeds the configured multiplicity limit");
       changed|=proposal.before!=proposal.after;
     }
     // Remove all key shares before adding any. This permits key swaps and
     // final-valid cyclic/self FK changes without transient counter overflow.
-    update_keys(true);update_keys(false);validate_keys();
+    update_keys(true);update_keys(false);keys.sort();validate_keys();
     prepare_nodes(rows);prepare_nodes(keys);
     stage_native(true);stage_native(false);
   }
@@ -373,18 +369,19 @@ struct SqlRowsRuntime::PreparedBatch::Data {
   bool active() const noexcept {return bool(owner)&&pending.active();}
   Proposal& touch(Touched& touched,std::size_t id,Counts& target,std::span<const Cell> row,
       std::optional<std::uint64_t> expected=std::nullopt) {
-    frontend::rows_detail::step(&work);const auto queued=touched.find(Probe{id,row});
-    if(queued!=touched.end()) {
-      if(expected && queued->second.after!=*expected)
+    const auto hash=sql_detail::hash_cells(row);
+    frontend::rows_detail::step(&work);auto* queued=touched.find(id,row,hash);
+    if(queued) {
+      if(expected && queued->payload.after!=*expected)
         fail("sql_rows_weight_mismatch","duplicate source edits do not form an expected-weight chain");
-      return queued->second;
+      return queued->payload;
     }
-    frontend::rows_detail::step(&work);const auto position=target.find(row);
-    const auto current=position==target.end()?0:position->second;
+    frontend::rows_detail::step(&work);const auto position=target.find(row,hash);
+    const auto current=position==absent?0:target.at(position).value;
     if(expected && current!=*expected)
       fail("sql_rows_weight_mismatch","SQL prior source weight differs from committed state");
     Tuple owned;
-    if(position!=target.end())owned=position->first; // Actual shared immutable Tuple copy.
+    if(position!=absent)owned=target.at(position).key; // Actual shared immutable Tuple copy.
     else {
       // New keys alone copy descriptors/string bytes; charge that copy as well
       // as the separate validation/project work already spent.
@@ -395,10 +392,11 @@ struct SqlRowsRuntime::PreparedBatch::Data {
       owned=Tuple::copy_of(owner->account,row);
     }
     frontend::rows_detail::step(&work);
-    return touched.emplace(Key{id,std::move(owned)},Proposal{&target,position,current,current,{}}).first->second;
+    return touched.add(id,std::move(owned),hash,Proposal{&target,position!=absent,current,current}).payload;
   }
   void update_keys(bool decreasing) {
-    for(const auto& [source_key,proposal]:rows) {
+    for(const auto& source_key:rows.items()) {
+      const auto& proposal=source_key.payload;
       frontend::rows_detail::step(&work);
       if(proposal.before==proposal.after)continue;
       const auto& table=owner->source(TableId{source_key.domain});
@@ -407,7 +405,7 @@ struct SqlRowsRuntime::PreparedBatch::Data {
         const auto before=constraint.parent?std::uint64_t(proposal.before!=0):proposal.before;
         const auto after=constraint.parent?std::uint64_t(proposal.after!=0):proposal.after;
         if(before==after || (after<before)!=decreasing)continue;
-        const auto selected=owner->project_key(constraint,source_key.row.view(),owner->key,owner->key_used,work);
+        const auto selected=owner->project_key(constraint,source_key.key.view(),owner->key,owner->key_used,work);
         if(!selected)continue; // NULLS DISTINCT / MATCH SIMPLE; empty key is present.
         auto& key=touch(keys,index,owner->keys[index],*selected);
         key.after=replace_count(key.after,before,after);
@@ -415,35 +413,41 @@ struct SqlRowsRuntime::PreparedBatch::Data {
     }
   }
   std::uint64_t final_count(std::size_t id,std::span<const Cell> row) {
-    frontend::rows_detail::step(&work);const auto found=keys.find(Probe{id,row});
-    if(found!=keys.end())return found->second.after;
+    frontend::rows_detail::step(&work);const auto* found=keys.find(id,row,sql_detail::hash_cells(row));
+    if(found)return found->payload.after;
     frontend::rows_detail::step(&work);return count(owner->keys[id],row);
   }
   void validate_keys() {
-    for(const auto& [key,proposal]:keys) {
+    for(const auto& key:keys.items()) {
+      const auto& proposal=key.payload;
       frontend::rows_detail::step(&work);const auto& constraint=owner->program.constraints()[key.domain];
       if(constraint.parent) {
-        if(proposal.after && !final_count(*constraint.parent,key.row.view()))
+        if(proposal.after && !final_count(*constraint.parent,key.key.view()))
           fail("foreign_key_violation","final SQL source foreign key has no live parent");
       } else {
         if(proposal.after>1)fail("unique_violation","final SQL UNIQUE key has more than one row");
         if(!proposal.after)for(const auto reference:constraint.referenced_by) {
           frontend::rows_detail::step(&work);
-          if(final_count(reference,key.row.view()))
+          if(final_count(reference,key.key.view()))
             fail("foreign_key_violation","final SQL source parent key is still referenced");
         }
       }
     }
   }
+  // Reserve every insert. Sorted items sharing a domain share their target.
   void prepare_nodes(Touched& touched) {
-    for(auto& [key,proposal]:touched) {
+    std::size_t inserts=0;
+    const auto items=touched.items();
+    for(std::size_t i=0;i<items.size();++i) {
       frontend::rows_detail::step(&work);
-      if(proposal.before!=proposal.after && proposal.position==proposal.target->end() && proposal.after)
-        proposal.inserted=node_for(*proposal.target,key.row,proposal.after);
+      const auto& proposal=items[i].payload;
+      if(proposal.before!=proposal.after && !proposal.present && proposal.after)++inserts;
+      if(inserts && (i+1==items.size() || items[i+1].domain!=items[i].domain)) {proposal.target->reserve(inserts);inserts=0;}
     }
   }
   void stage_native(bool decreasing) {
-    for(const auto& [key,proposal]:rows) {
+    for(const auto& key:rows.items()) {
+      const auto& proposal=key.payload;
       frontend::rows_detail::step(&work);
       if(proposal.before==proposal.after || (proposal.after<proposal.before)!=decreasing)continue;
       if(owner->program.contradiction())continue;
@@ -452,7 +456,7 @@ struct SqlRowsRuntime::PreparedBatch::Data {
         frontend::rows_detail::step(&work);const auto& occurrence=owner->program.occurrences()[id.value];
         owner->projected_used=std::max(owner->projected_used,occurrence.projection.size());
         const auto output=std::span<storage::ScalarView>(owner->projected.data(),occurrence.projection.size());
-        if(frontend::rows_detail::adapt(owner->program,occurrence,key.row.view(),owner->values,output,&work))
+        if(frontend::rows_detail::adapt(owner->program,occurrence,key.key.view(),owner->values,output,&work))
           static_cast<void>(pending.stage_contribution(owner->nodes[id.value],
               storage::TupleValuesView::borrow(storage::RowView::borrow(output)),
               {proposal.before},{proposal.after}));
@@ -460,13 +464,10 @@ struct SqlRowsRuntime::PreparedBatch::Data {
     }
   }
   static void publish(Touched& touched) noexcept {
-    for(auto& [key,proposal]:touched) {
-      static_cast<void>(key);
+    for(auto& item:touched.items()) {
+      const auto& proposal=item.payload;
       if(proposal.before==proposal.after)continue;
-      if(proposal.position==proposal.target->end()) {
-        if(proposal.after)proposal.target->insert(std::move(proposal.inserted));
-      } else if(!proposal.after)proposal.target->erase(proposal.position);
-      else proposal.position->second=proposal.after;
+      publish_count(*proposal.target,std::move(item.key),item.hash,proposal.present,proposal.after);
     }
   }
   Epoch commit() {
@@ -474,11 +475,14 @@ struct SqlRowsRuntime::PreparedBatch::Data {
     auto native=pending.commit(); // No throwing preparation remains after this barrier.
     publish(keys);publish(rows);
     Epoch result{changed,spent,std::move(native)};
-    keys.clear();rows.clear();owner.reset();return result;
+    release();return result;
   }
   void rollback() noexcept {
     if(!owner)return;
-    pending.rollback();keys.clear();rows.clear();owner.reset();
+    pending.rollback();release();
+  }
+  void release() noexcept {
+    SqlRowsRuntime::Data::give(owner->spare_keys,keys);SqlRowsRuntime::Data::give(owner->spare_rows,rows);owner.reset();
   }
 };
 
@@ -645,6 +649,7 @@ SqlRowsRuntime::Data& SqlRowsRuntime::data() const {
 }
 const frontend::SqlRowsProgram& SqlRowsRuntime::program() const & { return data().program; }
 std::uint64_t SqlRowsRuntime::sequence() const { return data().native.sequence(); }
+std::string_view SqlRowsRuntime::engine() const { return data().native.engine(); }
 bool SqlRowsRuntime::ready() const { return data_ && data_->native.ready(); }
 weighted::Multiplicity SqlRowsRuntime::root_weight() const { return data().native.root_weight(); }
 resource::MemoryStatistics SqlRowsRuntime::accounted_memory_statistics() const { return data().account.statistics(); }
@@ -652,6 +657,79 @@ Epoch SqlRowsRuntime::apply(const Update& update) { return data().apply(update);
 std::uint64_t SqlRowsRuntime::source_weight(TableId id, std::span<const Cell> values) const {
   auto& d = data(); static_cast<void>(d.native.root_weight()); // Reject private batch state; readers remain allowed.
   d.validate(d.source(id), values, nullptr); return count(d.sources[id.value], values);
+}
+bool SqlRowsRuntime::fused_available() const {
+  const auto& d = data(); return d.native.fused_available() && d.program.constraints().empty();
+}
+bool SqlRowsRuntime::prepare_fused(const NetBatch& batch, keyed::WeightSink& sink) {
+  auto& d = data();
+  if (!fused_available()) fail("sql_rows_fused_unavailable", "fused batches need the keyed core and no key constraints");
+  if (d.fused) fail("sql_rows_busy", "a fused SQL batch is already open");
+  d.native.fused_begin(batch.sequence);
+  d.fused.emplace(d.take(d.spare_rows));
+  try {
+    Data::Scratch scratch{d};
+    auto& rows = *d.fused;
+    // Chain the net edits per source row against committed weights.
+    for (const auto& edit : batch.replacements) {
+      const auto& table = d.source(edit.source);
+      d.validate(table, edit.values, nullptr);
+      const auto hash = sql_detail::hash_cells(edit.values);
+      if (auto* queued = rows.find(edit.source.value, edit.values, hash)) {
+        if (queued->payload.after != edit.before)
+          fail("sql_rows_weight_mismatch", "duplicate source edits do not form an expected-weight chain");
+        queued->payload.after = edit.after;
+        continue;
+      }
+      auto& target = d.sources[edit.source.value];
+      const auto position = target.find(edit.values, hash);
+      const auto current = position == absent ? 0 : target.at(position).value;
+      if (current != edit.before) fail("sql_rows_weight_mismatch", "SQL prior source weight differs from committed state");
+      if (edit.before == edit.after) continue;
+      auto owned = position != absent ? target.at(position).key : Tuple::copy_of(d.account, edit.values);
+      rows.add(edit.source.value, std::move(owned), hash, Proposal{&target, position != absent, current, edit.after});
+    }
+    // Publication inserts without allocating.
+    for (const auto& item : rows.items())
+      if (!item.payload.present && item.payload.after && item.payload.before != item.payload.after) item.payload.target->reserve(1);
+    bool changed = false;
+    for (const bool decreasing : {true, false}) {
+      for (const auto& item : rows.items()) {
+        const auto& proposal = item.payload;
+        if (proposal.before == proposal.after || (proposal.after < proposal.before) != decreasing) continue;
+        if (proposal.after > d.options.native.multiplicity_limit)
+          fail("sql_rows_overflow", "final SQL source weight exceeds the configured multiplicity limit");
+        changed = true;
+        if (d.program.contradiction()) continue;
+        for (const auto id : d.source(TableId{item.domain}).occurrences) {
+          const auto& occurrence = d.program.occurrences()[id.value];
+          d.projected_used = std::max(d.projected_used, occurrence.projection.size());
+          const auto output = std::span<storage::ScalarView>(d.projected.data(), occurrence.projection.size());
+          if (frontend::rows_detail::adapt(d.program, occurrence, item.key.view(), d.values, output, nullptr))
+            d.native.fused_stage(d.nodes[id.value], storage::RowView::borrow(output), {proposal.before}, {proposal.after}, &sink);
+        }
+      }
+    }
+    return changed;
+  } catch (...) { rollback_fused(); throw; }
+}
+weighted::Epoch SqlRowsRuntime::commit_fused() {
+  auto& d = data();
+  if (!d.fused) fail("invalid_epoch", "no fused SQL batch is open");
+  auto epoch = d.native.fused_commit();
+  for (auto& item : d.fused->items()) {
+    const auto& proposal = item.payload;
+    if (proposal.before != proposal.after)
+      publish_count(*proposal.target, std::move(item.key), item.hash, proposal.present, proposal.after);
+  }
+  Data::give(d.spare_rows, *d.fused); d.fused.reset();
+  return epoch;
+}
+void SqlRowsRuntime::rollback_fused() noexcept {
+  if (!data_ || !data_->fused) return;
+  auto& d = *data_;
+  d.native.fused_rollback();
+  Data::give(d.spare_rows, *d.fused); d.fused.reset();
 }
 sql_rows::SourceSnapshot SqlRowsRuntime::source_snapshot(sql_rows::SourceSnapshotLimits limits) const {
   const auto& d = data();
@@ -668,9 +746,17 @@ sql_rows::SourceSnapshot SqlRowsRuntime::source_snapshot(sql_rows::SourceSnapsho
   sql_rows::SourceSnapshot result(d.account, d.native.sequence(), d.program,
       d.native.structural_program(), d.native.binding());
   result.rows.reserve(static_cast<std::size_t>(count));
+  // Hash-ordered tables are presented in the source's exact tuple order.
+  Items<const Counts::Entry*> order(allocator<const Counts::Entry*>(d.account, resource::MemoryPurpose::scratch));
   for (std::size_t i = 0; i < d.sources.size(); ++i) {
     work.admit({.structural_steps = 1});
-    for (const auto& [row, weight] : d.sources[i]) {
+    order.clear();
+    for (const auto& entry : d.sources[i].entries()) order.push_back(&entry);
+    std::sort(order.begin(), order.end(), [](const Counts::Entry* a, const Counts::Entry* b) {
+      return sql_detail::less(a->key.view(), b->key.view());
+    });
+    for (const auto* entry : order) {
+      const auto& row = entry->key; const auto weight = entry->value;
       work.admit({.structural_steps = 1});
       for (const auto& cell : row.view()) {
         std::uint64_t bytes = 0;

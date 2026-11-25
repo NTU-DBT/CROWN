@@ -297,15 +297,35 @@ class ObservationState {
   void route(std::uint64_t occurrence,std::uint64_t prefix) noexcept {
     occurrence_=occurrence; prefix_=prefix;
   }
-  void set(MetricId,std::uint64_t) noexcept;
-  void add(MetricId,std::uint64_t=1) noexcept;
+  // Inline: each delta attempt sets its metrics; output calls add() per row.
+  void set(MetricId id,std::uint64_t amount) noexcept {
+    const int slot=target_slot();
+    if (slot<0) return;
+    auto& value=slots_[static_cast<std::size_t>(slot)].values[static_cast<std::size_t>(id)];
+    if (value.availability==MetricAvailability::available && !value.saturated) {
+      value.value=amount; touch(slot,id);
+      if (amount==UINT64_MAX) saturate_timing(id,value);
+    }
+  }
+  void add(MetricId id,std::uint64_t amount=1) noexcept {
+    const int slot=target_slot();
+    if (slot<0) return;
+    auto& value=slots_[static_cast<std::size_t>(slot)].values[static_cast<std::size_t>(id)];
+    if (value.availability!=MetricAvailability::available) return;
+    touch(slot,id);
+    if (amount>UINT64_MAX-value.value) { value.value=UINT64_MAX; value.saturated=true; }
+    else value.value+=amount;
+  }
   void unavailable(MetricId) noexcept;
-  void event(TraceKind,std::uint64_t event=0,std::uint64_t cause=0,
+  // Records only in a sampled trace attempt.
+  void event(TraceKind kind,std::uint64_t event=0,std::uint64_t cause=0,
       std::uint64_t node=observation_no_id,std::uint64_t occurrence=observation_no_id,
       std::uint64_t prefix=0,std::uint64_t before=0,std::uint64_t after=0,
-      std::uint64_t role=observation_no_id,std::uint64_t tuple=observation_no_id) noexcept;
+      std::uint64_t role=observation_no_id,std::uint64_t tuple=observation_no_id) noexcept {
+    if (selected_) record(kind,event,cause,node,occurrence,prefix,before,after,role,tuple);
+  }
   void note_cursor_clock_read() noexcept {
-    if(snapshot_.current && snapshot_.current->owner==ObservationLayer::delta)
+    if(current_>=0 && slots_[static_cast<std::size_t>(current_)].owner==ObservationLayer::delta)
       add(MetricId::nested_cursor_clock_reads);
   }
   [[nodiscard]] bool clocks_enabled() const noexcept;
@@ -320,7 +340,26 @@ class ObservationState {
   std::vector<TraceRecord,resource::MemoryAllocator<TraceRecord>> buffer_; // Sized once at admission.
   bool selected_=false;
   std::uint64_t occurrence_=observation_no_id,prefix_=0;
-  [[nodiscard]] ObservationSummary* target() noexcept;
+  // The current and last attempt summaries occupy two slots (snapshot_ keeps
+  // neither): finishing an attempt flips them instead of moving a summary,
+  // and a new attempt starts as a copy of its layer's prepared summary.
+  // A new attempt resets only the metric values written since its slot was
+  // last reset from the same layer's summary (dirty bits, one per MetricId).
+  std::array<ObservationSummary,2> slots_{};
+  std::array<ObservationSummary,3> fresh_{};
+  std::array<std::uint64_t,2> dirty_{};
+  std::array<int,2> slot_layer_{-1,-1};
+  int current_=-1,last_=-1;
+  static_assert(observation_metric_count<=64,"dirty metric bits fit one word");
+  [[nodiscard]] int target_slot() const noexcept { return current_>=0?current_:last_; }
+  void touch(int slot,MetricId id) noexcept { dirty_[static_cast<std::size_t>(slot)]|=std::uint64_t{1}<<static_cast<unsigned>(id); }
+  [[nodiscard]] ObservationSummary* target() noexcept {
+    const int slot=target_slot();
+    return slot>=0?&slots_[static_cast<std::size_t>(slot)]:nullptr;
+  }
+  static void saturate_timing(MetricId,MetricValue&) noexcept;
+  void record(TraceKind,std::uint64_t,std::uint64_t,std::uint64_t,std::uint64_t,
+      std::uint64_t,std::uint64_t,std::uint64_t,std::uint64_t,std::uint64_t) noexcept;
 };
 [[nodiscard]] ObservationSnapshot observation_snapshot(const std::shared_ptr<ObservationState>&,ObservationOptions) noexcept;
 [[nodiscard]] ObservationTrace observation_trace(const std::shared_ptr<ObservationState>&,ObservationOptions);

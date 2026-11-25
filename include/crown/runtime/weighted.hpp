@@ -4,6 +4,7 @@
 #include "crown/ir/program.hpp"
 #include "crown/resource/owner_allocator.hpp"
 #include "crown/storage/layout.hpp"
+#include "crown/storage/keyed.hpp"
 #include <array>
 #include <cstddef>
 #include <cstdint>
@@ -27,6 +28,7 @@ struct Options {
   // Owning diagnostic histories add copies/pins. Events imply change capture.
   bool capture_changes = false;
   bool capture_events = false;
+  storage::keyed::GcOptions gc{};  // keyed core only
 };
 // Shapes are compiled/checked by the existing compiler. This binding explicitly
 // changes the execution semantics; it is not an exact-set plan/cache identity.
@@ -208,6 +210,7 @@ struct CursorMetrics {
 };
 }  // namespace crown::runtime::weighted
 
+namespace crown::runtime::keyed { class WeightSink; }
 namespace crown::runtime {
 // Direct-CQ shapes maintain exact weighted subtrees and projected multiplicities.
 // Nullable SQL source admission uses SqlRowsRuntime; recovery remains separate.
@@ -303,6 +306,8 @@ class WeightedRuntime {
   [[nodiscard]] std::uint64_t owner() const;
   [[nodiscard]] std::uint64_t sequence() const;
   [[nodiscard]] bool ready() const;
+  // The maintaining core: "keyed_v1" (bag mode, docs/keyed_core.md) or "reference_v1".
+  [[nodiscard]] std::string_view engine() const;
   [[nodiscard]] weighted::Multiplicity root_weight() const;
   [[nodiscard]] std::optional<weighted::Attempt> last_attempt() const;
   [[nodiscard]] resource::MemoryStatistics accounted_memory_statistics() const;
@@ -311,6 +316,20 @@ class WeightedRuntime {
   [[nodiscard]] weighted::Epoch apply(const weighted::Update&);
   [[nodiscard]] weighted::Snapshot snapshot(weighted::SnapshotLimits = {}) const;
   [[nodiscard]] ResultCursor results(weighted::CursorOptions = {}) const;
+  // Fused keyed epochs (SqlRowsRuntime::prepare_fused): native contributions
+  // go straight into the keyed bag engine, without a PendingEpoch, journal,
+  // delta capture or epoch metrics; every changed head tuple is reported to
+  // the sink as it changes. Only on the keyed core (engine() == "keyed_v1").
+  // fused_stage replaces one contribution to a native record (values in node
+  // scope order), exactly as a PendingEpoch native contribution does.
+  [[nodiscard]] bool fused_available() const noexcept;
+  void fused_begin(std::uint64_t sequence);
+  void fused_stage(NodeId, storage::RowView values, weighted::Multiplicity before,
+      weighted::Multiplicity after, keyed::WeightSink* sink);
+  // Commits the open fused epoch; the epoch carries its sequence, changed flag
+  // and root summaries only (no metrics, journal or captured deltas).
+  [[nodiscard]] weighted::Epoch fused_commit();
+  void fused_rollback() noexcept;
  private:
   friend class detail::SqlColdRebuild;
   explicit WeightedRuntime(std::shared_ptr<Impl> value) noexcept : impl_(std::move(value)) {}

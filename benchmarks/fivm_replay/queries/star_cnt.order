@@ -1,0 +1,10 @@
+5 4
+0 A int -1 {} 0
+1 B int 0 {0} 0
+2 C int 0 {0} 0
+3 D int 0 {0} 0
+4 E int 0 {0} 0
+G1 1 A,B
+G2 2 A,C
+G3 3 A,D
+G4 4 A,E
